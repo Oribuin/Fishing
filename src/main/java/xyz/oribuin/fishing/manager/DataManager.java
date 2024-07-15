@@ -1,6 +1,6 @@
-package dev.rosewood.myplugin.manager;
+package xyz.oribuin.fishing.manager;
 
-import dev.rosewood.myplugin.database.migration._1_CreateInitialTables;
+import xyz.oribuin.fishing.database.migration._1_CreateInitialTables;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.database.DataMigration;
 import dev.rosewood.rosegarden.manager.AbstractDataManager;

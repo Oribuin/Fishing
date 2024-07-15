@@ -1,4 +1,4 @@
-package dev.rosewood.myplugin.command.command;
+package xyz.oribuin.fishing.command.command;
 
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.command.argument.ArgumentHandlers;
@@ -17,10 +17,6 @@ public class ExampleCommand extends BaseRoseCommand {
 
     @RoseExecutable
     public void execute(CommandContext context, Player target, String message) {
-        String toSend = message != null ? message : "Hello!";
-
-        target.sendMessage(String.format("%s -> You: %s", context.getSender().getName(), toSend));
-        context.getSender().sendMessage(String.format("You -> %s: %s", target.getName(), toSend));
     }
 
     @Override

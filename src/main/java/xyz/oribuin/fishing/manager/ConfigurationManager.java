@@ -1,6 +1,6 @@
-package dev.rosewood.myplugin.manager;
+package xyz.oribuin.fishing.manager;
 
-import dev.rosewood.myplugin.MyPlugin;
+import xyz.oribuin.fishing.FishingPlugin;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.config.RoseSetting;
@@ -49,7 +49,7 @@ public class ConfigurationManager extends AbstractConfigurationManager {
 
         @Override
         public CommentedFileConfiguration getBaseConfig() {
-            return MyPlugin.getInstance().getManager(ConfigurationManager.class).getConfig();
+            return FishingPlugin.get().getManager(ConfigurationManager.class).getConfig();
         }
     }
 

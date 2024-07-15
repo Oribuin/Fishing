@@ -6,7 +6,7 @@ plugins {
     id "maven-publish"
 }
 
-group = 'dev.rosewood'
+group = 'xyz.oribuin'
 version = '1.0-SNAPSHOT'
 
 java {
@@ -25,24 +25,33 @@ repositories {
     mavenCentral()
     mavenLocal()
 
-    maven { url = "https://repo.rosewooddev.io/repository/public/" }
+    maven { url = "https://libraries.minecraft.net" }
     maven { url = "https://repo.papermc.io/repository/maven-public/" }
     maven { url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
+    maven { url = "https://repo.rosewooddev.io/repository/public/" }
+    maven { url = "https://repo.extendedclip.com/content/repositories/placeholderapi/" }
+    maven { url = "https://repo.codemc.org/repository/maven-public/" }
+    maven { url = "https://jitpack.io" }
+    maven { url = "https://repo.mattstudios.me/artifactory/public/" }
 }
 
 dependencies {
     api "dev.rosewood:rosegarden:${gardenVersion}"
-    api "dev.rosewood:guiframework:${guiVersion}"
+    api ("dev.triumph-team:triumph-gui:${triumphVersion}") {
+        exclude group: "com.google.code.gson", module: "gson"
+        exclude group: "net.kyori", module: "*"
+    }
 
-    // Decide whether you want to use Spigot or Paper API (Paper is recommended)
-    compileOnly "io.papermc.paper:paper-api:${spigotVersion}-R0.1-SNAPSHOT"
 //    compileOnly "org.spigotmc:spigot-api:${spigotVersion}-R0.1-SNAPSHOT"
+    compileOnly "io.papermc.paper:paper-api:${spigotVersion}-R0.1-SNAPSHOT"
+    compileOnly "com.mojang:authlib:${authLibVersion}"
+    compileOnly "com.github.MilkBowl:VaultAPI:${vaultVersion}"
 }
 
 shadowJar {
     archiveClassifier.set(null)
 
-    relocate("dev.rosewood.rosegarden", "${project.group}.myplugin.rosegarden")
+    relocate("dev.rosewood.rosegarden", "${project.group}.fishing.rosegarden")
 
     // Remove comments if you're not using SQL/SQLite
 //    exclude 'dev/rosewood/rosegarden/lib/hikaricp/**/*.class'
@@ -63,9 +72,9 @@ publishing {
     publications {
         shadow(MavenPublication) { publication ->
             project.shadow.component(publication)
-            artifactId = "myplugin"
+            artifactId = "fishing"
             pom {
-                name = "myplugin"
+                name = "fishing"
             }
         }
     }

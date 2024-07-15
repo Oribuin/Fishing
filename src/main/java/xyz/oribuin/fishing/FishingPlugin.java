@@ -1,26 +1,24 @@
-package dev.rosewood.myplugin;
+package xyz.oribuin.fishing;
 
-import dev.rosewood.guiframework.GuiFramework;
-import dev.rosewood.myplugin.manager.CommandManager;
-import dev.rosewood.myplugin.manager.ConfigurationManager;
-import dev.rosewood.myplugin.manager.DataManager;
-import dev.rosewood.myplugin.manager.LocaleManager;
+import xyz.oribuin.fishing.manager.CommandManager;
+import xyz.oribuin.fishing.manager.ConfigurationManager;
+import xyz.oribuin.fishing.manager.DataManager;
+import xyz.oribuin.fishing.manager.LocaleManager;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.manager.Manager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class MyPlugin extends RosePlugin {
+public class FishingPlugin extends RosePlugin {
 
-    private static MyPlugin instance;
-    private GuiFramework framework;
+    private static FishingPlugin instance;
 
-    public static MyPlugin getInstance() {
+    public static FishingPlugin get() {
         return instance;
     }
 
-    public MyPlugin() {
+    public FishingPlugin() {
         super(-1, -1,
                 ConfigurationManager.class,
                 DataManager.class,
@@ -33,7 +31,6 @@ public class MyPlugin extends RosePlugin {
 
     @Override
     public void enable() {
-        this.framework = GuiFramework.instantiate(this);
     }
 
     @Override
@@ -44,10 +41,6 @@ public class MyPlugin extends RosePlugin {
     @Override
     protected @NotNull List<Class<? extends Manager>> getManagerLoadPriority() {
         return List.of();
-    }
-
-    public GuiFramework getFramework() {
-        return framework;
     }
 
 }
