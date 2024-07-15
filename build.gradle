@@ -1,0 +1,89 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+plugins {
+    id "java-library"
+    id "com.github.johnrengelman.shadow" version "7.1.0"
+    id "maven-publish"
+}
+
+group = 'dev.rosewood'
+version = '1.0-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+compileJava {
+    options.compilerArgs += ['-parameters']
+    options.fork = true
+    options.encoding = 'UTF-8'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+
+    maven { url = "https://repo.rosewooddev.io/repository/public/" }
+    maven { url = "https://repo.papermc.io/repository/maven-public/" }
+    maven { url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
+}
+
+dependencies {
+    api "dev.rosewood:rosegarden:${gardenVersion}"
+    api "dev.rosewood:guiframework:${guiVersion}"
+
+    // Decide whether you want to use Spigot or Paper API (Paper is recommended)
+    compileOnly "io.papermc.paper:paper-api:${spigotVersion}-R0.1-SNAPSHOT"
+//    compileOnly "org.spigotmc:spigot-api:${spigotVersion}-R0.1-SNAPSHOT"
+}
+
+shadowJar {
+    archiveClassifier.set(null)
+
+    relocate("dev.rosewood.rosegarden", "${project.group}.myplugin.rosegarden")
+
+    // Remove comments if you're not using SQL/SQLite
+//    exclude 'dev/rosewood/rosegarden/lib/hikaricp/**/*.class'
+//    exclude 'dev/rosewood/rosegarden/lib/slf4j/**/*.class'
+}
+
+// Include version replacement
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        include '**/*.yml'
+        filter ReplaceTokens, tokens: ["version": project.property("version")]
+        duplicatesStrategy DuplicatesStrategy.INCLUDE
+    }
+}
+
+// Jar Publishing
+publishing {
+    publications {
+        shadow(MavenPublication) { publication ->
+            project.shadow.component(publication)
+            artifactId = "myplugin"
+            pom {
+                name = "myplugin"
+            }
+        }
+    }
+
+    repositories {
+        if (project.hasProperty('mavenUser') && project.hasProperty('mavenPassword')) {
+            maven {
+                credentials {
+                    username project.mavenUser
+                    password project.mavenPassword
+                }
+
+                def releasesRepoUrl = 'https://repo.rosewooddev.io/repository/public-releases/'
+                def snapshotsRepoUrl = 'https://repo.rosewooddev.io/repository/public-snapshots/'
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            }
+        }
+    }
+}
+
+build.dependsOn shadowJar

@@ -1,0 +1,6 @@
+name: MyPlugin
+main: dev.rosewood.myplugin.MyPlugin
+version: '@version@'
+api-version: '1.16'
+author: Rosewood-Development
+description: A plugin that does stuff
