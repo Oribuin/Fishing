@@ -33,9 +33,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 public final class FishUtils {
+
+    public static ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
 
     public FishUtils() {
         throw new IllegalStateException("VouchersUtil is a utility class and cannot be instantiated.");

@@ -1,6 +1,5 @@
 package xyz.oribuin.fishing.manager;
 
-import xyz.oribuin.fishing.database.migration._1_CreateInitialTables;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.database.DataMigration;
 import dev.rosewood.rosegarden.manager.AbstractDataManager;
@@ -16,7 +15,7 @@ public class DataManager extends AbstractDataManager {
 
     @Override
     public @NotNull List<Class<? extends DataMigration>> getDataMigrations() {
-        return List.of(_1_CreateInitialTables.class);
+        return List.of();
     }
 
     /**

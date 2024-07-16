@@ -5,14 +5,20 @@ import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.manager.Manager;
 import org.bukkit.block.Biome;
+import org.bukkit.entity.FishHook;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.fish.Tier;
 import xyz.oribuin.fishing.fish.condition.Time;
 import xyz.oribuin.fishing.fish.condition.Weather;
 import xyz.oribuin.fishing.util.FishUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class FishManager extends Manager {
 
@@ -43,7 +49,6 @@ public class FishManager extends Manager {
                     });
                 });
     }
-
 
     /**
      * Load a fish from the tier config file
@@ -79,9 +84,72 @@ public class FishManager extends Manager {
         return fish;
     }
 
+    /**
+     * Try to catch a fish from the tier based on the player's fishing rod and fish hook
+     *
+     * @param player  The player to check
+     * @param rod     The fishing rod the player is using
+     * @param hook    The fishhook the player is using
+     *
+     * @return The fish the player caught
+     */
+    public List<Fish> tryCatch(Player player, ItemStack rod, FishHook hook) {
+        List<Fish> result = new ArrayList<>();
+        // TODO: Check for augments on the fishing rod
+        // TODO: Provide the player with entropy on catch, sometimes
+        // TODO: Give statistics to the player
+        result.add(this.generateFish(player, rod, hook));
+        return result;
+    }
+
+    /**
+     * Select a random fish from the tier based on the player's fishing rod and fish hook
+     *
+     * @param player The player to check
+     * @param rod    The fishing rod the player is using
+     * @param hook   The fishhook the player is using
+     *
+     * @return The fish the player caught
+     */
+    private Fish generateFish(Player player, ItemStack rod, FishHook hook) {
+        // Pick the quality of the fish based on the tier
+        TierManager manager = this.rosePlugin.getManager(TierManager.class);
+        double qualityChance = FishUtils.RANDOM.nextDouble(100);
+
+        // Obtain the quality of the 
+        Optional<Tier> quality = manager.getQualityTypes()
+                .values()
+                .stream()
+                .filter(t -> qualityChance <= t.getChance())
+                .findFirst();
+
+        if (quality.isEmpty()) return null;
+
+        // Make sure the quality is not null
+        List<Fish> fishList = this.getFishByTier(quality.get()).stream()
+                .filter(f -> f.canCatch(player, rod, hook))
+                .toList();
+
+        if (fishList.isEmpty()) return null;
+
+        // Pick a random fish from the list
+        return fishList.get(FishUtils.RANDOM.nextInt(fishList.size()));
+    }
+
     @Override
     public void disable() {
 
+    }
+
+    /**
+     * Get all the fish in a specific tier of fish
+     *
+     * @param tier The tier of fish
+     *
+     * @return The list of fish in the tier
+     */
+    public List<Fish> getFishByTier(Tier tier) {
+        return this.fishTypes.values().stream().filter(fish -> fish.getTier().equalsIgnoreCase(tier.getName())).toList();
     }
 
     public Map<String, Fish> getFishTypes() {

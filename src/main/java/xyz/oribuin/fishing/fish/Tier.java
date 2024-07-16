@@ -9,14 +9,18 @@ import java.util.Objects;
 
 public class Tier {
 
-    private final String name;
-    private final double money;
-    private final double chance;
-    private final int entropy;
+    // Basic Values
     private final ItemStack baseDisplay;
     private final File tierFolder;
     private final File tierFile;
 
+    // Fish values
+    private final String name;
+    private final double money;
+    private final double chance;
+    private final int entropy;
+    private float fishExp;
+    private float naturalExp;
     /**
      * Create a new quality name for a fish
      *
@@ -33,6 +37,8 @@ public class Tier {
         this.money = money;
         this.chance = chance;
         this.entropy = entropy;
+        this.fishExp = 0.0f;
+        this.naturalExp = 0.0f;
         this.baseDisplay = baseDisplay;
         this.tierFolder = new File(FishingPlugin.get().getDataFolder(), this.name.toLowerCase());
         this.tierFile = new File(this.tierFolder, "fish.yml");
@@ -70,6 +76,22 @@ public class Tier {
 
     public ItemStack getBaseDisplay() {
         return baseDisplay;
+    }
+
+    public float getFishExp() {
+        return fishExp;
+    }
+
+    public void setFishExp(float fishExp) {
+        this.fishExp = fishExp;
+    }
+
+    public float getNaturalExp() {
+        return naturalExp;
+    }
+
+    public void setNaturalExp(float naturalExp) {
+        this.naturalExp = naturalExp;
     }
 
 }

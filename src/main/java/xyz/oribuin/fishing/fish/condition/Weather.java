@@ -11,6 +11,17 @@ public enum Weather {
     //    SNOW;
 
     /**
+     * Check if the location is in the state of the weather
+     *
+     * @param location The location to check
+     *
+     * @return If the location is in the state of the weather
+     */
+    public boolean isState(Location location) {
+        return this == test(location);
+    }
+
+    /**
      * Get the weather in the location provided
      *
      * @param location The location to check the weather

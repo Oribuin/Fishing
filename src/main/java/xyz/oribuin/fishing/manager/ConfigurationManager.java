@@ -9,7 +9,7 @@ import dev.rosewood.rosegarden.manager.AbstractConfigurationManager;
 public class ConfigurationManager extends AbstractConfigurationManager {
 
     public enum Setting implements RoseSetting {
-        MY_SETTINGS("my-settings", "default-value", "This is a comment.", "This is another comment.");
+        ;
 
         private final String key;
         private final Object defaultValue;

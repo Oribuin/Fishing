@@ -17,7 +17,7 @@ import java.util.Objects;
 
 public class TierManager extends Manager {
 
-    private final Map<String, Tier> qualityTypes = new HashMap<>();
+    private final Map<String, Tier> tiers = new HashMap<>();
     private CommentedFileConfiguration config;
 
     public TierManager(RosePlugin rosePlugin) {
@@ -41,14 +41,14 @@ public class TierManager extends Manager {
                 .stream()
                 .map(this::load).
                 filter(Objects::nonNull)
-                .forEach(tier -> this.qualityTypes.put(tier.getName(), tier));
+                .forEach(tier -> this.tiers.put(tier.getName(), tier));
 
         // Load all the tiers from the configuration file
         for (String key : section.getKeys(false)) {
             Tier tier = this.load(key);
             if (tier == null) continue;
 
-            this.qualityTypes.put(tier.getName(), tier);
+            this.tiers.put(tier.getName(), tier);
         }
     }
 
@@ -76,8 +76,17 @@ public class TierManager extends Manager {
             return null;
         }
 
+        // Make sure there is actually a chance to obtain the tier
+        if (chance <= 0) {
+            this.rosePlugin.getLogger().severe("The chance for the tier: " + key + " is invalid. Please double check your configuration file.");
+            Bukkit.getPluginManager().disablePlugin(this.rosePlugin);
+            return null;
+        }
+
         // Create a new tier
         Tier tier = new Tier(key.toLowerCase(), money, chance, entropy, baseDisplay);
+        tier.setFishExp((float) this.config.getDouble(path + "fish-exp", 0));
+        tier.setNaturalExp((float) this.config.getDouble(path + "natural-exp", 0));
 
         try {
             File tierDirectory = new File(this.rosePlugin.getDataFolder(), "tiers");
@@ -96,13 +105,17 @@ public class TierManager extends Manager {
         return tier;
     }
 
+    public Tier get(String key) {
+        return this.tiers.get(key);
+    }
+
     @Override
     public void disable() {
 
     }
 
     public Map<String, Tier> getQualityTypes() {
-        return this.qualityTypes;
+        return this.tiers;
     }
 
 
