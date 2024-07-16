@@ -37,15 +37,16 @@ repositories {
 
 dependencies {
     api "dev.rosewood:rosegarden:${gardenVersion}"
-    api ("dev.triumph-team:triumph-gui:${triumphVersion}") {
-        exclude group: "com.google.code.gson", module: "gson"
-        exclude group: "net.kyori", module: "*"
+    api("dev.triumphteam:triumph-gui:${triumphVersion}") {  // https://mf.mattstudios.me/triumph-gui/introduction
+        exclude group: "com.google.code.gson", module: "gson" // Remove GSON, Already included in spigot api
+        exclude group: "net.kyori", module: "*" // Remove kyori
     }
 
-//    compileOnly "org.spigotmc:spigot-api:${spigotVersion}-R0.1-SNAPSHOT"
     compileOnly "io.papermc.paper:paper-api:${spigotVersion}-R0.1-SNAPSHOT"
     compileOnly "com.mojang:authlib:${authLibVersion}"
     compileOnly "com.github.MilkBowl:VaultAPI:${vaultVersion}"
+
+    implementation "com.jeff-media:MorePersistentDataTypes:${persistentDataTypeVersion}"
 }
 
 shadowJar {

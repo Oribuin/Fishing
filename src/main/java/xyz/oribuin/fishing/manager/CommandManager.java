@@ -16,7 +16,7 @@ public class CommandManager extends AbstractCommandManager {
 
     @Override
     public @NotNull List<Function<RosePlugin, BaseRoseCommand>> getRootCommands() {
-        return List.of(ExampleCommand::new);
+        return List.of();
     }
 
 }

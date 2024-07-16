@@ -48,6 +48,7 @@ public final class FishUtils {
      * Get a bukkit color from a hex code
      *
      * @param hex The hex code
+     *
      * @return The bukkit color
      */
     public static Color fromHex(String hex) {
@@ -69,6 +70,7 @@ public final class FishUtils {
      *
      * @param player The player to format the string for
      * @param text   The string to format
+     *
      * @return The formatted string
      */
     public static String format(Player player, String text) {
@@ -81,6 +83,7 @@ public final class FishUtils {
      * @param player       The player to format the string for
      * @param text         The text to format
      * @param placeholders The placeholders to replace
+     *
      * @return The formatted string
      */
     public static String format(Player player, String text, StringPlaceholders placeholders) {
@@ -97,9 +100,11 @@ public final class FishUtils {
      * @param sender       The CommandSender to apply placeholders from
      * @param key          The key to deserialize from
      * @param placeholders The placeholders to apply
+     *
      * @return The deserialized ItemStack
      */
     @Nullable
+    @SuppressWarnings("deprecation")
     public static ItemStack deserialize(
             @NotNull CommentedConfigurationSection section,
             @Nullable CommandSender sender,
@@ -134,9 +139,7 @@ public final class FishUtils {
             if (owner.equalsIgnoreCase("self") && sender instanceof Player player) {
                 offlinePlayer = player;
             } else {
-                offlinePlayer = NMSUtil.isPaper()
-                        ? Bukkit.getOfflinePlayerIfCached(owner)
-                        : Bukkit.getOfflinePlayer(owner);
+                offlinePlayer = Bukkit.getOfflinePlayerIfCached(owner);
             }
         }
 
@@ -160,6 +163,7 @@ public final class FishUtils {
      *
      * @param section The section to deserialize from
      * @param key     The key to deserialize from
+     *
      * @return The deserialized ItemStack
      */
     @Nullable
@@ -173,6 +177,7 @@ public final class FishUtils {
      * @param section The section to deserialize from
      * @param sender  The CommandSender to apply placeholders from
      * @param key     The key to deserialize from
+     *
      * @return The deserialized ItemStack
      */
     @Nullable
@@ -184,6 +189,7 @@ public final class FishUtils {
      * Parse an integer from an object safely
      *
      * @param object The object
+     *
      * @return The integer
      */
     private static int toInt(String object) {
@@ -198,6 +204,7 @@ public final class FishUtils {
      * Convert a string to a duration
      *
      * @param input The input string
+     *
      * @return The duration
      */
     public static Duration getTime(String input) {
@@ -229,6 +236,7 @@ public final class FishUtils {
      * Format a time in milliseconds into a string
      *
      * @param time Time in milliseconds
+     *
      * @return Formatted time
      */
     public static String formatTime(long time) {
@@ -258,9 +266,11 @@ public final class FishUtils {
      *
      * @param rosePlugin The plugin
      * @param folders    The folders
+     *
      * @return The file
      */
     @NotNull
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static File createFile(@NotNull RosePlugin rosePlugin, @NotNull String... folders) {
         File file = new File(rosePlugin.getDataFolder(), String.join("/", folders)); // Create the file
         if (file.exists())
@@ -279,7 +289,7 @@ public final class FishUtils {
 
             Files.copy(stream, Paths.get(file.getAbsolutePath()));
         } catch (IOException e) {
-            e.printStackTrace();
+            FishingPlugin.get().getLogger().severe("Failed to create file: " + file.getPath() + " - " + e.getMessage());
         }
 
         return file;
@@ -309,6 +319,7 @@ public final class FishUtils {
      * @param enumClass The enum class
      * @param name      The name of the enum
      * @param <T>       The enum name
+     *
      * @return The enum
      */
     public static <T extends Enum<T>> T getEnum(Class<T> enumClass, String name, T def) {
@@ -325,10 +336,12 @@ public final class FishUtils {
 
     /**
      * Convert a list of strings to a list of enums
+     *
      * @param enumClass The enum class
-     * @param content The content to convert
+     * @param content   The content to convert
+     * @param <T>       The enum type
+     *
      * @return The list of enums
-     * @param <T> The enum type
      */
     public static <T extends Enum<T>> List<T> getEnumList(Class<T> enumClass, List<String> content) {
         return content.stream()
@@ -341,9 +354,9 @@ public final class FishUtils {
      * Parse a list of strings from 1-1 to a stringlist
      *
      * @param list The list to parse
+     *
      * @return The parsed list
      */
-    @SuppressWarnings("unchecked")
     public static List<Integer> parseList(List<String> list) {
         List<Integer> newList = new ArrayList<>();
         for (String s : list) {
@@ -363,6 +376,7 @@ public final class FishUtils {
      *
      * @param start The start of the range
      * @param end   The end of the range
+     *
      * @return A list of numbers
      */
     public static List<Integer> getNumberRange(int start, int end) {
@@ -378,12 +392,5 @@ public final class FishUtils {
         return list;
     }
 
-    public static boolean isFolia() {
-        try {
-            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
-    }
+
 }

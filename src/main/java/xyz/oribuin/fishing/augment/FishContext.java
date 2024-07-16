@@ -10,8 +10,9 @@ import org.bukkit.inventory.ItemStack;
  * @param player    The player who caught the fish
  * @param itemStack The item stack of the fish
  * @param hook      The fishhook entity
+ * @param level     The level of the augment that was used
  */
-public record FishContext(Player player, ItemStack itemStack, FishHook hook) {
+public record FishContext(Player player, ItemStack itemStack, FishHook hook, int level) {
 
     // Unused
 

@@ -1,7 +1,6 @@
 package xyz.oribuin.fishing.augment.def;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import org.bukkit.inventory.ItemStack;
 import xyz.oribuin.fishing.api.event.InitialFishCatchEvent;
 import xyz.oribuin.fishing.augment.Augment;
@@ -12,14 +11,14 @@ import xyz.oribuin.fishing.fish.condition.Weather;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AugmentHotspot extends Augment {
+public class AugmentCallOfTheSea extends Augment {
 
     private double chancePerLevel = 5.0;
     private int minFish = 1;
     private int maxFish = 3;
 
-    public AugmentHotspot() {
-        super("hotspot", "Increases the amount of fish caught when the weather is clear");
+    public AugmentCallOfTheSea() {
+        super("call_of_the_sea", "Increases the amount of fish caught when the weather is raining");
     }
 
     /**
@@ -31,7 +30,7 @@ public class AugmentHotspot extends Augment {
      */
     @Override
     public void onInitialCatch(InitialFishCatchEvent event, int level) {
-        if (!Weather.CLEAR.isState(event.getHook().getLocation())) return;
+        if (Weather.CLEAR.isState(event.getHook().getLocation())) return;
 
         int chanceToTrigger = (int) (this.chancePerLevel * level);
         if (Math.random() * 100 > chanceToTrigger) return;
