@@ -1,6 +1,6 @@
-name: MyPlugin
-main: dev.rosewood.myplugin.MyPlugin
+name: Fishing
+main: xyz.oribuin.fishing.FishingPlugin
 version: '@version@'
-api-version: '1.16'
-author: Rosewood-Development
-description: A plugin that does stuff
+api-version: '1.20'
+author: Oribuin
+description: fishing :)

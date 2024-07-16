@@ -37,12 +37,6 @@ public class TierManager extends Manager {
             return;
         }
 
-        section.getKeys(false)
-                .stream()
-                .map(this::load).
-                filter(Objects::nonNull)
-                .forEach(tier -> this.tiers.put(tier.getName(), tier));
-
         // Load all the tiers from the configuration file
         for (String key : section.getKeys(false)) {
             Tier tier = this.load(key);
