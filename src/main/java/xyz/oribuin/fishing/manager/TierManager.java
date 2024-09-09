@@ -6,12 +6,17 @@ import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.manager.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 import xyz.oribuin.fishing.fish.Tier;
 import xyz.oribuin.fishing.util.FishUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -44,6 +49,27 @@ public class TierManager extends Manager {
 
             this.tiers.put(tier.getName(), tier);
         }
+    }
+
+    /**
+     * Get the quality of fish dependent on the chance provided, filters through all chances
+     * sorted for rarest -> common, seeing if chance <= tier chance. When no tier is selected it will return null.
+     * Usually, a null tier means a player wont get a custom fish
+     *
+     * @param chance The chance of obtaining the fish
+     * @return The fish that can be provided.
+     */
+    @Nullable
+    public Tier selectTier(double chance) {
+        List<Tier> tiers = new ArrayList<>(this.tiers.values());
+        tiers.sort(Comparator.comparingDouble(Tier::getChance)); // sort by chance
+        Collections.reverse(tiers); // Put highest rarity first
+
+        // Select the new fish :3
+        return tiers.stream()
+                .filter(x -> chance <= x.getChance())
+                .findFirst()
+                .orElse(null);
     }
 
     /**

@@ -5,6 +5,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import xyz.oribuin.fishing.FishingPlugin;
+import xyz.oribuin.fishing.api.event.FishGenerateEvent;
 import xyz.oribuin.fishing.api.event.InitialFishCatchEvent;
 import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.util.FishUtils;
@@ -56,9 +57,10 @@ public abstract class Augment implements Listener {
     /**
      * The functionality provided when a fish is generated for the player
      *
-     * @param context The context of the fish event
+     * @param event The event that is fired when a fish is generated
+     * @param level The level of the augment that was used
      */
-    public void onGenerate(FishContext context, double qualityChance) {
+    public void onGenerate(FishGenerateEvent event, int level) {
     }
 
     /**

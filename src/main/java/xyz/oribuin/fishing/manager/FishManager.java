@@ -4,6 +4,7 @@ import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.manager.Manager;
+import org.bukkit.Bukkit;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
@@ -11,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import xyz.oribuin.fishing.api.event.InitialFishCatchEvent;
 import xyz.oribuin.fishing.augment.Augment;
 import xyz.oribuin.fishing.augment.FishContext;
+import xyz.oribuin.fishing.api.event.FishGenerateEvent;
 import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.fish.Tier;
 import xyz.oribuin.fishing.fish.condition.Time;
@@ -89,7 +91,7 @@ public class FishManager extends Manager {
     }
 
     /**
-     * Try to catch a fish from the tier based on the player's fishing rod and fish hook
+     * Try to catch a fish from the tier based on the player's fishing rod and fishhook
      *
      * @param player The player to check
      * @param rod    The fishing rod the player is using
@@ -115,14 +117,15 @@ public class FishManager extends Manager {
         // TODO: Give statistics to the player
 
         for (int i = 0; i < event.getAmountToCatch(); i++) {
-            result.add(this.generateFish(player, rod, hook, augments));
+            result.add(this.generateFish(player, rod, hook));
         }
 
         return result;
     }
 
     /**
-     * Select a random fish from the tier based on the player's fishing rod and fish hook
+     * Fires the {@link FishGenerateEvent} and returns the fish
+     * This generates its own fish that can be overridden by augments or other plugins.
      *
      * @param player The player to check
      * @param rod    The fishing rod the player is using
@@ -130,33 +133,12 @@ public class FishManager extends Manager {
      *
      * @return The fish the player caught
      */
-    private Fish generateFish(Player player, ItemStack rod, FishHook hook, Map<Augment, Integer> augments) {
-        // Pick the quality of the fish based on the tier
-        TierManager manager = this.rosePlugin.getManager(TierManager.class);
-        double qualityChance = FishUtils.RANDOM.nextDouble(100);
+    private Fish generateFish(Player player, ItemStack rod, FishHook hook) {
+        FishGenerateEvent event = new FishGenerateEvent(player, rod, hook);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return null;
 
-        // Run the augments onGenerate method
-        augments.forEach((augment, integer) -> augment.onGenerate(new FishContext(player, rod, hook, integer), qualityChance));
-
-        // Obtain the quality of the 
-        Optional<Tier> quality = manager.getQualityTypes()
-                .values()
-                .stream()
-                .sorted(Comparator.comparingDouble(Tier::getChance)) // Lowest chance first to highest chance
-                .filter(t -> qualityChance <= t.getChance())
-                .findFirst();
-
-        if (quality.isEmpty()) return null;
-
-        // Make sure the quality is not null
-        List<Fish> fishList = this.getFishByTier(quality.get()).stream()
-                .filter(f -> f.canCatch(player, rod, hook))
-                .toList();
-
-        if (fishList.isEmpty()) return null;
-
-        // Pick a random fish from the list
-        return fishList.get(FishUtils.RANDOM.nextInt(fishList.size()));
+        return event.getFish();
     }
 
     @Override
