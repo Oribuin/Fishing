@@ -2,6 +2,7 @@ package xyz.oribuin.fishing.augment.def;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
+import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
 import xyz.oribuin.fishing.api.event.InitialFishCatchEvent;
 import xyz.oribuin.fishing.augment.Augment;
@@ -38,6 +39,7 @@ public class AugmentHotspot extends Augment {
 
         int fishCaught = this.minFish + (int) (Math.random() * (this.maxFish - this.minFish));
         event.setAmountToCatch(event.getAmountToCatch() + fishCaught);
+        event.getPlayer().sendActionBar(Component.text("You have caught more fish due to the Hotspot augment!"));
 
         // TODO: Tell player that they have caught more fish
     }

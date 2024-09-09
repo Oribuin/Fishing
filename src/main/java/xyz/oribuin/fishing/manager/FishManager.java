@@ -8,6 +8,9 @@ import org.bukkit.block.Biome;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import xyz.oribuin.fishing.api.event.InitialFishCatchEvent;
+import xyz.oribuin.fishing.augment.Augment;
+import xyz.oribuin.fishing.augment.FishContext;
 import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.fish.Tier;
 import xyz.oribuin.fishing.fish.condition.Time;
@@ -15,6 +18,7 @@ import xyz.oribuin.fishing.fish.condition.Weather;
 import xyz.oribuin.fishing.util.FishUtils;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,18 +91,33 @@ public class FishManager extends Manager {
     /**
      * Try to catch a fish from the tier based on the player's fishing rod and fish hook
      *
-     * @param player  The player to check
-     * @param rod     The fishing rod the player is using
-     * @param hook    The fishhook the player is using
+     * @param player The player to check
+     * @param rod    The fishing rod the player is using
+     * @param hook   The fishhook the player is using
      *
      * @return The fish the player caught
      */
     public List<Fish> tryCatch(Player player, ItemStack rod, FishHook hook) {
         List<Fish> result = new ArrayList<>();
+        Map<Augment, Integer> augments = AugmentManager.getAugments(rod);
+
         // TODO: Check for augments on the fishing rod
+        InitialFishCatchEvent event = new InitialFishCatchEvent(player, rod, hook);
+        event.callEvent();
+
+        // Run the augments onInitialCatch method
+        augments.forEach((augment, integer) -> augment.onInitialCatch(event, integer));
+
+        // Cancel the event if it is cancelled
+        if (event.isCancelled()) return result;
+
         // TODO: Provide the player with entropy on catch, sometimes
         // TODO: Give statistics to the player
-        result.add(this.generateFish(player, rod, hook));
+
+        for (int i = 0; i < event.getAmountToCatch(); i++) {
+            result.add(this.generateFish(player, rod, hook, augments));
+        }
+
         return result;
     }
 
@@ -111,15 +130,19 @@ public class FishManager extends Manager {
      *
      * @return The fish the player caught
      */
-    private Fish generateFish(Player player, ItemStack rod, FishHook hook) {
+    private Fish generateFish(Player player, ItemStack rod, FishHook hook, Map<Augment, Integer> augments) {
         // Pick the quality of the fish based on the tier
         TierManager manager = this.rosePlugin.getManager(TierManager.class);
         double qualityChance = FishUtils.RANDOM.nextDouble(100);
+
+        // Run the augments onGenerate method
+        augments.forEach((augment, integer) -> augment.onGenerate(new FishContext(player, rod, hook, integer), qualityChance));
 
         // Obtain the quality of the 
         Optional<Tier> quality = manager.getQualityTypes()
                 .values()
                 .stream()
+                .sorted(Comparator.comparingDouble(Tier::getChance)) // Lowest chance first to highest chance
                 .filter(t -> qualityChance <= t.getChance())
                 .findFirst();
 

@@ -3,6 +3,7 @@ package xyz.oribuin.fishing;
 import org.apache.maven.model.PluginManagement;
 import org.bukkit.plugin.PluginManager;
 import xyz.oribuin.fishing.listener.FishListener;
+import xyz.oribuin.fishing.manager.AugmentManager;
 import xyz.oribuin.fishing.manager.CommandManager;
 import xyz.oribuin.fishing.manager.ConfigurationManager;
 import xyz.oribuin.fishing.manager.DataManager;
@@ -47,7 +48,7 @@ public class FishingPlugin extends RosePlugin {
 
     @Override
     protected @NotNull List<Class<? extends Manager>> getManagerLoadPriority() {
-        return List.of(TierManager.class, FishManager.class);
+        return List.of(TierManager.class, FishManager.class, AugmentManager.class);
     }
 
 }

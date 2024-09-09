@@ -66,14 +66,12 @@ public class TierManager extends Manager {
         // Make sure the base display item is not null
         if (baseDisplay == null) {
             this.rosePlugin.getLogger().severe("Failed to load the base display item for the tier: " + key);
-            Bukkit.getPluginManager().disablePlugin(this.rosePlugin);
             return null;
         }
 
         // Make sure there is actually a chance to obtain the tier
         if (chance <= 0) {
             this.rosePlugin.getLogger().severe("The chance for the tier: " + key + " is invalid. Please double check your configuration file.");
-            Bukkit.getPluginManager().disablePlugin(this.rosePlugin);
             return null;
         }
 

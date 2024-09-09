@@ -58,7 +58,7 @@ public abstract class Augment implements Listener {
      *
      * @param context The context of the fish event
      */
-    public void onGenerate(FishContext context) {
+    public void onGenerate(FishContext context, double qualityChance) {
     }
 
     /**
