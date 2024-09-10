@@ -40,7 +40,7 @@ public interface Configurable {
      * @return The path
      */
     @NotNull
-    Path getConfigPath();
+    Path configPath();
 
     /**
      * The parent folder of the configuration file, this should be the starting point for every config path
@@ -58,7 +58,7 @@ public interface Configurable {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     default void reload() {
         FishingPlugin plugin = FishingPlugin.get();
-        File targetFile = new File(this.parentFolder(), this.getConfigPath().toString());
+        File targetFile = new File(this.parentFolder(), this.configPath().toString());
 
         try {
             boolean addDefaults = false; // Should we add the defaults?
@@ -79,7 +79,7 @@ public interface Configurable {
 
             this.loadSettings(config);
         } catch (IOException ex) {
-            plugin.getLogger().warning("Configurable: There was an error loading the config file at path " + this.getConfigPath());
+            plugin.getLogger().warning("Configurable: There was an error loading the config file at path " + this.configPath());
         }
     }
 

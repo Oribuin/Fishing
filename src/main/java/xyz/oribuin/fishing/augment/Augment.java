@@ -51,7 +51,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      * @return The path
      */
     @Override
-    public @NotNull Path getConfigPath() {
+    public @NotNull Path configPath() {
         return Path.of("augments", this.name + ".yml");
     }
 

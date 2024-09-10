@@ -78,7 +78,7 @@ public abstract class Skill extends FishEventHandler implements Configurable {
      * @return The path
      */
     @Override
-    public @NotNull Path getConfigPath() {
+    public @NotNull Path configPath() {
         return Path.of("skills", this.name + ".yml");
     }
 
