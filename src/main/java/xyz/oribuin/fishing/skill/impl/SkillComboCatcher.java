@@ -24,7 +24,12 @@ public class SkillComboCatcher extends Skill {
      * rod they use. These skills can be bought with fishing levels
      */
     public SkillComboCatcher() {
-        super("combo_catcher");
+        super("combo_catcher",
+                "Increases the chance of obtaining higher ",
+                "rarity first when catching consecutively",
+                "Current Combo: %combo%/%maxcombo%",
+                "Current Bonus: %bonus%"
+        );
     }
 
     /**
@@ -39,6 +44,11 @@ public class SkillComboCatcher extends Skill {
         ComboData data = this.combos.getOrDefault(player.getUniqueId(), ComboData.empty());
         if (data.current() == 0) return;
         if (data.lastCatch() == 0) return;
+
+        if (System.currentTimeMillis() - data.lastCatch() > Setting.SKILLS_COMBO_TIMEOUT.getInt() * 1000L) {
+            data = ComboData.empty();
+            this.combos.put(player.getUniqueId(), data);
+        }
 
         // Increase the rate of catching a fish based on the combo
         double increase = this.percentageIncrease(data.current());

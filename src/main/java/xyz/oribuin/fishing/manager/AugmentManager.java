@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import xyz.oribuin.fishing.FishingPlugin;
+import xyz.oribuin.fishing.api.Configurable;
 import xyz.oribuin.fishing.augment.Augment;
 import xyz.oribuin.fishing.augment.impl.AugmentCallOfTheSea;
 import xyz.oribuin.fishing.augment.impl.AugmentHotspot;
@@ -36,27 +37,8 @@ public class AugmentManager extends Manager {
         this.register(new AugmentHotspot());
         this.register(new AugmentSaturate());
 
-        // Create the config file
-        File file = new File(this.rosePlugin.getDataFolder(), "augments.yml");
-        this.config = CommentedFileConfiguration.loadConfiguration(file);
-
-        CommentedConfigurationSection section = this.config.getConfigurationSection("augments");
-        if (section == null) return;
-
-        // Load all the values from the config file
-        for (String key : section.getKeys(false)) {
-            Augment augment = this.augments.get(key);
-            if (augment == null) continue;
-
-            CommentedConfigurationSection augmentSection = section.getConfigurationSection(key);
-            if (augmentSection == null) {
-                augmentSection = section.createSection(key);
-                augment.saveDefaults(augmentSection);
-            }
-
-            augment.loadDefaults(augmentSection);
-        }
-
+        // Load the augment config files
+        this.augments.values().forEach(Configurable::reload);
     }
 
     /**

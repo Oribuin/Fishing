@@ -1,16 +1,18 @@
 package xyz.oribuin.fishing.augment;
 
-import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.FishingPlugin;
+import xyz.oribuin.fishing.api.Configurable;
 import xyz.oribuin.fishing.api.FishEventHandler;
 import xyz.oribuin.fishing.util.FishUtils;
 
-import java.util.Map;
+import java.nio.file.Path;
 
-public abstract class Augment extends FishEventHandler implements Listener {
+public abstract class Augment extends FishEventHandler implements Listener, Configurable {
 
     public static NamespacedKey AUGMENTS_KEY = new NamespacedKey(FishingPlugin.get(), "augments");
 
@@ -43,41 +45,40 @@ public abstract class Augment extends FishEventHandler implements Listener {
     }
 
     /**
-     * Load the augment from a configuration file
+     * The path to the configuration file to be loaded. All paths will be relative to the {@link #parentFolder()},
+     * If you wish to overwrite this functionality, override the {@link #parentFolder()} method
      *
-     * @param config The configuration file
+     * @return The path
      */
-    public abstract void load(CommentedConfigurationSection config);
-
-    /**
-     * Save the default values of the augment to a configuration file
-     */
-    public abstract Map<String, Object> save();
-
-    /**
-     * Load the default values of the augment from a configuration file
-     *
-     * @param config The configuration file
-     */
-    public final void loadDefaults(CommentedConfigurationSection config) {
-        this.enabled = config.getBoolean(".enabled", true);
-        this.maxLevel = config.getInt(".max-level", 1);
-        this.description = config.getString(".description", this.description);
-        this.displayItem = FishUtils.deserialize(config, ".display-item");
-        this.load(config);
+    @Override
+    public @NotNull Path getConfigPath() {
+        return Path.of("augments", this.name + ".yml");
     }
 
     /**
-     * Save the default values of the augment to a configuration file
+     * Save the configuration file for the configurable class
      *
-     * @param config The configuration file
+     * @param config The configuration file to save
      */
-    public final void saveDefaults(CommentedConfigurationSection config) {
-        config.set(".enabled", this.enabled);
-        config.set(".max-level", this.maxLevel);
-        config.set(".description", this.description);
-        config.set(".display-item", this.displayItem);
-        this.save().forEach(config::set);
+    @Override
+    public void saveSettings(@NotNull CommentedFileConfiguration config) {
+        config.set("enabled", this.enabled);
+        config.set("max-level", this.maxLevel);
+        config.set("description", this.description);
+        config.set("display-item", this.displayItem); // TODO: Add FishUtils#serialize, add ItemSerializable Object
+    }
+
+    /**
+     * Load the settings from the configuration file
+     *
+     * @param config The configuration file to load
+     */
+    @Override
+    public void loadSettings(@NotNull CommentedFileConfiguration config) {
+        this.enabled = config.getBoolean("enabled", true);
+        this.maxLevel = config.getInt("max-level", 1);
+        this.description = config.getString("description", this.description);
+        this.displayItem = FishUtils.deserialize(config, "display-item");
     }
 
     /**

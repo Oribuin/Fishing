@@ -1,11 +1,13 @@
 package xyz.oribuin.fishing.augment.impl;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import xyz.oribuin.fishing.api.FishContext;
 import xyz.oribuin.fishing.api.event.InitialFishCatchEvent;
 import xyz.oribuin.fishing.augment.Augment;
-import xyz.oribuin.fishing.api.FishContext;
 import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.fish.condition.Weather;
 
@@ -56,27 +58,31 @@ public class AugmentCallOfTheSea extends Augment {
     }
 
     /**
-     * Load the augment from a configuration file
+     * Load the settings from the configuration file
      *
-     * @param config The configuration file
+     * @param config The configuration file to load
      */
     @Override
-    public void load(CommentedConfigurationSection config) {
+    public void loadSettings(@NotNull CommentedFileConfiguration config) {
+        super.loadSettings(config);
+
         this.chancePerLevel = config.getDouble("chance-per-level", 5); // 5% Chance per level
         this.minFish = config.getInt("min-fish", 1); // Minimum fish caught
         this.maxFish = config.getInt("max-fish", 3); // Maximum fish caught
     }
 
     /**
-     * Save the default values of the augment to a configuration file
+     * Save the configuration file for the configurable class
+     *
+     * @param config The configuration file to save
      */
     @Override
-    public Map<String, Object> save() {
-        return new HashMap<>() {{
-            this.put("chance-per-level", chancePerLevel);
-            this.put("min-fish", minFish);
-            this.put("max-fish", maxFish);
-        }};
+    public void saveSettings(@NotNull CommentedFileConfiguration config) {
+        super.saveSettings(config);
+
+        config.set("chance-per-level", this.chancePerLevel);
+        config.set("min-fish", this.minFish);
+        config.set("max-fish", this.maxFish);
     }
 
 }

@@ -2,6 +2,7 @@ package xyz.oribuin.fishing.manager;
 
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.manager.Manager;
+import xyz.oribuin.fishing.api.Configurable;
 import xyz.oribuin.fishing.augment.Augment;
 import xyz.oribuin.fishing.skill.Skill;
 import xyz.oribuin.fishing.skill.impl.SkillComboCatcher;
@@ -22,6 +23,7 @@ public class SkillManager extends Manager {
         this.skills.clear();
 
         this.register(new SkillComboCatcher());
+        this.skills.values().forEach(Configurable::reload);
     }
 
     /**
