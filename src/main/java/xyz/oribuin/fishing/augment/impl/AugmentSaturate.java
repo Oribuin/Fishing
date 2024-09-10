@@ -1,25 +1,21 @@
-package xyz.oribuin.fishing.augment.def;
+package xyz.oribuin.fishing.augment.impl;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
 import xyz.oribuin.fishing.api.event.InitialFishCatchEvent;
 import xyz.oribuin.fishing.augment.Augment;
-import xyz.oribuin.fishing.augment.FishContext;
+import xyz.oribuin.fishing.api.FishContext;
 import xyz.oribuin.fishing.fish.Fish;
-import xyz.oribuin.fishing.fish.condition.Weather;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class AugmentCallOfTheSea extends Augment {
+public class AugmentSaturate extends Augment {
 
-    private double chancePerLevel = 5.0;
-    private int minFish = 1;
-    private int maxFish = 3;
+    private double chancePerLevel = 25.0;
 
-    public AugmentCallOfTheSea() {
-        super("call_of_the_sea", "Increases the amount of fish caught when the weather is raining");
+    public AugmentSaturate() {
+        super("saturate", "Fully saturates the player when they catch a fish");
     }
 
     /**
@@ -31,15 +27,12 @@ public class AugmentCallOfTheSea extends Augment {
      */
     @Override
     public void onInitialCatch(InitialFishCatchEvent event, int level) {
-        if (Weather.CLEAR.isState(event.getHook().getLocation())) return;
+        if (event.getPlayer().getSaturation() >= 20.0) return;
 
         int chanceToTrigger = (int) (this.chancePerLevel * level);
         if (Math.random() * 100 > chanceToTrigger) return;
 
-        int fishCaught = this.minFish + (int) (Math.random() * (this.maxFish - this.minFish));
-        event.setAmountToCatch(event.getAmountToCatch() + fishCaught);
-        event.getPlayer().sendActionBar(Component.text("You have caught more fish due to the Call of the Sea augment!"));
-        // TODO: Tell player that they have caught more fish
+        event.getPlayer().setSaturation(20.0f);
     }
 
     /**
@@ -63,8 +56,6 @@ public class AugmentCallOfTheSea extends Augment {
     @Override
     public void load(CommentedConfigurationSection config) {
         this.chancePerLevel = config.getDouble("chance-per-level", 5); // 5% Chance per level
-        this.minFish = config.getInt("min-fish", 1); // Minimum fish caught
-        this.maxFish = config.getInt("max-fish", 3); // Maximum fish caught
     }
 
     /**
@@ -74,9 +65,8 @@ public class AugmentCallOfTheSea extends Augment {
     public Map<String, Object> save() {
         return new HashMap<>() {{
             this.put("chance-per-level", chancePerLevel);
-            this.put("min-fish", minFish);
-            this.put("max-fish", maxFish);
         }};
+
     }
 
 }

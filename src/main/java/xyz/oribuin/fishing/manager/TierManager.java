@@ -18,7 +18,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class TierManager extends Manager {
 
@@ -47,7 +46,7 @@ public class TierManager extends Manager {
             Tier tier = this.load(key);
             if (tier == null) continue;
 
-            this.tiers.put(tier.getName(), tier);
+            this.tiers.put(tier.name(), tier);
         }
     }
 
@@ -62,12 +61,12 @@ public class TierManager extends Manager {
     @Nullable
     public Tier selectTier(double chance) {
         List<Tier> tiers = new ArrayList<>(this.tiers.values());
-        tiers.sort(Comparator.comparingDouble(Tier::getChance)); // sort by chance
+        tiers.sort(Comparator.comparingDouble(Tier::chance)); // sort by chance
         Collections.reverse(tiers); // Put highest rarity first
 
         // Select the new fish :3
         return tiers.stream()
-                .filter(x -> chance <= x.getChance())
+                .filter(x -> chance <= x.chance())
                 .findFirst()
                 .orElse(null);
     }
@@ -103,8 +102,8 @@ public class TierManager extends Manager {
 
         // Create a new tier
         Tier tier = new Tier(key.toLowerCase(), money, chance, entropy, baseDisplay);
-        tier.setFishExp((float) this.config.getDouble(path + "fish-exp", 0));
-        tier.setNaturalExp((float) this.config.getDouble(path + "natural-exp", 0));
+        tier.fishExp((float) this.config.getDouble(path + "fish-exp", 0));
+        tier.naturalExp((float) this.config.getDouble(path + "natural-exp", 0));
 
         try {
             File tierDirectory = new File(this.rosePlugin.getDataFolder(), "tiers");
@@ -129,10 +128,10 @@ public class TierManager extends Manager {
 
     @Override
     public void disable() {
-
+        this.tiers.clear(); // Clear the cached list of tiers
     }
 
-    public Map<String, Tier> getQualityTypes() {
+    public Map<String, Tier> getTiers() {
         return this.tiers;
     }
 

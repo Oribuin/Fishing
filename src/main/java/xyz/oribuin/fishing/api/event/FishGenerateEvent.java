@@ -26,8 +26,9 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
     private final @NotNull ItemStack rod;
     private final @NotNull FishHook hook;
+    private final double baseChance;
     private @Nullable Fish fish;
-    private double baseChance;
+    private List<Double> chanceIncreases;
     private boolean cancelled;
 
     /**
@@ -49,6 +50,16 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
+     * Adds an increase to the base chance of the fish
+     *
+     * @param increase The increase to add
+     * @return The new chance
+     */
+    public double addIncrease(double increase) {
+        this.chanceIncreases.add(increase);
+        return this.baseChance + increase;
+    }
+    /**
      * Pulls the list of augments that a player has equipped on their fishing rod.
      *
      * @return The list of augments used
@@ -58,14 +69,21 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
-     * The default method for generating a new fish that is initially provided
+     * Generates a new fish for the player to catch, Chance System:
+     * baseChance + sum(chanceIncreases);
+     * Scans for each rarity from the highest rarity -> lowest rarity
      */
-    private void selectFish() {
+    public void generate() {
         FishManager fishProvider = FishingPlugin.get().getManager(FishManager.class);
         TierManager tierProvider = FishingPlugin.get().getManager(TierManager.class);
 
         // Obtain the quality of the
-        Tier quality = tierProvider.selectTier(this.baseChance);
+        double newChance = this.baseChance + this.chanceIncreases
+                .stream()
+                .mapToDouble(Double::doubleValue)
+                .sum();
+
+        Tier quality = tierProvider.selectTier(newChance);
         if (quality == null) return;
 
         // Make sure the quality is not null
@@ -92,8 +110,12 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
         return baseChance;
     }
 
-    public void setBaseChance(double baseChance) {
-        this.baseChance = baseChance;
+    public List<Double> getChanceIncreases() {
+        return chanceIncreases;
+    }
+
+    public void setChanceIncreases(List<Double> chanceIncreases) {
+        this.chanceIncreases = chanceIncreases;
     }
 
     public @Nullable Fish getFish() {

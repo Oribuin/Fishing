@@ -51,17 +51,17 @@ public class FishListener implements Listener {
             if (tier == null) return; // shouldn't happen but just in case
 
             // Tell the player they caught a fish
-            locale.sendMessage(event.getPlayer(), "fish-caught", StringPlaceholders.of("fish", fish.getDisplayName()));
+            locale.sendMessage(event.getPlayer(), "fish-caught", StringPlaceholders.of("fish", fish.displayName()));
 
             // gIve the fish to the player
             PlayerInventory inv = event.getPlayer().getInventory();
             if (inv.firstEmpty() == -1) {
-                event.getPlayer().getWorld().dropItem(event.getPlayer().getLocation(), fish.getItemStack());
+                event.getPlayer().getWorld().dropItem(event.getPlayer().getLocation(), fish.createItemStack());
                 return;
             }
 
-            inv.addItem(fish.getItemStack());
-            newExp.set(newExp.get() + (baseExpGained * tier.getNaturalExp()));
+            inv.addItem(fish.createItemStack());
+            newExp.set(newExp.get() + (baseExpGained * tier.naturalExp()));
         });
 
         // Apply more exp to the player

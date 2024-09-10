@@ -4,8 +4,8 @@ import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.hook.PlaceholderAPIHook;
 import dev.rosewood.rosegarden.utils.HexUtils;
-import dev.rosewood.rosegarden.utils.NMSUtil;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import net.objecthunter.exp4j.ExpressionBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -42,6 +42,17 @@ public final class FishUtils {
 
     public FishUtils() {
         throw new IllegalStateException("VouchersUtil is a utility class and cannot be instantiated.");
+    }
+
+    /**
+     * Evaluate a math expression and return the result
+     *
+     * @param expression The expression to evaluate
+     *
+     * @return The result of the expression
+     */
+    public static double evaluate(String expression) {
+        return new ExpressionBuilder(expression).build().evaluate();
     }
 
     /**

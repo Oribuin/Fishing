@@ -47,50 +47,50 @@ public class Tier {
     /**
      * @return The folder where all relational data is stored
      */
-    public File getTierFolder() {
+    public File tierFolder() {
         return this.tierFolder;
     }
 
     /**
      * @return The file where the relational data is stored
      */
-    public File getTierFile() {
+    public File tierFile() {
         return this.tierFile;
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
-    public double getMoney() {
+    public double money() {
         return money;
     }
 
-    public double getChance() {
+    public double chance() {
         return chance;
     }
 
-    public int getEntropy() {
+    public int entropy() {
         return entropy;
     }
 
-    public ItemStack getBaseDisplay() {
+    public ItemStack baseDisplay() {
         return baseDisplay;
     }
 
-    public float getFishExp() {
+    public float fishExp() {
         return fishExp;
     }
 
-    public void setFishExp(float fishExp) {
+    public void fishExp(float fishExp) {
         this.fishExp = fishExp;
     }
 
-    public float getNaturalExp() {
+    public float naturalExp() {
         return naturalExp;
     }
 
-    public void setNaturalExp(float naturalExp) {
+    public void naturalExp(float naturalExp) {
         this.naturalExp = naturalExp;
     }
 

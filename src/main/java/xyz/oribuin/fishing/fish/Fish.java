@@ -88,7 +88,7 @@ public class Fish {
      *
      * @return The item stack of the fish
      */
-    public ItemStack getItemStack() {
+    public ItemStack createItemStack() {
         if (this.itemStack != null)
             return this.itemStack.clone();
 
@@ -97,7 +97,7 @@ public class Fish {
         if (fishTier == null) return null;
 
         // Add all the information to the item stack
-        ItemStack itemStack = fishTier.getBaseDisplay().clone();
+        ItemStack itemStack = fishTier.baseDisplay().clone();
         itemStack.editMeta(itemMeta -> {
             itemMeta.displayName(Component.text(HexUtils.colorify(this.displayName)));
             itemMeta.setCustomModelData(this.modelData);
@@ -121,63 +121,64 @@ public class Fish {
         return FishingPlugin.get().getManager(TierManager.class).get(this.tier);
     }
 
-    public void setItemStack(ItemStack itemStack) {
+    public ItemStack itemStack() {
+        return this.itemStack;
+    }
+
+    public void itemStack(ItemStack itemStack) {
         this.itemStack = itemStack;
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
-    public String getTier() {
-        return tier;
-    }
 
-    public List<Biome> getBiomes() {
+    public List<Biome> biomes() {
         return biomes;
     }
 
-    public void setBiomes(List<Biome> biomes) {
+    public void biomes(List<Biome> biomes) {
         this.biomes = biomes;
     }
 
-    public Weather getWeather() {
+    public Weather weather() {
         return weather;
     }
 
-    public void setWeather(Weather weather) {
+    public void weather(Weather weather) {
         this.weather = weather;
     }
 
-    public Time getTime() {
+    public Time time() {
         return time;
     }
 
-    public void setTime(Time time) {
+    public void time(Time time) {
         this.time = time;
     }
 
-    public String getDisplayName() {
+    public String displayName() {
         return displayName;
     }
 
-    public void setDisplayName(String displayName) {
+    public void displayName(String displayName) {
         this.displayName = displayName;
     }
 
-    public List<String> getDescription() {
+    public List<String> description() {
         return description;
     }
 
-    public void setDescription(List<String> description) {
+    public void description(List<String> description) {
         this.description = description;
     }
 
-    public int getModelData() {
+    public int modelData() {
         return modelData;
     }
 
-    public void setModelData(int modelData) {
+    public void modelData(int modelData) {
         this.modelData = modelData;
     }
 

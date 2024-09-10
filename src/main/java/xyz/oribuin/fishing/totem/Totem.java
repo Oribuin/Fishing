@@ -5,14 +5,17 @@ import xyz.oribuin.fishing.util.math.MathL;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Totem {
 
+    private final UUID owner;
     private final Location center;
-    private final int radius;
+    private int radius;
     private boolean active;
 
-    public Totem(Location center, int radius) {
+    public Totem(UUID owner, Location center, int radius) {
+        this.owner = owner;
         this.center = center;
         this.radius = radius;
         this.active = false;
@@ -25,7 +28,7 @@ public class Totem {
      *
      * @return If the location is within the radius of the totem
      */
-    public boolean isWithinRadius(Location location) {
+    public boolean withinRadius(Location location) {
         // Radius will be in a circle around the center
         if (location.getWorld() != this.center.getWorld()) return false;
 
@@ -37,7 +40,7 @@ public class Totem {
      *
      * @return The outer bounds of the totem
      */
-    public List<Location> getBounds() {
+    public List<Location> bounds() {
         List<Location> results = new ArrayList<>();
         int numSteps = 120;
         for (int i = 0; i < numSteps; i++) {
@@ -51,19 +54,27 @@ public class Totem {
 
     }
 
-    public Location getCenter() {
+    public UUID owner() {
+        return owner;
+    }
+
+    public Location center() {
         return center;
     }
 
-    public int getRadius() {
+    public int radius() {
         return radius;
     }
 
-    public boolean isActive() {
+    public void radius(int radius) {
+        this.radius = radius;
+    }
+
+    public boolean active() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void active(boolean active) {
         this.active = active;
     }
 

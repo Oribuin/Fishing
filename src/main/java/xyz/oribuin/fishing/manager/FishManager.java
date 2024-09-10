@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import xyz.oribuin.fishing.api.event.InitialFishCatchEvent;
 import xyz.oribuin.fishing.augment.Augment;
-import xyz.oribuin.fishing.augment.FishContext;
 import xyz.oribuin.fishing.api.event.FishGenerateEvent;
 import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.fish.Tier;
@@ -20,11 +19,9 @@ import xyz.oribuin.fishing.fish.condition.Weather;
 import xyz.oribuin.fishing.util.FishUtils;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public class FishManager extends Manager {
 
@@ -37,14 +34,14 @@ public class FishManager extends Manager {
     @Override
     public void reload() {
         this.rosePlugin.getManager(TierManager.class)
-                .getQualityTypes()
+                .getTiers()
                 .forEach((s, tier) -> {
-                    CommentedFileConfiguration config = CommentedFileConfiguration.loadConfiguration(FishUtils.createFile(this.rosePlugin, tier.getTierFile()));
+                    CommentedFileConfiguration config = CommentedFileConfiguration.loadConfiguration(FishUtils.createFile(this.rosePlugin, tier.tierFile()));
                     CommentedConfigurationSection section = config.getConfigurationSection("fish");
 
                     // Make sure the section is not null
                     if (section == null) {
-                        this.rosePlugin.getLogger().warning("Failed to load fish in tier: " + tier.getName());
+                        this.rosePlugin.getLogger().warning("Failed to load fish in tier: " + tier.name());
                         return;
                     }
 
@@ -71,22 +68,22 @@ public class FishManager extends Manager {
 
         // Make sure the name is not null
         if (name == null) {
-            this.rosePlugin.getLogger().warning("Failed to load fish with key: " + key + " in tier: " + tier.getName());
+            this.rosePlugin.getLogger().warning("Failed to load fish with key: " + key + " in tier: " + tier.name());
             return null;
         }
 
         // Load additional values from the config
-        Fish fish = new Fish(name, tier.getName());
+        Fish fish = new Fish(name, tier.name());
 
         // Catch Conditions
-        fish.setDisplayName(config.getString(path + "display-name", name));
-        fish.setDescription(config.getStringList(path + "description"));
-        fish.setModelData(config.getInt(path + "model-data", -1));
+        fish.displayName(config.getString(path + "display-name", name));
+        fish.description(config.getStringList(path + "description"));
+        fish.modelData(config.getInt(path + "model-data", -1));
 
         // Catch Conditions
-        fish.setBiomes(FishUtils.getEnumList(Biome.class, config.getStringList(path + "biomes")));
-        fish.setWeather(FishUtils.getEnum(Weather.class, config.getString(path + "weather")));
-        fish.setTime(FishUtils.getEnum(Time.class, config.getString(path + "time")));
+        fish.biomes(FishUtils.getEnumList(Biome.class, config.getStringList(path + "biomes")));
+        fish.weather(FishUtils.getEnum(Weather.class, config.getString(path + "weather")));
+        fish.time(FishUtils.getEnum(Time.class, config.getString(path + "time")));
         return fish;
     }
 
@@ -154,7 +151,10 @@ public class FishManager extends Manager {
      * @return The list of fish in the tier
      */
     public List<Fish> getFishByTier(Tier tier) {
-        return this.fishTypes.values().stream().filter(fish -> fish.getTier().equalsIgnoreCase(tier.getName())).toList();
+        return this.fishTypes.values()
+                .stream()
+                .filter(fish -> fish.getTier().equalsIgnoreCase(tier.name()))
+                .toList();
     }
 
     public Map<String, Fish> getFishTypes() {

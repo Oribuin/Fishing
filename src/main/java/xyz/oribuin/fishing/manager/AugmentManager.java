@@ -10,9 +10,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.augment.Augment;
-import xyz.oribuin.fishing.augment.def.AugmentCallOfTheSea;
-import xyz.oribuin.fishing.augment.def.AugmentHotspot;
-import xyz.oribuin.fishing.augment.def.AugmentSaturate;
+import xyz.oribuin.fishing.augment.impl.AugmentCallOfTheSea;
+import xyz.oribuin.fishing.augment.impl.AugmentHotspot;
+import xyz.oribuin.fishing.augment.impl.AugmentSaturate;
 
 import java.io.File;
 import java.util.HashMap;
@@ -94,10 +94,10 @@ public class AugmentManager extends Manager {
      * @param augment The augment to register
      */
     public void register(Augment augment) {
-        String key = augment.getName().toLowerCase();
+        String key = augment.name().toLowerCase();
         if (key.isEmpty() || key.contains(" ")) return;
 
-        this.augments.put(augment.getName(), augment);
+        this.augments.put(augment.name(), augment);
     }
 
     @Override

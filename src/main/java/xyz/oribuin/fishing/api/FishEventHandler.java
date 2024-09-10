@@ -1,0 +1,44 @@
+package xyz.oribuin.fishing.api;
+
+import org.bukkit.inventory.ItemStack;
+import xyz.oribuin.fishing.api.event.FishGenerateEvent;
+import xyz.oribuin.fishing.api.event.InitialFishCatchEvent;
+import xyz.oribuin.fishing.fish.Fish;
+
+/**
+ * A global handler to parse any fishing related events, used to detect
+ * and modify fish when they are caught, generated and given
+ */
+public abstract class FishEventHandler {
+
+    /**
+     * The functionality provided by the augment when a player catches a fish
+     * This is run before the fish are generated, Used to modify the amount of fish caught
+     *
+     * @param event The initial fish catch event
+     * @param level The level of the augment that was used
+     */
+    public void onInitialCatch(InitialFishCatchEvent event, int level) {
+    }
+
+    /**
+     * The functionality provided when a fish is generated for the player
+     *
+     * @param event The event that is fired when a fish is generated
+     * @param level The level of the augment that was used
+     */
+    public void onGenerate(FishGenerateEvent event, int level) {
+    }
+
+    /**
+     * The functionality provided by the augment when a player obtains a fish from the initial catch
+     * This method is run for each fish caught
+     *
+     * @param context The context of the fish event
+     * @param fish    The fish that was caught
+     * @param stack   The item stack of the fish
+     */
+    public void onFishCatch(FishContext context, Fish fish, ItemStack stack) {
+    }
+
+}

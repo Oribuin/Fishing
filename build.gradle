@@ -46,6 +46,7 @@ dependencies {
     compileOnly "com.mojang:authlib:${authLibVersion}"
     compileOnly "com.github.MilkBowl:VaultAPI:${vaultVersion}"
 
+    implementation"net.objecthunter:exp4j:${exp4jVersion}"
     implementation "com.jeff-media:MorePersistentDataTypes:${persistentDataTypeVersion}"
 }
 

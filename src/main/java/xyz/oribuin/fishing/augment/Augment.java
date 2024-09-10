@@ -5,14 +5,12 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import xyz.oribuin.fishing.FishingPlugin;
-import xyz.oribuin.fishing.api.event.FishGenerateEvent;
-import xyz.oribuin.fishing.api.event.InitialFishCatchEvent;
-import xyz.oribuin.fishing.fish.Fish;
+import xyz.oribuin.fishing.api.FishEventHandler;
 import xyz.oribuin.fishing.util.FishUtils;
 
 import java.util.Map;
 
-public abstract class Augment implements Listener {
+public abstract class Augment extends FishEventHandler implements Listener {
 
     public static NamespacedKey AUGMENTS_KEY = new NamespacedKey(FishingPlugin.get(), "augments");
 
@@ -42,36 +40,6 @@ public abstract class Augment implements Listener {
      */
     public Augment(String name) {
         this(name, "No Description");
-    }
-
-    /**
-     * The functionality provided by the augment when a player catches a fish
-     * This is run before the fish are generated, Used to modify the amount of fish caught
-     *
-     * @param event The initial fish catch event
-     * @param level The level of the augment that was used
-     */
-    public void onInitialCatch(InitialFishCatchEvent event, int level) {
-    }
-
-    /**
-     * The functionality provided when a fish is generated for the player
-     *
-     * @param event The event that is fired when a fish is generated
-     * @param level The level of the augment that was used
-     */
-    public void onGenerate(FishGenerateEvent event, int level) {
-    }
-
-    /**
-     * The functionality provided by the augment when a player obtains a fish from the initial catch
-     * This method is run for each fish caught
-     *
-     * @param context The context of the fish event
-     * @param fish    The fish that was caught
-     * @param stack   The item stack of the fish
-     */
-    public void onFishCatch(FishContext context, Fish fish, ItemStack stack) {
     }
 
     /**
@@ -115,7 +83,7 @@ public abstract class Augment implements Listener {
     /**
      * @return If the augment is enabled
      */
-    public boolean isEnabled() {
+    public boolean enabled() {
         return enabled;
     }
 
@@ -124,21 +92,21 @@ public abstract class Augment implements Listener {
      *
      * @param enabled If the augment is enabled
      */
-    public void setEnabled(boolean enabled) {
+    public void enabled(boolean enabled) {
         this.enabled = enabled;
     }
 
     /**
      * @return The name of the augment
      */
-    public final String getName() {
+    public final String name() {
         return name;
     }
 
     /**
      * @return The description of the augment
      */
-    public final String getDescription() {
+    public final String description() {
         return description;
     }
 
@@ -147,14 +115,14 @@ public abstract class Augment implements Listener {
      *
      * @param description The description of the augment
      */
-    public void setDescription(String description) {
+    public void description(String description) {
         this.description = description;
     }
 
     /**
      * @return The display item of the augment
      */
-    public final ItemStack getDisplayItem() {
+    public final ItemStack displayItem() {
         return displayItem;
     }
 
@@ -163,14 +131,14 @@ public abstract class Augment implements Listener {
      *
      * @param displayItem The display item of the augment
      */
-    public final void setDisplayItem(ItemStack displayItem) {
+    public final void displayItem(ItemStack displayItem) {
         this.displayItem = displayItem;
     }
 
     /**
      * @return The max level of the augment
      */
-    public int getMaxLevel() {
+    public int maxLevel() {
         return maxLevel;
     }
 
@@ -179,7 +147,7 @@ public abstract class Augment implements Listener {
      *
      * @param maxLevel The max level of the augment
      */
-    public void setMaxLevel(int maxLevel) {
+    public void maxLevel(int maxLevel) {
         this.maxLevel = maxLevel;
     }
 

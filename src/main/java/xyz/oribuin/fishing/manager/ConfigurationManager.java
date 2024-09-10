@@ -9,6 +9,11 @@ import dev.rosewood.rosegarden.manager.AbstractConfigurationManager;
 public class ConfigurationManager extends AbstractConfigurationManager {
 
     public enum Setting implements RoseSetting {
+        SKILLS("skills", null, "The configuration settings for all the skills"),
+        SKILLS_COMBO("skills.combo", null, ""),
+        SKILLS_COMBO_MAX_FORMULA("skills.combo.max-formula", "%level% / 5 * 2", "Calculation for the maximum combo a player can have based on their level", "Placeholders:", "%level% - The current level of the player"),
+        SKILLS_COMBO_CHANCE_INCREASE("skills.combo.chance-formula", "", "Calculation for how much "),
+        SKILLS_COMBO_TIMEOUT("skills.combo.timeout", 30, "The time in seconds until the combo is reset after not catching a fish"),
         ;
 
         private final String key;
