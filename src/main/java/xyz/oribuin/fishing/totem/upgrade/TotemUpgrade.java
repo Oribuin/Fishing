@@ -3,10 +3,10 @@ package xyz.oribuin.fishing.totem.upgrade;
 import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.api.Configurable;
 import xyz.oribuin.fishing.api.FishEventHandler;
+import xyz.oribuin.fishing.api.economy.Cost;
 import xyz.oribuin.fishing.totem.Totem;
 
 import java.nio.file.Path;
-import java.util.Locale;
 
 public abstract class TotemUpgrade extends FishEventHandler implements Configurable {
 
@@ -25,6 +25,14 @@ public abstract class TotemUpgrade extends FishEventHandler implements Configura
      */
     public void applyTo(Totem totem, int level) {
     }
+
+    /**
+     * Get the cost of the upgrade for a specific level
+     *
+     * @param level The level of the upgrade
+     * @return The cost of the upgrade
+     */
+    public abstract Cost costFor(int level);
 
     /**
      * The path to the configuration file to be loaded. All paths will be relative to the {@link #parentFolder()},

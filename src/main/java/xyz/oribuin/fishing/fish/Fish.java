@@ -16,6 +16,7 @@ import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.fish.condition.Time;
 import xyz.oribuin.fishing.fish.condition.Weather;
 import xyz.oribuin.fishing.manager.TierManager;
+import xyz.oribuin.fishing.storage.PersistKeys;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,11 +33,6 @@ public class Fish {
     private List<String> description; // The description of the fish
     private int modelData; // The model data of the fish
     private ItemStack itemStack; // The item stack of the fish
-
-    // Static Variables
-    public static NamespacedKey TYPE_KEY = new NamespacedKey(FishingPlugin.get(), "type");
-    public static NamespacedKey TIER_KEY = new NamespacedKey(FishingPlugin.get(), "tier");
-
     /**
      * Create a new name of fish with a name and quality
      *
@@ -105,8 +101,8 @@ public class Fish {
 
             // fish data :-)
             PersistentDataContainer container = itemMeta.getPersistentDataContainer();
-            container.set(TYPE_KEY, PersistentDataType.STRING, this.name);
-            container.set(TIER_KEY, PersistentDataType.STRING, this.tier);
+            container.set(PersistKeys.FISH_TYPE, PersistentDataType.STRING, this.name);
+            container.set(PersistKeys.FISH_TYPE, PersistentDataType.STRING, this.tier);
         });
 
         return itemStack.clone(); // Clone the item stack to prevent any changes

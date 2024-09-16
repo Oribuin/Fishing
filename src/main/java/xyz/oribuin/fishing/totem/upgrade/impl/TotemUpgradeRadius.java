@@ -37,6 +37,31 @@ public class TotemUpgradeRadius extends TotemUpgrade implements Configurable {
      */
     @Override
     public void applyTo(Totem totem, int level) {
+        Tier tier = this.tiers.get(level);
+        if (tier == null) {
+            FishingPlugin.get().getLogger().warning("Failed to apply upgrade: " + this.name() + " to totem, The tier does not exist.");
+            return;
+        }
+
+        totem.radius(tier.newRadius());
+    }
+
+    /**
+     * Get the cost of the upgrade for a specific level
+     *
+     * @param level The level of the upgrade
+     *
+     * @return The cost of the upgrade
+     */
+    @Override
+    public Cost costFor(int level) {
+        Tier tier = this.tiers.get(level);
+        if (tier == null) {
+            FishingPlugin.get().getLogger().warning("Failed to get cost for upgrade: " + this.name() + ", The tier does not exist.");
+            return new Cost(Currency.ENTROPY, 0);
+        }
+
+        return this.tiers.get(level).cost();
     }
 
     /**
@@ -105,7 +130,7 @@ public class TotemUpgradeRadius extends TotemUpgrade implements Configurable {
      * @param cost      The cost to upgrade to the tier
      * @param newRadius The new radius of the totem
      */
-    private record Tier(Cost cost, int newRadius) {
+    public record Tier(Cost cost, int newRadius) {
     }
 
 }

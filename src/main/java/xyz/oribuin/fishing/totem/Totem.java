@@ -1,8 +1,11 @@
 package xyz.oribuin.fishing.totem;
 
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
+import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.util.math.MathL;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -10,9 +13,11 @@ import java.util.UUID;
 public class Totem {
 
     private final UUID owner;
-    private final Location center;
-    private int radius;
-    private boolean active;
+    private boolean active; // If the totem is active
+    private int radius; // Radius of the totem
+    private Duration duration; // Duration for the totem
+    private Duration cooldown; // Cooldown for the totem
+    private Location center; // Center of the totem
 
     public Totem(UUID owner, Location center, int radius) {
         this.owner = owner;
