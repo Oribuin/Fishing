@@ -67,6 +67,8 @@ public class ItemConstruct {
      * @param config The configuration section
      */
     public void serialize(CommentedConfigurationSection config) {
+        if (config == null) return;
+
         config.set("type", this.type.name());
         config.set("amount", this.amount);
         if (this.name != null) config.set("name", this.name);
@@ -100,6 +102,8 @@ public class ItemConstruct {
      * @return The itemstack
      */
     public static ItemConstruct deserialize(CommentedConfigurationSection config) {
+        if (config == null) return null;
+
         Material type = Material.getMaterial(config.getString("type", "AIR"));
         if (type == null || type == Material.AIR) return null;
 
@@ -145,7 +149,18 @@ public class ItemConstruct {
     }
 
     /**
-     * Serialize the itemstack to a new itemstack
+     * Serialize the itemconstruct to a new itemstack with no placeholders
+     *
+     * @return The itemstack
+     */
+    public ItemStack build() {
+        return this.build(StringPlaceholders.empty());
+    }
+
+    /**
+     * Serialize the itemconstruct to a new itemstack
+     *
+     * @param placeholders The placeholders to be applied to the Name and Lore
      *
      * @return The itemstack
      */

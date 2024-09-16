@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import xyz.oribuin.fishing.fish.Tier;
 import xyz.oribuin.fishing.util.FishUtils;
+import xyz.oribuin.fishing.util.ItemConstruct;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,7 +87,14 @@ public class TierManager extends Manager {
         double chance = this.config.getDouble(path + "chance", 0);
         double money = this.config.getDouble(path + "money", 0);
         int entropy = this.config.getInt(path + "entropy", 0);
-        ItemStack baseDisplay = FishUtils.deserialize(this.config, path + ".display");
+
+        ItemConstruct construct = ItemConstruct.deserialize(this.config.getConfigurationSection(path + "display"));
+        if (construct == null) {
+            this.rosePlugin.getLogger().severe("Failed to load the base display item for the tier: " + key);
+            return null;
+        }
+
+        ItemStack baseDisplay = construct.build();
 
         // Make sure the base display item is not null
         if (baseDisplay == null) {

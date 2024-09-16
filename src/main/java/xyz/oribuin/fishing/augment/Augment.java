@@ -1,6 +1,7 @@
 package xyz.oribuin.fishing.augment;
 
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
+import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -8,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.config.Configurable;
 import xyz.oribuin.fishing.api.event.FishEventHandler;
-import xyz.oribuin.fishing.util.FishUtils;
+import xyz.oribuin.fishing.util.ItemConstruct;
 
 import java.nio.file.Path;
 
@@ -78,7 +79,23 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
         this.enabled = config.getBoolean("enabled", true);
         this.maxLevel = config.getInt("max-level", 1);
         this.description = config.getString("description", this.description);
-        this.displayItem = FishUtils.deserialize(config, "display-item");
+
+        ItemConstruct construct = ItemConstruct.deserialize(config.getConfigurationSection("display-item"));
+        if (construct == null) {
+            FishingPlugin.get().getLogger().warning("Failed to load display item for augment: " + this.name);
+            return;
+        }
+
+        this.displayItem = construct.build(this.placeholders());
+    }
+
+    /**
+     * The placeholders for the augment when it is used
+     *
+     * @return The placeholders
+     */
+    public StringPlaceholders placeholders() {
+        return StringPlaceholders.empty();
     }
 
     /**
