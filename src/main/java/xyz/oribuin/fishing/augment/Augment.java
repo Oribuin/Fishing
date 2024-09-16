@@ -21,6 +21,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
     protected String description;
     protected ItemStack displayItem;
     protected int maxLevel;
+    protected int requiredLevel;
     protected boolean enabled;
 
     /**
@@ -33,6 +34,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
         this.name = name;
         this.description = description;
         this.maxLevel = 1;
+        this.requiredLevel = 1;
         this.enabled = true;
     }
 
@@ -65,6 +67,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
     public void saveSettings(@NotNull CommentedFileConfiguration config) {
         config.set("enabled", this.enabled);
         config.set("max-level", this.maxLevel);
+        config.set("required-level", this.requiredLevel);
         config.set("description", this.description);
         config.set("display-item", this.displayItem); // TODO: Add FishUtils#serialize, add ItemSerializable Object
     }
@@ -78,6 +81,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
     public void loadSettings(@NotNull CommentedFileConfiguration config) {
         this.enabled = config.getBoolean("enabled", true);
         this.maxLevel = config.getInt("max-level", 1);
+        this.requiredLevel = config.getInt("required-level", 1);
         this.description = config.getString("description", this.description);
 
         ItemConstruct construct = ItemConstruct.deserialize(config.getConfigurationSection("display-item"));
@@ -167,6 +171,22 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      */
     public void maxLevel(int maxLevel) {
         this.maxLevel = maxLevel;
+    }
+
+    /**
+     * @return The required level of the augment
+     */
+    public int requiredLevel() {
+        return requiredLevel;
+    }
+
+    /**
+     * Set the required level of the augment
+     *
+     * @param requiredLevel The required level of the augment
+     */
+    public void requiredLevel(int requiredLevel) {
+        this.requiredLevel = requiredLevel;
     }
 
 }
