@@ -26,5 +26,4 @@ public class TotemManager extends Manager {
 
     }
 
-    public void loadTotem()
 }

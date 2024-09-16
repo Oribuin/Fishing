@@ -15,10 +15,10 @@ public class ConditionCheckEvent extends PlayerEvent implements Cancellable {
     private boolean cancelled;
     private final ItemStack rod;
     private final FishHook hook;
-    private String condition;
+    private CatchCondition condition;
     private boolean result;
 
-    public ConditionCheckEvent(@NotNull Player who, @NotNull ItemStack rod, @NotNull FishHook hook, @NotNull String condition, boolean result) {
+    public ConditionCheckEvent(@NotNull Player who, @NotNull ItemStack rod, @NotNull FishHook hook, @NotNull CatchCondition condition, boolean result) {
         super(who, false);
 
         this.rod = rod;
@@ -35,11 +35,11 @@ public class ConditionCheckEvent extends PlayerEvent implements Cancellable {
         return hook;
     }
 
-    public String getCondition() {
+    public CatchCondition getCondition() {
         return condition;
     }
 
-    public void setCondition(String condition) {
+    public void setCondition(CatchCondition condition) {
         this.condition = condition;
     }
 

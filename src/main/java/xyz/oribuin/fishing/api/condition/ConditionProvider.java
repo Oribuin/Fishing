@@ -85,7 +85,7 @@ public class ConditionProvider {
 
             // Check the condition
             boolean result = entry.getValue().check(fish, player, rod, hook);
-            ConditionCheckEvent event = new ConditionCheckEvent(player, rod, hook, entry.getKey(), result);
+            ConditionCheckEvent event = new ConditionCheckEvent(player, rod, hook, entry.getValue(), result);
             event.callEvent(); // Call the event
 
             if (event.isCancelled()) continue;
