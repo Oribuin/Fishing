@@ -4,6 +4,8 @@ import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import xyz.oribuin.fishing.manager.ConfigurationManager.Setting;
 import xyz.oribuin.fishing.util.FishUtils;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class FishingUser {
@@ -13,6 +15,7 @@ public class FishingUser {
     private int level;
     private int experience;
     private int skillPoints;
+    private Map<String, Integer> skills;
 
     public FishingUser(UUID uuid) {
         this.uuid = uuid;
@@ -20,6 +23,7 @@ public class FishingUser {
         this.level = 1;
         this.experience = 0;
         this.skillPoints = 0;
+        this.skills = new HashMap<>();
     }
 
     /**
@@ -66,6 +70,14 @@ public class FishingUser {
 
     public void skillCaught(int skillCaught) {
         this.skillPoints = skillCaught;
+    }
+
+    public Map<String, Integer> skills() {
+        return this.skills;
+    }
+
+    public void skills(Map<String, Integer> skills) {
+        this.skills = skills;
     }
 
 }
