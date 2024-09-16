@@ -4,19 +4,22 @@ import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.manager.Manager;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import xyz.oribuin.fishing.api.event.FishGenerateEvent;
 import xyz.oribuin.fishing.api.event.InitialFishCatchEvent;
 import xyz.oribuin.fishing.augment.Augment;
-import xyz.oribuin.fishing.api.event.FishGenerateEvent;
+import xyz.oribuin.fishing.fish.Condition;
 import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.fish.Tier;
 import xyz.oribuin.fishing.fish.condition.Time;
 import xyz.oribuin.fishing.fish.condition.Weather;
 import xyz.oribuin.fishing.util.FishUtils;
+import org.bukkit.World.Environment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -81,9 +84,17 @@ public class FishManager extends Manager {
         fish.modelData(config.getInt(path + "model-data", -1));
 
         // Catch Conditions
-        fish.biomes(FishUtils.getEnumList(Biome.class, config.getStringList(path + "biomes")));
-        fish.weather(FishUtils.getEnum(Weather.class, config.getString(path + "weather")));
-        fish.time(FishUtils.getEnum(Time.class, config.getString(path + "time")));
+        Condition condition = new Condition();
+        condition.biomes(FishUtils.getEnumList(Biome.class, config.getStringList(path + "biomes")));
+        condition.weather(FishUtils.getEnum(Weather.class, config.getString(path + "weather")));
+        condition.time(FishUtils.getEnum(Time.class, config.getString(path + "time")));
+        condition.worlds(config.getStringList(path + "worlds"));
+        condition.environment(FishUtils.getEnum(Environment.class, config.getString(path + "environment")));
+        condition.waterDepth((Integer) config.get(path + "water-depth"));
+        condition.iceFishing(config.getBoolean(path + "ice-fishing"));
+        condition.lightLevel((Integer) config.get(path + "light-level"));
+        condition.height(this.getHeight(config.getString(path + "height")));
+        fish.condition(condition);
         return fish;
     }
 
@@ -153,8 +164,30 @@ public class FishManager extends Manager {
     public List<Fish> getFishByTier(Tier tier) {
         return this.fishTypes.values()
                 .stream()
-                .filter(fish -> fish.tier().name().equalsIgnoreCase(tier.name()))
+                .filter(fish -> fish.tierName().equalsIgnoreCase(tier.name()))
                 .toList();
+    }
+
+    /**
+     * Convert a string such as "1-2" to a pair of integers
+     *
+     * @param height The height string
+     *
+     * @return The pair of integers
+     */
+    private Pair<Integer, Integer> getHeight(String height) {
+        if (height == null) return null;
+
+        try {
+            String[] split = height.split("-");
+            if (split.length == 2) {
+                return Pair.of(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
+            }
+        } catch (NumberFormatException e) {
+            this.rosePlugin.getLogger().warning("Failed to parse height: " + height);
+        }
+
+        return null;
     }
 
     public Map<String, Fish> getFishTypes() {

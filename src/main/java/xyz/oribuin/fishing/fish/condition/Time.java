@@ -31,7 +31,7 @@ public enum Time {
      *
      * @return If the time is within the bounds
      */
-    public boolean isTime(World world) {
+    public boolean matches(World world) {
         if (this == ALL_DAY)
             return true;
 
