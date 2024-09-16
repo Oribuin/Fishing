@@ -1,15 +1,16 @@
 package xyz.oribuin.fishing.manager;
 
-import xyz.oribuin.fishing.FishingPlugin;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.config.RoseSetting;
 import dev.rosewood.rosegarden.manager.AbstractConfigurationManager;
+import xyz.oribuin.fishing.FishingPlugin;
 
 public class ConfigurationManager extends AbstractConfigurationManager {
 
     public enum Setting implements RoseSetting {
-      ;
+        REQUIRED_XP_FORMULA("required-xp-formula", "%level% * 625", "The formula to calculate the required experience to level up per level"),
+        ;
 
         private final String key;
         private final Object defaultValue;

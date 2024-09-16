@@ -4,5 +4,6 @@ public enum Currency {
     VAULT, // Vault economy plugin
     ENTROPY, // Entropy
     FISH_EXP, // Fish experience
-    PLAYER_XP // Player experience
+    PLAYER_XP, // Player experience
+    SKILL_POINTS, // Skill points
 }
