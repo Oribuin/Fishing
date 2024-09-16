@@ -46,7 +46,7 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
         this.rod = rod;
         this.hook = hook;
         this.baseChance = FishUtils.RANDOM.nextDouble(100);
-        this.selectFish();
+        this.generate();
     }
 
     /**

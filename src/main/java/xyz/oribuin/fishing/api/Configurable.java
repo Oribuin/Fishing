@@ -7,6 +7,8 @@ import xyz.oribuin.fishing.FishingPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Marks the config as a configurable class that will need to be loaded and unloaded from
@@ -31,6 +33,15 @@ public interface Configurable {
      */
     default void saveSettings(@NotNull CommentedFileConfiguration config) {
         // Empty function
+    }
+
+    /**
+     * The comments to be generated at the top of the file when it is created
+     *
+     * @return The comments
+     */
+    default List<String> comments() {
+        return new ArrayList<>();
     }
 
     /**

@@ -153,7 +153,7 @@ public class FishManager extends Manager {
     public List<Fish> getFishByTier(Tier tier) {
         return this.fishTypes.values()
                 .stream()
-                .filter(fish -> fish.getTier().equalsIgnoreCase(tier.name()))
+                .filter(fish -> fish.tier().name().equalsIgnoreCase(tier.name()))
                 .toList();
     }
 

@@ -26,4 +26,5 @@ public class DataManager extends AbstractDataManager {
     public void async(Runnable runnable) {
         this.rosePlugin.getServer().getScheduler().runTaskAsynchronously(this.rosePlugin, runnable);
     }
+
 }

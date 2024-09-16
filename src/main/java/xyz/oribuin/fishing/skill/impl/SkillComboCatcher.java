@@ -1,8 +1,10 @@
 package xyz.oribuin.fishing.skill.impl;
 
+import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.api.FishContext;
 import xyz.oribuin.fishing.api.event.FishGenerateEvent;
 import xyz.oribuin.fishing.fish.Fish;
@@ -10,14 +12,18 @@ import xyz.oribuin.fishing.manager.ConfigurationManager.Setting;
 import xyz.oribuin.fishing.skill.Skill;
 import xyz.oribuin.fishing.util.FishUtils;
 
+import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 public class SkillComboCatcher extends Skill {
 
     private final Map<UUID, ComboData> combos = new HashMap<>();
-
+    private String maxFormula = "%level% / 5 * 2"; // Max combo formula
+    private String chanceFormula = "%combo% * 0.1"; // The buff per combo
+    private Duration timeout = Duration.ofSeconds(30); // The time until the combo is reset
     /**
      * Skills are player unique upgrades, different to augments because
      * they are universal for the player and will activate regardless of what fishing
@@ -45,7 +51,7 @@ public class SkillComboCatcher extends Skill {
         if (data.current() == 0) return;
         if (data.lastCatch() == 0) return;
 
-        if (System.currentTimeMillis() - data.lastCatch() > Setting.SKILLS_COMBO_TIMEOUT.getInt() * 1000L) {
+        if (System.currentTimeMillis() - data.lastCatch() > this.timeout.toMillis()) {
             data = ComboData.empty();
             this.combos.put(player.getUniqueId(), data);
         }
@@ -66,7 +72,7 @@ public class SkillComboCatcher extends Skill {
     @Override
     public void onFishCatch(FishContext context, Fish fish, ItemStack stack) {
         Player player = context.player();
-        int timeout = Setting.SKILLS_COMBO_TIMEOUT.getInt();
+        long timeout = this.timeout.toSeconds();
         ComboData current = this.combos.getOrDefault(player.getUniqueId(), ComboData.empty());
 
         // If the timeout has passed, reset the combo
@@ -91,7 +97,7 @@ public class SkillComboCatcher extends Skill {
      */
     private int maxCombo(int level) {
         StringPlaceholders plc = StringPlaceholders.of("level", level);
-        return (int) FishUtils.evaluate(plc.apply(Setting.SKILLS_COMBO_MAX_FORMULA.getString()));
+        return (int) FishUtils.evaluate(plc.apply(this.maxFormula));
     }
 
     /**
@@ -103,7 +109,57 @@ public class SkillComboCatcher extends Skill {
      */
     private double percentageIncrease(int combo) {
         StringPlaceholders plc = StringPlaceholders.of("combo", combo);
-        return FishUtils.evaluate(plc.apply(Setting.SKILLS_COMBO_CHANCE_INCREASE.getString()));
+        return FishUtils.evaluate(plc.apply(this.chanceFormula));
+    }
+
+    /**
+     * The comments to be generated at the top of the file when it is created
+     *
+     * @return The comments
+     */
+    @Override
+    public List<String> comments() {
+        //        SKILLS_COMBO("skills.combo", null, ""),
+        //        SKILLS_COMBO_MAX_FORMULA("skills.combo.max-formula", "%level% / 5 * 2", "Calculation for the maximum combo a player can have based on their level", "Placeholders:", "%level% - The current level of the player"),
+        //        SKILLS_COMBO_CHANCE_INCREASE("skills.combo.chance-formula", "", "Calculation for how much "),
+        //        SKILLS_COMBO_TIMEOUT("skills.combo.timeout", 30, "The time in seconds until the combo is reset after not catching a fish"),
+
+        return List.of(
+                "Skill [Combo Catcher] - Increases the chance of catching higher rarity fish with each consecutive catch",
+                "This skill will reset after not catching a fish for 30 seconds",
+                "",
+                "max-formula: The formula to calculate the maximum combo a player can have based on their level",
+                "chance-formula: The formula to calculate the chance increase per combo",
+                "timeout: The time in seconds until the combo is reset after not catching a fish"
+        );
+    }
+
+    /**
+     * Load the settings from the configuration file
+     *
+     * @param config The configuration file to load
+     */
+    @Override
+    public void loadSettings(@NotNull CommentedFileConfiguration config) {
+        super.loadSettings(config);
+
+        this.maxFormula = config.getString("max-formula", this.maxFormula);
+        this.chanceFormula = config.getString("chance-formula", this.chanceFormula);
+        this.timeout = Duration.ofSeconds(config.getInt("timeout", (int) this.timeout.getSeconds()));
+    }
+
+    /**
+     * Save the configuration file for the configurable class
+     *
+     * @param config The configuration file to save
+     */
+    @Override
+    public void saveSettings(@NotNull CommentedFileConfiguration config) {
+        super.saveSettings(config);
+
+        config.set("max-formula", this.maxFormula);
+        config.set("chance-formula", this.chanceFormula);
+        config.set("timeout", (int) this.timeout.getSeconds());
     }
 
     public static class ComboData {

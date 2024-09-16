@@ -1,6 +1,7 @@
 package xyz.oribuin.fishing.util;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import dev.rosewood.rosegarden.utils.HexUtils;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -98,13 +99,13 @@ public class ItemConstruct {
      *
      * @return The itemstack
      */
-    public static ItemConstruct deserialize(CommentedConfigurationSection config, StringPlaceholders placeholders) {
+    public static ItemConstruct deserialize(CommentedConfigurationSection config) {
         Material type = Material.getMaterial(config.getString("type", "AIR"));
-        if (type == null) return null;
+        if (type == null || type == Material.AIR) return null;
 
         ItemConstruct construct = ItemConstruct.of(type);
         construct.amount(config.getInt("amount", 1));
-        construct.name(placeholders.apply(config.getString("name")));
+        construct.name(config.getString("name"));
         construct.lore(config.getStringList("lore"));
         construct.model(config.getInt("model"));
         construct.unbreakable(config.getBoolean("unbreakable"));
@@ -148,14 +149,18 @@ public class ItemConstruct {
      *
      * @return The itemstack
      */
-    public ItemStack build() {
+    public ItemStack build(StringPlaceholders placeholders) {
         ItemStack stack = new ItemStack(this.type, this.amount);
         ItemMeta meta = stack.getItemMeta();
         if (meta == null) return stack; // Probably air
 
         // REGULAR STUFF :D
-        if (this.name != null) meta.setDisplayName(this.name);
-        if (this.lore != null && !this.lore.isEmpty()) meta.setLore(this.lore);
+        if (this.name != null) meta.setDisplayName(HexUtils.colorify(placeholders.apply(this.name)));
+        if (this.lore != null && !this.lore.isEmpty()) {
+            List<String> lore = new ArrayList<>();
+            for (String line : this.lore) lore.add(HexUtils.colorify(placeholders.apply(line)));
+            meta.setLore(lore);
+        }
         if (this.model != 0) meta.setCustomModelData(this.model);
         if (this.amount > 1) stack.setAmount(this.amount);
         if (this.unbreakable) meta.setUnbreakable(true);
