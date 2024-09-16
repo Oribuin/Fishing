@@ -53,11 +53,10 @@ dependencies {
 shadowJar {
     archiveClassifier.set(null)
 
-    relocate("dev.rosewood.rosegarden", "${project.group}.fishing.rosegarden")
-
-    // Remove comments if you're not using SQL/SQLite
-//    exclude 'dev/rosewood/rosegarden/lib/hikaricp/**/*.class'
-//    exclude 'dev/rosewood/rosegarden/lib/slf4j/**/*.class'
+    relocate("dev.rosewood.rosegarden", "${project.group}.fishing.libs.rosegarden")
+    relocate("com.jeff_media.morepersistentdatatypes", "${project.group}.fishing.libs.persistentdatatypes")
+    relocate("net.objecthunter.exp4j", "${project.group}.fishing.libs.exp4j")
+    relocate("dev.triumphteam.gui", "${project.group}.fishing.libs.triumphgui")
 }
 
 // Include version replacement
