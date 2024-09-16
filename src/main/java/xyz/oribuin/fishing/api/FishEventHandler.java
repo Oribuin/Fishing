@@ -1,6 +1,7 @@
 package xyz.oribuin.fishing.api;
 
 import org.bukkit.inventory.ItemStack;
+import xyz.oribuin.fishing.api.event.ConditionCheckEvent;
 import xyz.oribuin.fishing.api.event.FishGenerateEvent;
 import xyz.oribuin.fishing.api.event.InitialFishCatchEvent;
 import xyz.oribuin.fishing.fish.Fish;
@@ -39,6 +40,15 @@ public abstract class FishEventHandler {
      * @param stack   The item stack of the fish
      */
     public void onFishCatch(FishContext context, Fish fish, ItemStack stack) {
+    }
+
+    /**
+     * The functionality provided when a condition is checked, used to modify the result of the condition
+     *
+     * @param event The context of the fish event
+     * @param level The level of the augment that was used
+     */
+    public void onConditionCheck(ConditionCheckEvent event, int level) {
     }
 
 }

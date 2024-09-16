@@ -9,6 +9,18 @@ import xyz.oribuin.fishing.fish.Fish;
 public class LightLevelCondition implements CatchCondition {
 
     /**
+     * Check if the requirements are met to run the condition
+     *
+     * @param fish The fish to check
+     *
+     * @return Results in true if the condition should run
+     */
+    @Override
+    public boolean shouldRun(Fish fish) {
+        return fish.condition().lightLevel() != null;
+    }
+
+    /**
      * Check if the player can catch the fish with the current conditions
      *
      * @param fish   The fish the player is trying to catch
@@ -20,10 +32,7 @@ public class LightLevelCondition implements CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        if (fish.condition().lightLevel() == null) return true;
-
         int hookLight = hook.getLocation().getBlock().getLightLevel();
-
         return fish.condition().lightLevel() >= hookLight;
     }
 

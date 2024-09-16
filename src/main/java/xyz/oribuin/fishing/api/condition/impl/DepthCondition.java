@@ -10,6 +10,18 @@ import xyz.oribuin.fishing.fish.Fish;
 public class DepthCondition implements CatchCondition {
 
     /**
+     * Check if the requirements are met to run the condition
+     *
+     * @param fish The fish to check
+     *
+     * @return Results in true if the condition should run
+     */
+    @Override
+    public boolean shouldRun(Fish fish) {
+        return fish.condition().waterDepth() != null;
+    }
+
+    /**
      * Check if the player can catch the fish with the current conditions
      *
      * @param fish   The fish the player is trying to catch
@@ -21,8 +33,6 @@ public class DepthCondition implements CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        if (fish.condition().waterDepth() == null) return true;
-
         int hookDepth = hook.getLocation().getBlockY();
         for (int i = 0; i < fish.condition().waterDepth(); i++) {
             if (hookDepth == i) return true;

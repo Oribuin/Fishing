@@ -19,6 +19,7 @@ public interface Configurable {
 
     /**
      * Load the settings from the configuration file
+     * I would recommend always super calling this method to save any settings that could be implemented
      *
      * @param config The configuration file to load
      */
@@ -28,6 +29,7 @@ public interface Configurable {
 
     /**
      * Save the configuration file for the configurable class
+     * I would recommend always super calling this method to save any settings that could be implemented
      *
      * @param config The configuration file to save
      */

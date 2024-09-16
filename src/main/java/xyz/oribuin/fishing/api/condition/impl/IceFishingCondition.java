@@ -14,6 +14,18 @@ public class IceFishingCondition implements CatchCondition {
     private static final int MAX_RADIUS = 3;
 
     /**
+     * Check if the requirements are met to run the condition
+     *
+     * @param fish The fish to check
+     *
+     * @return Results in true if the condition should run
+     */
+    @Override
+    public boolean shouldRun(Fish fish) {
+        return fish.condition().iceFishing();
+    }
+
+    /**
      * Check if the player can catch the fish with the current conditions
      *
      * @param fish   The fish the player is trying to catch

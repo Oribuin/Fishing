@@ -5,10 +5,21 @@ import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import xyz.oribuin.fishing.api.condition.CatchCondition;
-import xyz.oribuin.fishing.fish.Condition;
 import xyz.oribuin.fishing.fish.Fish;
 
 public class BiomeCondition implements CatchCondition {
+
+    /**
+     * Check if the requirements are met to run the condition
+     *
+     * @param fish The fish to check
+     *
+     * @return Results in true if the condition should run
+     */
+    @Override
+    public boolean shouldRun(Fish fish) {
+        return fish.condition().biomes() != null && !fish.condition().biomes().isEmpty();
+    }
 
     /**
      * Check if the player can catch the fish with the current conditions
@@ -22,11 +33,8 @@ public class BiomeCondition implements CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        Condition con = fish.condition();
-        if (con.biomes() == null || con.biomes().isEmpty()) return true;
-
         Biome biome = hook.getLocation().getBlock().getBiome();
-        return con.biomes().contains(biome);
+        return fish.condition().biomes().contains(biome);
     }
 
 }

@@ -9,6 +9,18 @@ import xyz.oribuin.fishing.fish.Fish;
 public class HeightCondition implements CatchCondition {
 
     /**
+     * Check if the requirements are met to run the condition
+     *
+     * @param fish The fish to check
+     *
+     * @return Results in true if the condition should run
+     */
+    @Override
+    public boolean shouldRun(Fish fish) {
+        return fish.condition().height() != null;
+    }
+
+    /**
      * Check if the player can catch the fish with the current conditions
      *
      * @param fish   The fish the player is trying to catch
@@ -20,8 +32,6 @@ public class HeightCondition implements CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        if (fish.condition().height() == null) return true;
-
         int minHookHeight = fish.condition().height().getLeft();
         int maxHookHeight = fish.condition().height().getRight();
         int hookHeight = hook.getLocation().getBlockY();
