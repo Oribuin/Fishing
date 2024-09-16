@@ -12,6 +12,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.persistence.PersistentDataContainer;
 import xyz.oribuin.fishing.FishingPlugin;
+import xyz.oribuin.fishing.api.task.AsyncTicker;
 import xyz.oribuin.fishing.storage.PersistKeys;
 import xyz.oribuin.fishing.util.FishUtils;
 import xyz.oribuin.fishing.util.math.MathL;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class Totem {
+public class Totem implements AsyncTicker {
 
     private final UUID owner;
     private String ownerName; // The name of the owner
@@ -31,7 +32,10 @@ public class Totem {
     private Duration cooldown; // Cooldown for the totem
     private long lastActive; // Last time the totem was active
     private Location center; // Center of the totem
+
     private ArmorStand entity; // The entity that will be spawned.
+    private long thetaTicks; // The ticks for the totem to spin
+    private double heightOffset; // The height offset for the totem
 
     public Totem(Player owner, Location center, int radius) {
         this.owner = owner.getUniqueId();
@@ -39,6 +43,39 @@ public class Totem {
         this.center = center;
         this.radius = radius;
         this.active = false;
+    }
+
+    /**
+     * The method that should run everytime the task is ticked,
+     * this method will be ran asynchronously
+     */
+    @Override
+    public void tickAsync() {
+        if (!this.center.isChunkLoaded()) return;
+        if (!this.active) return;
+        if (this.entity == null) return;
+
+        // Create the totem animations for radius of the totem
+        List<Location> bounds = this.bounds();
+        Particle.DustOptions options = new Particle.DustOptions(Color.LIME, 1f);
+        bounds.forEach(x -> this.center.getWorld().spawnParticle(
+                FishUtils.getEnum(Particle.class, "DUST", Particle.REDSTONE),
+                x,
+                2,
+                0, 0, 0, 0,
+                options
+        ));
+
+        // Make the totem spin :3
+        double theta = thetaTicks * 0.05;
+        Location newLocation = this.center.clone();
+        newLocation.setY(newLocation.getY() - this.heightOffset + Math.sin(theta) * 0.2 + this.heightOffset);
+        newLocation.setYaw((float) theta * 100);
+
+        this.entity.teleport(newLocation);
+
+        // TODO: Run the animations for all totem upgrades
+        // TODO: for each upgrade: if instanceof AsyncTickable then upgrade.tickAsync();
     }
 
     /**
@@ -59,6 +96,7 @@ public class Totem {
                     result.setDisabledSlots(EquipmentSlot.values());
                     result.setVisible(false);
                     result.setCustomNameVisible(true);
+                    result.setPersistent(true);
                     // TODO: Allow configurable name
                     result.customName(Component.text(this.ownerName + "'s Totem"));
                     this.saveToContainer(result.getPersistentDataContainer());
@@ -102,7 +140,7 @@ public class Totem {
                     FishUtils.getEnum(Particle.class, "DUST", Particle.REDSTONE),
                     x,
                     2,
-                    0,0,0,0,
+                    0, 0, 0, 0,
                     options
             ));
         });
