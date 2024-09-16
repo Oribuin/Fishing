@@ -1,4 +1,4 @@
-package xyz.oribuin.fishing.api;
+package xyz.oribuin.fishing.api.config;
 
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import org.jetbrains.annotations.NotNull;

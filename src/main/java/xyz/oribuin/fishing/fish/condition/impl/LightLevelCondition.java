@@ -1,4 +1,4 @@
-package xyz.oribuin.fishing.api.condition.impl;
+package xyz.oribuin.fishing.fish.condition.impl;
 
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
@@ -6,7 +6,7 @@ import org.bukkit.inventory.ItemStack;
 import xyz.oribuin.fishing.api.condition.CatchCondition;
 import xyz.oribuin.fishing.fish.Fish;
 
-public class TimeCondition implements CatchCondition {
+public class LightLevelCondition implements CatchCondition {
 
     /**
      * Check if the requirements are met to run the condition
@@ -17,7 +17,7 @@ public class TimeCondition implements CatchCondition {
      */
     @Override
     public boolean shouldRun(Fish fish) {
-        return fish.condition().time() != null;
+        return fish.condition().lightLevel() != null;
     }
 
     /**
@@ -32,7 +32,8 @@ public class TimeCondition implements CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        return fish.condition().time().matches(player.getWorld());
+        int hookLight = hook.getLocation().getBlock().getLightLevel();
+        return fish.condition().lightLevel() >= hookLight;
     }
 
 }

@@ -3,16 +3,11 @@ package xyz.oribuin.fishing.fish;
 import dev.rosewood.rosegarden.utils.HexUtils;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.StringUtils;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.FishHook;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import xyz.oribuin.fishing.FishingPlugin;
-import xyz.oribuin.fishing.api.condition.ConditionProvider;
-import xyz.oribuin.fishing.fish.condition.Weather;
+import xyz.oribuin.fishing.fish.condition.Condition;
 import xyz.oribuin.fishing.manager.TierManager;
 import xyz.oribuin.fishing.storage.PersistKeys;
 

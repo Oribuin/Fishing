@@ -1,13 +1,14 @@
-package xyz.oribuin.fishing.api.condition.impl;
+package xyz.oribuin.fishing.fish.condition.impl;
 
-import org.bukkit.block.Block;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import xyz.oribuin.fishing.api.condition.CatchCondition;
 import xyz.oribuin.fishing.fish.Fish;
 
-public class DepthCondition implements CatchCondition {
+import java.util.List;
+
+public class WorldCondition implements CatchCondition {
 
     /**
      * Check if the requirements are met to run the condition
@@ -18,7 +19,7 @@ public class DepthCondition implements CatchCondition {
      */
     @Override
     public boolean shouldRun(Fish fish) {
-        return fish.condition().waterDepth() != null;
+        return fish.condition().worlds() != null && !fish.condition().worlds().isEmpty();
     }
 
     /**
@@ -33,15 +34,8 @@ public class DepthCondition implements CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        int hookDepth = hook.getLocation().getBlockY();
-        for (int i = 0; i < fish.condition().waterDepth(); i++) {
-            if (hookDepth == i) return true;
-
-            Block relative = hook.getLocation().getBlock().getRelative(0, -i, 0);
-            if (relative.isLiquid()) return true;
-        }
-
-        return false;
+        List<String> worlds = fish.condition().worlds();
+        return worlds.contains(hook.getLocation().getWorld().getName());
     }
 
 }

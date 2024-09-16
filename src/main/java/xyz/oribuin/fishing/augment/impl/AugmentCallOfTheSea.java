@@ -4,7 +4,7 @@ import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import xyz.oribuin.fishing.api.FishContext;
+import xyz.oribuin.fishing.api.event.FishContext;
 import xyz.oribuin.fishing.api.event.InitialFishCatchEvent;
 import xyz.oribuin.fishing.augment.Augment;
 import xyz.oribuin.fishing.fish.Fish;

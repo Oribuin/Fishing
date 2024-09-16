@@ -6,8 +6,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.FishingPlugin;
-import xyz.oribuin.fishing.api.Configurable;
-import xyz.oribuin.fishing.api.FishEventHandler;
+import xyz.oribuin.fishing.api.config.Configurable;
+import xyz.oribuin.fishing.api.event.FishEventHandler;
 import xyz.oribuin.fishing.util.FishUtils;
 
 import java.nio.file.Path;

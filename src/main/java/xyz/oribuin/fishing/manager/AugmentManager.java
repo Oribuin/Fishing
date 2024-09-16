@@ -2,20 +2,18 @@ package xyz.oribuin.fishing.manager;
 
 import com.jeff_media.morepersistentdatatypes.DataType;
 import dev.rosewood.rosegarden.RosePlugin;
-import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.manager.Manager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import xyz.oribuin.fishing.FishingPlugin;
-import xyz.oribuin.fishing.api.Configurable;
+import xyz.oribuin.fishing.api.config.Configurable;
 import xyz.oribuin.fishing.augment.Augment;
 import xyz.oribuin.fishing.augment.impl.AugmentCallOfTheSea;
 import xyz.oribuin.fishing.augment.impl.AugmentHotspot;
 import xyz.oribuin.fishing.augment.impl.AugmentSaturate;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 

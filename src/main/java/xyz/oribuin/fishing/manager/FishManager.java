@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import xyz.oribuin.fishing.api.event.FishGenerateEvent;
 import xyz.oribuin.fishing.api.event.InitialFishCatchEvent;
 import xyz.oribuin.fishing.augment.Augment;
-import xyz.oribuin.fishing.fish.Condition;
+import xyz.oribuin.fishing.fish.condition.Condition;
 import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.fish.Tier;
 import xyz.oribuin.fishing.fish.condition.Time;

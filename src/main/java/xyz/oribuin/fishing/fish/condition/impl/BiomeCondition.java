@@ -1,12 +1,13 @@
-package xyz.oribuin.fishing.api.condition.impl;
+package xyz.oribuin.fishing.fish.condition.impl;
 
+import org.bukkit.block.Biome;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import xyz.oribuin.fishing.api.condition.CatchCondition;
 import xyz.oribuin.fishing.fish.Fish;
 
-public class HeightCondition implements CatchCondition {
+public class BiomeCondition implements CatchCondition {
 
     /**
      * Check if the requirements are met to run the condition
@@ -17,7 +18,7 @@ public class HeightCondition implements CatchCondition {
      */
     @Override
     public boolean shouldRun(Fish fish) {
-        return fish.condition().height() != null;
+        return fish.condition().biomes() != null && !fish.condition().biomes().isEmpty();
     }
 
     /**
@@ -32,11 +33,8 @@ public class HeightCondition implements CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        int minHookHeight = fish.condition().height().getLeft();
-        int maxHookHeight = fish.condition().height().getRight();
-        int hookHeight = hook.getLocation().getBlockY();
-
-        return hookHeight >= minHookHeight && hookHeight <= maxHookHeight;
+        Biome biome = hook.getLocation().getBlock().getBiome();
+        return fish.condition().biomes().contains(biome);
     }
 
 }

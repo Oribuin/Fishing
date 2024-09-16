@@ -5,10 +5,9 @@ import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import xyz.oribuin.fishing.api.FishContext;
+import xyz.oribuin.fishing.api.event.FishContext;
 import xyz.oribuin.fishing.api.event.FishGenerateEvent;
 import xyz.oribuin.fishing.fish.Fish;
-import xyz.oribuin.fishing.manager.ConfigurationManager.Setting;
 import xyz.oribuin.fishing.skill.Skill;
 import xyz.oribuin.fishing.util.FishUtils;
 

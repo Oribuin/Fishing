@@ -1,9 +1,6 @@
-package xyz.oribuin.fishing.api;
+package xyz.oribuin.fishing.api.event;
 
 import org.bukkit.inventory.ItemStack;
-import xyz.oribuin.fishing.api.event.ConditionCheckEvent;
-import xyz.oribuin.fishing.api.event.FishGenerateEvent;
-import xyz.oribuin.fishing.api.event.InitialFishCatchEvent;
 import xyz.oribuin.fishing.fish.Fish;
 
 /**

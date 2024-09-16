@@ -5,8 +5,8 @@ import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import xyz.oribuin.fishing.api.Configurable;
-import xyz.oribuin.fishing.api.FishEventHandler;
+import xyz.oribuin.fishing.api.config.Configurable;
+import xyz.oribuin.fishing.api.event.FishEventHandler;
 
 import java.nio.file.Path;
 import java.util.List;

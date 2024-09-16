@@ -1,8 +1,8 @@
-package xyz.oribuin.fishing.totem.upgrade;
+package xyz.oribuin.fishing.api.totem;
 
 import org.jetbrains.annotations.NotNull;
-import xyz.oribuin.fishing.api.Configurable;
-import xyz.oribuin.fishing.api.FishEventHandler;
+import xyz.oribuin.fishing.api.config.Configurable;
+import xyz.oribuin.fishing.api.event.FishEventHandler;
 import xyz.oribuin.fishing.api.economy.Cost;
 import xyz.oribuin.fishing.totem.Totem;
 

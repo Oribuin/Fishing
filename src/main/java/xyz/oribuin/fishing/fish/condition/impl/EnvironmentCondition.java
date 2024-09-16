@@ -1,4 +1,4 @@
-package xyz.oribuin.fishing.api.condition.impl;
+package xyz.oribuin.fishing.fish.condition.impl;
 
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
@@ -6,9 +6,7 @@ import org.bukkit.inventory.ItemStack;
 import xyz.oribuin.fishing.api.condition.CatchCondition;
 import xyz.oribuin.fishing.fish.Fish;
 
-import java.util.List;
-
-public class WorldCondition implements CatchCondition {
+public class EnvironmentCondition implements CatchCondition {
 
     /**
      * Check if the requirements are met to run the condition
@@ -19,7 +17,7 @@ public class WorldCondition implements CatchCondition {
      */
     @Override
     public boolean shouldRun(Fish fish) {
-        return fish.condition().worlds() != null && !fish.condition().worlds().isEmpty();
+        return fish.condition().environment() != null;
     }
 
     /**
@@ -34,8 +32,7 @@ public class WorldCondition implements CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        List<String> worlds = fish.condition().worlds();
-        return worlds.contains(hook.getLocation().getWorld().getName());
+        return fish.condition().environment() == hook.getLocation().getWorld().getEnvironment();
     }
 
 }
