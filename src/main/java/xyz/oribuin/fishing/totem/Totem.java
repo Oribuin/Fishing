@@ -37,12 +37,27 @@ public class Totem implements AsyncTicker {
     private long thetaTicks; // The ticks for the totem to spin
     private double heightOffset; // The height offset for the totem
 
+    public Totem(UUID owner, String ownerName) {
+        this.owner = owner;
+        this.ownerName = ownerName;
+        this.radius = 10;
+        this.duration = Duration.ofMinutes(2);
+        this.cooldown = Duration.ofHours(1);
+        this.lastActive = System.currentTimeMillis();
+        this.center = null;
+    }
+
+    /**
+     * Create a new totem owner with all the requires values
+     *
+     * @param owner  The owner of the totem
+     * @param center The block the totem lives
+     * @param radius The effective radius of the totem
+     */
     public Totem(Player owner, Location center, int radius) {
-        this.owner = owner.getUniqueId();
-        this.ownerName = owner.getName();
-        this.center = center;
+        this(owner.getUniqueId(), owner.getName());
         this.radius = radius;
-        this.active = false;
+        this.center = center;
     }
 
     /**
@@ -54,6 +69,8 @@ public class Totem implements AsyncTicker {
         if (!this.center.isChunkLoaded()) return;
         if (!this.active) return;
         if (this.entity == null) return;
+
+        this.thetaTicks++;
 
         // Create the totem animations for radius of the totem
         List<Location> bounds = this.bounds();
@@ -101,6 +118,8 @@ public class Totem implements AsyncTicker {
                     result.customName(Component.text(this.ownerName + "'s Totem"));
                     this.saveToContainer(result.getPersistentDataContainer());
                 });
+
+        this.heightOffset = this.entity.isSmall() ? 1.0 : 1.5; // Height offset
 
         // Create spawning particles around the totem
         int maxRadius = 2;
@@ -153,11 +172,31 @@ public class Totem implements AsyncTicker {
      */
     public void saveToContainer(PersistentDataContainer container) {
         container.set(PersistKeys.TOTEM_OWNER, DataType.UUID, this.owner);
+        container.set(PersistKeys.TOTEM_OWNERNAME, DataType.STRING, this.ownerName);
         container.set(PersistKeys.TOTEM_RADIUS, DataType.INTEGER, this.radius);
         container.set(PersistKeys.TOTEM_ACTIVE, DataType.BOOLEAN, this.active);
         container.set(PersistKeys.TOTEM_DURATION, DataType.LONG, this.duration.toMillis());
         container.set(PersistKeys.TOTEM_COOLDOWN, DataType.LONG, this.cooldown.toMillis());
         container.set(PersistKeys.TOTEM_LASTACTIVE, DataType.LONG, this.lastActive);
+    }
+
+    public static Totem fromContainer(PersistentDataContainer container) {
+        UUID owner = container.get(PersistKeys.TOTEM_OWNER, DataType.UUID);
+        String ownerName = container.getOrDefault(PersistKeys.TOTEM_OWNERNAME, DataType.STRING, "N/A");
+        Integer radius = container.get(PersistKeys.TOTEM_RADIUS, DataType.INTEGER);
+        boolean active = container.getOrDefault(PersistKeys.TOTEM_ACTIVE, DataType.BOOLEAN, false);
+        Long duration = container.get(PersistKeys.TOTEM_DURATION, DataType.LONG);
+        Long cooldown = container.get(PersistKeys.TOTEM_COOLDOWN, DataType.LONG);
+        long lastActive = container.getOrDefault(PersistKeys.TOTEM_LASTACTIVE, DataType.LONG, System.currentTimeMillis());
+
+        if (owner == null) return null;
+        if (radius == null) return null;
+        if (duration == null) return null;
+        if (cooldown == null) return null;
+
+        Totem totem = new Totem(owner, ownerName);
+        totem.active(active);
+        return null;
     }
 
     /**
@@ -197,24 +236,63 @@ public class Totem implements AsyncTicker {
         return owner;
     }
 
-    public Location center() {
-        return center;
+    public String ownerName() {
+        return ownerName;
     }
 
-    public int radius() {
-        return radius;
-    }
-
-    public void radius(int radius) {
-        this.radius = radius;
+    public void ownerName(String ownerName) {
+        this.ownerName = ownerName;
     }
 
     public boolean active() {
-        return active;
+        return this.active;
     }
 
     public void active(boolean active) {
         this.active = active;
     }
 
+    public Location center() {
+        return center;
+    }
+
+    public void center(Location center) {
+        this.center = center;
+    }
+
+    public int radius() {
+        return this.radius;
+    }
+
+    public void radius(int radius) {
+        this.radius = radius;
+    }
+
+    public Duration duration() {
+        return this.duration;
+    }
+
+    public void duration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public Duration cooldown() {
+        return cooldown;
+    }
+
+    public void cooldown(Duration cooldown) {
+        this.cooldown = cooldown;
+    }
+
+    public long lasActive() {
+        return this.lastActive;
+    }
+
+    public void lastActive(long lastActive) {
+        this.lastActive = lastActive;
+    }
+
+    public ArmorStand entity() {
+        return this.entity;
+    }
 }
