@@ -1,4 +1,4 @@
-package xyz.oribuin.fishing.storage;
+package xyz.oribuin.fishing.storage.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

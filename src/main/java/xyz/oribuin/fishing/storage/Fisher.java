@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class FishingUser {
+public class Fisher {
 
     private final UUID uuid;
     private int entropy;
@@ -17,7 +17,7 @@ public class FishingUser {
     private int skillPoints;
     private Map<String, Integer> skills;
 
-    public FishingUser(UUID uuid) {
+    public Fisher(UUID uuid) {
         this.uuid = uuid;
         this.entropy = 0;
         this.level = 1;
@@ -64,11 +64,11 @@ public class FishingUser {
         this.experience = experience;
     }
 
-    public int skillCaught() {
+    public int points() {
         return this.skillPoints;
     }
 
-    public void skillCaught(int skillCaught) {
+    public void points(int skillCaught) {
         this.skillPoints = skillCaught;
     }
 

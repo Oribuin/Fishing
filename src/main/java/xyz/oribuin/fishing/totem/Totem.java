@@ -13,7 +13,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.persistence.PersistentDataContainer;
 import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.task.AsyncTicker;
-import xyz.oribuin.fishing.storage.PersistKeys;
+import xyz.oribuin.fishing.storage.util.PersistKeys;
 import xyz.oribuin.fishing.util.FishUtils;
 import xyz.oribuin.fishing.util.math.MathL;
 

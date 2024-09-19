@@ -9,7 +9,7 @@ import org.bukkit.persistence.PersistentDataType;
 import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.fish.condition.Condition;
 import xyz.oribuin.fishing.manager.TierManager;
-import xyz.oribuin.fishing.storage.PersistKeys;
+import xyz.oribuin.fishing.storage.util.PersistKeys;
 
 import java.util.ArrayList;
 import java.util.List;
