@@ -34,19 +34,6 @@ public class AugmentSaturate extends Augment {
         event.getPlayer().setSaturation(20.0f);
     }
 
-    /**
-     * The functionality provided by the augment when a player obtains a fish from the initial catch
-     * This method is run for each fish caught
-     *
-     * @param context The context of the fish event
-     * @param fish    The fish that was caught
-     * @param stack   The item stack of the fish
-     */
-    @Override
-    public void onFishCatch(FishContext context, Fish fish, ItemStack stack) {
-        // Unused
-    }
-
 
     /**
      * Load the settings from the configuration file

@@ -119,11 +119,6 @@ public class SkillComboCatcher extends Skill {
      */
     @Override
     public List<String> comments() {
-        //        SKILLS_COMBO("skills.combo", null, ""),
-        //        SKILLS_COMBO_MAX_FORMULA("skills.combo.max-formula", "%level% / 5 * 2", "Calculation for the maximum combo a player can have based on their level", "Placeholders:", "%level% - The current level of the player"),
-        //        SKILLS_COMBO_CHANCE_INCREASE("skills.combo.chance-formula", "", "Calculation for how much "),
-        //        SKILLS_COMBO_TIMEOUT("skills.combo.timeout", 30, "The time in seconds until the combo is reset after not catching a fish"),
-
         return List.of(
                 "Skill [Combo Catcher] - Increases the chance of catching higher rarity fish with each consecutive catch",
                 "This skill will reset after not catching a fish for 30 seconds",

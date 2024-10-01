@@ -36,14 +36,12 @@ public class FishManager extends Manager {
                     CommentedConfigurationSection section = config.getConfigurationSection("fish");
 
                     // Make sure the section is not null
-                    System.out.println("config keys:" + config.getKeys(false));
                     if (section == null) {
                         this.rosePlugin.getLogger().warning("No fish have been found in the " + tier.name() + " tier configuration file. Creating default fish.");
                         section = config.createSection("fish");
 
                         Fish defaultFish = new Fish(tier.name() + "-default", tier.name());
                         defaultFish.saveSettings(section);
-                        this.fishTypes.put(defaultFish.name(), defaultFish);
 
                         try {
                             config.save(tier.tierFile());

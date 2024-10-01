@@ -1,48 +1,43 @@
 package xyz.oribuin.fishing.fish;
 
+import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
+import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.FishingPlugin;
+import xyz.oribuin.fishing.api.config.Configurable;
 import xyz.oribuin.fishing.util.FishUtils;
 import xyz.oribuin.fishing.util.ItemConstruct;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Objects;
 
 
-public class Tier {
+public class Tier implements Configurable {
 
     // Basic Values
-    private final ItemConstruct baseDisplay;
-    private File tierFile;
-    private CommentedFileConfiguration config;
+    private final File tierFile;
+    private final CommentedFileConfiguration config;
 
     // Fish values
     private final String name;
-    private final double money;
-    private final double chance;
-    private final int entropy;
+    private ItemConstruct baseDisplay;
+    private double money;
+    private double chance;
+    private int entropy;
     private float fishExp;
     private float naturalExp;
 
     /**
      * Create a new quality name for a fish, Creates a new file for the quality
      *
-     * @param name        The name of the quality
-     * @param money       How much the fish of this quality is worth in money
-     * @param chance      The chance of getting this quality
-     * @param baseDisplay The base display item for the quality of fish
+     * @param name The name of the quality
      */
-    public Tier(String name, double money, double chance, int entropy, ItemConstruct baseDisplay) {
+    public Tier(String name) {
         Objects.requireNonNull(name, "Quality name cannot be null.");
-        Objects.requireNonNull(baseDisplay, "Base display item cannot be null.");
 
         this.name = name;
-        this.money = money;
-        this.chance = chance;
-        this.entropy = entropy;
-        this.fishExp = 0.0f;
-        this.naturalExp = 0.0f;
-        this.baseDisplay = baseDisplay;
+        this.baseDisplay = ItemConstruct.EMPTY;
         this.tierFile = FishUtils.createFile(FishingPlugin.get(), "tiers", name + ".yml");
         this.config = CommentedFileConfiguration.loadConfiguration(this.tierFile);
     }
@@ -50,26 +45,54 @@ public class Tier {
     /**
      * Create a new quality name for a fish, Does not create a new file for the quality
      *
-     * @param name        The name of the quality
-     * @param money       How much the fish of this quality is worth in money
-     * @param chance      The chance of getting this quality
-     * @param entropy     The entropy of the quality
-     * @param baseDisplay The base display item for the quality of fish
-     * @param tierFile    The file where the relational data is stored
+     * @param name     The name of the quality
+     * @param tierFile The file where the relational data is stored
      */
-    public Tier(String name, double money, double chance, int entropy, ItemConstruct baseDisplay, File tierFile) {
+    public Tier(String name, File tierFile) {
         Objects.requireNonNull(name, "Quality name cannot be null.");
-        Objects.requireNonNull(baseDisplay, "Base display item cannot be null.");
 
         this.name = name;
-        this.money = money;
-        this.chance = chance;
-        this.entropy = entropy;
+        this.money = 0.0;
+        this.chance = 0.0;
+        this.entropy = 0;
         this.fishExp = 0.0f;
         this.naturalExp = 0.0f;
-        this.baseDisplay = baseDisplay;
+        this.baseDisplay = ItemConstruct.EMPTY;
         this.tierFile = tierFile;
         this.config = CommentedFileConfiguration.loadConfiguration(this.tierFile);
+    }
+
+    /**
+     * Load the settings from the configuration file
+     * I would recommend always super calling this method to save any settings that could be implemented
+     *
+     * @param config The configuration file to load
+     */
+    @Override
+    public void loadSettings(@NotNull CommentedConfigurationSection config) {
+        this.money = config.getDouble("money", 0.0);
+        this.chance = config.getDouble("chance", 0.0);
+        this.entropy = config.getInt("entropy", 0);
+        this.baseDisplay = ItemConstruct.deserialize(config.getConfigurationSection("display"));
+        this.fishExp = (float) config.getDouble("fish-exp", 0.0);
+        this.naturalExp = (float) config.getDouble("natural-exp", 0.0);
+    }
+
+    /**
+     * Save the configuration file for the configurable class
+     * I would recommend always super calling this method to save any settings that could be implemented
+     *
+     * @param config The configuration file to save
+     */
+    @Override
+    public void saveSettings(@NotNull CommentedConfigurationSection config) {
+        config.set("money", this.money);
+        config.set("chance", this.chance);
+        config.set("entropy", this.entropy);
+        config.set("fish-exp", this.fishExp);
+        config.set("natural-exp", this.naturalExp);
+
+        this.baseDisplay.serialize(config);
     }
 
     /**
@@ -91,16 +114,32 @@ public class Tier {
         return money;
     }
 
+    public void money(double money) {
+        this.money = money;
+    }
+
     public double chance() {
         return chance;
+    }
+
+    public void chance(double chance) {
+        this.chance = chance;
     }
 
     public int entropy() {
         return entropy;
     }
 
+    public void entropy(int entropy) {
+        this.entropy = entropy;
+    }
+
     public ItemConstruct baseDisplay() {
         return baseDisplay;
+    }
+
+    public void baseDisplay(ItemConstruct baseDisplay) {
+        this.baseDisplay = baseDisplay != null ? baseDisplay : ItemConstruct.EMPTY;
     }
 
     public float fishExp() {
@@ -117,6 +156,17 @@ public class Tier {
 
     public void naturalExp(float naturalExp) {
         this.naturalExp = naturalExp;
+    }
+
+    /**
+     * The path to the configuration file to be loaded. All paths will be relative to the {@link #parentFolder()},
+     * If you wish to overwrite this functionality, override the {@link #parentFolder()} method
+     *
+     * @return The path
+     */
+    @Override
+    public @NotNull Path configPath() {
+        return this.tierFile.toPath();
     }
 
 }
