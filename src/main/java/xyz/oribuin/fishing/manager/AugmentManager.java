@@ -10,6 +10,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.config.Configurable;
 import xyz.oribuin.fishing.augment.Augment;
+import xyz.oribuin.fishing.augment.impl.AugmentBiomeDisrupt;
 import xyz.oribuin.fishing.augment.impl.AugmentCallOfTheSea;
 import xyz.oribuin.fishing.augment.impl.AugmentHotspot;
 import xyz.oribuin.fishing.augment.impl.AugmentSaturate;
@@ -31,6 +32,7 @@ public class AugmentManager extends Manager {
         this.augments.clear();
 
         // Register all the augments, Maybe this should be done in reflection
+        this.register(new AugmentBiomeDisrupt());
         this.register(new AugmentCallOfTheSea());
         this.register(new AugmentHotspot());
         this.register(new AugmentSaturate());

@@ -6,5 +6,5 @@ tiers:
     fish-exp: 100 # Fishing experience reward when caught
     natural-exp: 10.0 # Rewards additional % experience when caught naturally
     display:
-      material: COD
+      type: COD
       name: '&#CD7F32&l%'

@@ -70,7 +70,6 @@ public interface Configurable {
     /**
      * Load the configuration file for the configurable class
      */
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     default void reload() {
         FishingPlugin plugin = FishingPlugin.get();
         File targetFile = new File(this.parentFolder(), this.configPath().toString());
