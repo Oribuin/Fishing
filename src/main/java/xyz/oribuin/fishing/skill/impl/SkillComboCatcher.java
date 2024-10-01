@@ -1,5 +1,6 @@
 package xyz.oribuin.fishing.skill.impl;
 
+import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.entity.Player;
@@ -139,7 +140,7 @@ public class SkillComboCatcher extends Skill {
      * @param config The configuration file to load
      */
     @Override
-    public void loadSettings(@NotNull CommentedFileConfiguration config) {
+    public void loadSettings(@NotNull CommentedConfigurationSection config) {
         super.loadSettings(config);
 
         this.maxFormula = config.getString("max-formula", this.maxFormula);
@@ -153,7 +154,7 @@ public class SkillComboCatcher extends Skill {
      * @param config The configuration file to save
      */
     @Override
-    public void saveSettings(@NotNull CommentedFileConfiguration config) {
+    public void saveSettings(@NotNull CommentedConfigurationSection config) {
         super.saveSettings(config);
 
         config.set("max-formula", this.maxFormula);

@@ -1,7 +1,9 @@
 package xyz.oribuin.fishing;
 
-import org.apache.maven.model.PluginManagement;
+import dev.rosewood.rosegarden.RosePlugin;
+import dev.rosewood.rosegarden.manager.Manager;
 import org.bukkit.plugin.PluginManager;
+import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.listener.FishListener;
 import xyz.oribuin.fishing.manager.AugmentManager;
 import xyz.oribuin.fishing.manager.CommandManager;
@@ -9,9 +11,6 @@ import xyz.oribuin.fishing.manager.ConfigurationManager;
 import xyz.oribuin.fishing.manager.DataManager;
 import xyz.oribuin.fishing.manager.FishManager;
 import xyz.oribuin.fishing.manager.LocaleManager;
-import dev.rosewood.rosegarden.RosePlugin;
-import dev.rosewood.rosegarden.manager.Manager;
-import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.manager.TierManager;
 
 import java.util.List;

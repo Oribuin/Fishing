@@ -5,6 +5,7 @@ import dev.rosewood.rosegarden.hook.PlaceholderAPIHook;
 import dev.rosewood.rosegarden.utils.HexUtils;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import net.objecthunter.exp4j.ExpressionBuilder;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Color;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -212,6 +213,28 @@ public final class FishUtils {
         try {
             return Enum.valueOf(enumClass, name.toUpperCase());
         } catch (IllegalArgumentException ignored) {
+        }
+
+        return null;
+    }
+
+    /**
+     * Convert a string such as "1-2" to a pair of integers
+     *
+     * @param height The height string
+     *
+     * @return The pair of integers
+     */
+    public static Pair<Integer, Integer> getHeight(String height) {
+        if (height == null) return null;
+
+        try {
+            String[] split = height.split("-");
+            if (split.length == 2) {
+                return Pair.of(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
+            }
+        } catch (NumberFormatException e) {
+            FishingPlugin.get().getLogger().warning("Failed to parse height: " + height);
         }
 
         return null;

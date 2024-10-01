@@ -1,6 +1,7 @@
 package xyz.oribuin.fishing.util;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.utils.HexUtils;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.Color;
@@ -27,6 +28,8 @@ import java.util.Map;
  */
 @SuppressWarnings({ "deprecation", "unused" })
 public class ItemConstruct {
+
+    public static ItemConstruct EMPTY = ItemConstruct.of(Material.STONE); // Empty itemstack
 
     private final Material type;
     private int amount;
@@ -104,7 +107,7 @@ public class ItemConstruct {
     public static ItemConstruct deserialize(CommentedConfigurationSection config) {
         if (config == null) return null;
 
-        Material type = Material.getMaterial(config.getString("type", "AIR"));
+        Material type = Material.getMaterial(config.getString("type", "STONE"));
         if (type == null || type == Material.AIR) return null;
 
         ItemConstruct construct = ItemConstruct.of(type);

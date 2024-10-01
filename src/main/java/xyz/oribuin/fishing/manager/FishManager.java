@@ -4,22 +4,15 @@ import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.manager.Manager;
-import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
-import org.bukkit.block.Biome;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import xyz.oribuin.fishing.api.event.FishGenerateEvent;
 import xyz.oribuin.fishing.api.event.InitialFishCatchEvent;
 import xyz.oribuin.fishing.augment.Augment;
-import xyz.oribuin.fishing.fish.condition.Condition;
 import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.fish.Tier;
-import xyz.oribuin.fishing.fish.condition.Time;
-import xyz.oribuin.fishing.fish.condition.Weather;
-import xyz.oribuin.fishing.util.FishUtils;
-import org.bukkit.World.Environment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,13 +32,24 @@ public class FishManager extends Manager {
         this.rosePlugin.getManager(TierManager.class)
                 .getTiers()
                 .forEach((s, tier) -> {
-                    CommentedFileConfiguration config = CommentedFileConfiguration.loadConfiguration(FishUtils.createFile(this.rosePlugin, tier.tierFile()));
+                    CommentedFileConfiguration config = tier.config();
                     CommentedConfigurationSection section = config.getConfigurationSection("fish");
 
                     // Make sure the section is not null
+                    System.out.println("config keys:" + config.getKeys(false));
                     if (section == null) {
-                        this.rosePlugin.getLogger().warning("Failed to load fish in tier: " + tier.name());
-                        return;
+                        this.rosePlugin.getLogger().warning("No fish have been found in the " + tier.name() + " tier configuration file. Creating default fish.");
+                        section = config.createSection("fish");
+
+                        Fish defaultFish = new Fish(tier.name() + "-default", tier.name());
+                        defaultFish.saveSettings(section);
+                        this.fishTypes.put(defaultFish.name(), defaultFish);
+
+                        try {
+                            config.save(tier.tierFile());
+                        } catch (Exception e) {
+                            this.rosePlugin.getLogger().warning("Failed to save default fish to the " + tier.name() + " tier configuration file.");
+                        }
                     }
 
                     // Load all the fish from the config
@@ -66,8 +70,10 @@ public class FishManager extends Manager {
      * @return The fish
      */
     public Fish load(CommentedFileConfiguration config, Tier tier, String key) {
-        String path = ("fish." + key + ".").toLowerCase();
-        String name = config.getString(path + "name");
+        CommentedConfigurationSection section = config.getConfigurationSection("fish." + key);
+        if (section == null) return null;
+
+        String name = section.getString("name");
 
         // Make sure the name is not null
         if (name == null) {
@@ -77,24 +83,7 @@ public class FishManager extends Manager {
 
         // Load additional values from the config
         Fish fish = new Fish(name, tier.name());
-
-        // Catch Conditions
-        fish.displayName(config.getString(path + "display-name", name));
-        fish.description(config.getStringList(path + "description"));
-        fish.modelData(config.getInt(path + "model-data", -1));
-
-        // Catch Conditions
-        Condition condition = new Condition();
-        condition.biomes(FishUtils.getEnumList(Biome.class, config.getStringList(path + "biomes")));
-        condition.weather(FishUtils.getEnum(Weather.class, config.getString(path + "weather")));
-        condition.time(FishUtils.getEnum(Time.class, config.getString(path + "time")));
-        condition.worlds(config.getStringList(path + "worlds"));
-        condition.environment(FishUtils.getEnum(Environment.class, config.getString(path + "environment")));
-        condition.waterDepth((Integer) config.get(path + "water-depth"));
-        condition.iceFishing(config.getBoolean(path + "ice-fishing"));
-        condition.lightLevel((Integer) config.get(path + "light-level"));
-        condition.height(this.getHeight(config.getString(path + "height")));
-        fish.condition(condition);
+        fish.loadSettings(section);
         return fish;
     }
 
@@ -166,28 +155,6 @@ public class FishManager extends Manager {
                 .stream()
                 .filter(fish -> fish.tierName().equalsIgnoreCase(tier.name()))
                 .toList();
-    }
-
-    /**
-     * Convert a string such as "1-2" to a pair of integers
-     *
-     * @param height The height string
-     *
-     * @return The pair of integers
-     */
-    private Pair<Integer, Integer> getHeight(String height) {
-        if (height == null) return null;
-
-        try {
-            String[] split = height.split("-");
-            if (split.length == 2) {
-                return Pair.of(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-            }
-        } catch (NumberFormatException e) {
-            this.rosePlugin.getLogger().warning("Failed to parse height: " + height);
-        }
-
-        return null;
     }
 
     public Map<String, Fish> getFishTypes() {

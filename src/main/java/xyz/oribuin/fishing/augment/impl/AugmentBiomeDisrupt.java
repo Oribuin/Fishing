@@ -1,5 +1,6 @@
 package xyz.oribuin.fishing.augment.impl;
 
+import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.api.event.ConditionCheckEvent;
@@ -49,7 +50,7 @@ public class AugmentBiomeDisrupt extends Augment {
      * @param config The configuration file to load
      */
     @Override
-    public void loadSettings(@NotNull CommentedFileConfiguration config) {
+    public void loadSettings(@NotNull CommentedConfigurationSection config) {
         super.loadSettings(config);
 
         this.chanceFormula = config.getString("chance-formula", this.chanceFormula);
@@ -61,7 +62,7 @@ public class AugmentBiomeDisrupt extends Augment {
      * @param config The configuration file to save
      */
     @Override
-    public void saveSettings(@NotNull CommentedFileConfiguration config) {
+    public void saveSettings(@NotNull CommentedConfigurationSection config) {
         super.saveSettings(config);
 
         config.set("chance-formula", this.chanceFormula);

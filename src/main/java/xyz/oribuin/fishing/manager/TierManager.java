@@ -5,14 +5,12 @@ import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.manager.Manager;
 import org.bukkit.Bukkit;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import xyz.oribuin.fishing.fish.Tier;
 import xyz.oribuin.fishing.util.FishUtils;
 import xyz.oribuin.fishing.util.ItemConstruct;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -57,6 +55,7 @@ public class TierManager extends Manager {
      * Usually, a null tier means a player wont get a custom fish
      *
      * @param chance The chance of obtaining the fish
+     *
      * @return The fish that can be provided.
      */
     @Nullable
@@ -88,17 +87,21 @@ public class TierManager extends Manager {
         double money = this.config.getDouble(path + "money", 0);
         int entropy = this.config.getInt(path + "entropy", 0);
 
-        ItemConstruct construct = ItemConstruct.deserialize(this.config.getConfigurationSection(path + "display"));
-        if (construct == null) {
-            this.rosePlugin.getLogger().severe("Failed to load the base display item for the tier: " + key);
+        CommentedConfigurationSection section = this.config.getConfigurationSection(path + "display");
+        if (section == null) {
+            this.rosePlugin.getLogger().severe("Failed to load the base display item for the tier: " + key + ". Display section is null.");
             return null;
         }
 
-        ItemStack baseDisplay = construct.build();
+        ItemConstruct construct = ItemConstruct.deserialize(section);
+        if (construct == null) {
+            this.rosePlugin.getLogger().severe("Failed to load the base display item for the tier: " + key + ". Display construct is null.");
+            return null;
+        }
 
         // Make sure the base display item is not null
-        if (baseDisplay == null) {
-            this.rosePlugin.getLogger().severe("Failed to load the base display item for the tier: " + key);
+        if (construct.build() == null) {
+            this.rosePlugin.getLogger().severe("Failed to load the base display item for the tier: " + key + ". Display item is null.");
             return null;
         }
 
@@ -108,25 +111,10 @@ public class TierManager extends Manager {
             return null;
         }
 
-        // Create a new tier
-        Tier tier = new Tier(key.toLowerCase(), money, chance, entropy, baseDisplay);
+        // Create a new tier, Config files are created when a tier is instantiated
+        Tier tier = new Tier(key.toLowerCase(), money, chance, entropy, construct);
         tier.fishExp((float) this.config.getDouble(path + "fish-exp", 0));
         tier.naturalExp((float) this.config.getDouble(path + "natural-exp", 0));
-
-        try {
-            File tierDirectory = new File(this.rosePlugin.getDataFolder(), "tiers");
-            if (!tierDirectory.exists()) tierDirectory.mkdirs();
-
-            File tierFile = new File(tierDirectory, key.toLowerCase() + ".yml");
-            if (!tierFile.exists()) {
-                tierFile.createNewFile();
-            }
-
-        } catch (IOException ex) {
-            this.rosePlugin.getLogger().warning("Failed to save the tier file for the tier: " + key);
-            return null;
-        }
-
         return tier;
     }
 

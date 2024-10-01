@@ -1,5 +1,6 @@
 package xyz.oribuin.fishing.augment.impl;
 
+import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
@@ -59,7 +60,7 @@ public class AugmentCallOfTheSea extends Augment {
      * @param config The configuration file to load
      */
     @Override
-    public void loadSettings(@NotNull CommentedFileConfiguration config) {
+    public void loadSettings(@NotNull CommentedConfigurationSection config) {
         super.loadSettings(config);
 
         this.chancePerLevel = config.getDouble("chance-per-level", 5); // 5% Chance per level
@@ -73,7 +74,7 @@ public class AugmentCallOfTheSea extends Augment {
      * @param config The configuration file to save
      */
     @Override
-    public void saveSettings(@NotNull CommentedFileConfiguration config) {
+    public void saveSettings(@NotNull CommentedConfigurationSection config) {
         super.saveSettings(config);
 
         config.set("chance-per-level", this.chancePerLevel);

@@ -83,7 +83,7 @@ public class TotemUpgradeRadius extends TotemUpgrade implements Configurable {
      * @param config The configuration file to load
      */
     @Override
-    public void loadSettings(@NotNull CommentedFileConfiguration config) {
+    public void loadSettings(@NotNull CommentedConfigurationSection config) {
         this.tiers.clear();
 
         CommentedConfigurationSection tiers = config.getConfigurationSection("tiers");
@@ -115,7 +115,7 @@ public class TotemUpgradeRadius extends TotemUpgrade implements Configurable {
      * @param config The configuration file to save
      */
     @Override
-    public void saveSettings(@NotNull CommentedFileConfiguration config) {
+    public void saveSettings(@NotNull CommentedConfigurationSection config) {
         this.tiers.forEach((level, tier) -> {
             CommentedConfigurationSection section = config.createSection("tiers." + level);
             section.set("currency", tier.cost().currency().name());

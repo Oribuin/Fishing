@@ -1,6 +1,8 @@
 package xyz.oribuin.fishing.api.config;
 
+import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.FishingPlugin;
 
@@ -23,7 +25,7 @@ public interface Configurable {
      *
      * @param config The configuration file to load
      */
-    default void loadSettings(@NotNull CommentedFileConfiguration config) {
+    default void loadSettings(@NotNull CommentedConfigurationSection config) {
         // Empty function
     }
 
@@ -33,7 +35,7 @@ public interface Configurable {
      *
      * @param config The configuration file to save
      */
-    default void saveSettings(@NotNull CommentedFileConfiguration config) {
+    default void saveSettings(@NotNull CommentedConfigurationSection config) {
         // Empty function
     }
 
@@ -78,9 +80,10 @@ public interface Configurable {
 
             // Create the file if it doesn't exist, set the defaults
             if (!targetFile.exists()) {
-                targetFile.mkdir();
-                targetFile.createNewFile();
+                this.createFile(targetFile);
                 addDefaults = true;
+
+                Bukkit.getLogger().info("[Fishing]: Created a new file at path " + this.configPath());
             }
 
             // Load the configuration file
@@ -91,9 +94,29 @@ public interface Configurable {
             }
 
             this.loadSettings(config);
-        } catch (IOException ex) {
-            plugin.getLogger().warning("Configurable: There was an error loading the config file at path " + this.configPath());
+        } catch (Exception ex) {
+            plugin.getLogger().warning("Configurable: There was an error loading the config file at path " + this.configPath() + ": " + ex.getMessage());
         }
+    }
+
+    /**
+     * Create a file in the designated path
+     *
+     * @param target The file to create
+     *
+     * @throws IOException If the file could not be created
+     */
+    private void createFile(File target) throws IOException {
+
+        // Add all the parent folders if they don't exist
+        for (File parent = target.getParentFile(); parent != null; parent = parent.getParentFile()) {
+            if (!parent.exists()) {
+                parent.mkdirs();
+            }
+        }
+
+        // Create the file
+        target.createNewFile();
     }
 
 }

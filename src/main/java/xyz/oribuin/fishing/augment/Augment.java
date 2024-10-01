@@ -1,10 +1,10 @@
 package xyz.oribuin.fishing.augment;
 
+import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.config.Configurable;
@@ -12,6 +12,7 @@ import xyz.oribuin.fishing.api.event.FishEventHandler;
 import xyz.oribuin.fishing.util.ItemConstruct;
 
 import java.nio.file.Path;
+import java.util.List;
 
 public abstract class Augment extends FishEventHandler implements Listener, Configurable {
 
@@ -19,7 +20,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
 
     protected final String name;
     protected String description;
-    protected ItemStack displayItem;
+    protected ItemConstruct displayItem;
     protected int maxLevel;
     protected int requiredLevel;
     protected boolean enabled;
@@ -31,11 +32,12 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      * @param description The description of the augment
      */
     public Augment(String name, String description) {
+        this.enabled = true;
         this.name = name;
         this.description = description;
         this.maxLevel = 1;
         this.requiredLevel = 1;
-        this.enabled = true;
+        this.displayItem = ItemConstruct.EMPTY;
     }
 
     /**
@@ -64,12 +66,17 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      * @param config The configuration file to save
      */
     @Override
-    public void saveSettings(@NotNull CommentedFileConfiguration config) {
+    public void saveSettings(@NotNull CommentedConfigurationSection config) {
+        config.addComments(this.comments().toArray(new String[0]));
         config.set("enabled", this.enabled);
         config.set("max-level", this.maxLevel);
         config.set("required-level", this.requiredLevel);
         config.set("description", this.description);
-        config.set("display-item", this.displayItem); // TODO: Add FishUtils#serialize, add ItemSerializable Object
+
+        CommentedConfigurationSection section = config.getConfigurationSection("display-item");
+        if (section == null) section = config.createSection("display-item");
+
+        this.displayItem.serialize(section); // Serialize the display item
     }
 
     /**
@@ -78,7 +85,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      * @param config The configuration file to load
      */
     @Override
-    public void loadSettings(@NotNull CommentedFileConfiguration config) {
+    public void loadSettings(@NotNull CommentedConfigurationSection config) {
         this.enabled = config.getBoolean("enabled", true);
         this.maxLevel = config.getInt("max-level", 1);
         this.requiredLevel = config.getInt("required-level", 1);
@@ -90,7 +97,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
             return;
         }
 
-        this.displayItem = construct.build(this.placeholders());
+        this.displayItem = construct;
     }
 
     /**
@@ -100,6 +107,16 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      */
     public StringPlaceholders placeholders() {
         return StringPlaceholders.empty();
+    }
+
+    /**
+     * The comments to be generated at the top of the file when it is created
+     *
+     * @return The comments
+     */
+    @Override
+    public List<String> comments() {
+        return this.description.isEmpty() ? List.of("No Description") : List.of(this.description);
     }
 
     /**
@@ -144,7 +161,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
     /**
      * @return The display item of the augment
      */
-    public final ItemStack displayItem() {
+    public final ItemConstruct displayItem() {
         return displayItem;
     }
 
@@ -153,7 +170,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      *
      * @param displayItem The display item of the augment
      */
-    public final void displayItem(ItemStack displayItem) {
+    public final void displayItem(ItemConstruct displayItem) {
         this.displayItem = displayItem;
     }
 

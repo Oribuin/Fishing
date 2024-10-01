@@ -1,21 +1,30 @@
 package xyz.oribuin.fishing.fish;
 
+import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.HexUtils;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.StringUtils;
+import org.bukkit.World;
+import org.bukkit.block.Biome;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.FishingPlugin;
+import xyz.oribuin.fishing.api.config.Configurable;
 import xyz.oribuin.fishing.fish.condition.Condition;
+import xyz.oribuin.fishing.fish.condition.Time;
+import xyz.oribuin.fishing.fish.condition.Weather;
 import xyz.oribuin.fishing.manager.TierManager;
 import xyz.oribuin.fishing.storage.util.PersistKeys;
+import xyz.oribuin.fishing.util.FishUtils;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Fish {
+public class Fish implements Configurable {
 
     private final String name; // The name of the fish
     private final String tier; // The tier of the fish
@@ -44,6 +53,84 @@ public class Fish {
     }
 
     /**
+     * Load the settings from the configuration file
+     * I would recommend always super calling this method to save any settings that could be implemented
+     *
+     * @param config The configuration file to load
+     */
+    @Override
+    public void loadSettings(@NotNull CommentedConfigurationSection config) {
+        String name = config.getString(this.name + "name");
+        String tier = config.getString(this.name + "tier");
+
+        // Make sure the name is not null
+        if (this.name == null || this.tier == null) {
+            FishingPlugin.get().getLogger().warning("'name' is null for fish");
+            return;
+        }
+
+        // Load additional values from the config
+        Fish fish = new Fish(name, tier);
+
+        // Catch Conditions
+        this.displayName = config.getString("display-name", name);
+        this.description = config.getStringList("description");
+        this.modelData = config.getInt("model-data", -1);
+
+        // Catch Conditions
+        Condition condition = new Condition();
+        condition.biomes(FishUtils.getEnumList(Biome.class, config.getStringList("biomes")));
+        condition.weather(FishUtils.getEnum(Weather.class, config.getString("weather")));
+        condition.time(FishUtils.getEnum(Time.class, config.getString("time")));
+        condition.worlds(config.getStringList("worlds"));
+        condition.environment(FishUtils.getEnum(World.Environment.class, config.getString("environment")));
+        condition.waterDepth((Integer) config.get("water-depth"));
+        condition.iceFishing(config.getBoolean("ice-fishing"));
+        condition.lightLevel((Integer) config.get("light-level"));
+        condition.height(FishUtils.getHeight(config.getString("height")));
+        fish.condition(condition);
+    }
+
+    /**
+     * Save the configuration file for the configurable class
+     * I would recommend always super calling this method to save any settings that could be implemented
+     *
+     * @param config The configuration file to save
+     */
+    @Override
+    public void saveSettings(@NotNull CommentedConfigurationSection config) {
+        config.set(this.name + ".name", this.name);
+        config.set(this.name + ".tier", this.tier);
+        config.set(this.name + ".display-name", this.displayName);
+        config.set(this.name + ".description", this.description);
+        config.set(this.name + ".model-data", this.modelData);
+
+        // Conditions for the fish
+        config.set(this.name + ".biomes", this.condition.biomes().stream().map(Enum::name).toList());
+        config.set(this.name + ".worlds", this.condition.worlds());
+        config.set(this.name + ".ice-fishing", this.condition.iceFishing());
+
+        // ugly :)
+        if (this.condition.weather() != null) config.set(this.name + ".weather", this.condition.weather().name());
+        if (this.condition.time() != null) config.set(this.name + ".time", this.condition.time().name());
+        if (this.condition.environment() != null) config.set(this.name + ".environment", this.condition.environment().name());
+        if (this.condition.waterDepth() != null) config.set(this.name + ".water-depth", this.condition.waterDepth());
+        if (this.condition.lightLevel() != null) config.set(this.name + ".light-level", this.condition.lightLevel());
+        if (this.condition.height() != null) config.set(this.name + ".height", this.condition.height().getLeft() + "-" + condition.height().getRight());
+    }
+
+    /**
+     * The path to the configuration file to be loaded. All paths will be relative to the {@link #parentFolder()},
+     * If you wish to overwrite this functionality, override the {@link #parentFolder()} method
+     *
+     * @return The path
+     */
+    @Override
+    public @NotNull Path configPath() {
+        return this.tier().tierFile().toPath();
+    }
+
+    /**
      * Create and obtain the itemstack of the fish, We only want to cache the itemstack if it's been used
      *
      * @return The item stack of the fish
@@ -57,7 +144,7 @@ public class Fish {
         if (fishTier == null) return null;
 
         // Add all the information to the item stack
-        ItemStack itemStack = fishTier.baseDisplay().clone();
+        ItemStack itemStack = fishTier.baseDisplay().build();
         itemStack.editMeta(itemMeta -> {
             itemMeta.displayName(Component.text(HexUtils.colorify(this.displayName)));
             itemMeta.setCustomModelData(this.modelData);
@@ -128,5 +215,6 @@ public class Fish {
     public void condition(Condition condition) {
         this.condition = condition;
     }
+
 
 }
