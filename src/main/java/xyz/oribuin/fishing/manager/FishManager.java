@@ -98,7 +98,6 @@ public class FishManager extends Manager {
         List<Fish> result = new ArrayList<>();
         Map<Augment, Integer> augments = AugmentManager.getAugments(rod);
 
-        // TODO: Check for augments on the fishing rod
         InitialFishCatchEvent event = new InitialFishCatchEvent(player, rod, hook);
         event.callEvent();
 

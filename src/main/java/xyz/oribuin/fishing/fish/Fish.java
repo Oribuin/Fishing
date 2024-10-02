@@ -60,20 +60,11 @@ public class Fish implements Configurable {
      */
     @Override
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        String name = config.getString(this.name + "name");
-        String tier = config.getString(this.name + "tier");
-
-        // Make sure the name is not null
-        if (this.name == null || this.tier == null) {
-            FishingPlugin.get().getLogger().warning("'name' is null for fish");
-            return;
-        }
-
-        // Load additional values from the config
         Fish fish = new Fish(name, tier);
+        System.out.println("Loading fish: " + name);
 
         // Catch Conditions
-        this.displayName = config.getString("display-name", name);
+        this.displayName = config.getString("display-name", StringUtils.capitalize(this.name));
         this.description = config.getStringList("description");
         this.modelData = config.getInt("model-data", -1);
 
