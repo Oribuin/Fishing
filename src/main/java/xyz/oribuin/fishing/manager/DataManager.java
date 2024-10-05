@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 public class DataManager extends AbstractDataManager {
 
@@ -25,6 +24,25 @@ public class DataManager extends AbstractDataManager {
         super(rosePlugin);
     }
 
+    /**
+     * Get a user's data from the cache or database if not found
+     *
+     * @param uuid The user's UUID
+     *
+     * @return The user's data
+     */
+    public Fisher get(UUID uuid) {
+        return this.userData.computeIfAbsent(uuid, x -> {
+            this.loadUser(uuid);
+            return null;
+        });
+    }
+
+    /**
+     * Save a user's data to the database and cache
+     *
+     * @param fisher The user to save
+     */
     public void saveUser(Fisher fisher) {
         this.userData.put(fisher.uuid(), fisher);
 
@@ -45,6 +63,11 @@ public class DataManager extends AbstractDataManager {
         }));
     }
 
+    /**
+     * Get a user's data from the cache
+     *
+     * @param uuid The user's UUID
+     */
     public void loadUser(UUID uuid) {
         this.async(() -> this.databaseConnector.connect(connection -> {
             String query = "SELECT * FROM " + this.getTablePrefix() + "users WHERE uuid = ?";
@@ -82,6 +105,7 @@ public class DataManager extends AbstractDataManager {
         this.rosePlugin.getServer().getScheduler().runTaskAsynchronously(this.rosePlugin, runnable);
     }
 
-    private record PlayerSkills(Map<String, Integer> skills) {}
+    private record PlayerSkills(Map<String, Integer> skills) {
+    }
 
 }

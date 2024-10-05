@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import xyz.oribuin.fishing.api.event.FishGenerateEvent;
 import xyz.oribuin.fishing.api.event.InitialFishCatchEvent;
 import xyz.oribuin.fishing.augment.Augment;
+import xyz.oribuin.fishing.augment.AugmentRegistry;
 import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.fish.Tier;
 
@@ -96,7 +97,7 @@ public class FishManager extends Manager {
      */
     public List<Fish> tryCatch(Player player, ItemStack rod, FishHook hook) {
         List<Fish> result = new ArrayList<>();
-        Map<Augment, Integer> augments = AugmentManager.getAugments(rod);
+        Map<Augment, Integer> augments = AugmentRegistry.from(rod);
 
         InitialFishCatchEvent event = new InitialFishCatchEvent(player, rod, hook);
         event.callEvent();
@@ -106,9 +107,6 @@ public class FishManager extends Manager {
 
         // Cancel the event if it is cancelled
         if (event.isCancelled()) return result;
-
-        // TODO: Provide the player with entropy on catch, sometimes
-        // TODO: Give statistics to the player
 
         for (int i = 0; i < event.getAmountToCatch(); i++) {
             result.add(this.generateFish(player, rod, hook));

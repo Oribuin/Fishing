@@ -1,10 +1,8 @@
 package xyz.oribuin.fishing.manager;
 
 import dev.rosewood.rosegarden.RosePlugin;
-import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.manager.Manager;
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
 import xyz.oribuin.fishing.fish.Tier;
 import xyz.oribuin.fishing.util.FishUtils;
@@ -28,21 +26,23 @@ public class TierManager extends Manager {
 
     @Override
     public void reload() {
-        File qualityFile = FishUtils.createFile(this.rosePlugin, "tiers.yml");
-        this.config = CommentedFileConfiguration.loadConfiguration(qualityFile);
-        CommentedConfigurationSection section = this.config.getConfigurationSection("tiers");
+        File tierFolder = FishUtils.createFile(this.rosePlugin, new File(this.rosePlugin.getDataFolder(), "tiers"));
 
-        // Make sure the section is not null
-        if (section == null) {
-            this.rosePlugin.getLogger().severe("No tiers have been found in the tiers.yml configuration file, Please double check your configuration file.");
-            Bukkit.getPluginManager().disablePlugin(this.rosePlugin);
-            return;
+        // Load all the tiers from the config files in the folder
+        File[] content = tierFolder.listFiles();
+        if (content == null) {
+            FishUtils.createFile(this.rosePlugin, "tiers", "bronze.yml");
+            content = tierFolder.listFiles();
         }
 
-        // Load all the tiers from the configuration file
-        for (String key : section.getKeys(false)) {
-            Tier tier = this.load(key);
-            if (tier == null) continue;
+        if (content == null) return;
+
+        for (File file : content) {
+            if (file.isDirectory()) return; // we're not subdirectoring
+            if (!file.getName().endsWith(".yml")) return; // it's not a yml file
+
+            Tier tier = new Tier(file.getName().replace(".yml", ""));
+            tier.reload(); // Load the tier settings
 
             this.tiers.put(tier.name(), tier);
         }
@@ -68,25 +68,6 @@ public class TierManager extends Manager {
                 .filter(x -> chance <= x.chance())
                 .findFirst()
                 .orElse(null);
-    }
-
-    /**
-     * Load a tier from the configuration file
-     *
-     * @param key The key to load
-     *
-     * @return The loaded tier
-     */
-    public Tier load(String key) {
-        CommentedConfigurationSection section = this.config.getConfigurationSection("tiers." + key.toLowerCase());
-        if (section == null) {
-            this.rosePlugin.getLogger().severe("Failed to load the tier: " + key + ". Section is null.");
-            return null;
-        }
-
-        Tier tier = new Tier(key.toLowerCase());
-        tier.loadSettings(section);
-        return tier;
     }
 
     public Tier get(String key) {

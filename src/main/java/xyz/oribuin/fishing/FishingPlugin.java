@@ -4,14 +4,15 @@ import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.manager.Manager;
 import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.NotNull;
+import xyz.oribuin.fishing.augment.AugmentRegistry;
 import xyz.oribuin.fishing.listener.FishListener;
-import xyz.oribuin.fishing.manager.AugmentManager;
 import xyz.oribuin.fishing.manager.CommandManager;
 import xyz.oribuin.fishing.manager.ConfigurationManager;
 import xyz.oribuin.fishing.manager.DataManager;
 import xyz.oribuin.fishing.manager.FishManager;
 import xyz.oribuin.fishing.manager.LocaleManager;
 import xyz.oribuin.fishing.manager.TierManager;
+import xyz.oribuin.fishing.skill.SkillRegistry;
 
 import java.util.List;
 
@@ -38,6 +39,9 @@ public class FishingPlugin extends RosePlugin {
     public void enable() {
         PluginManager manager = this.getServer().getPluginManager();
         manager.registerEvents(new FishListener(this), this);
+
+        SkillRegistry.init();
+        AugmentRegistry.init();
     }
 
     @Override
@@ -47,7 +51,7 @@ public class FishingPlugin extends RosePlugin {
 
     @Override
     protected @NotNull List<Class<? extends Manager>> getManagerLoadPriority() {
-        return List.of(TierManager.class, FishManager.class, AugmentManager.class);
+        return List.of(TierManager.class, FishManager.class);
     }
 
 }

@@ -27,11 +27,33 @@ public class Fisher {
     }
 
     /**
+     * Level up the player if they have enough experience
+     *
+     * @return If the player leveled up
+     */
+    public boolean levelUp() {
+        int requiredExp = this.requiredExp(); // Get the required experience to level up
+        this.experience -= requiredExp; // Remove the required experience from the player
+        this.level++;
+        this.skillPoints++;
+        return true;
+    }
+
+    /**
+     * Check if the player can level up based on the current experience
+     *
+     * @return If the player can level up
+     */
+    public boolean canLevelUp() {
+        return this.experience >= this.requiredExp();
+    }
+
+    /**
      * Check the required experience to level up based on the current level
      *
      * @return The required experience to level up
      */
-    public int getXpToNextLevel() {
+    public int requiredExp() {
         StringPlaceholders placeholders = StringPlaceholders.of("level", this.level);
         return (int) FishUtils.evaluate(placeholders.apply(Setting.REQUIRED_XP_FORMULA.getString()));
     }

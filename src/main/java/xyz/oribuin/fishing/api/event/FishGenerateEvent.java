@@ -12,9 +12,9 @@ import org.jetbrains.annotations.Nullable;
 import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.condition.ConditionProvider;
 import xyz.oribuin.fishing.augment.Augment;
+import xyz.oribuin.fishing.augment.AugmentRegistry;
 import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.fish.Tier;
-import xyz.oribuin.fishing.manager.AugmentManager;
 import xyz.oribuin.fishing.manager.FishManager;
 import xyz.oribuin.fishing.manager.TierManager;
 import xyz.oribuin.fishing.util.FishUtils;
@@ -66,7 +66,7 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
      * @return The list of augments used
      */
     public Map<Augment, Integer> augments() {
-        return AugmentManager.getAugments(this.rod);
+        return AugmentRegistry.from(this.rod);
     }
 
     /**

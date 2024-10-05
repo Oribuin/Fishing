@@ -1,7 +1,6 @@
 package xyz.oribuin.fishing.augment;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.Listener;
@@ -15,8 +14,6 @@ import java.nio.file.Path;
 import java.util.List;
 
 public abstract class Augment extends FishEventHandler implements Listener, Configurable {
-
-    public static NamespacedKey AUGMENTS_KEY = new NamespacedKey(FishingPlugin.get(), "augments");
 
     protected final String name;
     protected String description;
@@ -98,6 +95,15 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
         }
 
         this.displayItem = construct;
+    }
+
+    /**
+     * Get the namespace key for the augment
+     *
+     * @return The namespace key
+     */
+    public NamespacedKey key() {
+        return new NamespacedKey(FishingPlugin.get(), this.name);
     }
 
     /**

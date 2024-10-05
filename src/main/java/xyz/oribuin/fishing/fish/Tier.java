@@ -10,6 +10,8 @@ import xyz.oribuin.fishing.util.ItemConstruct;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -25,8 +27,9 @@ public class Tier implements Configurable {
     private double money;
     private double chance;
     private int entropy;
-    private float fishExp;
+    private int fishExp;
     private float naturalExp;
+    private Map<String, Fish> fish;
 
     /**
      * Create a new quality name for a fish, Creates a new file for the quality
@@ -40,6 +43,7 @@ public class Tier implements Configurable {
         this.baseDisplay = ItemConstruct.EMPTY;
         this.tierFile = FishUtils.createFile(FishingPlugin.get(), "tiers", name + ".yml");
         this.config = CommentedFileConfiguration.loadConfiguration(this.tierFile);
+        this.fish = new HashMap<>();
     }
 
     /**
@@ -55,11 +59,12 @@ public class Tier implements Configurable {
         this.money = 0.0;
         this.chance = 0.0;
         this.entropy = 0;
-        this.fishExp = 0.0f;
+        this.fishExp = 0;
         this.naturalExp = 0.0f;
         this.baseDisplay = ItemConstruct.EMPTY;
         this.tierFile = tierFile;
         this.config = CommentedFileConfiguration.loadConfiguration(this.tierFile);
+        this.fish = new HashMap<>();
     }
 
     /**
@@ -74,8 +79,21 @@ public class Tier implements Configurable {
         this.chance = config.getDouble("chance", 0.0);
         this.entropy = config.getInt("entropy", 0);
         this.baseDisplay = ItemConstruct.deserialize(config.getConfigurationSection("display"));
-        this.fishExp = (float) config.getDouble("fish-exp", 0.0);
+        this.fishExp = config.getInt("fish-exp", 0);
         this.naturalExp = (float) config.getDouble("natural-exp", 0.0);
+
+        CommentedConfigurationSection section = config.getConfigurationSection("fish");
+        if (section == null) return;
+
+        // Load all the fish from the config
+        for (String key : section.getKeys(false)) {
+            CommentedConfigurationSection fishSection = section.getConfigurationSection(key);
+            if (fishSection == null) continue;
+
+            Fish fish = new Fish(key, this.name);
+            fish.loadSettings(fishSection);
+            this.fish.put(key, fish);
+        }
     }
 
     /**
@@ -93,6 +111,16 @@ public class Tier implements Configurable {
         config.set("natural-exp", this.naturalExp);
 
         this.baseDisplay.serialize(config);
+
+        CommentedConfigurationSection section = config.getConfigurationSection("fish");
+        if (section == null) section = config.createSection("fish");
+
+        // Save all the fish from the config
+        for (Map.Entry<String, Fish> entry : this.fish.entrySet()) {
+            CommentedConfigurationSection fishSection = section.getConfigurationSection(entry.getKey());
+            if (fishSection == null) fishSection = section.createSection(entry.getKey());
+            entry.getValue().saveSettings(fishSection);
+        }
     }
 
     /**
@@ -142,11 +170,11 @@ public class Tier implements Configurable {
         this.baseDisplay = baseDisplay != null ? baseDisplay : ItemConstruct.EMPTY;
     }
 
-    public float fishExp() {
+    public int fishExp() {
         return fishExp;
     }
 
-    public void fishExp(float fishExp) {
+    public void fishExp(int fishExp) {
         this.fishExp = fishExp;
     }
 

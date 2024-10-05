@@ -7,15 +7,14 @@ import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import xyz.oribuin.fishing.FishingPlugin;
+import xyz.oribuin.fishing.api.event.FishCatchEvent;
 import xyz.oribuin.fishing.fish.Fish;
-import xyz.oribuin.fishing.fish.Tier;
 import xyz.oribuin.fishing.manager.DataManager;
 import xyz.oribuin.fishing.manager.FishManager;
 import xyz.oribuin.fishing.manager.LocaleManager;
 import xyz.oribuin.fishing.storage.Fisher;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class FishListener implements Listener {
 
@@ -39,25 +38,23 @@ public class FishListener implements Listener {
         List<Fish> caught = manager.tryCatch(event.getPlayer(), hand, event.getHook());
         if (caught.isEmpty()) return;
 
-        // TODO: Run the augments for the fishing rod
-        // TODO: Augment: Increase xp when catching fish
-        // TODO: Reward player with entropy on catch, sometimes
-
         // Add the fish into the player inventory
         double baseExpGained = event.getExpToDrop();
         double naturalExp = 0.0;
-        double newFishExp = 0.0;
+        int newFishExp = 0;
         int newEntropy = 0;
 
         for (Fish fish : caught) {
             if (fish == null) continue;
 
-            Tier tier = fish.tier();
-            if (fish.tier() == null) continue;
+            FishCatchEvent fishCatchEvent = new FishCatchEvent(event.getPlayer(), hand, event.getHook(), fish);
+            fishCatchEvent.callEvent();
+            if (fishCatchEvent.isCancelled()) continue; // If the event is cancelled, do nothing
 
-            naturalExp += baseExpGained * tier.naturalExp();
-            newFishExp += tier.fishExp();
-            newEntropy += tier.entropy();
+            // Use the event values because they could have been modified
+            naturalExp += baseExpGained * fishCatchEvent.getNaturalExp();
+            newFishExp += fishCatchEvent.getFishExp();
+            newEntropy += fishCatchEvent.getEntropy();
 
             // Tell the player they caught a fish
             locale.sendMessage(event.getPlayer(), "fish-caught", StringPlaceholders.of("fish", fish.displayName()));
@@ -72,14 +69,21 @@ public class FishListener implements Listener {
             inv.addItem(fish.createItemStack());
         }
 
-        // Apply more exp to the player
+        Fisher fisher = this.plugin.getManager(DataManager.class).get(event.getPlayer().getUniqueId());
+        if (fisher == null) return;
+
+        // Append the new exp and entropy to the player
         event.setExpToDrop((int) naturalExp);
+        fisher.experience(fisher.experience() + newFishExp);
+        fisher.entropy(fisher.entropy() + newEntropy);
 
-        // TODO: Give the player entropy
-        // TODO: Give the player statistics
+        // Level up the player if they have enough experience
+        if (fisher.canLevelUp()) {
+            fisher.levelUp(); // Level up the player
 
-//        Fisher fisher = this.plugin.getManager(DataManager.class).get
-
+            // Tell the player they leveled up
+            event.getPlayer().sendMessage("You leveled up! You are now level " + fisher.level() + "!"); // TODO: Replace with locale message
+        }
     }
 
 }
