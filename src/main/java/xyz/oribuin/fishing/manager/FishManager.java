@@ -16,13 +16,12 @@ import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.fish.Tier;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class FishManager extends Manager {
 
-    private final Map<String, Fish> fishTypes = new HashMap<>();
+    //    private final Map<String, Fish> fishTypes = new HashMap<>();
 
     public FishManager(RosePlugin rosePlugin) {
         super(rosePlugin);
@@ -30,33 +29,33 @@ public class FishManager extends Manager {
 
     @Override
     public void reload() {
-        this.rosePlugin.getManager(TierManager.class)
-                .getTiers()
-                .forEach((s, tier) -> {
-                    CommentedFileConfiguration config = tier.config();
-                    CommentedConfigurationSection section = config.getConfigurationSection("fish");
-
-                    // Make sure the section is not null
-                    if (section == null) {
-                        this.rosePlugin.getLogger().warning("No fish have been found in the " + tier.name() + " tier configuration file. Creating default fish.");
-                        section = config.createSection("fish");
-
-                        Fish defaultFish = new Fish(tier.name() + "-default", tier.name());
-                        defaultFish.saveSettings(section);
-
-                        try {
-                            config.save(tier.tierFile());
-                        } catch (Exception e) {
-                            this.rosePlugin.getLogger().warning("Failed to save default fish to the " + tier.name() + " tier configuration file.");
-                        }
-                    }
-
-                    // Load all the fish from the config
-                    section.getKeys(false).forEach(key -> {
-                        Fish fish = this.load(config, tier, key);
-                        if (fish != null) this.fishTypes.put(key, fish);
-                    });
-                });
+        //        this.rosePlugin.getManager(TierManager.class)
+        //                .getTiers()
+        //                .forEach((s, tier) -> {
+        //                    CommentedFileConfiguration config = tier.config();
+        //                    CommentedConfigurationSection section = config.getConfigurationSection("fish");
+        //
+        //                     Make sure the section is not null
+        //                    if (section == null) {
+        //                        this.rosePlugin.getLogger().warning("No fish have been found in the " + tier.name() + " tier configuration file. Creating default fish.");
+        //                        section = config.createSection("fish");
+        //
+        //                        Fish defaultFish = new Fish(tier.name() + "-default", tier.name());
+        //                        defaultFish.saveSettings(section);
+        //
+        //                        try {
+        //                            config.save(tier.tierFile());
+        //                        } catch (Exception e) {
+        //                            this.rosePlugin.getLogger().warning("Failed to save default fish to the " + tier.name() + " tier configuration file.");
+        //                        }
+        //                    }
+        //
+        //                     Load all the fish from the config
+        //                    section.getKeys(false).forEach(key -> {
+        //                        Fish fish = this.load(config, tier, key);
+        //                        if (fish != null) this.fishTypes.put(key, fish);
+        //                    });
+        //                });
     }
 
     /**
@@ -136,24 +135,6 @@ public class FishManager extends Manager {
     @Override
     public void disable() {
 
-    }
-
-    /**
-     * Get all the fish in a specific tier of fish
-     *
-     * @param tier The tier of fish
-     *
-     * @return The list of fish in the tier
-     */
-    public List<Fish> getFishByTier(Tier tier) {
-        return this.fishTypes.values()
-                .stream()
-                .filter(fish -> fish.tierName().equalsIgnoreCase(tier.name()))
-                .toList();
-    }
-
-    public Map<String, Fish> getFishTypes() {
-        return fishTypes;
     }
 
 }

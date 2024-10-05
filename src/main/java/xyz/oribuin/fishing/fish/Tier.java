@@ -78,7 +78,7 @@ public class Tier implements Configurable {
         this.money = config.getDouble("money", 0.0);
         this.chance = config.getDouble("chance", 0.0);
         this.entropy = config.getInt("entropy", 0);
-        this.baseDisplay = ItemConstruct.deserialize(config.getConfigurationSection("display"));
+        this.baseDisplay = ItemConstruct.deserialize(config.getConfigurationSection("display-item"));
         this.fishExp = config.getInt("fish-exp", 0);
         this.naturalExp = (float) config.getDouble("natural-exp", 0.0);
 
@@ -110,15 +110,14 @@ public class Tier implements Configurable {
         config.set("fish-exp", this.fishExp);
         config.set("natural-exp", this.naturalExp);
 
-        this.baseDisplay.serialize(config);
-
-        CommentedConfigurationSection section = config.getConfigurationSection("fish");
-        if (section == null) section = config.createSection("fish");
+        CommentedConfigurationSection itemSection = config.getConfigurationSection("display-item");
+        if (itemSection == null) itemSection = config.createSection("display-item");
+        this.baseDisplay.serialize(itemSection);
 
         // Save all the fish from the config
         for (Map.Entry<String, Fish> entry : this.fish.entrySet()) {
-            CommentedConfigurationSection fishSection = section.getConfigurationSection(entry.getKey());
-            if (fishSection == null) fishSection = section.createSection(entry.getKey());
+            CommentedConfigurationSection fishSection = config.getConfigurationSection("fish." + entry.getKey());
+            if (fishSection == null) fishSection = config.createSection("fish." + entry.getKey());
             entry.getValue().saveSettings(fishSection);
         }
     }
@@ -136,6 +135,14 @@ public class Tier implements Configurable {
 
     public String name() {
         return name;
+    }
+
+    public Map<String, Fish> fish() {
+        return this.fish;
+    }
+
+    public void fish(Map<String, Fish> fish) {
+        this.fish = fish;
     }
 
     public double money() {

@@ -6,6 +6,7 @@ import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.augment.AugmentRegistry;
 import xyz.oribuin.fishing.listener.FishListener;
+import xyz.oribuin.fishing.listener.PlayerListeners;
 import xyz.oribuin.fishing.manager.CommandManager;
 import xyz.oribuin.fishing.manager.ConfigurationManager;
 import xyz.oribuin.fishing.manager.DataManager;
@@ -39,6 +40,7 @@ public class FishingPlugin extends RosePlugin {
     public void enable() {
         PluginManager manager = this.getServer().getPluginManager();
         manager.registerEvents(new FishListener(this), this);
+        manager.registerEvents(new PlayerListeners(this), this);
 
         SkillRegistry.init();
         AugmentRegistry.init();

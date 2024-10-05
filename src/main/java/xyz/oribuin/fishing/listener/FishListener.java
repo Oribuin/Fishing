@@ -81,6 +81,8 @@ public class FishListener implements Listener {
         if (fisher.canLevelUp()) {
             fisher.levelUp(); // Level up the player
 
+            this.plugin.getManager(DataManager.class).saveUser(fisher); // Save the player data on levelup
+
             // Tell the player they leveled up
             event.getPlayer().sendMessage("You leveled up! You are now level " + fisher.level() + "!"); // TODO: Replace with locale message
         }

@@ -54,12 +54,14 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
      * Adds an increase to the base chance of the fish
      *
      * @param increase The increase to add
+     *
      * @return The new chance
      */
     public double addIncrease(double increase) {
         this.chanceIncreases.add(increase);
         return this.baseChance + increase;
     }
+
     /**
      * Pulls the list of augments that a player has equipped on their fishing rod.
      *
@@ -75,7 +77,6 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
      * Scans for each rarity from the highest rarity -> lowest rarity
      */
     public void generate() {
-        FishManager fishProvider = FishingPlugin.get().getManager(FishManager.class);
         TierManager tierProvider = FishingPlugin.get().getManager(TierManager.class);
 
         // Obtain the quality of the
@@ -88,15 +89,14 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
         if (quality == null) return;
 
         // Make sure the quality is not null
-        List<Fish> fishList = fishProvider.getFishByTier(quality)
-                .stream()
-                .filter(f ->  ConditionProvider.check(f, player, rod, hook))
+        List<Fish> canCatch = quality.fish().values().stream()
+                .filter(x -> ConditionProvider.check(x, player, rod, hook))
                 .toList();
 
-        if (fishList.isEmpty()) return;
+        if (canCatch.isEmpty()) return;
 
         // Pick a random fish from the list
-        this.fish = fishList.get(FishUtils.RANDOM.nextInt(fishList.size()));
+        this.fish = canCatch.get(FishUtils.RANDOM.nextInt(canCatch.size()));
     }
 
     public @NotNull ItemStack getRod() {

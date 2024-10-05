@@ -61,7 +61,6 @@ public class Fish implements Configurable {
     @Override
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
         Fish fish = new Fish(name, tier);
-        System.out.println("Loading fish: " + name);
 
         // Catch Conditions
         this.displayName = config.getString("display-name", StringUtils.capitalize(this.name));
@@ -91,7 +90,6 @@ public class Fish implements Configurable {
     @Override
     public void saveSettings(@NotNull CommentedConfigurationSection config) {
         config.set(this.name + ".name", this.name);
-        config.set(this.name + ".tier", this.tier);
         config.set(this.name + ".display-name", this.displayName);
         config.set(this.name + ".description", this.description);
         config.set(this.name + ".model-data", this.modelData);
