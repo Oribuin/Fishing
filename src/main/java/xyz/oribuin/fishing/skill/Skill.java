@@ -10,8 +10,10 @@ import xyz.oribuin.fishing.api.config.Configurable;
 import xyz.oribuin.fishing.api.event.FishEventHandler;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public abstract class Skill extends FishEventHandler implements Configurable {
 
@@ -90,7 +92,8 @@ public abstract class Skill extends FishEventHandler implements Configurable {
      */
     @Override
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        this.description = config.getString("description", "No Description");
+        this.description = String.join("\n", config.getStringList("description"));
+
     }
 
     /**
@@ -100,7 +103,8 @@ public abstract class Skill extends FishEventHandler implements Configurable {
      */
     @Override
     public void saveSettings(@NotNull CommentedConfigurationSection config) {
-        config.set("description", this.description);
+        config.addComments(this.comments().toArray(new String[0]));
+        config.set("description", List.of(this.description.split("\n")));
     }
 
 }

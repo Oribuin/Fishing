@@ -26,7 +26,7 @@ public class TierManager extends Manager {
 
     @Override
     public void reload() {
-        File tierFolder = FishUtils.createFile(this.rosePlugin, new File(this.rosePlugin.getDataFolder(), "tiers"));
+        File tierFolder = new File(this.rosePlugin.getDataFolder(), "tiers");
 
         // Load all the tiers from the config files in the folder
         File[] content = tierFolder.listFiles();
@@ -38,11 +38,13 @@ public class TierManager extends Manager {
         if (content == null) return;
 
         for (File file : content) {
-            if (file.isDirectory()) return; // we're not subdirectoring
+            if (file.isDirectory()) return; // we're not subdirectories
             if (!file.getName().endsWith(".yml")) return; // it's not a yml file
 
+            CommentedFileConfiguration tierConfig = CommentedFileConfiguration.loadConfiguration(file);
+
             Tier tier = new Tier(file.getName().replace(".yml", ""));
-            tier.reload(); // Load the tier settings
+            tier.loadSettings(tierConfig); // Load the tier settings
 
             this.tiers.put(tier.name(), tier);
         }

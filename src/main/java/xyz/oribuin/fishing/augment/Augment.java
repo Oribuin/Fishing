@@ -68,7 +68,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
         config.set("enabled", this.enabled);
         config.set("max-level", this.maxLevel);
         config.set("required-level", this.requiredLevel);
-        config.set("description", this.description);
+        config.set("description", List.of(this.description.split("\n")));
 
         CommentedConfigurationSection section = config.getConfigurationSection("display-item");
         if (section == null) section = config.createSection("display-item");
@@ -86,7 +86,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
         this.enabled = config.getBoolean("enabled", true);
         this.maxLevel = config.getInt("max-level", 1);
         this.requiredLevel = config.getInt("required-level", 1);
-        this.description = config.getString("description", this.description);
+        this.description = String.join("\n", config.getStringList("description"));
 
         ItemConstruct construct = ItemConstruct.deserialize(config.getConfigurationSection("display-item"));
         if (construct == null) {
