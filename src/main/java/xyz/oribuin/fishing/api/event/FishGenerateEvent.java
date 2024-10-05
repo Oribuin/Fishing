@@ -10,12 +10,11 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xyz.oribuin.fishing.FishingPlugin;
-import xyz.oribuin.fishing.api.condition.ConditionProvider;
+import xyz.oribuin.fishing.fish.condition.ConditionRegistry;
 import xyz.oribuin.fishing.augment.Augment;
 import xyz.oribuin.fishing.augment.AugmentRegistry;
 import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.fish.Tier;
-import xyz.oribuin.fishing.manager.FishManager;
 import xyz.oribuin.fishing.manager.TierManager;
 import xyz.oribuin.fishing.util.FishUtils;
 
@@ -90,7 +89,7 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
 
         // Make sure the quality is not null
         List<Fish> canCatch = quality.fish().values().stream()
-                .filter(x -> ConditionProvider.check(x, player, rod, hook))
+                .filter(x -> ConditionRegistry.check(x, player, rod, hook))
                 .toList();
 
         if (canCatch.isEmpty()) return;

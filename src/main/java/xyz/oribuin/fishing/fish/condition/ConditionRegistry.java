@@ -1,9 +1,13 @@
-package xyz.oribuin.fishing.api.condition;
+package xyz.oribuin.fishing.fish.condition;
 
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import xyz.oribuin.fishing.api.condition.CatchCondition;
+import xyz.oribuin.fishing.api.event.ConditionCheckEvent;
+import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.fish.condition.impl.BiomeCondition;
+import xyz.oribuin.fishing.fish.condition.impl.BoatCondition;
 import xyz.oribuin.fishing.fish.condition.impl.DepthCondition;
 import xyz.oribuin.fishing.fish.condition.impl.EnvironmentCondition;
 import xyz.oribuin.fishing.fish.condition.impl.HeightCondition;
@@ -12,18 +16,17 @@ import xyz.oribuin.fishing.fish.condition.impl.LightLevelCondition;
 import xyz.oribuin.fishing.fish.condition.impl.TimeCondition;
 import xyz.oribuin.fishing.fish.condition.impl.WeatherCondition;
 import xyz.oribuin.fishing.fish.condition.impl.WorldCondition;
-import xyz.oribuin.fishing.api.event.ConditionCheckEvent;
-import xyz.oribuin.fishing.fish.Fish;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ConditionProvider {
+public class ConditionRegistry {
 
     private static final Map<String, CatchCondition> CONDITIONS = new HashMap<>();
 
     static {
         register("biome", new BiomeCondition());
+        register("boat", new BoatCondition());
         register("depth", new DepthCondition());
         register("environment", new EnvironmentCondition());
         register("height", new HeightCondition());

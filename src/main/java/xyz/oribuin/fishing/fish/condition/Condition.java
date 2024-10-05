@@ -3,6 +3,7 @@ package xyz.oribuin.fishing.fish.condition;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
+import xyz.oribuin.fishing.fish.condition.impl.BoatCondition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ public class Condition {
     private boolean iceFishing = false;
     private Pair<Integer, Integer> height = null;
     private Integer lightLevel = null;
+    private boolean boatFishing = false;
 
     public List<Biome> biomes() {
         return biomes;
@@ -101,6 +103,14 @@ public class Condition {
     public Condition lightLevel(Integer lightLevel) {
         this.lightLevel = lightLevel;
         return this;
+    }
+
+    public boolean boatFishing() {
+        return this.boatFishing;
+    }
+
+    public void boatFishing(boolean boatFishing) {
+        this.boatFishing = boatFishing;
     }
 
 }

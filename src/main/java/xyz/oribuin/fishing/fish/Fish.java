@@ -78,6 +78,7 @@ public class Fish implements Configurable {
         condition.iceFishing(config.getBoolean("ice-fishing"));
         condition.lightLevel((Integer) config.get("light-level"));
         condition.height(FishUtils.getHeight(config.getString("height")));
+        condition.boatFishing(config.getBoolean("boat-fishing"));
         fish.condition(condition);
     }
 
@@ -98,6 +99,7 @@ public class Fish implements Configurable {
         config.set(this.name + ".biomes", this.condition.biomes().stream().map(Enum::name).toList());
         config.set(this.name + ".worlds", this.condition.worlds());
         config.set(this.name + ".ice-fishing", this.condition.iceFishing());
+        config.set(this.name + "boat-fishing", this.condition.boatFishing());
 
         // ugly :)
         if (this.condition.weather() != null) config.set(this.name + ".weather", this.condition.weather().name());
