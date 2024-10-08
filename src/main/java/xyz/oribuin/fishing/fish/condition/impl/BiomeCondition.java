@@ -1,11 +1,15 @@
 package xyz.oribuin.fishing.fish.condition.impl;
 
-import org.bukkit.block.Biome;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import xyz.oribuin.biomeadapter.BiomeAdapter;
+import xyz.oribuin.biomeadapter.api.BiomeHandler;
+import xyz.oribuin.biomeadapter.api.BiomeWrapper;
 import xyz.oribuin.fishing.api.condition.CatchCondition;
 import xyz.oribuin.fishing.fish.Fish;
+
+import java.util.List;
 
 public class BiomeCondition implements CatchCondition {
 
@@ -33,8 +37,24 @@ public class BiomeCondition implements CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        Biome biome = hook.getLocation().getBlock().getBiome();
-        return fish.condition().biomes().contains(biome);
+        BiomeHandler handler = BiomeAdapter.get();
+        List<String> biomes = fish.condition().biomes();
+        boolean datapackSupported = handler != null && handler.getNoiseBiome(hook.getLocation()) != null;
+
+        // If the NMS Version is not supported, use bukkit's default biome check
+        if (!datapackSupported) {
+            return biomes.contains(hook.getLocation().getBlock().getBiome().name());
+        }
+
+        BiomeWrapper<?> biomeWrapper = handler.getNoiseBiome(hook.getLocation());
+        if (biomeWrapper == null) return false;
+
+        // If the biome is null, return false
+        String[] split = biomeWrapper.getKey().getNamespace().split(":");
+        if (split.length != 2) return false; // If the namespace is not valid, return false
+
+        // Support for "plains" or "minecraft:plains"
+        return biomes.contains(split[0]) || biomes.contains(biomeWrapper.getKey().namespace());
     }
 
 }

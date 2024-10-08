@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class Condition {
 
-    private List<Biome> biomes = new ArrayList<>();
+    private List<String> biomes = new ArrayList<>();
     private Weather weather = null;
     private Time time = Time.ALL_DAY;
     private List<String> worlds = new ArrayList<>();
@@ -24,11 +24,11 @@ public class Condition {
     private Integer lightLevel = null;
     private boolean boatFishing = false;
 
-    public List<Biome> biomes() {
+    public List<String> biomes() {
         return biomes;
     }
 
-    public Condition biomes(List<Biome> biomes) {
+    public Condition biomes(List<String> biomes) {
         this.biomes = biomes;
         return this;
     }

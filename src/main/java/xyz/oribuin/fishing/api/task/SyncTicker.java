@@ -8,7 +8,7 @@ public interface SyncTicker {
      * The method that should run everytime the task is ticked,
      * this method will be ran synchronously
      */
-    void tickAsync();
+    void tickSync();
 
     /**
      * The delay between each tick, Set to Duration#ZERO for no delay

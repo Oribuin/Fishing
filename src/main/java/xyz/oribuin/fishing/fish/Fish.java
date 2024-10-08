@@ -69,7 +69,7 @@ public class Fish implements Configurable {
 
         // Catch Conditions
         Condition condition = new Condition();
-        condition.biomes(FishUtils.getEnumList(Biome.class, config.getStringList("biomes")));
+        condition.biomes(config.getStringList("biomes"));
         condition.weather(FishUtils.getEnum(Weather.class, config.getString("weather")));
         condition.time(FishUtils.getEnum(Time.class, config.getString("time")));
         condition.worlds(config.getStringList("worlds"));

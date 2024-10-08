@@ -46,8 +46,9 @@ dependencies {
     compileOnly "com.mojang:authlib:${authLibVersion}"
     compileOnly "com.github.MilkBowl:VaultAPI:${vaultVersion}"
 
-    implementation"net.objecthunter:exp4j:${exp4jVersion}"
+    implementation "net.objecthunter:exp4j:${exp4jVersion}"
     implementation "com.jeff-media:MorePersistentDataTypes:${persistentDataTypeVersion}"
+    implementation "xyz.oribuin:biome-adapter:1.0.1"
 }
 
 shadowJar {
@@ -57,6 +58,7 @@ shadowJar {
     relocate("com.jeff_media.morepersistentdatatypes", "${project.group}.fishing.libs.persistentdatatypes")
     relocate("net.objecthunter.exp4j", "${project.group}.fishing.libs.exp4j")
     relocate("dev.triumphteam.gui", "${project.group}.fishing.libs.triumphgui")
+    relocate("xyz.oribuin.biomeadapter", "${project.group}.fishing.libs.biomeadapter")
 }
 
 // Include version replacement
