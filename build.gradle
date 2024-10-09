@@ -48,7 +48,6 @@ dependencies {
 
     implementation "net.objecthunter:exp4j:${exp4jVersion}"
     implementation "com.jeff-media:MorePersistentDataTypes:${persistentDataTypeVersion}"
-    implementation "xyz.oribuin:biome-adapter:1.0.1"
 }
 
 shadowJar {

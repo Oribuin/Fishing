@@ -1,16 +1,18 @@
 package xyz.oribuin.fishing.fish.condition.impl;
 
+import dev.rosewood.rosegarden.utils.NMSUtil;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import xyz.oribuin.biomeadapter.BiomeAdapter;
-import xyz.oribuin.biomeadapter.api.BiomeHandler;
-import xyz.oribuin.biomeadapter.api.BiomeWrapper;
 import xyz.oribuin.fishing.api.condition.CatchCondition;
 import xyz.oribuin.fishing.fish.Fish;
 
 import java.util.List;
 
+@SuppressWarnings("deprecation")
 public class BiomeCondition implements CatchCondition {
 
     /**
@@ -37,24 +39,24 @@ public class BiomeCondition implements CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        BiomeHandler handler = BiomeAdapter.get();
+        Location loc = hook.getLocation();
         List<String> biomes = fish.condition().biomes();
-        boolean datapackSupported = handler != null && handler.getNoiseBiome(hook.getLocation()) != null;
 
-        // If the NMS Version is not supported, use bukkit's default biome check
-        if (!datapackSupported) {
-            return biomes.contains(hook.getLocation().getBlock().getBiome().name());
+        // Use the old method if the server is not running paper
+        if (!NMSUtil.isPaper()) {
+            return biomes.contains(loc.getBlock().getBiome().name());
         }
 
-        BiomeWrapper<?> biomeWrapper = handler.getNoiseBiome(hook.getLocation());
-        if (biomeWrapper == null) return false;
+        // Server is running paper
+        List<NamespacedKey> biomeKeys = biomes.stream().map(NamespacedKey::fromString).toList();
+        NamespacedKey current = Bukkit.getUnsafe().getBiomeKey(
+                loc.getWorld(),
+                loc.getBlockX(),
+                loc.getBlockY(),
+                loc.getBlockZ()
+        );
 
-        // If the biome is null, return false
-        String[] split = biomeWrapper.getKey().getNamespace().split(":");
-        if (split.length != 2) return false; // If the namespace is not valid, return false
-
-        // Support for "plains" or "minecraft:plains"
-        return biomes.contains(split[0]) || biomes.contains(biomeWrapper.getKey().namespace());
+        return biomeKeys.contains(current);
     }
 
 }
