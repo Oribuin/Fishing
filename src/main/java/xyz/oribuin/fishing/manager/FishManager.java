@@ -127,7 +127,10 @@ public class FishManager extends Manager {
     private Fish generateFish(Player player, ItemStack rod, FishHook hook) {
         FishGenerateEvent event = new FishGenerateEvent(player, rod, hook);
         Bukkit.getPluginManager().callEvent(event);
+
+        event.generate();
         if (event.isCancelled()) return null;
+        if (event.getFish() == null) return null;
 
         return event.getFish();
     }

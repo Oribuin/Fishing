@@ -5,7 +5,6 @@ import dev.rosewood.rosegarden.utils.HexUtils;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.World;
-import org.bukkit.block.Biome;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -22,7 +21,6 @@ import xyz.oribuin.fishing.util.FishUtils;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class Fish implements Configurable {
 
@@ -40,10 +38,7 @@ public class Fish implements Configurable {
      * @param name The name of the fish
      * @param tier The quality of the fish
      */
-    public Fish(String name, String tier) {
-        Objects.requireNonNull(name, "Fish name cannot be null.");
-        Objects.requireNonNull(tier, "Fish tier cannot be null.");
-
+    public Fish(@NotNull String name, @NotNull String tier) {
         this.name = name;
         this.tier = tier;
         this.condition = new Condition();
@@ -96,7 +91,7 @@ public class Fish implements Configurable {
         config.set(this.name + ".model-data", this.modelData);
 
         // Conditions for the fish
-        config.set(this.name + ".biomes", this.condition.biomes().stream().map(Enum::name).toList());
+        config.set(this.name + ".biomes", this.condition.biomes());
         config.set(this.name + ".worlds", this.condition.worlds());
         config.set(this.name + ".ice-fishing", this.condition.iceFishing());
         config.set(this.name + "boat-fishing", this.condition.boatFishing());

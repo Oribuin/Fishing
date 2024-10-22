@@ -57,7 +57,6 @@ shadowJar {
     relocate("com.jeff_media.morepersistentdatatypes", "${project.group}.fishing.libs.persistentdatatypes")
     relocate("net.objecthunter.exp4j", "${project.group}.fishing.libs.exp4j")
     relocate("dev.triumphteam.gui", "${project.group}.fishing.libs.triumphgui")
-    relocate("xyz.oribuin.biomeadapter", "${project.group}.fishing.libs.biomeadapter")
 }
 
 // Include version replacement

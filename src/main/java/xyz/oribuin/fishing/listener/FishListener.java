@@ -57,7 +57,8 @@ public class FishListener implements Listener {
             newEntropy += fishCatchEvent.getEntropy();
 
             // Tell the player they caught a fish
-            locale.sendMessage(event.getPlayer(), "fish-caught", StringPlaceholders.of("fish", fish.displayName()));
+            event.getPlayer().sendMessage("You caught a " + fish.displayName() + "!"); // TODO: Replace with locale message
+//            locale.sendMessage(event.getPlayer(), "fish-caught", StringPlaceholders.of("fish", fish.displayName()));
 
             // Give the fish to the player
             PlayerInventory inv = event.getPlayer().getInventory();

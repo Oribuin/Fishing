@@ -1,13 +1,9 @@
 package xyz.oribuin.fishing.augment.impl;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.api.event.InitialFishCatchEvent;
 import xyz.oribuin.fishing.augment.Augment;
-import xyz.oribuin.fishing.api.event.FishContext;
-import xyz.oribuin.fishing.fish.Fish;
 
 public class AugmentSaturate extends Augment {
 
@@ -26,14 +22,14 @@ public class AugmentSaturate extends Augment {
      */
     @Override
     public void onInitialCatch(InitialFishCatchEvent event, int level) {
-        if (event.getPlayer().getSaturation() >= 20.0) return;
+        if (event.getPlayer().getFoodLevel() >= 20.0) return;
 
         int chanceToTrigger = (int) (this.chancePerLevel * level);
         if (Math.random() * 100 > chanceToTrigger) return;
 
-        event.getPlayer().setSaturation(20.0f);
+        event.getPlayer().setFoodLevel(20);
+        event.getPlayer().sendMessage("You have been fully saturated!");
     }
-
 
     /**
      * Load the settings from the configuration file

@@ -10,14 +10,15 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xyz.oribuin.fishing.FishingPlugin;
-import xyz.oribuin.fishing.fish.condition.ConditionRegistry;
 import xyz.oribuin.fishing.augment.Augment;
 import xyz.oribuin.fishing.augment.AugmentRegistry;
 import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.fish.Tier;
+import xyz.oribuin.fishing.fish.condition.ConditionRegistry;
 import xyz.oribuin.fishing.manager.TierManager;
 import xyz.oribuin.fishing.util.FishUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +47,7 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
         this.rod = rod;
         this.hook = hook;
         this.baseChance = FishUtils.RANDOM.nextDouble(100);
-        this.generate();
+        this.chanceIncreases = new ArrayList<>();
     }
 
     /**

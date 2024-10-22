@@ -92,8 +92,7 @@ public class ConditionRegistry {
             event.callEvent(); // Call the event
 
             if (event.isCancelled()) continue;
-            if (!event.getResult()) continue;
-            return false;
+            if (!event.getResult()) return false;
         }
 
         return true;

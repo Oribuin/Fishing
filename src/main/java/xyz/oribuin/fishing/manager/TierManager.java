@@ -53,7 +53,7 @@ public class TierManager extends Manager {
     /**
      * Get the quality of fish dependent on the chance provided, filters through all chances
      * sorted for rarest -> common, seeing if chance <= tier chance. When no tier is selected it will return null.
-     * Usually, a null tier means a player wont get a custom fish
+     * Usually, a null tier means a player won't get a custom fish
      *
      * @param chance The chance of obtaining the fish
      *

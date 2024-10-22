@@ -41,6 +41,11 @@ public class FishingPlugin extends RosePlugin {
         PluginManager manager = this.getServer().getPluginManager();
         manager.registerEvents(new FishListener(this), this);
         manager.registerEvents(new PlayerListeners(this), this);
+    }
+
+    @Override
+    public void reload() {
+        super.reload();
 
         SkillRegistry.init();
         AugmentRegistry.init();

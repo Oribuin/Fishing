@@ -4,6 +4,7 @@ import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.command.framework.BaseRoseCommand;
 import dev.rosewood.rosegarden.manager.AbstractCommandManager;
 import org.jetbrains.annotations.NotNull;
+import xyz.oribuin.fishing.command.FishCommand;
 
 import java.util.List;
 import java.util.function.Function;
@@ -16,7 +17,7 @@ public class CommandManager extends AbstractCommandManager {
 
     @Override
     public @NotNull List<Function<RosePlugin, BaseRoseCommand>> getRootCommands() {
-        return List.of();
+        return List.of(FishCommand::new);
     }
 
 }
