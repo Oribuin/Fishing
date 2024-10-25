@@ -1,11 +1,14 @@
 package xyz.oribuin.fishing.augment.impl;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
+import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.api.event.ConditionCheckEvent;
 import xyz.oribuin.fishing.augment.Augment;
 import xyz.oribuin.fishing.fish.condition.impl.BiomeCondition;
+import xyz.oribuin.fishing.util.FishUtils;
+
+import java.util.List;
 
 /**
  * The functionality of this augment is provided in BiomeCondition.java
@@ -28,20 +31,11 @@ public class AugmentBiomeDisrupt extends Augment {
     public void onConditionCheck(ConditionCheckEvent event, int level) {
         if (!(event.getCondition() instanceof BiomeCondition)) return;
 
-        if (this.shouldIgnoreBiome(level)) {
-            event.setResult(true);
-        }
-    }
+        StringPlaceholders plc = StringPlaceholders.of("level", level);
+        double chance = FishUtils.evaluate(plc.apply(this.chanceFormula));
+        if (Math.random() > chance) return;
 
-    /**
-     * Should the biome restrictions be ignored for the player
-     *
-     * @param level The level of the augment
-     *
-     * @return Results in true if the biome restrictions should be ignored
-     */
-    public boolean shouldIgnoreBiome(int level) {
-        return Math.random() * 100 < (int) (level * 0.20);
+        event.setResult(true);
     }
 
     /**
@@ -66,6 +60,20 @@ public class AugmentBiomeDisrupt extends Augment {
         super.saveSettings(config);
 
         config.set("chance-formula", this.chanceFormula);
+    }
+
+    /**
+     * The comments to be generated at the top of the file when it is created
+     *
+     * @return The comments
+     */
+    @Override
+    public List<String> comments() {
+        return List.of(
+                "Augment [Biome Disruption] - When a player catches a fish, there is a chance to ignore the biome restrictions.",
+                "",
+                "chance-formula: The formula to calculate the chance to ignore the biome restrictions"
+        );
     }
 
 }
