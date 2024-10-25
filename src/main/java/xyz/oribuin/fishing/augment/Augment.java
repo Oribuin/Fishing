@@ -2,6 +2,7 @@ package xyz.oribuin.fishing.augment;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +22,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
     protected int maxLevel;
     protected int requiredLevel;
     protected boolean enabled;
+    protected String displayLine;
 
     /**
      * Create a new augment instance with a name and description
@@ -35,6 +37,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
         this.maxLevel = 1;
         this.requiredLevel = 1;
         this.displayItem = ItemConstruct.EMPTY;
+        this.displayLine = "&c" + StringUtils.capitalize(this.name.replace("_", " ")) + " %level_roman%";
     }
 
     /**
@@ -69,6 +72,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
         config.set("max-level", this.maxLevel);
         config.set("required-level", this.requiredLevel);
         config.set("description", List.of(this.description.split("\n")));
+        config.set("display-line", this.displayLine);
 
         CommentedConfigurationSection section = config.getConfigurationSection("display-item");
         if (section == null) section = config.createSection("display-item");
@@ -87,6 +91,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
         this.maxLevel = config.getInt("max-level", 1);
         this.requiredLevel = config.getInt("required-level", 1);
         this.description = String.join("\n", config.getStringList("description"));
+        this.displayLine = config.getString("display-line", "&c" + StringUtils.capitalize(this.name.replace("_", " ")) + " %level_roman%");
 
         ItemConstruct construct = ItemConstruct.deserialize(config.getConfigurationSection("display-item"));
         if (construct == null) {
@@ -104,6 +109,15 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      */
     public NamespacedKey key() {
         return new NamespacedKey(FishingPlugin.get(), this.name);
+    }
+
+    /**
+     * Get the namespace key for the augment lore, used to identify the augment in the lore of an item
+     *
+     * @return The namespace key
+     */
+    public NamespacedKey loreKey() {
+        return new NamespacedKey(FishingPlugin.get(), this.name + "-lore");
     }
 
     /**
@@ -210,6 +224,22 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      */
     public void requiredLevel(int requiredLevel) {
         this.requiredLevel = requiredLevel;
+    }
+
+    /**
+     * @return The lore line of the augment
+     */
+    public String displayLine() {
+        return displayLine;
+    }
+
+    /**
+     * Set the lore line of the augment
+     *
+     * @param loreLine The lore line of the augment
+     */
+    public void displayLine(String loreLine) {
+        this.displayLine = loreLine;
     }
 
 }

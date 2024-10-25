@@ -41,7 +41,6 @@ public class ApplyCommand extends BaseRoseCommand {
         AugmentRegistry.save(item, augments);
 
         player.sendMessage("Successfully applied the augment to the fishing rod.");
-        augments.forEach((a, l) -> player.sendMessage("Augment: " + a.name() + " Level: " + l));
     }
 
     @Override

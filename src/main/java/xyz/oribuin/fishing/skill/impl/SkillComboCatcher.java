@@ -24,6 +24,7 @@ public class SkillComboCatcher extends Skill {
     private String maxFormula = "%level% / 5 * 2"; // Max combo formula
     private String chanceFormula = "%combo% * 0.1"; // The buff per combo
     private Duration timeout = Duration.ofSeconds(30); // The time until the combo is reset
+
     /**
      * Skills are player unique upgrades, different to augments because
      * they are universal for the player and will activate regardless of what fishing

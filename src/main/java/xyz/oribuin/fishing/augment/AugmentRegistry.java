@@ -1,5 +1,7 @@
 package xyz.oribuin.fishing.augment;
 
+import dev.rosewood.rosegarden.utils.HexUtils;
+import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -8,14 +10,16 @@ import xyz.oribuin.fishing.augment.impl.AugmentBiomeDisrupt;
 import xyz.oribuin.fishing.augment.impl.AugmentCallOfTheSea;
 import xyz.oribuin.fishing.augment.impl.AugmentHotspot;
 import xyz.oribuin.fishing.augment.impl.AugmentSaturate;
+import xyz.oribuin.fishing.util.math.RomanNumber;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AugmentRegistry {
 
     private static final Map<String, Augment> augments = new HashMap<>();
-
 
     /**
      * The plugin initializes all the augments and registers them
@@ -70,6 +74,7 @@ public class AugmentRegistry {
      * @param itemStack The itemstack to save the augments to
      * @param augments  The augments and their levels
      */
+    @SuppressWarnings("deprecation")
     public static void save(ItemStack itemStack, Map<Augment, Integer> augments) {
         ItemMeta meta = itemStack.getItemMeta();
         if (meta == null) return;
@@ -77,6 +82,42 @@ public class AugmentRegistry {
         PersistentDataContainer container = meta.getPersistentDataContainer();
         augments.forEach((augment, level) -> {
             container.set(augment.key(), PersistentDataType.INTEGER, level);
+
+            String current = container.getOrDefault(augment.loreKey(), PersistentDataType.STRING, augment.displayLine());
+            StringPlaceholders placeholders = StringPlaceholders.of(
+                    "level", level,
+                    "level_roman", RomanNumber.toRoman(level)
+            );
+
+            container.set(augment.loreKey(), PersistentDataType.STRING, placeholders.apply(augment.displayLine()));
+
+            // Modify the lore of the item
+            List<String> lore = new ArrayList<>();
+            List<String> itemLore = meta.getLore();
+            String formatted = HexUtils.colorify(current);
+            boolean found = false;
+            if (itemLore != null) {
+                lore.addAll(itemLore);
+            }
+
+            for (int index = 0; index < lore.size(); index++) {
+                String line = lore.get(index);
+                if (line == null) continue;
+                if (found) break;
+
+                // Check if the line contains the augment lore key
+                if (line.contains(formatted)) {
+                    lore.set(index, HexUtils.colorify(placeholders.apply(augment.displayLine())));
+                    found = true;
+                }
+            }
+
+            // If the augment was not found in the lore, add it to the end
+            if (!found) {
+                lore.add(HexUtils.colorify(placeholders.apply(augment.displayLine())));
+            }
+
+            meta.setLore(lore);
         });
 
         itemStack.setItemMeta(meta);
