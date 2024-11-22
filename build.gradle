@@ -8,12 +8,14 @@ plugins {
 
 group = 'xyz.oribuin'
 version = '1.0-SNAPSHOT'
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    disableAutoTargetJvm()
 }
+
 
 compileJava {
     options.compilerArgs += ['-parameters']
@@ -54,7 +56,7 @@ shadowJar {
     archiveClassifier.set(null)
 
     relocate("dev.rosewood.rosegarden", "${project.group}.fishing.libs.rosegarden")
-    relocate("com.jeff_media.morepersistentdatatypes", "${project.group}.fishing.libs.persistentdatatypes")
+    relocate("com.jeff_media.morepersistentdatatypes", "${project.group}.fishing.libs.pdt")
     relocate("net.objecthunter.exp4j", "${project.group}.fishing.libs.exp4j")
     relocate("dev.triumphteam.gui", "${project.group}.fishing.libs.triumphgui")
 }

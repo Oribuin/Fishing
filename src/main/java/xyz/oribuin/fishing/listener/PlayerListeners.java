@@ -6,7 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import xyz.oribuin.fishing.FishingPlugin;
-import xyz.oribuin.fishing.manager.DataManager;
+import xyz.oribuin.fishing.manager.base.DataManager;
 import xyz.oribuin.fishing.storage.Fisher;
 
 public class PlayerListeners implements Listener {

@@ -7,6 +7,7 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Fish;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -37,6 +38,7 @@ public class Totem implements AsyncTicker {
     private long thetaTicks; // The ticks for the totem to spin
     private double heightOffset; // The height offset for the totem
 
+
     public Totem(UUID owner, String ownerName) {
         this.owner = owner;
         this.ownerName = ownerName;
@@ -48,7 +50,7 @@ public class Totem implements AsyncTicker {
     }
 
     /**
-     * Create a new totem owner with all the requires values
+     * Create a new totem owner with all the required values
      *
      * @param owner  The owner of the totem
      * @param center The block the totem lives
@@ -76,7 +78,7 @@ public class Totem implements AsyncTicker {
         List<Location> bounds = this.bounds();
         Particle.DustOptions options = new Particle.DustOptions(Color.LIME, 1f);
         bounds.forEach(x -> this.center.getWorld().spawnParticle(
-                FishUtils.getEnum(Particle.class, "DUST", Particle.REDSTONE),
+                FishUtils.getEnum(Particle.class, "REDSTONE", Particle.DUST),
                 x,
                 2,
                 0, 0, 0, 0,
@@ -147,7 +149,7 @@ public class Totem implements AsyncTicker {
 
             // Spawn totem particles around the totem
             results.forEach(x -> this.center.getWorld().spawnParticle(
-                    Particle.TOTEM,
+                    FishUtils.getEnum(Particle.class, "TOTEM", Particle.TOTEM_OF_UNDYING),
                     x,
                     2,
                     0, 0, 0, 0
@@ -156,7 +158,7 @@ public class Totem implements AsyncTicker {
             // Spawn dust particles to display the totem radius
             Particle.DustOptions options = new Particle.DustOptions(Color.LIME, 1f);
             results.forEach(x -> this.center.getWorld().spawnParticle(
-                    FishUtils.getEnum(Particle.class, "DUST", Particle.REDSTONE),
+                    FishUtils.getEnum(Particle.class, "DUST", FishUtils.getEnum(Particle.class, "REDSTONE", Particle.DUST)),
                     x,
                     2,
                     0, 0, 0, 0,
@@ -164,6 +166,8 @@ public class Totem implements AsyncTicker {
             ));
         });
     }
+
+
 
     /**
      * Save all the totem values to the container
@@ -180,6 +184,13 @@ public class Totem implements AsyncTicker {
         container.set(PersistKeys.TOTEM_LASTACTIVE, DataType.LONG, this.lastActive);
     }
 
+    /**
+     * Create a new totem from a container with all the required values
+     *
+     * @param container The container to get the values from
+     *
+     * @return The totem object
+     */
     public static Totem fromContainer(PersistentDataContainer container) {
         UUID owner = container.get(PersistKeys.TOTEM_OWNER, DataType.UUID);
         String ownerName = container.getOrDefault(PersistKeys.TOTEM_OWNERNAME, DataType.STRING, "N/A");
@@ -196,6 +207,10 @@ public class Totem implements AsyncTicker {
 
         Totem totem = new Totem(owner, ownerName);
         totem.active(active);
+        totem.radius(radius);
+        totem.duration(Duration.ofMillis(duration));
+        totem.cooldown(Duration.ofMillis(cooldown));
+        totem.lastActive(lastActive);
         return null;
     }
 

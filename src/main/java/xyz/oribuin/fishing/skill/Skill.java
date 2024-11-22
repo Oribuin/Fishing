@@ -2,18 +2,16 @@ package xyz.oribuin.fishing.skill;
 
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.api.config.Configurable;
 import xyz.oribuin.fishing.api.event.FishEventHandler;
+import xyz.oribuin.fishing.manager.base.DataManager;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public abstract class Skill extends FishEventHandler implements Configurable {
 
@@ -66,7 +64,7 @@ public abstract class Skill extends FishEventHandler implements Configurable {
     }
 
     /**
-     * The name of the skill, this is used to store what skills player has in {@link xyz.oribuin.fishing.manager.DataManager}
+     * The name of the skill, this is used to store what skills player has in {@link DataManager}
      *
      * @return The skill name
      */

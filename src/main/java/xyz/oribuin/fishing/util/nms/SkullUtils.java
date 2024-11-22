@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.Base64;
 import java.util.UUID;
 
+@SuppressWarnings({"unused", "deprecation"})
 public final class SkullUtils {
 
     private static Method method_SkullMeta_setProfile;

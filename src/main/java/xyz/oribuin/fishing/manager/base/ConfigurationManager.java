@@ -1,4 +1,4 @@
-package xyz.oribuin.fishing.manager;
+package xyz.oribuin.fishing.manager.base;
 
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;

@@ -4,6 +4,7 @@ import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xyz.oribuin.fishing.FishingPlugin;
 
 import java.io.File;
@@ -54,8 +55,10 @@ public interface Configurable {
      *
      * @return The path
      */
-    @NotNull
-    Path configPath();
+    @Nullable
+    default Path configPath() {
+        return null;
+    }
 
     /**
      * The parent folder of the configuration file, this should be the starting point for every config path
@@ -72,6 +75,7 @@ public interface Configurable {
      */
     default void reload() {
         FishingPlugin plugin = FishingPlugin.get();
+        if (this.configPath() == null) return;
         File targetFile = new File(this.parentFolder(), this.configPath().toString());
 
         try {
@@ -116,6 +120,20 @@ public interface Configurable {
 
         // Create the file
         target.createNewFile();
+    }
+
+    /**
+     * Pull a section from the configuration file and save the settings
+     *
+     * @param base The base section to pull from
+     * @param name The name of the section
+     */
+    @NotNull
+    default CommentedConfigurationSection pullSection(CommentedConfigurationSection base, String name) {
+        CommentedConfigurationSection section = base.getConfigurationSection(name);
+        if (section == null) section = base.createSection(name);
+
+        return section;
     }
 
 }

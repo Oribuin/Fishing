@@ -13,7 +13,4 @@ import org.bukkit.inventory.ItemStack;
  * @param level     The level of the augment/skill/upgrade that was used
  */
 public record FishContext(Player player, ItemStack itemStack, FishHook hook, int level) {
-
-    // Unused
-
 }

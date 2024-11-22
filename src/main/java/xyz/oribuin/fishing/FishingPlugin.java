@@ -7,12 +7,14 @@ import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.augment.AugmentRegistry;
 import xyz.oribuin.fishing.listener.FishListener;
 import xyz.oribuin.fishing.listener.PlayerListeners;
-import xyz.oribuin.fishing.manager.CommandManager;
-import xyz.oribuin.fishing.manager.ConfigurationManager;
-import xyz.oribuin.fishing.manager.DataManager;
 import xyz.oribuin.fishing.manager.FishManager;
-import xyz.oribuin.fishing.manager.LocaleManager;
+import xyz.oribuin.fishing.manager.MenuManager;
 import xyz.oribuin.fishing.manager.TierManager;
+import xyz.oribuin.fishing.manager.TotemManager;
+import xyz.oribuin.fishing.manager.base.CommandManager;
+import xyz.oribuin.fishing.manager.base.ConfigurationManager;
+import xyz.oribuin.fishing.manager.base.DataManager;
+import xyz.oribuin.fishing.manager.base.LocaleManager;
 import xyz.oribuin.fishing.skill.SkillRegistry;
 
 import java.util.List;
@@ -58,7 +60,12 @@ public class FishingPlugin extends RosePlugin {
 
     @Override
     protected @NotNull List<Class<? extends Manager>> getManagerLoadPriority() {
-        return List.of(TierManager.class, FishManager.class);
+        return List.of(
+                TierManager.class,
+                FishManager.class,
+                MenuManager.class,
+                TotemManager.class
+        );
     }
 
 }

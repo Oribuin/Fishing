@@ -1,6 +1,5 @@
 package xyz.oribuin.fishing.listener;
 
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
@@ -9,9 +8,9 @@ import org.bukkit.inventory.PlayerInventory;
 import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.event.FishCatchEvent;
 import xyz.oribuin.fishing.fish.Fish;
-import xyz.oribuin.fishing.manager.DataManager;
+import xyz.oribuin.fishing.manager.base.DataManager;
 import xyz.oribuin.fishing.manager.FishManager;
-import xyz.oribuin.fishing.manager.LocaleManager;
+import xyz.oribuin.fishing.manager.base.LocaleManager;
 import xyz.oribuin.fishing.storage.Fisher;
 
 import java.util.List;

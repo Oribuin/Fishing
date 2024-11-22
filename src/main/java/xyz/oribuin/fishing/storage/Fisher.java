@@ -1,7 +1,7 @@
 package xyz.oribuin.fishing.storage;
 
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
-import xyz.oribuin.fishing.manager.ConfigurationManager.Setting;
+import xyz.oribuin.fishing.manager.base.ConfigurationManager.Setting;
 import xyz.oribuin.fishing.util.FishUtils;
 
 import java.util.HashMap;
