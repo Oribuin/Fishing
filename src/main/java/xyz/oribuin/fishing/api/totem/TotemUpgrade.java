@@ -2,8 +2,8 @@ package xyz.oribuin.fishing.api.totem;
 
 import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.api.config.Configurable;
-import xyz.oribuin.fishing.api.event.FishEventHandler;
 import xyz.oribuin.fishing.api.economy.Cost;
+import xyz.oribuin.fishing.api.event.FishEventHandler;
 import xyz.oribuin.fishing.totem.Totem;
 
 import java.nio.file.Path;
@@ -30,6 +30,7 @@ public abstract class TotemUpgrade extends FishEventHandler implements Configura
      * Get the cost of the upgrade for a specific level
      *
      * @param level The level of the upgrade
+     *
      * @return The cost of the upgrade
      */
     public abstract Cost costFor(int level);

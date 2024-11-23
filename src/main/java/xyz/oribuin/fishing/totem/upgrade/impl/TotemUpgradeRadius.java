@@ -1,14 +1,13 @@
 package xyz.oribuin.fishing.totem.upgrade.impl;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.config.Configurable;
 import xyz.oribuin.fishing.api.economy.Cost;
 import xyz.oribuin.fishing.api.economy.Currency;
-import xyz.oribuin.fishing.totem.Totem;
 import xyz.oribuin.fishing.api.totem.TotemUpgrade;
+import xyz.oribuin.fishing.totem.Totem;
 import xyz.oribuin.fishing.util.FishUtils;
 
 import java.util.HashMap;

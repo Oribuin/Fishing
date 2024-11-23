@@ -1,7 +1,6 @@
 package xyz.oribuin.fishing.util;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.utils.HexUtils;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.Color;
@@ -16,7 +15,6 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import xyz.oribuin.fishing.api.config.Configurable;
 import xyz.oribuin.fishing.util.nms.SkullUtils;
 
 import java.util.ArrayList;

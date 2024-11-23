@@ -4,7 +4,6 @@ import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.manager.Manager;
 import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.gui.PluginMenu;
-import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.gui.ExampleMenu;
 import xyz.oribuin.fishing.gui.StatsMenu;
 

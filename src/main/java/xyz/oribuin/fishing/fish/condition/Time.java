@@ -7,7 +7,8 @@ public enum Time {
     DAY(6, 18),
     NIGHT(18, 6),
     SUNSET(18, 20),
-    SUNRISE(6, 8),;
+    SUNRISE(6, 8),
+    ;
 
     private final int lowerBound;
     private final int upperBound;

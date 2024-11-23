@@ -3,12 +3,9 @@ package xyz.oribuin.fishing.augment.impl;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import net.kyori.adventure.text.Component;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import xyz.oribuin.fishing.api.event.FishContext;
 import xyz.oribuin.fishing.api.event.InitialFishCatchEvent;
 import xyz.oribuin.fishing.augment.Augment;
-import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.fish.condition.Weather;
 import xyz.oribuin.fishing.util.FishUtils;
 

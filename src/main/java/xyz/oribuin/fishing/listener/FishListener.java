@@ -8,8 +8,8 @@ import org.bukkit.inventory.PlayerInventory;
 import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.event.FishCatchEvent;
 import xyz.oribuin.fishing.fish.Fish;
-import xyz.oribuin.fishing.manager.base.DataManager;
 import xyz.oribuin.fishing.manager.FishManager;
+import xyz.oribuin.fishing.manager.base.DataManager;
 import xyz.oribuin.fishing.manager.base.LocaleManager;
 import xyz.oribuin.fishing.storage.Fisher;
 
@@ -57,7 +57,7 @@ public class FishListener implements Listener {
 
             // Tell the player they caught a fish
             event.getPlayer().sendMessage("You caught a " + fish.displayName() + "!"); // TODO: Replace with locale message
-//            locale.sendMessage(event.getPlayer(), "fish-caught", StringPlaceholders.of("fish", fish.displayName()));
+            //            locale.sendMessage(event.getPlayer(), "fish-caught", StringPlaceholders.of("fish", fish.displayName()));
 
             // Give the fish to the player
             PlayerInventory inv = event.getPlayer().getInventory();

@@ -14,7 +14,7 @@ import java.net.URL;
 import java.util.Base64;
 import java.util.UUID;
 
-@SuppressWarnings({"unused", "deprecation"})
+@SuppressWarnings({ "unused", "deprecation" })
 public final class SkullUtils {
 
     private static Method method_SkullMeta_setProfile;
@@ -32,9 +32,9 @@ public final class SkullUtils {
     @SuppressWarnings("deprecation")
     public static void setSkullTexture(SkullMeta skullMeta, String texture) {
         // TODO: Add head database support
-//        if (texture != null && texture.startsWith("hdb:") && Bukkit.getPluginManager().isPluginEnabled("HeadDatabase")) {
-//            texture = new HeadDatabaseAPI().getBase64(texture.substring(4));
-//        }
+        //        if (texture != null && texture.startsWith("hdb:") && Bukkit.getPluginManager().isPluginEnabled("HeadDatabase")) {
+        //            texture = new HeadDatabaseAPI().getBase64(texture.substring(4));
+        //        }
 
         if (texture == null || texture.isEmpty())
             return;

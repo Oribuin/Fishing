@@ -1,15 +1,11 @@
 package xyz.oribuin.fishing.skill.impl;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.api.event.FishCatchEvent;
-import xyz.oribuin.fishing.api.event.FishContext;
 import xyz.oribuin.fishing.api.event.FishGenerateEvent;
-import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.skill.Skill;
 import xyz.oribuin.fishing.util.FishUtils;
 
@@ -100,7 +96,7 @@ public class SkillComboCatcher extends Skill {
     /**
      * The maximum combo a player can have based on their level
      *
-     * @param level  The level of the player
+     * @param level The level of the player
      *
      * @return The max combo
      */
@@ -174,8 +170,8 @@ public class SkillComboCatcher extends Skill {
         /**
          * Holder for all relevant info about the player's current combo
          *
-         * @param current The current combo level
-         * @param lastCatch    The last time a player caught a fish
+         * @param current   The current combo level
+         * @param lastCatch The last time a player caught a fish
          */
         public ComboData(int current, long lastCatch) {
             this.current = current;
@@ -200,6 +196,7 @@ public class SkillComboCatcher extends Skill {
 
         /**
          * Apply a new combo count to the player
+         *
          * @param newCurrent The new combo count
          */
         public void current(int newCurrent) {
@@ -215,6 +212,7 @@ public class SkillComboCatcher extends Skill {
 
         /**
          * Apply a new time to the player's last catch
+         *
          * @param newLastCatch The new time
          */
         public void lastCatch(long newLastCatch) {
