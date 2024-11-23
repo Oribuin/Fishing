@@ -4,7 +4,9 @@ import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.manager.Manager;
 import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.gui.PluginMenu;
+import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.gui.ExampleMenu;
+import xyz.oribuin.fishing.gui.StatsMenu;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +24,8 @@ public class MenuManager extends Manager {
         menus.clear();
 
         // Register the menus
-        menus.put(ExampleMenu.class, new ExampleMenu());
+        menus.put(ExampleMenu.class, new ExampleMenu(FishingPlugin.get()));
+        menus.put(StatsMenu.class, new StatsMenu(FishingPlugin.get()));
 
         // Load all the menus
         menus.values().forEach(PluginMenu::reload);
@@ -49,7 +52,7 @@ public class MenuManager extends Manager {
 
     @Override
     public void disable() {
-
+        menus.clear();
     }
 
 }

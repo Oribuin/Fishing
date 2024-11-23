@@ -6,7 +6,7 @@ import dev.rosewood.rosegarden.command.framework.CommandContext;
 import dev.rosewood.rosegarden.command.framework.CommandInfo;
 import dev.rosewood.rosegarden.command.framework.annotation.RoseExecutable;
 import org.bukkit.entity.Player;
-import xyz.oribuin.fishing.gui.ExampleMenu;
+import xyz.oribuin.fishing.gui.StatsMenu;
 import xyz.oribuin.fishing.manager.MenuManager;
 
 public class MenuCommand extends BaseRoseCommand {
@@ -20,7 +20,7 @@ public class MenuCommand extends BaseRoseCommand {
         Player player = (Player) context.getSender();
 
         // Open the menu for the player
-        ExampleMenu menu = MenuManager.from(ExampleMenu.class);
+        StatsMenu menu = MenuManager.from(StatsMenu.class);
         if (menu == null) return;
 
         menu.open(player);

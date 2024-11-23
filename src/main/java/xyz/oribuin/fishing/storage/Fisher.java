@@ -58,6 +58,15 @@ public class Fisher {
         return (int) FishUtils.evaluate(placeholders.apply(Setting.REQUIRED_XP_FORMULA.getString()));
     }
 
+    public StringPlaceholders placeholders() {
+        return StringPlaceholders.of(
+                "level", this.level,
+                "experience", this.experience,
+                "skill_points", this.skillPoints,
+                "required_exp", this.requiredExp()
+        );
+    }
+
     public UUID uuid() {
         return this.uuid;
     }

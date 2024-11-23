@@ -2,14 +2,15 @@ package xyz.oribuin.fishing.gui;
 
 import dev.triumphteam.gui.guis.PaginatedGui;
 import org.bukkit.entity.Player;
+import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.gui.PluginMenu;
 
 public class ExampleMenu extends PluginMenu {
 
     protected final PaginatedGui gui = this.createPaginated();
 
-    public ExampleMenu() {
-        super("example");
+    public ExampleMenu(FishingPlugin plugin) {
+        super(plugin, "example");
     }
 
     /**

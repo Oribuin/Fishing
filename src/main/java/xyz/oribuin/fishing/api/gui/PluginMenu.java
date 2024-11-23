@@ -1,6 +1,7 @@
 package xyz.oribuin.fishing.api.gui;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.BaseGui;
 import dev.triumphteam.gui.guis.Gui;
@@ -18,6 +19,7 @@ import java.util.Map;
 
 public abstract class PluginMenu implements Configurable {
 
+    protected final FishingPlugin plugin;
     protected final GuiAction<InventoryClickEvent> EMPTY = event -> {
         // :33333333
     };
@@ -29,7 +31,8 @@ public abstract class PluginMenu implements Configurable {
     protected Map<String, GuiItem> extraItems;
     protected int pageSize;
 
-    public PluginMenu(String name) {
+    public PluginMenu(FishingPlugin plugin, String name) {
+        this.plugin = plugin;
         this.name = name;
         this.title = name;
         this.rows = 6;
@@ -83,13 +86,25 @@ public abstract class PluginMenu implements Configurable {
      * @param function The function to run when the item is clicked
      */
     public void placeItem(BaseGui gui, String key, GuiAction<InventoryClickEvent> function) {
+        this.placeItem(gui, key, StringPlaceholders.empty(), function);
+    }
+
+    /**
+     * Place the item in the GUI
+     *
+     * @param gui          The GUI to place the item in
+     * @param key          The key of the item to place
+     * @param placeholders The placeholders to apply to the item
+     * @param function     The function to run when the item is clicked
+     */
+    public void placeItem(BaseGui gui, String key, StringPlaceholders placeholders, GuiAction<InventoryClickEvent> function) {
         GuiItem item = this.items.get(key.toLowerCase());
         if (item == null) {
             FishingPlugin.get().getLogger().warning("Failed to place item with key: " + key + " in menu: " + this.name + ". Item not found.");
             return;
         }
 
-        item.place(gui, function);
+        item.place(gui, placeholders, function);
     }
 
     /**

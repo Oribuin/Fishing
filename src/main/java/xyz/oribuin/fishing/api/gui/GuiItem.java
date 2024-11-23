@@ -1,6 +1,7 @@
 package xyz.oribuin.fishing.api.gui;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.BaseGui;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -26,6 +27,17 @@ public class GuiItem implements Configurable {
      * @param function The function to run when the item is clicked
      */
     public void place(BaseGui gui, GuiAction<InventoryClickEvent> function) {
+        this.place(gui, StringPlaceholders.empty(), function);
+    }
+
+    /**
+     * Place the item in the specified slot in the GUI
+     *
+     * @param gui          The GUI to place the item in
+     * @param placeholders The placeholders to apply to the item
+     * @param function     The function to run when the item is clicked
+     */
+    public void place(BaseGui gui, StringPlaceholders placeholders, GuiAction<InventoryClickEvent> function) {
         if (gui == null) return;
         if (!this.enabled) return;
 
@@ -33,7 +45,7 @@ public class GuiItem implements Configurable {
         this.slot.forEach(x -> {
             if (x < 0 || x >= guiSize) return;
 
-            ItemStack item = this.item.build();
+            ItemStack item = this.item.build(placeholders);
             if (item == null) return;
 
             gui.setItem(slot, new dev.triumphteam.gui.guis.GuiItem(item, function));
@@ -132,16 +144,32 @@ public class GuiItem implements Configurable {
         return enabled;
     }
 
+    public void enabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public String name() {
         return name;
+    }
+
+    public void name(String name) {
+        this.name = name;
     }
 
     public List<Integer> slot() {
         return slot;
     }
 
+    public void slot(List<Integer> slot) {
+        this.slot = slot;
+    }
+
     public ItemConstruct item() {
         return item;
+    }
+
+    public void item(ItemConstruct item) {
+        this.item = item;
     }
 
 }
