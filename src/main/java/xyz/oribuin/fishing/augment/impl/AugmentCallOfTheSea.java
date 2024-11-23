@@ -33,6 +33,7 @@ public class AugmentCallOfTheSea extends Augment {
      */
     @Override
     public void onInitialCatch(InitialFishCatchEvent event, int level) {
+        if (!this.enabled) return;
         if (Weather.CLEAR.isState(event.getHook().getLocation())) return;
 
         StringPlaceholders plc = StringPlaceholders.of("level", level);
@@ -43,19 +44,6 @@ public class AugmentCallOfTheSea extends Augment {
         event.setAmountToCatch(event.getAmountToCatch() + fishCaught);
         event.getPlayer().sendActionBar(Component.text("You have caught more fish due to the Call of the Sea augment!"));
         // TODO: Tell player that they have caught more fish
-    }
-
-    /**
-     * The functionality provided by the augment when a player obtains a fish from the initial catch
-     * This method is run for each fish caught
-     *
-     * @param context The context of the fish event
-     * @param fish    The fish that was caught
-     * @param stack   The item stack of the fish
-     */
-    @Override
-    public void onFishCatch(FishContext context, Fish fish, ItemStack stack) {
-        // Unused
     }
 
     /**

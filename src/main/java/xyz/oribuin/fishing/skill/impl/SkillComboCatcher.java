@@ -6,6 +6,7 @@ import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import xyz.oribuin.fishing.api.event.FishCatchEvent;
 import xyz.oribuin.fishing.api.event.FishContext;
 import xyz.oribuin.fishing.api.event.FishGenerateEvent;
 import xyz.oribuin.fishing.fish.Fish;
@@ -70,9 +71,16 @@ public class SkillComboCatcher extends Skill {
      * @param fish    The fish that was caught
      * @param stack   The item stack of the fish
      */
+    /**
+     * The functionality provided by the augment when a player obtains a fish from the initial catch
+     * This method is run for each fish caught
+     *
+     * @param event The context of the fish event
+     * @param level The level of the augment that was used
+     */
     @Override
-    public void onFishCatch(FishContext context, Fish fish, ItemStack stack) {
-        Player player = context.player();
+    public void onFishCatch(FishCatchEvent event, int level) {
+        Player player = event.getPlayer();
         long timeout = this.timeout.toSeconds();
         ComboData current = this.combos.getOrDefault(player.getUniqueId(), ComboData.empty());
 
@@ -82,7 +90,7 @@ public class SkillComboCatcher extends Skill {
         }
 
         // Increase the combo
-        int max = this.maxCombo(context.level());
+        int max = this.maxCombo(level);
         current.current(Math.min(current.current() + 1, max));
         current.lastCatch(System.currentTimeMillis());
 

@@ -73,8 +73,6 @@ public class GuiItem implements Configurable {
         if (item != null) {
             this.item = ItemConstruct.deserialize(item);
         }
-
-        System.out.println("Loaded item: " + this.name);
     }
 
     /**

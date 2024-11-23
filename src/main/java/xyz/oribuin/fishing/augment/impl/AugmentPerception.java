@@ -1,8 +1,11 @@
 package xyz.oribuin.fishing.augment.impl;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.jetbrains.annotations.NotNull;
+import xyz.oribuin.fishing.api.event.FishCatchEvent;
 import xyz.oribuin.fishing.augment.Augment;
+import xyz.oribuin.fishing.util.FishUtils;
 
 import java.util.List;
 
@@ -15,6 +18,22 @@ public class AugmentPerception extends Augment {
      */
     public AugmentPerception() {
         super("perception", "Increases the base entropy earned from catching fish.");
+    }
+
+    /**
+     * The functionality provided by the augment when a player obtains a fish from the initial catch
+     * This method is run for each fish caught
+     *
+     * @param event The context of the fish event
+     * @param level The level of the augment that was used
+     */
+    @Override
+    public void onFishCatch(FishCatchEvent event, int level) {
+        if (!this.enabled) return;
+
+        StringPlaceholders plc = StringPlaceholders.of("level", level, "entropy", event.getEntropy());
+        double entropy = FishUtils.evaluate(plc.apply(this.formula));
+        event.setEntropy((int) entropy);
     }
 
     /**

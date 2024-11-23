@@ -29,6 +29,7 @@ public class AugmentBiomeDisrupt extends Augment {
      */
     @Override
     public void onConditionCheck(ConditionCheckEvent event, int level) {
+        if (!this.enabled) return;
         if (!(event.getCondition() instanceof BiomeCondition)) return;
 
         StringPlaceholders plc = StringPlaceholders.of("level", level);
