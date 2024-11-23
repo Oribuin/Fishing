@@ -9,6 +9,8 @@ import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.manager.base.DataManager;
 import xyz.oribuin.fishing.storage.Fisher;
 
+import java.util.concurrent.CompletableFuture;
+
 public class PlayerListeners implements Listener {
 
     private final FishingPlugin plugin;
@@ -24,7 +26,17 @@ public class PlayerListeners implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onJoin(PlayerJoinEvent event) {
-        this.plugin.getManager(DataManager.class).loadUser(event.getPlayer().getUniqueId());
+        DataManager manager = this.plugin.getManager(DataManager.class);
+
+        CompletableFuture.runAsync(() -> manager.loadUser(event.getPlayer().getUniqueId()))
+                .thenRun(() -> {
+                    // create a new Fisher object if the player is not found
+                    Fisher fisher = manager.get(event.getPlayer().getUniqueId());
+                    if (fisher == null) fisher = new Fisher(event.getPlayer().getUniqueId());
+
+                    // Save the new user data
+                    manager.saveUser(fisher);
+                });
     }
 
     /**

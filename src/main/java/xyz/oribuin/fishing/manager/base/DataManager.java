@@ -49,10 +49,7 @@ public class DataManager extends AbstractDataManager {
      * @return The user's data
      */
     public Fisher get(UUID uuid) {
-        return this.userData.computeIfAbsent(uuid, x -> {
-            this.loadUser(uuid);
-            return null;
-        });
+        return this.userData.get(uuid);
     }
 
     /**
@@ -154,8 +151,9 @@ public class DataManager extends AbstractDataManager {
                 fisher.experience(result.getInt("experience"));
                 fisher.points(result.getInt("skill_points"));
                 fisher.skills(GSON.fromJson(result.getString("skills"), PlayerSkills.class).skills());
-                this.userData.put(uuid, fisher);
             }
+
+            this.userData.put(uuid, fisher);
         }
     }
 
