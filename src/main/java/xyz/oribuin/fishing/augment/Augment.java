@@ -25,7 +25,6 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
     protected int requiredLevel;
     protected String permission;
 
-
     /**
      * Create a new augment instance with a name and description
      *

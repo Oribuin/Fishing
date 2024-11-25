@@ -12,6 +12,9 @@ public class PersistKeys {
     public static NamespacedKey FISH_TYPE = new NamespacedKey(PLUGIN, "fish_type");
     public static NamespacedKey FISH_TIER = new NamespacedKey(PLUGIN, "fish_tier");
 
+    // Augment Namespaces
+    public static final NamespacedKey AUGMENT_TYPE = new NamespacedKey(PLUGIN, "augment_type");
+
     // Totem Namespaces
     public static final NamespacedKey TOTEM_OWNER = new NamespacedKey(PLUGIN, "totem_owner");
     public static final NamespacedKey TOTEM_OWNERNAME = new NamespacedKey(PLUGIN, "totem_ownername");

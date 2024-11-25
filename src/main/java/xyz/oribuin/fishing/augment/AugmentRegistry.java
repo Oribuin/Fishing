@@ -77,6 +77,17 @@ public class AugmentRegistry {
     }
 
     /**
+     * Get an augment from the registry by its name
+     *
+     * @param name The name of the augment
+     *
+     * @return The augment
+     */
+    public static Augment from(String name) {
+        return augments.get(name);
+    }
+
+    /**
      * Save the augments to the itemstack meta
      *
      * @param itemStack The itemstack to save the augments to
