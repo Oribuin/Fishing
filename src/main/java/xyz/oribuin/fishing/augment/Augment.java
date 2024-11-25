@@ -3,12 +3,18 @@ package xyz.oribuin.fishing.augment;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.apache.commons.lang3.StringUtils;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemFlag;
 import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.config.Configurable;
+import xyz.oribuin.fishing.api.economy.Cost;
 import xyz.oribuin.fishing.api.event.FishEventHandler;
+import xyz.oribuin.fishing.api.recipe.Recipe;
+import xyz.oribuin.fishing.api.recipe.RecipeItem;
 import xyz.oribuin.fishing.util.ItemConstruct;
 
 import java.nio.file.Path;
@@ -37,7 +43,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
         this.description = description;
         this.maxLevel = 5;
         this.requiredLevel = 1;
-        this.displayItem = ItemConstruct.EMPTY;
+        this.displayItem = this.defaultItem();
         this.displayLine = "&c" + StringUtils.capitalize(this.name.replace("_", " ")) + " %level_roman%";
         this.permission = "fishing.augment." + name;
     }
@@ -105,6 +111,26 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
     }
 
     /**
+     * The default item for the augment
+     *
+     * @return The default item
+     */
+    private ItemConstruct defaultItem() {
+        return ItemConstruct.of(Material.FIREWORK_STAR)
+                .name("&f[&#4f73d6>&l%display_name%&f]")
+                .lore("&7%description%",
+                        "",
+                        "&#4f73d6Information",
+                        " &7| &fRequired Level: &#4f73d6%required_level%",
+                        " &7| &fMax Level: &#4f73d6%max_level%",
+                        " &7| &fCost: &#4f73d6%amount% &f%currency%",
+                        ""
+                )
+                .enchant(Enchantment.EFFICIENCY, 1)
+                .flags(ItemFlag.HIDE_ENCHANTS);
+    }
+
+    /**
      * Get the namespace key for the augment
      *
      * @return The namespace key
@@ -128,7 +154,16 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      * @return The placeholders
      */
     public StringPlaceholders placeholders() {
-        return StringPlaceholders.empty();
+        return StringPlaceholders.builder()
+                .add("id", this.name)
+                .add("display_name", StringUtils.capitalize(this.name.replace("_", " ")))
+                .add("max_level", this.maxLevel)
+                .add("required_level", this.requiredLevel)
+                .add("description", this.description)
+                .add("display_line", this.displayLine)
+                .add("permission", this.permission)
+                .add("enabled", this.enabled)
+                .build();
     }
 
     /**

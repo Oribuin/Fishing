@@ -3,7 +3,6 @@ package xyz.oribuin.fishing.augment.impl;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.jetbrains.annotations.NotNull;
-import xyz.oribuin.fishing.api.event.FishCatchEvent;
 import xyz.oribuin.fishing.api.event.FishGutEvent;
 import xyz.oribuin.fishing.augment.Augment;
 import xyz.oribuin.fishing.util.FishUtils;
