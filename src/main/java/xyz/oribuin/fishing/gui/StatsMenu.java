@@ -56,9 +56,9 @@ public class StatsMenu extends PluginMenu {
 
         // Default OPTIONS :DDD
         CommentedConfigurationSection items = this.pullSection(config, "items");
-        CommentedConfigurationSection item = this.pullSection(items, "1.stats");
+        CommentedConfigurationSection item = this.pullSection(items, "1");
 
-        GuiItem statsItem = new GuiItem();
+        GuiItem statsItem = new GuiItem("stats");
         ItemConstruct construct = ItemConstruct.of(Material.PLAYER_HEAD)
                 .name("&f&lUser Stats")
                 .lore(

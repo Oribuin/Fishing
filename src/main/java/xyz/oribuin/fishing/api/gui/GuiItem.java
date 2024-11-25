@@ -20,6 +20,13 @@ public class GuiItem implements Configurable {
     protected List<Integer> slot = List.of(0);
     protected ItemConstruct item = ItemConstruct.EMPTY;
 
+    public GuiItem() {
+    }
+
+    public GuiItem(String name) {
+        this.name = name;
+    }
+
     /**
      * Place the item in the specified slot in the GUI
      *
