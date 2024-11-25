@@ -101,8 +101,8 @@ public class Fisher {
         return this.skillPoints;
     }
 
-    public void points(int skillCaught) {
-        this.skillPoints = skillCaught;
+    public void points(int skillPoints) {
+        this.skillPoints = skillPoints;
     }
 
     public Map<String, Integer> skills() {

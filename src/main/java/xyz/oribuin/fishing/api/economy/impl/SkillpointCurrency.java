@@ -1,30 +1,18 @@
-package xyz.oribuin.fishing.api.economy;
+package xyz.oribuin.fishing.api.economy.impl;
 
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
+import xyz.oribuin.fishing.api.economy.Currency;
+import xyz.oribuin.fishing.storage.Fisher;
 
-public class Cost implements Currency {
-
-    private final Currency currency;
-    private Number price;
-
-    /**
-     * Create a new cost object with a currency and amount
-     *
-     * @param currency The currency to use
-     * @param price    The amount of currency to use
-     */
-    public Cost(@NotNull Currency currency, @NotNull Number price) {
-        this.currency = currency;
-        this.price = price;
-    }
+public class SkillpointCurrency implements Currency {
 
     /**
      * @return The name of the currency
      */
     @Override
     public String name() {
-        return this.currency.name();
+        return "skillpoint";
     }
 
     /**
@@ -34,7 +22,7 @@ public class Cost implements Currency {
      */
     @Override
     public @NotNull Number amount(@NotNull OfflinePlayer player) {
-        return this.currency.amount(player);
+        return this.fisher(player).points();
     }
 
     /**
@@ -47,7 +35,7 @@ public class Cost implements Currency {
      */
     @Override
     public boolean has(@NotNull OfflinePlayer player, @NotNull Number amount) {
-        return this.currency.has(player, amount);
+        return this.amount(player).intValue() >= amount.intValue();
     }
 
     /**
@@ -58,7 +46,8 @@ public class Cost implements Currency {
      */
     @Override
     public void give(@NotNull OfflinePlayer player, @NotNull Number amount) {
-        this.currency.give(player, amount);
+        Fisher fisher = this.fisher(player);
+        fisher.points(fisher.points() + amount.intValue());
     }
 
     /**
@@ -69,23 +58,8 @@ public class Cost implements Currency {
      */
     @Override
     public void take(@NotNull OfflinePlayer player, @NotNull Number amount) {
-        this.currency.take(player, amount);
-    }
-
-    /**
-     * @return The price of the item
-     */
-    public Number price() {
-        return this.price;
-    }
-
-    /**
-     * Add a price to the item cost
-     *
-     * @param price The price to add
-     */
-    public void price(Number price) {
-        this.price = price;
+        Fisher fisher = this.fisher(player);
+        fisher.points(fisher.points() - amount.intValue());
     }
 
 }

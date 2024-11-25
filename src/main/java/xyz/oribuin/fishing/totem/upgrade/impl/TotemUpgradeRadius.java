@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.config.Configurable;
 import xyz.oribuin.fishing.api.economy.Cost;
+import xyz.oribuin.fishing.api.economy.Currencies;
 import xyz.oribuin.fishing.api.economy.Currency;
 import xyz.oribuin.fishing.api.totem.TotemUpgrade;
 import xyz.oribuin.fishing.totem.Totem;
@@ -57,7 +58,7 @@ public class TotemUpgradeRadius extends TotemUpgrade implements Configurable {
         Tier tier = this.tiers.get(level);
         if (tier == null) {
             FishingPlugin.get().getLogger().warning("Failed to get cost for upgrade: " + this.name() + ", The tier does not exist.");
-            return new Cost(Currency.ENTROPY, 0);
+            return new Cost(Currencies.ENTROPY.get(), 0);
         }
 
         return this.tiers.get(level).cost();
@@ -72,6 +73,7 @@ public class TotemUpgradeRadius extends TotemUpgrade implements Configurable {
     public List<String> comments() {
         return List.of(
                 "Totem Upgrade [Radius] - Increases the effective range of the totem",
+                "",
                 "This upgrade will increase the radius of the totem by a set amount"
         );
     }
@@ -92,7 +94,7 @@ public class TotemUpgradeRadius extends TotemUpgrade implements Configurable {
             CommentedConfigurationSection section = tiers.getConfigurationSection(key);
             if (section == null) return;
 
-            Currency currency = FishUtils.getEnum(Currency.class, section.getString("currency"), Currency.ENTROPY);
+            Currency currency = FishUtils.getEnum(Currencies.class, section.getString("currency"), Currencies.ENTROPY).get();
             int amount = section.getInt("cost", 0);
             int newRadius = section.getInt("radius", 0);
 
@@ -117,8 +119,10 @@ public class TotemUpgradeRadius extends TotemUpgrade implements Configurable {
     public void saveSettings(@NotNull CommentedConfigurationSection config) {
         this.tiers.forEach((level, tier) -> {
             CommentedConfigurationSection section = config.createSection("tiers." + level);
-            section.set("currency", tier.cost().currency().name());
-            section.set("cost", tier.cost().amount());
+
+            // TODO: Improve c
+//            section.set("currency", tier.cost().currency().name());
+//            section.set("cost", tier.cost());
             section.set("radius", tier.newRadius());
         });
     }

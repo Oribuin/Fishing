@@ -1,30 +1,23 @@
-package xyz.oribuin.fishing.api.economy;
+package xyz.oribuin.fishing.api.economy.impl;
 
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
+import xyz.oribuin.fishing.api.economy.Currency;
 
-public class Cost implements Currency {
+public class VaultCurrency implements Currency {
 
-    private final Currency currency;
-    private Number price;
-
-    /**
-     * Create a new cost object with a currency and amount
-     *
-     * @param currency The currency to use
-     * @param price    The amount of currency to use
-     */
-    public Cost(@NotNull Currency currency, @NotNull Number price) {
-        this.currency = currency;
-        this.price = price;
-    }
+    private static final RegisteredServiceProvider<Economy> PROVIDER = Bukkit.getServicesManager().getRegistration(Economy.class);
+    private static final Economy API = PROVIDER != null ? PROVIDER.getProvider() : null;
 
     /**
      * @return The name of the currency
      */
     @Override
     public String name() {
-        return this.currency.name();
+        return "vault";
     }
 
     /**
@@ -34,7 +27,7 @@ public class Cost implements Currency {
      */
     @Override
     public @NotNull Number amount(@NotNull OfflinePlayer player) {
-        return this.currency.amount(player);
+        return API != null ? API.getBalance(player) : 0.0;
     }
 
     /**
@@ -47,7 +40,7 @@ public class Cost implements Currency {
      */
     @Override
     public boolean has(@NotNull OfflinePlayer player, @NotNull Number amount) {
-        return this.currency.has(player, amount);
+        return API != null && API.has(player, amount.doubleValue());
     }
 
     /**
@@ -58,7 +51,7 @@ public class Cost implements Currency {
      */
     @Override
     public void give(@NotNull OfflinePlayer player, @NotNull Number amount) {
-        this.currency.give(player, amount);
+        if (API != null) API.depositPlayer(player, amount.doubleValue());
     }
 
     /**
@@ -69,23 +62,7 @@ public class Cost implements Currency {
      */
     @Override
     public void take(@NotNull OfflinePlayer player, @NotNull Number amount) {
-        this.currency.take(player, amount);
-    }
-
-    /**
-     * @return The price of the item
-     */
-    public Number price() {
-        return this.price;
-    }
-
-    /**
-     * Add a price to the item cost
-     *
-     * @param price The price to add
-     */
-    public void price(Number price) {
-        this.price = price;
+        if (API != null) API.withdrawPlayer(player, amount.doubleValue());
     }
 
 }
