@@ -6,6 +6,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.api.config.Configurable;
 
+public abstract class RecipeItem<T> implements Configurable {
 
     private final Class<T> type; // This is the type of the ite;
     protected T item;
