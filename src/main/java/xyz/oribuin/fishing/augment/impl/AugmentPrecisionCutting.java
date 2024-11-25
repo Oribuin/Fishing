@@ -4,31 +4,31 @@ import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.api.event.FishCatchEvent;
+import xyz.oribuin.fishing.api.event.FishGutEvent;
 import xyz.oribuin.fishing.augment.Augment;
 import xyz.oribuin.fishing.util.FishUtils;
 
 import java.util.List;
 
-public class AugmentPerception extends Augment {
+public class AugmentPrecisionCutting extends Augment {
 
     private String formula = "(%entropy% + %level%) * 0.05";
 
     /**
      * Create a new augment instance with a name and description
      */
-    public AugmentPerception() {
-        super("perception", "Increases the base entropy earned from catching fish.");
+    public AugmentPrecisionCutting() {
+        super("precision_cutting", "Increases the entropy gained from gutting fish.");
     }
 
     /**
-     * The functionality provided by the augment when a player obtains a fish from the initial catch
-     * This method is run for each fish caught
+     * The functionality provided when a collection of fish are gutted by the player
      *
      * @param event The context of the fish event
      * @param level The level of the augment that was used
      */
     @Override
-    public void onFishCatch(FishCatchEvent event, int level) {
+    public void onFishGut(FishGutEvent event, int level) {
         if (!this.enabled) return;
 
         StringPlaceholders plc = StringPlaceholders.of("level", level, "entropy", event.getEntropy());
@@ -68,7 +68,7 @@ public class AugmentPerception extends Augment {
     @Override
     public List<String> comments() {
         return List.of(
-                "Augment [Perception] - Increases the base entropy earned from catching fish.",
+                "Augment [Precision Cutting] - Increases the entropy gained from gutting fish.",
                 "",
                 "formula: The formula to calculate the additional entropy earned per level"
         );

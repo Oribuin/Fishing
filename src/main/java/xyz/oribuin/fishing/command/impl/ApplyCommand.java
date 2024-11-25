@@ -35,7 +35,7 @@ public class ApplyCommand extends BaseRoseCommand {
 
         // Get the augment from the argument
         Map<Augment, Integer> augments = new HashMap<>(AugmentRegistry.from(item));
-        augments.put(augment, level);
+        augments.put(augment, Math.min(level, augment.maxLevel()));
 
         // Apply the augment to the fishing rod
         AugmentRegistry.save(item, augments);

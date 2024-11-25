@@ -44,4 +44,13 @@ public abstract class FishEventHandler {
     public void onConditionCheck(ConditionCheckEvent event, int level) {
     }
 
+    /**
+     * The functionality provided when a collection of fish are gutted by the player
+     *
+     * @param event The context of the fish event
+     * @param level The level of the augment that was used
+     */
+    public void onFishGut(FishGutEvent event, int level) {
+    }
+
 }

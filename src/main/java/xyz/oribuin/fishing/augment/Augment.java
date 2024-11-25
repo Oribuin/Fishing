@@ -17,12 +17,14 @@ import java.util.List;
 public abstract class Augment extends FishEventHandler implements Listener, Configurable {
 
     protected final String name;
+    protected boolean enabled;
     protected String description;
     protected ItemConstruct displayItem;
+    protected String displayLine;
     protected int maxLevel;
     protected int requiredLevel;
-    protected boolean enabled;
-    protected String displayLine;
+    protected String permission;
+
 
     /**
      * Create a new augment instance with a name and description

@@ -1,7 +1,9 @@
 package xyz.oribuin.fishing.storage;
 
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.manager.base.ConfigurationManager.Setting;
+import xyz.oribuin.fishing.manager.base.DataManager;
 import xyz.oribuin.fishing.util.FishUtils;
 
 import java.util.HashMap;
@@ -22,7 +24,7 @@ public class Fisher {
         this.entropy = 0;
         this.level = 1;
         this.experience = 0;
-        this.skillPoints = 0;
+        this.skillPoints = 1;
         this.skills = new HashMap<>();
     }
 

@@ -38,7 +38,7 @@ public class FishListener implements Listener {
         if (caught.isEmpty()) return;
 
         // Add the fish into the player inventory
-        double baseExpGained = event.getExpToDrop();
+        float baseExpGained = event.getExpToDrop();
         double naturalExp = 0.0;
         int newFishExp = 0;
         int newEntropy = 0;
@@ -47,11 +47,13 @@ public class FishListener implements Listener {
             if (fish == null) continue;
 
             FishCatchEvent fishCatchEvent = new FishCatchEvent(event.getPlayer(), hand, event.getHook(), fish);
+            fishCatchEvent.setNaturalExp(baseExpGained); // Set the base experience gained
+
             fishCatchEvent.callEvent();
             if (fishCatchEvent.isCancelled()) continue; // If the event is cancelled, do nothing
 
             // Use the event values because they could have been modified
-            naturalExp += baseExpGained * fishCatchEvent.getNaturalExp();
+            naturalExp += fishCatchEvent.getNaturalExp();
             newFishExp += fishCatchEvent.getFishExp();
             newEntropy += fishCatchEvent.getEntropy();
 

@@ -9,6 +9,10 @@ import org.bukkit.persistence.PersistentDataType;
 import xyz.oribuin.fishing.augment.impl.AugmentBiomeDisrupt;
 import xyz.oribuin.fishing.augment.impl.AugmentCallOfTheSea;
 import xyz.oribuin.fishing.augment.impl.AugmentHotspot;
+import xyz.oribuin.fishing.augment.impl.AugmentIntellect;
+import xyz.oribuin.fishing.augment.impl.AugmentPerception;
+import xyz.oribuin.fishing.augment.impl.AugmentPrecisionCutting;
+import xyz.oribuin.fishing.augment.impl.AugmentSage;
 import xyz.oribuin.fishing.augment.impl.AugmentSaturate;
 import xyz.oribuin.fishing.util.math.RomanNumber;
 
@@ -30,6 +34,10 @@ public class AugmentRegistry {
         register(new AugmentBiomeDisrupt());
         register(new AugmentCallOfTheSea());
         register(new AugmentHotspot());
+        register(new AugmentIntellect());
+        register(new AugmentPerception());
+        register(new AugmentPrecisionCutting());
+        register(new AugmentSage());
         register(new AugmentSaturate());
     }
 
@@ -81,12 +89,13 @@ public class AugmentRegistry {
 
         PersistentDataContainer container = meta.getPersistentDataContainer();
         augments.forEach((augment, level) -> {
-            container.set(augment.key(), PersistentDataType.INTEGER, level);
+            int newLevel = Math.min(level, augment.maxLevel());
+            container.set(augment.key(), PersistentDataType.INTEGER, newLevel);
 
             String current = container.getOrDefault(augment.loreKey(), PersistentDataType.STRING, augment.displayLine());
             StringPlaceholders placeholders = StringPlaceholders.of(
-                    "level", level,
-                    "level_roman", RomanNumber.toRoman(level)
+                    "level", newLevel,
+                    "level_roman", RomanNumber.toRoman(newLevel)
             );
 
             container.set(augment.loreKey(), PersistentDataType.STRING, placeholders.apply(augment.displayLine()));

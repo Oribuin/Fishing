@@ -9,15 +9,15 @@ import xyz.oribuin.fishing.util.FishUtils;
 
 import java.util.List;
 
-public class AugmentPerception extends Augment {
+public class AugmentIntellect extends Augment {
 
-    private String formula = "(%entropy% + %level%) * 0.05";
+    private String formula = "%level% * 0.05";
 
     /**
      * Create a new augment instance with a name and description
      */
-    public AugmentPerception() {
-        super("perception", "Increases the base entropy earned from catching fish.");
+    public AugmentIntellect() {
+        super("intellect", "Increases the base minecraft xp earned from catching fish.");
     }
 
     /**
@@ -31,9 +31,9 @@ public class AugmentPerception extends Augment {
     public void onFishCatch(FishCatchEvent event, int level) {
         if (!this.enabled) return;
 
-        StringPlaceholders plc = StringPlaceholders.of("level", level, "entropy", event.getEntropy());
-        double entropy = FishUtils.evaluate(plc.apply(this.formula));
-        event.setEntropy((int) entropy);
+        StringPlaceholders plc = StringPlaceholders.of("level", level, "xp", event.getNaturalExp());
+        double xp = FishUtils.evaluate(plc.apply(this.formula));
+        event.setNaturalExp((int) xp);
     }
 
     /**
@@ -68,9 +68,9 @@ public class AugmentPerception extends Augment {
     @Override
     public List<String> comments() {
         return List.of(
-                "Augment [Perception] - Increases the base entropy earned from catching fish.",
+                "Augment [Sage] - Increases the base plugin xp earned from catching fish.",
                 "",
-                "formula: The formula to calculate the additional entropy earned per level"
+                "formula: The formula to calculate the additional xp earned per level"
         );
     }
 
