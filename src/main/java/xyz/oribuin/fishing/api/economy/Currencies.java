@@ -6,8 +6,6 @@ import xyz.oribuin.fishing.api.economy.impl.PlayerExpCurrency;
 import xyz.oribuin.fishing.api.economy.impl.SkillpointCurrency;
 import xyz.oribuin.fishing.api.economy.impl.VaultCurrency;
 
-import java.util.PrimitiveIterator;
-
 public enum Currencies {
     ENTROPY(new EntropyCurrency()),
     FISH_EXP(new FishExpCurrency()),

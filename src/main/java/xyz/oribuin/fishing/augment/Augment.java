@@ -11,10 +11,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.config.Configurable;
-import xyz.oribuin.fishing.api.economy.Cost;
 import xyz.oribuin.fishing.api.event.FishEventHandler;
-import xyz.oribuin.fishing.api.recipe.Recipe;
-import xyz.oribuin.fishing.api.recipe.RecipeItem;
 import xyz.oribuin.fishing.util.ItemConstruct;
 
 import java.nio.file.Path;

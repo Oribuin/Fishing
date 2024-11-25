@@ -1,7 +1,6 @@
 package xyz.oribuin.fishing.api.recipe;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.api.config.Configurable;

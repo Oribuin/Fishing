@@ -37,6 +37,7 @@ public class MaterialRecipeItem extends RecipeItem<Material> {
 
         this.item = FishUtils.getEnum(this.type(), config.getString("item"), Material.BEDROCK);
     }
+
     /**
      * Save the configuration file for the configurable class
      * I would recommend always super calling this method to save any settings that could be implemented

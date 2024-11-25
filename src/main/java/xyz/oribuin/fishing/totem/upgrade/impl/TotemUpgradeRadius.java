@@ -121,8 +121,8 @@ public class TotemUpgradeRadius extends TotemUpgrade implements Configurable {
             CommentedConfigurationSection section = config.createSection("tiers." + level);
 
             // TODO: Improve c
-//            section.set("currency", tier.cost().currency().name());
-//            section.set("cost", tier.cost());
+            //            section.set("currency", tier.cost().currency().name());
+            //            section.set("cost", tier.cost());
             section.set("radius", tier.newRadius());
         });
     }
