@@ -36,10 +36,11 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
         this.enabled = true;
         this.name = name;
         this.description = description;
-        this.maxLevel = 1;
+        this.maxLevel = 5;
         this.requiredLevel = 1;
         this.displayItem = ItemConstruct.EMPTY;
         this.displayLine = "&c" + StringUtils.capitalize(this.name.replace("_", " ")) + " %level_roman%";
+        this.permission = "fishing.augment." + name;
     }
 
     /**

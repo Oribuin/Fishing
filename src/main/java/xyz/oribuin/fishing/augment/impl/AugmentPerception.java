@@ -18,6 +18,8 @@ public class AugmentPerception extends Augment {
      */
     public AugmentPerception() {
         super("perception", "Increases the base entropy earned from catching fish.");
+
+        this.maxLevel = 5;
     }
 
     /**

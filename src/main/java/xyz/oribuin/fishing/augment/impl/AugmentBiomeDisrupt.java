@@ -19,6 +19,8 @@ public class AugmentBiomeDisrupt extends Augment {
 
     public AugmentBiomeDisrupt() {
         super("biome_disruption", "When a player catches a fish, there is a chance to ignore the biome restrictions.");
+
+        this.maxLevel = 3;
     }
 
     /**

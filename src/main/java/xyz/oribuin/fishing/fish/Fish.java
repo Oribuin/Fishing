@@ -55,26 +55,22 @@ public class Fish implements Configurable {
      */
     @Override
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        Fish fish = new Fish(name, tier);
-
         // Catch Conditions
         this.displayName = config.getString("display-name", StringUtils.capitalize(this.name));
         this.description = config.getStringList("description");
         this.modelData = config.getInt("model-data", -1);
 
         // Catch Conditions
-        Condition condition = new Condition();
-        condition.biomes(config.getStringList("biomes"));
-        condition.weather(FishUtils.getEnum(Weather.class, config.getString("weather")));
-        condition.time(FishUtils.getEnum(Time.class, config.getString("time")));
-        condition.worlds(config.getStringList("worlds"));
-        condition.environment(FishUtils.getEnum(World.Environment.class, config.getString("environment")));
-        condition.waterDepth((Integer) config.get("water-depth"));
-        condition.iceFishing(config.getBoolean("ice-fishing"));
-        condition.lightLevel((Integer) config.get("light-level"));
-        condition.height(FishUtils.getHeight(config.getString("height")));
-        condition.boatFishing(config.getBoolean("boat-fishing"));
-        fish.condition(condition);
+        this.condition.biomes(config.getStringList("biomes"));
+        this.condition.weather(FishUtils.getEnum(Weather.class, config.getString("weather")));
+        this.condition.time(FishUtils.getEnum(Time.class, config.getString("time")));
+        this.condition.worlds(config.getStringList("worlds"));
+        this.condition.environment(FishUtils.getEnum(World.Environment.class, config.getString("environment")));
+        this.condition.waterDepth((Integer) config.get("water-depth"));
+        this.condition.iceFishing(config.getBoolean("ice-fishing"));
+        this.condition.lightLevel((Integer) config.get("light-level"));
+        this.condition.height(FishUtils.getHeight(config.getString("height")));
+        this.condition.boatFishing(config.getBoolean("boat-fishing"));
     }
 
     /**

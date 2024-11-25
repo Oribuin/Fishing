@@ -12,7 +12,8 @@ import xyz.oribuin.fishing.fish.Fish;
 
 import java.util.List;
 
-@SuppressWarnings("deprecation")
+
+@SuppressWarnings({ "deprecation", "removal" })
 public class BiomeCondition implements CatchCondition {
 
     /**
@@ -42,13 +43,13 @@ public class BiomeCondition implements CatchCondition {
         Location loc = hook.getLocation();
         List<String> biomes = fish.condition().biomes();
 
-        // Use the old method if the server is not running paper
-        if (!NMSUtil.isPaper()) {
-            return biomes.contains(loc.getBlock().getBiome().name());
+        // 1.21.3+ Biome Check
+        if (NMSUtil.getVersionNumber() > 21 && NMSUtil.getMinorVersionNumber() >= 3) {
+            String value = this.keyValue(loc.getBlock().getBiome().getKey());
+            return biomes.stream().anyMatch(value::equalsIgnoreCase);
         }
 
-        // Server is running paper
-        List<NamespacedKey> biomeKeys = biomes.stream().map(NamespacedKey::fromString).toList();
+        // 1.21.2 and below Biome Check
         NamespacedKey current = Bukkit.getUnsafe().getBiomeKey(
                 loc.getWorld(),
                 loc.getBlockX(),
@@ -56,7 +57,17 @@ public class BiomeCondition implements CatchCondition {
                 loc.getBlockZ()
         );
 
-        return biomeKeys.contains(current);
+        return biomes.stream().anyMatch(x -> this.keyValue(current).equalsIgnoreCase(x));
     }
 
+    /**
+     * Get the key value of the biome
+     *
+     * @param key The key to get the value of
+     *
+     * @return The value of the key
+     */
+    private String keyValue(NamespacedKey key) {
+        return key.value();
+    }
 }

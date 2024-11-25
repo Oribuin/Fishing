@@ -19,6 +19,8 @@ public class AugmentCallOfTheSea extends Augment {
 
     public AugmentCallOfTheSea() {
         super("call_of_the_sea", "Increases the amount of fish caught when the weather is raining");
+
+        this.maxLevel = 15;
     }
 
     /**

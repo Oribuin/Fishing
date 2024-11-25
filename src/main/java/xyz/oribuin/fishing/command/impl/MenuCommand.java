@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import xyz.oribuin.fishing.gui.StatsMenu;
 import xyz.oribuin.fishing.manager.MenuManager;
 
+// suppress experimental
 public class MenuCommand extends BaseRoseCommand {
 
     public MenuCommand(RosePlugin rosePlugin) {
@@ -24,6 +25,7 @@ public class MenuCommand extends BaseRoseCommand {
         if (menu == null) return;
 
         menu.open(player);
+
     }
 
     @Override

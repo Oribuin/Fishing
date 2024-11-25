@@ -18,6 +18,8 @@ public class AugmentIntellect extends Augment {
      */
     public AugmentIntellect() {
         super("intellect", "Increases the base minecraft xp earned from catching fish.");
+
+        this.maxLevel = 3;
     }
 
     /**
