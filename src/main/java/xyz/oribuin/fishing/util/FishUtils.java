@@ -11,9 +11,11 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.FishingPlugin;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Duration;
@@ -28,7 +30,7 @@ public final class FishUtils {
     public static ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
 
     public FishUtils() {
-        throw new IllegalStateException("VouchersUtil is a utility class and cannot be instantiated.");
+        throw new IllegalStateException("FishUtil is a utility class and cannot be instantiated.");
     }
 
     /**
@@ -320,4 +322,28 @@ public final class FishUtils {
         return list;
     }
 
+    /**
+     * Generate the default fish names from the resources
+     * @return The list of fish names
+     */
+    public static List<String> generateFishNames() {
+        List<String> fishNames = new ArrayList<>();
+
+        InputStream stream = FishingPlugin.get().getResource("generated/fish.txt");
+        if (stream == null) {
+            FishingPlugin.get().getLogger().severe("Failed to generate default fish: InputStream is null.");
+            return fishNames;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                fishNames.add(line);
+            }
+        } catch (Exception e){
+            FishingPlugin.get().getLogger().severe("Failed to generate default fish: " + e.getMessage());
+        }
+
+        return fishNames;
+    }
 }

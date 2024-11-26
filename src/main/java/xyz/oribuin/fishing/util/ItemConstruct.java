@@ -18,6 +18,7 @@ import org.bukkit.potion.PotionEffectType;
 import xyz.oribuin.fishing.util.nms.SkullUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +51,11 @@ public class ItemConstruct {
     private ItemConstruct(Material type) {
         this.type = type;
         this.amount = 1;
+        this.model = 0;
+        this.unbreakable = false;
+        this.enchantment = new HashMap<>();
+        this.flags = new ArrayList<>();
+        this.effects = new ArrayList<>();
     }
 
     /**
@@ -83,7 +89,7 @@ public class ItemConstruct {
         }
 
         config.set("unbreakable", this.unbreakable);
-        if (this.flags != null && !this.flags.isEmpty()) config.set("flags", this.flags);
+        if (this.flags != null && !this.flags.isEmpty()) config.set("flags", this.flags.stream().map(ItemFlag::name).toList());
         if (this.texture != null) config.set("texture", this.texture);
         if (this.color != null) config.set("color", this.color.asRGB());
         if (this.effects != null && !this.effects.isEmpty()) {
@@ -175,7 +181,13 @@ public class ItemConstruct {
         if (this.name != null) meta.setDisplayName(HexUtils.colorify(placeholders.apply(this.name)));
         if (this.lore != null && !this.lore.isEmpty()) {
             List<String> lore = new ArrayList<>();
-            for (String line : this.lore) lore.add(HexUtils.colorify(placeholders.apply(line)));
+            for (String line : this.lore) {
+                String[] newLine = placeholders.apply(line).split("\n");
+                for (String s : newLine) {
+                    lore.add(HexUtils.colorify(s));
+                }
+            }
+
             meta.setLore(lore);
         }
         if (this.model != 0) meta.setCustomModelData(this.model);
@@ -209,6 +221,13 @@ public class ItemConstruct {
         // Apply the item meta
         stack.setItemMeta(meta);
         return stack;
+    }
+
+    /**
+     * @return The material of the item
+     */
+    public int amount() {
+        return this.amount;
     }
 
     /**

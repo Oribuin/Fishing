@@ -1,97 +1,98 @@
-chance: 60.0 # Chance of getting this tier
-money: 3.0 # Money reward when the fish is sold
-entropy: 5 # Entropy reward when the fish is gutted
-fish-exp: 100 # Fishing experience reward when caught
-natural-exp: 10.0 # Rewards additional % experience when caught naturally
+
+chance: 15.0 # Chance of getting this tier
+money: 7.0 # Money reward when the fish is sold
+entropy: 10 # Entropy reward when the fish is gutted
+fish-exp: 200 # Fishing experience reward when caught
+natural-exp: 12.0 # Rewards additional % experience when caught naturally
 display-item:
   type: COD
-  name: '&#CD7F32&l%name%'
+  name: '&#C0C0C0&l%name%'
   lore:
     - ''
-    - '%description%'
+    - '&7%description%'
     - ''
-    - '&#CD7F32Information:'
-    - ' &#CD7F32- &7Price: &f%price%'
-    - ' &#CD7F32- &7Entropy: &f%entropy%'
-    - ' &#CD7F32- &7Biomes: &f%biomes%'
-    - ' &#CD7F32- &7Weather: &f%worlds%'
-    - ' &#CD7F32- &7Time: &f%time%'
+    - '&#C0C0C0Information:'
+    - ' &#C0C0C0- &7Price: &f%price%'
+    - ' &#C0C0C0- &7Entropy: &f%entropy%'
+    - ' &#C0C0C0- &7Biomes: &f%biomes%'
+    - ' &#C0C0C0- &7Weather: &f%worlds%'
+    - ' &#C0C0C0- &7Time: &f%time%'
     - ''
 fish:
-  cod:
-    display-name: 'Cod'
+  bull_trout:
+    display-name: 'Bull Trout'
     description:
       - '&7a very slippery guy'
       - '&7a &overy very &7slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
-  bluegill:
-    display-name: 'Bluegill'
+  rainbow_trout:
+    display-name: 'Rainbow Trout'
     description:
       - '&7a very slippery guy'
       - '&7a &overy very &7slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
-  perch:
-    display-name: 'Perch'
+  brook_trout:
+    display-name: 'Brook Trout'
     description:
       - '&7a very slippery guy'
       - '&7a &overy very &7slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
-  bullhead:
-    display-name: 'Bullhead'
+  white_perch:
+    display-name: 'White Perch'
     description:
       - '&7a very slippery guy'
       - '&7a &overy very &7slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
-  tilapia:
-    display-name: 'Tilapia'
+  smallmouth_bass:
+    display-name: 'Smallmouth Bass'
     description:
       - '&7a very slippery guy'
       - '&7a &overy very &7slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
-  goldfish:
-    display-name: 'Goldfish'
+  yellow_perch:
+    display-name: 'Yellow Perch'
     description:
       - '&7a very slippery guy'
       - '&7a &overy very &7slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
-  koi:
-    display-name: 'Koi'
+  flathead_catfish:
+    display-name: 'Flathead Catfish'
     description:
       - '&7a very slippery guy'
       - '&7a &overy very &7slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
-  guppy:
-    display-name: 'Guppy'
+  gourami:
+    display-name: 'Gourami'
     description:
       - '&7a very slippery guy'
       - '&7a &overy very &7slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
-  molly:
-    display-name: 'Molly'
+  angelfish:
+    display-name: 'Angelfish'
     description:
       - '&7a very slippery guy'
       - '&7a &overy very &7slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
-  platy:
-    display-name: 'Platy'
+  white_crappie:
+    display-name: 'White Crappie'
     description:
       - '&7a very slippery guy'
       - '&7a &overy very &7slippery guy'

@@ -1,7 +1,7 @@
 package xyz.oribuin.fishing.fish;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.utils.HexUtils;
+import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.World;
@@ -55,7 +55,6 @@ public class Fish implements Configurable {
      */
     @Override
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        // Catch Conditions
         this.displayName = config.getString("display-name", StringUtils.capitalize(this.name));
         this.description = config.getStringList("description");
         this.modelData = config.getInt("model-data", -1);
@@ -126,11 +125,13 @@ public class Fish implements Configurable {
         if (fishTier == null) return null;
 
         // Add all the information to the item stack
-        ItemStack itemStack = fishTier.baseDisplay().build();
+        StringPlaceholders.Builder placeholders = StringPlaceholders.builder();
+        placeholders.addAll(this.placeholders());
+        placeholders.addAll(this.tier().placeholders());
+
+        ItemStack itemStack = fishTier.baseDisplay().build(placeholders.build());
         itemStack.editMeta(itemMeta -> {
-            itemMeta.displayName(Component.text(HexUtils.colorify(this.displayName)));
-            itemMeta.setCustomModelData(this.modelData);
-            // TODO: Set the lore of the item
+            if (this.modelData > 0) itemMeta.setCustomModelData(this.modelData);
 
             // fish data :-)
             PersistentDataContainer container = itemMeta.getPersistentDataContainer();
@@ -139,6 +140,25 @@ public class Fish implements Configurable {
         });
 
         return itemStack.clone(); // Clone the item stack to prevent any changes
+    }
+
+    private StringPlaceholders placeholders() {
+        return StringPlaceholders.builder()
+                .add("id", this.name)
+                .add("name", this.displayName)
+                .add("tier", this.tier)
+                .add("description", String.join("\n", this.description))
+                .add("biomes", this.condition.biomes().isEmpty() ? "All" : String.join(", ", this.condition.biomes()))
+                .add("weather", this.condition.weather() == null ? "All" : this.condition.weather().name())
+                .add("time", this.condition.time() == null ? "All" : this.condition.time().name())
+                .add("worlds", this.condition.worlds().isEmpty() ? "All" : String.join(", ", this.condition.worlds()))
+                .add("environment", this.condition.environment() == null ? "All" : this.condition.environment().name())
+                .add("water-depth", this.condition.waterDepth() == null ? "All" : this.condition.waterDepth().toString())
+                .add("ice-fishing", this.condition.iceFishing() ? "Yes" : "No")
+                .add("height", this.condition.height() == null ? "All" : this.condition.height().getLeft() + " - " + this.condition.height().getRight())
+                .add("light-level", this.condition.lightLevel() == null ? "All" : this.condition.lightLevel().toString())
+                .add("boat-fishing", this.condition.boatFishing() ? "Yes" : "No")
+                .build();
     }
 
     /**

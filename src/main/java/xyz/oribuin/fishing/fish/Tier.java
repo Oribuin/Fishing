@@ -2,7 +2,9 @@ package xyz.oribuin.fishing.fish;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
+import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.jetbrains.annotations.NotNull;
+import org.w3c.dom.stylesheets.LinkStyle;
 import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.config.Configurable;
 import xyz.oribuin.fishing.util.FishUtils;
@@ -13,6 +15,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 
 public class Tier implements Configurable {
@@ -120,6 +123,17 @@ public class Tier implements Configurable {
             if (fishSection == null) fishSection = config.createSection("fish." + entry.getKey());
             entry.getValue().saveSettings(fishSection);
         }
+    }
+
+    public StringPlaceholders placeholders() {
+        return StringPlaceholders.builder()
+                .add("tier", this.name)
+                .add("price", this.money)
+                .add("chance", this.chance)
+                .add("entropy", this.entropy)
+                .add("fish_xp", this.fishExp)
+                .add("natural_xp", this.naturalExp)
+                .build();
     }
 
     /**

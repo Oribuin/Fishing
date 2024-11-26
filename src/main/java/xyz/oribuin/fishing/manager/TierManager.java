@@ -18,7 +18,6 @@ import java.util.Map;
 public class TierManager extends Manager {
 
     private final Map<String, Tier> tiers = new HashMap<>();
-    private CommentedFileConfiguration config;
 
     public TierManager(RosePlugin rosePlugin) {
         super(rosePlugin);
@@ -32,6 +31,11 @@ public class TierManager extends Manager {
         File[] content = tierFolder.listFiles();
         if (content == null) {
             FishUtils.createFile(this.rosePlugin, "tiers", "bronze.yml");
+            FishUtils.createFile(this.rosePlugin, "tiers", "silver.yml");
+            FishUtils.createFile(this.rosePlugin, "tiers", "gold.yml");
+            FishUtils.createFile(this.rosePlugin, "tiers", "diamond.yml");
+            FishUtils.createFile(this.rosePlugin, "tiers", "platinum.yml");
+            FishUtils.createFile(this.rosePlugin, "tiers", "mythic.yml");
             content = tierFolder.listFiles();
         }
 
