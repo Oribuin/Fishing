@@ -6,6 +6,7 @@ import dev.rosewood.rosegarden.command.framework.BaseRoseCommand;
 import dev.rosewood.rosegarden.command.framework.CommandInfo;
 import xyz.oribuin.fishing.command.impl.admin.give.GiveAugmentCommand;
 import xyz.oribuin.fishing.command.impl.admin.give.GiveFishCommand;
+import xyz.oribuin.fishing.command.impl.admin.give.GiveTotemCommand;
 
 public class GiveCommand extends BaseRoseCommand {
 
@@ -24,7 +25,11 @@ public class GiveCommand extends BaseRoseCommand {
 
     private ArgumentsDefinition createArguments() {
         return ArgumentsDefinition.builder()
-                .requiredSub(new GiveAugmentCommand(this.rosePlugin), new GiveFishCommand(this.rosePlugin));
+                .requiredSub(
+                        new GiveAugmentCommand(this.rosePlugin),
+                        new GiveFishCommand(this.rosePlugin),
+                        new GiveTotemCommand(this.rosePlugin)
+                );
     }
 
 }

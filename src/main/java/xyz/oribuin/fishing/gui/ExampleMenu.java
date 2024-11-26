@@ -18,7 +18,6 @@ public class ExampleMenu extends PluginMenu {
      *
      * @param player The player to open the GUI for
      */
-    @Override
     public void open(Player player) {
         this.placeExtras(this.gui);
 

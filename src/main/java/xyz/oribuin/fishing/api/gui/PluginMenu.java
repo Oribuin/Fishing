@@ -7,17 +7,21 @@ import dev.triumphteam.gui.guis.BaseGui;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.config.Configurable;
+import xyz.oribuin.fishing.util.ItemConstruct;
 
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
 public abstract class PluginMenu implements Configurable {
+
+    public static final ItemConstruct BORDER = ItemConstruct.of(Material.BLACK_STAINED_GLASS_PANE).tooltip(false);
 
     protected final FishingPlugin plugin;
     protected final GuiAction<InventoryClickEvent> EMPTY = event -> {
@@ -40,13 +44,6 @@ public abstract class PluginMenu implements Configurable {
         this.extraItems = new HashMap<>();
         this.pageSize = 0;
     }
-
-    /**
-     * Open the GUI for the specified player
-     *
-     * @param player The player to open the GUI for
-     */
-    public abstract void open(Player player);
 
     /**
      * Create the menu for the GUI with the specified settings

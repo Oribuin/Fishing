@@ -27,6 +27,17 @@ public class GuiItem implements Configurable {
         this.name = name;
     }
 
+    public GuiItem(String name, ItemConstruct item) {
+        this.name = name;
+        this.item = item;
+    }
+
+    public GuiItem(String name, int slot, ItemConstruct item) {
+        this.name = name;
+        this.slot = List.of(slot);
+        this.item = item;
+    }
+
     /**
      * Place the item in the specified slot in the GUI
      *
@@ -167,6 +178,14 @@ public class GuiItem implements Configurable {
 
     public void slot(List<Integer> slot) {
         this.slot = slot;
+    }
+
+    public void parseSlot(String slot) {
+        this.slot = this.parseSlots(slot);
+    }
+
+    public void parseSlots(List<String> slots) {
+        this.slot = this.parseSlotList(slots);
     }
 
     public ItemConstruct item() {

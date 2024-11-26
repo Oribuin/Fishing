@@ -23,7 +23,6 @@ public class StatsMenu extends PluginMenu {
      *
      * @param player The player to open the GUI for
      */
-    @Override
     public void open(Player player) {
         Fisher fisher = this.plugin.getManager(DataManager.class).get(player.getUniqueId());
         if (fisher == null) {

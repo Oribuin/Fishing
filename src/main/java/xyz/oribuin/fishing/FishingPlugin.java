@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.augment.AugmentRegistry;
 import xyz.oribuin.fishing.listener.FishListener;
 import xyz.oribuin.fishing.listener.PlayerListeners;
+import xyz.oribuin.fishing.listener.TotemListeners;
 import xyz.oribuin.fishing.manager.FishManager;
 import xyz.oribuin.fishing.manager.MenuManager;
 import xyz.oribuin.fishing.manager.TierManager;
@@ -43,6 +44,7 @@ public class FishingPlugin extends RosePlugin {
         PluginManager manager = this.getServer().getPluginManager();
         manager.registerEvents(new FishListener(this), this);
         manager.registerEvents(new PlayerListeners(this), this);
+        manager.registerEvents(new TotemListeners(this), this);
     }
 
     @Override

@@ -6,6 +6,7 @@ import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.gui.PluginMenu;
 import xyz.oribuin.fishing.gui.ExampleMenu;
 import xyz.oribuin.fishing.gui.StatsMenu;
+import xyz.oribuin.fishing.gui.totem.TotemMainMenu;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,8 +24,7 @@ public class MenuManager extends Manager {
         menus.clear();
 
         // Register the menus
-        menus.put(ExampleMenu.class, new ExampleMenu(FishingPlugin.get()));
-        menus.put(StatsMenu.class, new StatsMenu(FishingPlugin.get()));
+        menus.put(TotemMainMenu.class, new TotemMainMenu(FishingPlugin.get()));
 
         // Load all the menus
         menus.values().forEach(PluginMenu::reload);

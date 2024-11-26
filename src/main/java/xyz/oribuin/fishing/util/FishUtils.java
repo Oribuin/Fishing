@@ -166,6 +166,12 @@ public final class FishUtils {
         if (hours > 0) builder.append(hours).append("h, ");
         if (minutes > 0) builder.append(minutes).append("m, ");
         if (seconds > 0) builder.append(seconds).append("s");
+
+        // remove the last comma
+        if (builder.toString().endsWith(", ")) {
+            builder.setLength(builder.length() - 2);
+        }
+
         return builder.toString();
     }
 

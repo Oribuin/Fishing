@@ -54,4 +54,8 @@ public record FinePosition(String world, int x, int y, int z) {
         );
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s, %d, %d, %d", this.world, this.x, this.y, this.z);
+    }
 }

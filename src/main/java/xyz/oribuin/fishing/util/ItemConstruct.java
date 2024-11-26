@@ -44,6 +44,9 @@ public class ItemConstruct {
     private Color color;
     private boolean glow;
 
+    // 1.21.3+ only
+    private boolean tooltip;
+
     /**
      * Create a new Item Construct with a Material
      *
@@ -58,6 +61,7 @@ public class ItemConstruct {
         this.flags = new ArrayList<>();
         this.effects = new ArrayList<>();
         this.glow = false;
+        this.tooltip = true;
     }
 
     /**
@@ -88,6 +92,7 @@ public class ItemConstruct {
 
         config.set("unbreakable", this.unbreakable);
         config.set("glow", this.glow);
+        config.set("tooltip", this.tooltip);
 
         if (this.enchantment != null) {
             for (Map.Entry<Enchantment, Integer> entry : this.enchantment.entrySet()) {
@@ -133,6 +138,8 @@ public class ItemConstruct {
         construct.texture(config.getString("texture"));
         construct.color(Color.fromRGB(config.getInt("color")));
         construct.glow(config.getBoolean("glow"));
+        construct.tooltip(config.getBoolean("tooltip"));
+
 
         // Serialize the enchants
         CommentedConfigurationSection enchantments = config.getConfigurationSection("enchantments");
@@ -226,6 +233,10 @@ public class ItemConstruct {
         // Apply the skull texture
         if (this.texture != null && meta instanceof SkullMeta skullMeta) {
             SkullUtils.setSkullTexture(skullMeta, this.texture);
+        }
+
+        if (!this.tooltip) {
+            meta.setHideTooltip(true);
         }
 
         // Apply the item meta
@@ -428,6 +439,18 @@ public class ItemConstruct {
      */
     public ItemConstruct glow(boolean glow) {
         this.glow = glow;
+        return this;
+    }
+
+    /**
+     * Apply the itemstack should have a tooltip
+     *
+     * @param tooltip If the itemstack should have no tooltip
+     *
+     * @return The itemstack constructor
+     */
+    public ItemConstruct tooltip(boolean tooltip) {
+        this.tooltip = tooltip;
         return this;
     }
 

@@ -1,20 +1,26 @@
 package xyz.oribuin.fishing.totem;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import com.jeff_media.morepersistentdatatypes.DataType;
+import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.task.AsyncTicker;
+import xyz.oribuin.fishing.manager.TotemManager;
 import xyz.oribuin.fishing.storage.util.PersistKeys;
 import xyz.oribuin.fishing.util.FishUtils;
+import xyz.oribuin.fishing.util.ItemConstruct;
 import xyz.oribuin.fishing.util.math.MathL;
 
 import java.time.Duration;
@@ -23,6 +29,11 @@ import java.util.List;
 import java.util.UUID;
 
 public class Totem implements AsyncTicker {
+
+    private static final Duration PARTICLE_DELAY = Duration.ofSeconds(1);
+
+    private static final String TEXTURE = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmY2MjRhNDRlNzdiOTVkYmUxY2M3MzU1MzY5NTNlODQwYmE2YzE5YjAxNTdjNTQ5ZDliODI1MzQ2NDhjOGNlNCJ9fX0=";
+    public static final ItemConstruct DEFAULT_ITEM = defaultItem();
 
     private final UUID owner;
     private String ownerName; // The name of the owner
@@ -34,17 +45,22 @@ public class Totem implements AsyncTicker {
     private Location center; // Center of the totem
 
     private ArmorStand entity; // The entity that will be spawned.
-    private long thetaTicks; // The ticks for the totem to spin
-    private double heightOffset; // The height offset for the totem
+    private long lastTick; // The last time the totem was ticked
+    private List<Location> bounds; // The bounds of the totem
 
-
+    /**
+     * Create a new totem owner with all the required values
+     *
+     * @param owner     The owner of the totem
+     * @param ownerName The name of the owner
+     */
     public Totem(UUID owner, String ownerName) {
         this.owner = owner;
         this.ownerName = ownerName;
         this.radius = 10;
         this.duration = Duration.ofMinutes(2);
         this.cooldown = Duration.ofHours(1);
-        this.lastActive = System.currentTimeMillis();
+        this.lastActive = 0;
         this.center = null;
     }
 
@@ -68,33 +84,32 @@ public class Totem implements AsyncTicker {
     @Override
     public void tickAsync() {
         if (!this.center.isChunkLoaded()) return;
-        if (!this.active) return;
         if (this.entity == null) return;
 
-        this.thetaTicks++;
+        // Spawn particles around the totem
+        if (System.currentTimeMillis() - this.lastTick > PARTICLE_DELAY.toMillis()) {
 
-        // Create the totem animations for radius of the totem
-        List<Location> bounds = this.bounds();
-        Particle.DustOptions options = new Particle.DustOptions(Color.LIME, 1f);
-        bounds.forEach(x -> this.center.getWorld().spawnParticle(
-                FishUtils.getEnum(Particle.class, "REDSTONE", Particle.DUST),
-                x,
-                2,
-                0, 0, 0, 0,
-                options
-        ));
+            Color color = Color.RED;
+            if (this.active) color = Color.LIME;
+            if (!this.active && this.onCooldown()) color = Color.YELLOW;
 
-        // Make the totem spin :3
-        double theta = thetaTicks * 0.05;
-        Location newLocation = this.center.clone();
-        newLocation.setY(newLocation.getY() - this.heightOffset + Math.sin(theta) * 0.2 + this.heightOffset);
-        newLocation.setYaw((float) theta * 100);
+            new ParticleBuilder(Particle.DUST)
+                    .location(this.entity.getEyeLocation().toCenterLocation())
+                    .offset(0.5, 0.5, 0.5)
+                    .count(10)
+                    .extra(0)
+                    .color(color)
+                    .spawn();
 
-        this.entity.teleport(newLocation);
+            // Spawn additional particles around the totem bounds while active
+            if (this.active) {
+                this.bounds.forEach(x -> this.dust(Color.LIME).location(x.clone().add(0, 0.5, 0)).spawn());
+            }
 
-        // TODO: Run the animations for all totem upgrades
-        // TODO: for each upgrade: if instanceof AsyncTickable then upgrade.tickAsync();
+            this.lastTick = System.currentTimeMillis();
+        }
     }
+
 
     /**
      * Spawn in the totem in the world at a location
@@ -102,70 +117,70 @@ public class Totem implements AsyncTicker {
      * @param location The block location to spawn the totem
      */
     public void spawn(Location location) {
-        this.center = location.clone().add(0.5, 1.5, 0.5);
-        this.entity = this.center.getWorld().spawn(
-                this.center,
-                ArmorStand.class,
-                CreatureSpawnEvent.SpawnReason.CUSTOM,
-                result -> {
-                    result.setInvisible(true);
-                    result.setCanTick(false);
-                    result.setGravity(false);
-                    result.setDisabledSlots(EquipmentSlot.values());
-                    result.setVisible(false);
-                    result.setCustomNameVisible(true);
-                    result.setPersistent(true);
-                    // TODO: Allow configurable name
-                    result.customName(Component.text(this.ownerName + "'s Totem"));
-                    this.saveToContainer(result.getPersistentDataContainer());
-                });
+        this.center = location.toBlockLocation().add(0.5, -0.3, 0.5);
+        this.bounds = this.bounds();
+        this.entity = this.center.getWorld().spawn(this.center, ArmorStand.class, CreatureSpawnEvent.SpawnReason.CUSTOM, result -> {
+            result.setInvisible(false);
+            result.setCanTick(false);
+            result.setGravity(false);
+            result.setVisible(false);
+            result.setCustomNameVisible(true);
+            result.setPersistent(true);
+            result.customName(Component.text(this.ownerName + "'s Totem")); // TODO: Allow configurable name
+            result.setItem(EquipmentSlot.HEAD, DEFAULT_ITEM.build());
 
-        this.heightOffset = this.entity.isSmall() ? 1.0 : 1.5; // Height offset
+            // Lock all the slots
+            for (EquipmentSlot slot : EquipmentSlot.values()) {
+                result.addEquipmentLock(slot, ArmorStand.LockType.ADDING_OR_CHANGING);
+                result.addEquipmentLock(slot, ArmorStand.LockType.REMOVING_OR_CHANGING);
+            }
+
+            this.saveToContainer(result.getPersistentDataContainer());
+        });
 
         // Create spawning particles around the totem
-        int maxRadius = 2;
-        double height = -0.25;
-        List<Location> results = new ArrayList<>();
-        int numSteps = 120;
-        for (double newRadius = 0; newRadius < maxRadius; newRadius += 0.25) {
-            for (int i = 0; i < numSteps; i++) {
-                height += 0.25;
-                double dx = MathL.cos(Math.PI * 2 * ((double) i / numSteps)) * maxRadius - newRadius;
-                double dz = MathL.sin(Math.PI * 2 * ((double) i / numSteps)) * maxRadius - newRadius;
-
-                results.add(this.center.clone().add(dx, height, dz));
-            }
-        }
-
-        List<Location> bounds = this.bounds();
         long startTime = System.currentTimeMillis();
-        Bukkit.getScheduler().runTaskAsynchronously(FishingPlugin.get(), task -> {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(FishingPlugin.get(), task -> {
             // if longer than 3 seconds cancel
-            if (System.currentTimeMillis() - startTime > Duration.ofSeconds(3).toMillis()) {
+            if (System.currentTimeMillis() - startTime > Duration.ofSeconds(5).toMillis()) {
                 task.cancel();
                 return;
             }
 
-            // Spawn totem particles around the totem
-            results.forEach(x -> this.center.getWorld().spawnParticle(
-                    FishUtils.getEnum(Particle.class, "TOTEM", Particle.TOTEM_OF_UNDYING),
-                    x,
-                    2,
-                    0, 0, 0, 0
-            ));
-
             // Spawn dust particles to display the totem radius
-            Particle.DustOptions options = new Particle.DustOptions(Color.LIME, 1f);
-            results.forEach(x -> this.center.getWorld().spawnParticle(
-                    FishUtils.getEnum(Particle.class, "DUST", FishUtils.getEnum(Particle.class, "REDSTONE", Particle.DUST)),
-                    x,
-                    2,
-                    0, 0, 0, 0,
-                    options
-            ));
-        });
+            this.bounds.forEach(x -> this.dust(Color.LIME).location(x.clone().add(0, 0.5, 0)).spawn());
+        }, 0L, 5L);
     }
 
+    /**
+     * Update the totem values
+     */
+    public void update() {
+        if (this.entity != null) this.saveToContainer(this.entity.getPersistentDataContainer());
+
+        FishingPlugin.get().getManager(TotemManager.class).registerTotem(this);
+    }
+
+    /**
+     * Save the totem values to the itemstack
+     *
+     * @param itemStack The itemstack to save the values to
+     */
+    public void saveTo(ItemStack itemStack) {
+        if (itemStack == null) {
+            FishingPlugin.get().getLogger().severe("ItemStack is null, could not save totem by owner: " + this.owner);
+            return;
+        }
+
+        itemStack.editMeta(itemMeta -> {
+            if (itemMeta == null) {
+                FishingPlugin.get().getLogger().severe("ItemMeta is null for item: " + itemStack.getType());
+                return;
+            }
+
+            this.saveToContainer(itemMeta.getPersistentDataContainer());
+        });
+    }
 
     /**
      * Save all the totem values to the container
@@ -198,10 +213,7 @@ public class Totem implements AsyncTicker {
         Long cooldown = container.get(PersistKeys.TOTEM_COOLDOWN, DataType.LONG);
         long lastActive = container.getOrDefault(PersistKeys.TOTEM_LASTACTIVE, DataType.LONG, System.currentTimeMillis());
 
-        if (owner == null) return null;
-        if (radius == null) return null;
-        if (duration == null) return null;
-        if (cooldown == null) return null;
+        if (owner == null || radius == null || duration == null || cooldown == null) return null;
 
         Totem totem = new Totem(owner, ownerName);
         totem.active(active);
@@ -209,7 +221,64 @@ public class Totem implements AsyncTicker {
         totem.duration(Duration.ofMillis(duration));
         totem.cooldown(Duration.ofMillis(cooldown));
         totem.lastActive(lastActive);
-        return null;
+        return totem;
+    }
+
+    /**
+     * Create a new totem from an entity
+     *
+     * @param stand The armor stand to get the values from
+     *
+     * @return The totem object
+     */
+    public static Totem fromEntity(ArmorStand stand) {
+        Totem totem = fromContainer(stand.getPersistentDataContainer());
+        if (totem == null) return null;
+
+        totem.entity(stand);
+        totem.center(stand.getLocation());
+        return totem;
+
+    }
+
+    public StringPlaceholders placeholders() {
+        return StringPlaceholders.builder()
+                .add("owner", this.ownerName)
+                .add("radius", this.radius)
+                .add("duration", FishUtils.formatTime(this.duration.toMillis()))
+                .add("cooldown", FishUtils.formatTime(this.cooldown.toMillis()))
+                .add("active", this.active ? "Yes" : "No")
+                .add("timer", FishUtils.formatTime(this.duration.toMillis() - (System.currentTimeMillis() - this.lastActive)))
+                .add("cooldownTimer", FishUtils.formatTime(this.cooldown.toMillis() - (System.currentTimeMillis() - this.lastActive)))
+                .build();
+
+    }
+
+    /**
+     * Create a new particle builder with the dust particle
+     *
+     * @param color The color of the dust
+     *
+     * @return The particle builder
+     */
+    private ParticleBuilder dust(Color color) {
+        return new ParticleBuilder(Particle.DUST)
+                .count(1)
+                .extra(0)
+                .offset(0, 0, 0.)
+                .color(color)
+                .clone();
+    }
+
+    /**
+     * Test if the totem is on cooldown
+     *
+     * @return If the totem is on cooldown
+     */
+    public boolean onCooldown() {
+        if (this.lastActive == 0) return false;
+
+        return System.currentTimeMillis() - this.lastActive < this.cooldown.toMillis();
     }
 
     /**
@@ -232,6 +301,8 @@ public class Totem implements AsyncTicker {
      * @return The outer bounds of the totem
      */
     public List<Location> bounds() {
+        if (this.center == null) return new ArrayList<>();
+
         List<Location> results = new ArrayList<>();
         int numSteps = 120;
         for (int i = 0; i < numSteps; i++) {
@@ -242,7 +313,24 @@ public class Totem implements AsyncTicker {
         }
 
         return results;
+    }
 
+    public static ItemConstruct defaultItem() {
+        return ItemConstruct.of(Material.PLAYER_HEAD)
+                .name("&f[&#4f73d6&lFishing Totem&f]")
+                .lore(
+                        "&7Place in the world to create local",
+                        "&7booster for players within it's radius.",
+                        "",
+                        "&#4f73d6Information",
+                        " &#4f73d6- &7Owner: &f%owner%",
+                        " &#4f73d6- &7Radius: &f%radius% blocks",
+                        " &#4f73d6- &7Duration: &f%duration%",
+                        " &#4f73d6- &7Cooldown: &f%cooldown%",
+                        ""
+                )
+                .glow(true)
+                .texture(TEXTURE);
     }
 
     public UUID owner() {
@@ -271,6 +359,7 @@ public class Totem implements AsyncTicker {
 
     public void center(Location center) {
         this.center = center;
+        this.bounds = this.bounds();
     }
 
     public int radius() {
@@ -279,6 +368,7 @@ public class Totem implements AsyncTicker {
 
     public void radius(int radius) {
         this.radius = radius;
+        this.bounds = this.bounds();
     }
 
     public Duration duration() {
@@ -308,4 +398,21 @@ public class Totem implements AsyncTicker {
     public ArmorStand entity() {
         return this.entity;
     }
+
+    public void entity(ArmorStand entity) {
+        this.entity = entity;
+        this.center = entity.getLocation();
+        this.bounds = this.bounds();
+    }
+
+    /**
+     * The delay between each tick, Set to Duration#ZERO for no delay
+     *
+     * @return The delay between each tick
+     */
+    @Override
+    public Duration delay() {
+        return AsyncTicker.super.delay();
+    }
+
 }
