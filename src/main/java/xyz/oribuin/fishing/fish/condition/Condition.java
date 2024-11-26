@@ -13,7 +13,7 @@ public class Condition {
 
     private List<String> biomes = new ArrayList<>();
     private Weather weather = null;
-    private Time time = Time.ALL_DAY;
+    private Time time = Time.ANY_TIME;
     private List<String> worlds = new ArrayList<>();
     private World.Environment environment = null;
     private Integer waterDepth = null;

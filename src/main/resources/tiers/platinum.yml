@@ -15,7 +15,7 @@ display-item:
     - ' &#E5E4E2- &7Price: &f%price%'
     - ' &#E5E4E2- &7Entropy: &f%entropy%'
     - ' &#E5E4E2- &7Biomes: &f%biomes%'
-    - ' &#E5E4E2- &7Weather: &f%worlds%'
+    - ' &#E5E4E2- &7Weather: &f%weather%'
     - ' &#E5E4E2- &7Time: &f%time%'
     - ''
 fish:
