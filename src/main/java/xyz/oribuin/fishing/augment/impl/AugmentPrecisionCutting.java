@@ -17,7 +17,7 @@ public class AugmentPrecisionCutting extends Augment {
      * Create a new augment instance with a name and description
      */
     public AugmentPrecisionCutting() {
-        super("precision_cutting", "Increases the entropy gained from gutting fish.");
+        super("precision_cutting", "&7Increases the entropy ", "&7gained from gutting fish.");
     }
 
     /**

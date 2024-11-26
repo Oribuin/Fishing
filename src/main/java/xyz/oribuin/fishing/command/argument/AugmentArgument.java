@@ -22,7 +22,7 @@ public class AugmentArgument extends ArgumentHandler<Augment> {
         Augment augment = AugmentRegistry.all().get(input);
         if (augment != null) return augment;
 
-        throw new HandledArgumentException("argument-handler-augments", StringPlaceholders.of("augment", input));
+        throw new HandledArgumentException("argument-handler-augments", StringPlaceholders.of("input", input));
     }
 
     @Override

@@ -18,7 +18,7 @@ public class AugmentHotspot extends Augment {
     private int maxFish = 3;
 
     public AugmentHotspot() {
-        super("hotspot", "Increases the amount of fish caught when the weather is clear");
+        super("hotspot", "&7Increases the amount of fish", "&7caught when the weather is clear");
 
         this.maxLevel = 15;
     }

@@ -4,6 +4,7 @@ import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.manager.Manager;
 import org.jetbrains.annotations.Nullable;
+import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.fish.Tier;
 import xyz.oribuin.fishing.util.FishUtils;
 
@@ -76,8 +77,40 @@ public class TierManager extends Manager {
                 .orElse(null);
     }
 
+    /**
+     * Get the tier based on the key
+     *
+     * @param key The key of the tier
+     *
+     * @return The tier
+     */
     public Tier get(String key) {
         return this.tiers.get(key);
+    }
+
+    /**
+     * Get the fish from the tier based on the key
+     *
+     * @param key The key of the fish
+     *
+     * @return The fish from the tier
+     */
+    public Fish getFish(String key) {
+        return this.tiers.values().stream()
+                .map(x -> x.getFish(key))
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * Get all the fish from all the tiers
+     *
+     * @return All the fish from all the tiers
+     */
+    public List<Fish> allFish() {
+        List<Fish> fish = new ArrayList<>();
+        this.tiers.values().forEach(x -> fish.addAll(x.fish().values()));
+        return fish;
     }
 
     @Override

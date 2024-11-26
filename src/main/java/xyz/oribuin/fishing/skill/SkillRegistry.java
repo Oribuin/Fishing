@@ -40,6 +40,20 @@ public class SkillRegistry {
     }
 
     /**
+     * Get a skill from the registry
+     *
+     * @param name The name of the skill
+     *
+     * @return The skill
+     */
+    public static Skill get(String name) {
+        return skills.values().stream()
+                .filter(skill -> skill.name().equalsIgnoreCase(name))
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
      * Get all the skills from the registry
      *
      * @return The skills

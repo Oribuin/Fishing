@@ -15,13 +15,14 @@ import xyz.oribuin.fishing.api.event.FishEventHandler;
 import xyz.oribuin.fishing.util.ItemConstruct;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Augment extends FishEventHandler implements Listener, Configurable {
 
     protected final String name;
     protected boolean enabled;
-    protected String description;
+    protected List<String> description;
     protected ItemConstruct displayItem;
     protected String displayLine;
     protected int maxLevel;
@@ -34,10 +35,10 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      * @param name        The name of the augment
      * @param description The description of the augment
      */
-    public Augment(String name, String description) {
+    public Augment(String name, String... description) {
         this.enabled = true;
         this.name = name;
-        this.description = description;
+        this.description = new ArrayList<>(List.of(description));
         this.maxLevel = 5;
         this.requiredLevel = 1;
         this.displayItem = this.defaultItem();
@@ -76,7 +77,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
         config.set("enabled", this.enabled);
         config.set("max-level", this.maxLevel);
         config.set("required-level", this.requiredLevel);
-        config.set("description", List.of(this.description.split("\n")));
+        config.set("description", this.description);
         config.set("display-line", this.displayLine);
 
         CommentedConfigurationSection section = config.getConfigurationSection("display-item");
@@ -95,7 +96,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
         this.enabled = config.getBoolean("enabled", true);
         this.maxLevel = config.getInt("max-level", 1);
         this.requiredLevel = config.getInt("required-level", 1);
-        this.description = String.join("\n", config.getStringList("description"));
+        this.description = config.getStringList("description");
         this.displayLine = config.getString("display-line", "&c" + StringUtils.capitalize(this.name.replace("_", " ")) + " %level_roman%");
 
         ItemConstruct construct = ItemConstruct.deserialize(config.getConfigurationSection("display-item"));
@@ -114,17 +115,15 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      */
     private ItemConstruct defaultItem() {
         return ItemConstruct.of(Material.FIREWORK_STAR)
-                .name("&f[&#4f73d6>&l%display_name%&f]")
+                .name("&f[&#4f73d6&l%display_name%&f]")
                 .lore("&7%description%",
                         "",
                         "&#4f73d6Information",
-                        " &7| &fRequired Level: &#4f73d6%required_level%",
-                        " &7| &fMax Level: &#4f73d6%max_level%",
-                        " &7| &fCost: &#4f73d6%amount% &f%currency%",
+                        " &#4f73d6- &7Required Level: &f%required_level%",
+                        " &#4f73d6- &7Max Level: &f%max_level%",
                         ""
                 )
-                .enchant(Enchantment.EFFICIENCY, 1)
-                .flags(ItemFlag.HIDE_ENCHANTS);
+                .glow(true);
     }
 
     /**
@@ -156,7 +155,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
                 .add("display_name", StringUtils.capitalize(this.name.replace("_", " ")))
                 .add("max_level", this.maxLevel)
                 .add("required_level", this.requiredLevel)
-                .add("description", this.description)
+                .add("description", String.join("\n", this.description))
                 .add("display_line", this.displayLine)
                 .add("permission", this.permission)
                 .add("enabled", this.enabled)
@@ -170,7 +169,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      */
     @Override
     public List<String> comments() {
-        return this.description.isEmpty() ? List.of("No Description") : List.of(this.description);
+        return this.description.isEmpty() ? List.of("No Description") : this.description;
     }
 
     /**
@@ -199,7 +198,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
     /**
      * @return The description of the augment
      */
-    public final String description() {
+    public final List<String> description() {
         return description;
     }
 
@@ -208,7 +207,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      *
      * @param description The description of the augment
      */
-    public void description(String description) {
+    public void description(List<String> description) {
         this.description = description;
     }
 

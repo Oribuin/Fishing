@@ -18,7 +18,7 @@ public class AugmentBiomeDisrupt extends Augment {
     private String chanceFormula = "%level% * 0.20"; // 20% per level
 
     public AugmentBiomeDisrupt() {
-        super("biome_disruption", "When a player catches a fish, there is a chance to ignore the biome restrictions.");
+        super("biome_disruption", "&7When a player catches a fish, there is", "&7a chance to ignore the biome restrictions.");
 
         this.maxLevel = 3;
     }

@@ -17,7 +17,7 @@ public class AugmentSage extends Augment {
      * Create a new augment instance with a name and description
      */
     public AugmentSage() {
-        super("sage", "Increases the base plugin xp earned from catching fish.");
+        super("sage", "&7Increases the base plugin xp", "&7earned from catching fish.");
     }
 
     /**

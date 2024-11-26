@@ -5,6 +5,7 @@ import dev.rosewood.rosegarden.hook.PlaceholderAPIHook;
 import dev.rosewood.rosegarden.utils.HexUtils;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import net.objecthunter.exp4j.ExpressionBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Color;
 import org.bukkit.entity.Player;
@@ -281,6 +282,28 @@ public final class FishUtils {
     }
 
     /**
+     * Niceify an enum value to a string
+     *
+     * @param enumValue The enum value
+     * @param <T>       The enum type
+     *
+     * @return The niceified string
+     */
+    public static <T extends Enum<T>> String niceify(T enumValue) {
+        String noUnderscores = enumValue.name().toLowerCase().replace("_", " ");
+        return StringUtils.capitalize(noUnderscores);
+    }
+
+    public static <T extends Enum<T>> String niceify(T enumValue, String def) {
+        if (enumValue == null) return def;
+
+        String noUnderscores = enumValue.name().toLowerCase().replace("_", " ");
+        return StringUtils.capitalize(noUnderscores);
+    }
+
+
+
+    /**
      * Parse a list of strings from 1-1 to a stringlist
      *
      * @param list The list to parse
@@ -324,6 +347,7 @@ public final class FishUtils {
 
     /**
      * Generate the default fish names from the resources
+     *
      * @return The list of fish names
      */
     public static List<String> generateFishNames() {
@@ -340,7 +364,7 @@ public final class FishUtils {
             while ((line = reader.readLine()) != null) {
                 fishNames.add(line);
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             FishingPlugin.get().getLogger().severe("Failed to generate default fish: " + e.getMessage());
         }
 

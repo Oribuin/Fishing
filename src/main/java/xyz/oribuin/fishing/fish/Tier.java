@@ -125,6 +125,10 @@ public class Tier implements Configurable {
         }
     }
 
+    public Fish getFish(String name) {
+        return this.fish.get(name);
+    }
+
     public StringPlaceholders placeholders() {
         return StringPlaceholders.builder()
                 .add("tier", this.name)

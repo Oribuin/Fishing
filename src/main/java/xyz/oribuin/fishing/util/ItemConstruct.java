@@ -42,6 +42,7 @@ public class ItemConstruct {
     private String texture;
     private List<Effect> effects;
     private Color color;
+    private boolean glow;
 
     /**
      * Create a new Item Construct with a Material
@@ -56,6 +57,7 @@ public class ItemConstruct {
         this.enchantment = new HashMap<>();
         this.flags = new ArrayList<>();
         this.effects = new ArrayList<>();
+        this.glow = false;
     }
 
     /**
@@ -79,16 +81,20 @@ public class ItemConstruct {
 
         config.set("type", this.type.name());
         config.set("amount", this.amount);
+
         if (this.name != null) config.set("name", this.name);
         if (this.lore != null && !this.lore.isEmpty()) config.set("lore", this.lore);
         if (this.model != 0) config.set("model", this.model);
+
+        config.set("unbreakable", this.unbreakable);
+        config.set("glow", this.glow);
+
         if (this.enchantment != null) {
             for (Map.Entry<Enchantment, Integer> entry : this.enchantment.entrySet()) {
                 config.set("enchantments." + entry.getKey().getKey().getKey(), entry.getValue());
             }
         }
 
-        config.set("unbreakable", this.unbreakable);
         if (this.flags != null && !this.flags.isEmpty()) config.set("flags", this.flags.stream().map(ItemFlag::name).toList());
         if (this.texture != null) config.set("texture", this.texture);
         if (this.color != null) config.set("color", this.color.asRGB());
@@ -100,6 +106,8 @@ public class ItemConstruct {
                 config.set("effects." + i + ".amplifier", effect.amp);
             }
         }
+
+
     }
 
     /**
@@ -124,6 +132,7 @@ public class ItemConstruct {
         construct.flagSerialize(config.getStringList("flags"));
         construct.texture(config.getString("texture"));
         construct.color(Color.fromRGB(config.getInt("color")));
+        construct.glow(config.getBoolean("glow"));
 
         // Serialize the enchants
         CommentedConfigurationSection enchantments = config.getConfigurationSection("enchantments");
@@ -193,6 +202,7 @@ public class ItemConstruct {
         if (this.model != 0) meta.setCustomModelData(this.model);
         if (this.amount > 1) stack.setAmount(this.amount);
         if (this.unbreakable) meta.setUnbreakable(true);
+        if (this.glow) meta.setEnchantmentGlintOverride(true);
         if (this.flags != null && !this.flags.isEmpty()) this.flags.forEach(meta::addItemFlags);
         if (this.enchantment != null) {
             for (Map.Entry<Enchantment, Integer> entry : this.enchantment.entrySet()) {
@@ -406,6 +416,18 @@ public class ItemConstruct {
         } catch (IllegalArgumentException ignored) {
         }
 
+        return this;
+    }
+
+    /**
+     * Apply the itemstack glow
+     *
+     * @param glow If the itemstack should glow
+     *
+     * @return The itemstack constructor
+     */
+    public ItemConstruct glow(boolean glow) {
+        this.glow = glow;
         return this;
     }
 

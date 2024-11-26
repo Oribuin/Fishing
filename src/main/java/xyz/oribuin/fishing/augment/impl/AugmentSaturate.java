@@ -14,7 +14,7 @@ public class AugmentSaturate extends Augment {
     private String chanceFormula = "%level% * 0.15"; // 15% per level
 
     public AugmentSaturate() {
-        super("saturate", "Fully saturates the player when they catch a fish");
+        super("saturate", "&7Fully saturates the player", "&7when they catch a fish");
     }
 
     /**

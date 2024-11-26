@@ -17,7 +17,7 @@ public class AugmentIntellect extends Augment {
      * Create a new augment instance with a name and description
      */
     public AugmentIntellect() {
-        super("intellect", "Increases the base minecraft xp earned from catching fish.");
+        super("intellect", "&7Increases the base minecraft xp", "&7earned from catching fish.");
 
         this.maxLevel = 3;
     }

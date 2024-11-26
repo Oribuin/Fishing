@@ -17,7 +17,7 @@ public class AugmentPerception extends Augment {
      * Create a new augment instance with a name and description
      */
     public AugmentPerception() {
-        super("perception", "Increases the base entropy earned from catching fish.");
+        super("perception", "&7Increases the base entropy ", "&7earned from catching fish.");
 
         this.maxLevel = 5;
     }
