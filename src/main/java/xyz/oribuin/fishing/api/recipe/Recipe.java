@@ -1,6 +1,6 @@
 package xyz.oribuin.fishing.api.recipe;
 
-import xyz.oribuin.fishing.api.economy.Cost;
+import xyz.oribuin.fishing.economy.Cost;
 
 import java.util.List;
 

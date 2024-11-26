@@ -1,4 +1,4 @@
-package xyz.oribuin.fishing.api.economy;
+package xyz.oribuin.fishing.economy;
 
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;

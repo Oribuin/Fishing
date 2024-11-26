@@ -1,18 +1,23 @@
-package xyz.oribuin.fishing.api.economy.impl;
+package xyz.oribuin.fishing.economy.impl;
 
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
-import xyz.oribuin.fishing.api.economy.Currency;
-import xyz.oribuin.fishing.storage.Fisher;
+import xyz.oribuin.fishing.economy.Currency;
 
-public class EntropyCurrency implements Currency {
+public class VaultCurrency implements Currency {
+
+    private static final RegisteredServiceProvider<Economy> PROVIDER = Bukkit.getServicesManager().getRegistration(Economy.class);
+    private static final Economy API = PROVIDER != null ? PROVIDER.getProvider() : null;
 
     /**
      * @return The name of the currency
      */
     @Override
     public String name() {
-        return "entropy";
+        return "vault";
     }
 
     /**
@@ -22,7 +27,7 @@ public class EntropyCurrency implements Currency {
      */
     @Override
     public @NotNull Number amount(@NotNull OfflinePlayer player) {
-        return this.fisher(player).entropy();
+        return API != null ? API.getBalance(player) : 0.0;
     }
 
     /**
@@ -35,7 +40,7 @@ public class EntropyCurrency implements Currency {
      */
     @Override
     public boolean has(@NotNull OfflinePlayer player, @NotNull Number amount) {
-        return this.amount(player).intValue() >= amount.intValue();
+        return API != null && API.has(player, amount.doubleValue());
     }
 
     /**
@@ -46,8 +51,7 @@ public class EntropyCurrency implements Currency {
      */
     @Override
     public void give(@NotNull OfflinePlayer player, @NotNull Number amount) {
-        Fisher fisher = this.fisher(player);
-        fisher.entropy(fisher.entropy() + amount.intValue());
+        if (API != null) API.depositPlayer(player, amount.doubleValue());
     }
 
     /**
@@ -58,8 +62,7 @@ public class EntropyCurrency implements Currency {
      */
     @Override
     public void take(@NotNull OfflinePlayer player, @NotNull Number amount) {
-        Fisher fisher = this.fisher(player);
-        fisher.entropy(fisher.entropy() - amount.intValue());
+        if (API != null) API.withdrawPlayer(player, amount.doubleValue());
     }
 
 }

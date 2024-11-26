@@ -1,8 +1,8 @@
-package xyz.oribuin.fishing.api.economy.impl;
+package xyz.oribuin.fishing.economy.impl;
 
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
-import xyz.oribuin.fishing.api.economy.Currency;
+import xyz.oribuin.fishing.economy.Currency;
 import xyz.oribuin.fishing.storage.Fisher;
 
 public class SkillpointCurrency implements Currency {

@@ -1,10 +1,10 @@
-package xyz.oribuin.fishing.api.economy;
+package xyz.oribuin.fishing.economy;
 
-import xyz.oribuin.fishing.api.economy.impl.EntropyCurrency;
-import xyz.oribuin.fishing.api.economy.impl.FishExpCurrency;
-import xyz.oribuin.fishing.api.economy.impl.PlayerExpCurrency;
-import xyz.oribuin.fishing.api.economy.impl.SkillpointCurrency;
-import xyz.oribuin.fishing.api.economy.impl.VaultCurrency;
+import xyz.oribuin.fishing.economy.impl.EntropyCurrency;
+import xyz.oribuin.fishing.economy.impl.FishExpCurrency;
+import xyz.oribuin.fishing.economy.impl.PlayerExpCurrency;
+import xyz.oribuin.fishing.economy.impl.SkillpointCurrency;
+import xyz.oribuin.fishing.economy.impl.VaultCurrency;
 
 public enum Currencies {
     ENTROPY(new EntropyCurrency()),

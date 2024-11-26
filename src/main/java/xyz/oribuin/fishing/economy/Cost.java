@@ -1,18 +1,30 @@
-package xyz.oribuin.fishing.api.economy.impl;
+package xyz.oribuin.fishing.economy;
 
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import xyz.oribuin.fishing.api.economy.Currency;
 
-public class PlayerExpCurrency implements Currency {
+public class Cost implements Currency {
+
+    private final Currency currency;
+    private Number price;
+
+    /**
+     * Create a new cost object with a currency and amount
+     *
+     * @param currency The currency to use
+     * @param price    The amount of currency to use
+     */
+    public Cost(@NotNull Currency currency, @NotNull Number price) {
+        this.currency = currency;
+        this.price = price;
+    }
 
     /**
      * @return The name of the currency
      */
     @Override
     public String name() {
-        return "player_exp";
+        return this.currency.name();
     }
 
     /**
@@ -22,10 +34,7 @@ public class PlayerExpCurrency implements Currency {
      */
     @Override
     public @NotNull Number amount(@NotNull OfflinePlayer player) {
-        Player online = player.getPlayer();
-        if (online == null) return 0;
-
-        return online.getTotalExperience();
+        return this.currency.amount(player);
     }
 
     /**
@@ -38,7 +47,7 @@ public class PlayerExpCurrency implements Currency {
      */
     @Override
     public boolean has(@NotNull OfflinePlayer player, @NotNull Number amount) {
-        return this.amount(player).intValue() >= amount.intValue();
+        return this.currency.has(player, amount);
     }
 
     /**
@@ -49,10 +58,7 @@ public class PlayerExpCurrency implements Currency {
      */
     @Override
     public void give(@NotNull OfflinePlayer player, @NotNull Number amount) {
-        Player online = player.getPlayer();
-        if (online == null) return;
-
-        online.giveExp(amount.intValue());
+        this.currency.give(player, amount);
     }
 
     /**
@@ -63,10 +69,23 @@ public class PlayerExpCurrency implements Currency {
      */
     @Override
     public void take(@NotNull OfflinePlayer player, @NotNull Number amount) {
-        Player online = player.getPlayer();
-        if (online == null) return;
+        this.currency.take(player, amount);
+    }
 
-        online.giveExp(-amount.intValue());
+    /**
+     * @return The price of the item
+     */
+    public Number price() {
+        return this.price;
+    }
+
+    /**
+     * Add a price to the item cost
+     *
+     * @param price The price to add
+     */
+    public void price(Number price) {
+        this.price = price;
     }
 
 }
