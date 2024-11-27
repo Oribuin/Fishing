@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class DataManager extends AbstractDataManager {
 
@@ -166,11 +167,10 @@ public class DataManager extends AbstractDataManager {
         return this.userData;
     }
 
+
     @Override
-    public @NotNull List<Class<? extends DataMigration>> getDataMigrations() {
-        return List.of(
-                _1_CreateInitialTables.class
-        );
+    public @NotNull List<Supplier<? extends DataMigration>> getDataMigrations() {
+        return List.of(_1_CreateInitialTables::new);
     }
 
     /**

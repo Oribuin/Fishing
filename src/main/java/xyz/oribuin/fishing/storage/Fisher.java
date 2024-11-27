@@ -1,7 +1,7 @@
 package xyz.oribuin.fishing.storage;
 
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
-import xyz.oribuin.fishing.manager.base.ConfigurationManager.Setting;
+import xyz.oribuin.fishing.config.Setting;
 import xyz.oribuin.fishing.util.FishUtils;
 
 import java.util.HashMap;
@@ -55,7 +55,7 @@ public class Fisher {
      */
     public int requiredExp() {
         StringPlaceholders placeholders = StringPlaceholders.of("level", this.level);
-        return (int) FishUtils.evaluate(placeholders.apply(Setting.REQUIRED_XP_FORMULA.getString()));
+        return (int) FishUtils.evaluate(placeholders.apply(Setting.REQUIRED_XP_FORMULA.get()));
     }
 
     public StringPlaceholders placeholders() {

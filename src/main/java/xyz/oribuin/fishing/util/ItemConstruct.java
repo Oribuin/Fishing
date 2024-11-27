@@ -43,8 +43,6 @@ public class ItemConstruct {
     private List<Effect> effects;
     private Color color;
     private boolean glow;
-
-    // 1.21.3+ only
     private boolean tooltip;
 
     /**
