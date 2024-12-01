@@ -11,7 +11,6 @@ import xyz.oribuin.fishing.listener.FishListener;
 import xyz.oribuin.fishing.listener.PlayerListeners;
 import xyz.oribuin.fishing.listener.TotemListeners;
 import xyz.oribuin.fishing.manager.FishManager;
-import xyz.oribuin.fishing.manager.MenuManager;
 import xyz.oribuin.fishing.manager.TierManager;
 import xyz.oribuin.fishing.manager.TotemManager;
 import xyz.oribuin.fishing.manager.base.CommandManager;
@@ -65,7 +64,6 @@ public class FishingPlugin extends RosePlugin {
         return List.of(
                 TierManager.class,
                 FishManager.class,
-                MenuManager.class,
                 TotemManager.class
         );
     }

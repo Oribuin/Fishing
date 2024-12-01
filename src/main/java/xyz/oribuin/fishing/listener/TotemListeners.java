@@ -11,14 +11,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import xyz.oribuin.fishing.FishingPlugin;
-import xyz.oribuin.fishing.gui.totem.TotemMainMenu;
-import xyz.oribuin.fishing.manager.MenuManager;
 import xyz.oribuin.fishing.manager.TotemManager;
 import xyz.oribuin.fishing.totem.Totem;
 
@@ -86,10 +83,13 @@ public class TotemListeners implements Listener {
 
         event.setCancelled(true);
 
-        TotemMainMenu menu = MenuManager.from(TotemMainMenu.class);
-        if (menu == null) return;
 
-        menu.open(totem, event.getPlayer());
+//        this.plugin.getManager(MenuManager.class).open(TotemMainMenu.ID, event.getPlayer(), 1);
+
+//        TotemMainMenu menu = MenuManager.from(TotemMainMenu.class);
+//        if (menu == null) return;
+//
+//        menu.open(totem, event.getPlayer());
     }
 
     /**
