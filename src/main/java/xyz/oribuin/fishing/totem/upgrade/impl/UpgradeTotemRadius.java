@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TotemUpgradeRadius extends TotemUpgrade implements Configurable {
+public class UpgradeTotemRadius extends TotemUpgrade implements Configurable {
 
     private final Map<Integer, Tier> tiers = new HashMap<>();
 
