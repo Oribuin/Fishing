@@ -86,6 +86,13 @@ public class TotemListeners implements Listener {
 
         event.setCancelled(true);
 
+        if (event.getPlayer().isSneaking()) {
+            totem.entity().remove(); // Remove the totem entity
+            manager.unregisterTotem(totem); // Unregister the totem
+            event.getPlayer().sendMessage("Totem removed."); // Send the player a message
+            return;
+        }
+
         TotemMainMenu menu = MenuManager.from(TotemMainMenu.class);
         if (menu == null) return;
 
