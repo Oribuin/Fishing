@@ -8,7 +8,6 @@ import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.FishingPlugin;
@@ -24,9 +23,7 @@ public abstract class PluginMenu implements Configurable {
     public static final ItemConstruct BORDER = ItemConstruct.of(Material.BLACK_STAINED_GLASS_PANE).tooltip(false);
 
     protected final FishingPlugin plugin;
-    protected final GuiAction<InventoryClickEvent> EMPTY = event -> {
-        // :33333333
-    };
+    protected final GuiAction<InventoryClickEvent> EMPTY = event -> {};
 
     protected final String name;
     protected String title;
@@ -35,6 +32,12 @@ public abstract class PluginMenu implements Configurable {
     protected Map<String, GuiItem> extraItems;
     protected int pageSize;
 
+    /**
+     * Creates a new plugin menu instance, with the specified name
+     *
+     * @param plugin The plugin instance
+     * @param name   The name of the menu, will be also function as the menu path
+     */
     public PluginMenu(FishingPlugin plugin, String name) {
         this.plugin = plugin;
         this.name = name;

@@ -108,8 +108,28 @@ public class Totem implements AsyncTicker {
 
             this.lastTick = System.currentTimeMillis();
         }
+
+        // Check if the totem should be disabled
+        if (this.active && System.currentTimeMillis() - this.lastActive > this.duration.toMillis()) {
+            this.active(false);
+            this.lastActive = System.currentTimeMillis();
+            this.update(); // Update the totem
+        }
     }
 
+    /**
+     * Activate the totem for the player to use
+     */
+    public void activate() {
+        if (this.onCooldown()) {
+            FishingPlugin.get().getLogger().warning("Failed to activate totem for player: " + this.ownerName + ", The totem is on cooldown.");
+            return;
+        }
+
+        this.active(true);
+        this.lastActive = System.currentTimeMillis();
+        this.update();
+    }
 
     /**
      * Spawn in the totem in the world at a location

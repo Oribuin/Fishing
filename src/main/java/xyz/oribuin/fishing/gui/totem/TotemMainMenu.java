@@ -4,6 +4,7 @@ import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.gui.GuiItem;
@@ -69,10 +70,12 @@ public class TotemMainMenu extends PluginMenu {
             });
         }
 
-        // The totem is not active and is not on cooldown, display the activate item
+        // The totem is not active and is not on cooldown, display the button to activate the totem
         if (!totem.active() && !totem.onCooldown()) {
             this.placeItem(gui, "totem-activate", totem.placeholders(), x -> {
-                // Withdraw the totem and give it to the player
+                totem.activate(); // Activate the totem
+                player.sendMessage("§aYou have activated the totem!");
+                player.closeInventory(InventoryCloseEvent.Reason.PLUGIN); // Close the player's inventory
             });
         }
 

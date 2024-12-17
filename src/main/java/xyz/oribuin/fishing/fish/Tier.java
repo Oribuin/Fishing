@@ -137,6 +137,7 @@ public class Tier implements Configurable {
                 .add("entropy", this.entropy)
                 .add("fish_xp", this.fishExp)
                 .add("natural_xp", this.naturalExp)
+                .add("fish_count", this.fish.size())
                 .build();
     }
 
