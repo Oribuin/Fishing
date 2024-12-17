@@ -3,6 +3,7 @@ package xyz.oribuin.fishing.totem;
 import com.destroystokyo.paper.ParticleBuilder;
 import com.jeff_media.morepersistentdatatypes.DataType;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import io.papermc.paper.math.Rotations;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -47,6 +48,7 @@ public class Totem implements AsyncTicker {
     private ArmorStand entity; // The entity that will be spawned.
     private long lastTick; // The last time the totem was ticked
     private List<Location> bounds; // The bounds of the totem
+    private int rotation; // The rotation of the totem
 
     /**
      * Create a new totem owner with all the required values
@@ -109,10 +111,19 @@ public class Totem implements AsyncTicker {
             this.lastTick = System.currentTimeMillis();
         }
 
+        if (this.active && this.entity != null) {
+            if (this.rotation >= 360) this.rotation = -1;
+            this.rotation += 2;
+
+            this.entity.setHeadRotations(Rotations.ofDegrees(0, this.rotation, 0));
+        }
+
         // Check if the totem should be disabled
         if (this.active && System.currentTimeMillis() - this.lastActive > this.duration.toMillis()) {
             this.active(false);
             this.lastActive = System.currentTimeMillis();
+            this.rotation = 0;
+            this.entity.setHeadRotations(Rotations.ZERO);
             this.update(); // Update the totem
         }
     }
@@ -187,19 +198,12 @@ public class Totem implements AsyncTicker {
      * @param itemStack The itemstack to save the values to
      */
     public void saveTo(ItemStack itemStack) {
-        if (itemStack == null) {
+        if (itemStack == null || itemStack.getItemMeta() == null) {
             FishingPlugin.get().getLogger().severe("ItemStack is null, could not save totem by owner: " + this.owner);
             return;
         }
 
-        itemStack.editMeta(itemMeta -> {
-            if (itemMeta == null) {
-                FishingPlugin.get().getLogger().severe("ItemMeta is null for item: " + itemStack.getType());
-                return;
-            }
-
-            this.saveToContainer(itemMeta.getPersistentDataContainer());
-        });
+        itemStack.editMeta(itemMeta -> this.saveToContainer(itemMeta.getPersistentDataContainer()));
     }
 
     /**
