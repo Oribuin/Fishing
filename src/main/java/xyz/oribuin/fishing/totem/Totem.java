@@ -105,12 +105,14 @@ public class Totem implements AsyncTicker {
 
             // Spawn additional particles around the totem bounds while active
             if (this.active) {
-                this.bounds.forEach(x -> this.dust(Color.LIME).location(x.clone().add(0, 0.5, 0)).spawn());
+                ParticleBuilder dust = this.dust(Color.LIME);
+                this.bounds.forEach(x -> dust.clone().location(x.clone().add(0, 1.5, 0)).spawn());
             }
 
             this.lastTick = System.currentTimeMillis();
         }
 
+        // Make the totem rotate it's head
         if (this.active && this.entity != null) {
             if (this.rotation >= 360) this.rotation = -1;
             this.rotation += 2;
