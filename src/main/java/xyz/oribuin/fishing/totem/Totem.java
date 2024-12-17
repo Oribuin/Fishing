@@ -20,6 +20,7 @@ import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.task.AsyncTicker;
 import xyz.oribuin.fishing.manager.TotemManager;
 import xyz.oribuin.fishing.storage.util.PersistKeys;
+import xyz.oribuin.fishing.totem.upgrade.impl.UpgradeMythicWaters;
 import xyz.oribuin.fishing.util.FishUtils;
 import xyz.oribuin.fishing.util.ItemConstruct;
 import xyz.oribuin.fishing.util.math.MathL;
@@ -106,6 +107,7 @@ public class Totem implements AsyncTicker {
             // Spawn additional particles around the totem bounds while active
             if (this.active) {
                 this.bounds.forEach(x -> this.dust(Color.LIME).location(x.clone().add(0, 0.5, 0)).spawn());
+                UpgradeMythicWaters.playAnimation(this); // Play the mythic waters animation:
             }
 
             this.lastTick = System.currentTimeMillis();
