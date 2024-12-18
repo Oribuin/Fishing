@@ -307,6 +307,21 @@ public final class FishUtils {
         return StringUtils.capitalize(noUnderscores);
     }
 
+    /**
+     * Format every word in a string to be capitalized
+     * @param str The string to format
+     * @return The formatted string
+     */
+    public static String capitalizeFully(String str) {
+        String[] split = str.toLowerCase().split(" ");
+        StringBuilder builder = new StringBuilder();
+
+        for (String s : split) {
+            builder.append(StringUtils.capitalize(s)).append(" ");
+        }
+
+        return builder.toString().trim();
+    }
 
 
     /**

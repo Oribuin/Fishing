@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.config.Configurable;
 import xyz.oribuin.fishing.api.event.FishEventHandler;
+import xyz.oribuin.fishing.util.FishUtils;
 import xyz.oribuin.fishing.util.ItemConstruct;
 
 import java.nio.file.Path;
@@ -152,7 +153,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
     public StringPlaceholders placeholders() {
         return StringPlaceholders.builder()
                 .add("id", this.name)
-                .add("display_name", StringUtils.capitalize(this.name.replace("_", " ")))
+                .add("display_name", FishUtils.capitalizeFully(this.name.replace("_", " ")))
                 .add("max_level", this.maxLevel)
                 .add("required_level", this.requiredLevel)
                 .add("description", String.join("\n", this.description))
