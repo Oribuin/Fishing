@@ -20,7 +20,8 @@ import java.util.Map;
 
 public abstract class PluginMenu implements Configurable {
 
-    public static final ItemConstruct BORDER = ItemConstruct.of(Material.BLACK_STAINED_GLASS_PANE).tooltip(false);
+    public static final ItemConstruct BORDER = ItemConstruct.of(Material.BLACK_STAINED_GLASS_PANE)
+            .tooltip(false);
 
     protected final FishingPlugin plugin;
     protected final GuiAction<InventoryClickEvent> EMPTY = event -> {};

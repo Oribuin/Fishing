@@ -355,7 +355,7 @@ public class Totem implements AsyncTicker {
                         " &#4f73d6- &7Cooldown: &f%cooldown%",
                         ""
                 )
-                .glow(true)
+                .glowing(true)
                 .texture(TEXTURE);
     }
 

@@ -81,7 +81,9 @@ public class Tier implements Configurable {
         this.money = config.getDouble("money", 0.0);
         this.chance = config.getDouble("chance", 0.0);
         this.entropy = config.getInt("entropy", 0);
-        this.baseDisplay = ItemConstruct.deserialize(config.getConfigurationSection("display-item"));
+        this.baseDisplay = ItemConstruct.EMPTY;
+        this.baseDisplay.loadSettings(this.pullSection(config, "display-item"));
+
         this.fishExp = config.getInt("fish-exp", 0);
         this.naturalExp = (float) config.getDouble("natural-exp", 0.0);
 
@@ -113,15 +115,11 @@ public class Tier implements Configurable {
         config.set("fish-exp", this.fishExp);
         config.set("natural-exp", this.naturalExp);
 
-        CommentedConfigurationSection itemSection = config.getConfigurationSection("display-item");
-        if (itemSection == null) itemSection = config.createSection("display-item");
-        this.baseDisplay.serialize(itemSection);
+        this.baseDisplay = ItemConstruct.deserialize(this.pullSection(config, "display-item"));
 
         // Save all the fish from the config
         for (Map.Entry<String, Fish> entry : this.fish.entrySet()) {
-            CommentedConfigurationSection fishSection = config.getConfigurationSection("fish." + entry.getKey());
-            if (fishSection == null) fishSection = config.createSection("fish." + entry.getKey());
-            entry.getValue().saveSettings(fishSection);
+            entry.getValue().saveSettings(this.pullSection(config, "fish." + entry.getKey()));
         }
     }
 

@@ -1,49 +1,48 @@
 package xyz.oribuin.fishing.util;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.utils.HexUtils;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
-import org.bukkit.Color;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.ItemLore;
+import io.papermc.paper.datacomponent.item.Unbreakable;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import xyz.oribuin.fishing.util.nms.SkullUtils;
+import org.jetbrains.annotations.NotNull;
+import xyz.oribuin.fishing.api.config.Configurable;
+import xyz.oribuin.fishing.util.item.ItemEdible;
+import xyz.oribuin.fishing.util.item.ItemEffect;
+import xyz.oribuin.fishing.util.item.ItemEnchant;
+import xyz.oribuin.fishing.util.item.ItemTexture;
+import xyz.oribuin.fishing.util.item.ItemValue;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Create a config system that will apply itemstack values to be serialized/deserialized from
  * config files
  */
-@SuppressWarnings({ "deprecation", "unused" })
-public class ItemConstruct {
+@SuppressWarnings({ "unused", "FieldMayBeFinal" })
+public class ItemConstruct implements Configurable {
 
     public static ItemConstruct EMPTY = ItemConstruct.of(Material.STONE); // Empty itemstack
 
-    private final Material type;
-    private int amount;
+    private Material type;
+    private Integer amount;
     private String name;
     private List<String> lore;
-    private int model;
-    private Map<Enchantment, Integer> enchantment;
-    private boolean unbreakable;
-    private List<ItemFlag> flags;
-    private String texture;
-    private List<Effect> effects;
-    private Color color;
-    private boolean glow;
+    private ItemEnchant enchantments;
+    private ItemEnchant storedEnchantments;
+    private ItemEffect effects;
+    private ItemTexture texture;
+    private ItemEdible edible;
+    private ItemValue<Boolean> unbreakable;
+    private boolean glowing;
     private boolean tooltip;
+    private boolean additionalTooltip;
+    private boolean glider;
 
     /**
      * Create a new Item Construct with a Material
@@ -53,13 +52,18 @@ public class ItemConstruct {
     private ItemConstruct(Material type) {
         this.type = type;
         this.amount = 1;
-        this.model = 0;
-        this.unbreakable = false;
-        this.enchantment = new HashMap<>();
-        this.flags = new ArrayList<>();
-        this.effects = new ArrayList<>();
-        this.glow = false;
+        this.name = null;
+        this.lore = new ArrayList<>();
+        this.enchantments = new ItemEnchant();
+        this.storedEnchantments = new ItemEnchant();
+        this.effects = new ItemEffect();
+        this.unbreakable = new ItemValue<>(false);
+        this.texture = new ItemTexture(null);
+        this.edible = null;
+        this.glowing = false;
         this.tooltip = true;
+        this.additionalTooltip = true;
+        this.glider = false;
     }
 
     /**
@@ -71,103 +75,6 @@ public class ItemConstruct {
      */
     public static ItemConstruct of(Material type) {
         return new ItemConstruct(type);
-    }
-
-    /**
-     * Convert the itemstack into a configuration section
-     *
-     * @param config The configuration section
-     */
-    public void serialize(CommentedConfigurationSection config) {
-        if (config == null) return;
-
-        config.set("type", this.type.name());
-        config.set("amount", this.amount);
-
-        if (this.name != null) config.set("name", this.name);
-        if (this.lore != null && !this.lore.isEmpty()) config.set("lore", this.lore);
-        if (this.model != 0) config.set("model", this.model);
-
-        config.set("unbreakable", this.unbreakable);
-        config.set("glow", this.glow);
-        config.set("tooltip", this.tooltip);
-
-        if (this.enchantment != null) {
-            for (Map.Entry<Enchantment, Integer> entry : this.enchantment.entrySet()) {
-                config.set("enchantments." + entry.getKey().getKey().getKey(), entry.getValue());
-            }
-        }
-
-        if (this.flags != null && !this.flags.isEmpty()) config.set("flags", this.flags.stream().map(ItemFlag::name).toList());
-        if (this.texture != null) config.set("texture", this.texture);
-        if (this.color != null) config.set("color", this.color.asRGB());
-        if (this.effects != null && !this.effects.isEmpty()) {
-            for (int i = 0; i < this.effects.size(); i++) {
-                Effect effect = this.effects.get(i);
-                config.set("effects." + i + ".type", effect.type.getName());
-                config.set("effects." + i + ".duration", effect.duration);
-                config.set("effects." + i + ".amplifier", effect.amp);
-            }
-        }
-
-
-    }
-
-    /**
-     * Convert a config section into a new itemstack
-     *
-     * @param config The configuration section
-     *
-     * @return The itemstack
-     */
-    public static ItemConstruct deserialize(CommentedConfigurationSection config) {
-        if (config == null) return null;
-
-        Material type = Material.getMaterial(config.getString("type", "STONE"));
-        if (type == null || type == Material.AIR) return null;
-
-        ItemConstruct construct = ItemConstruct.of(type);
-        construct.amount(config.getInt("amount", 1));
-        construct.name(config.getString("name"));
-        construct.lore(config.getStringList("lore"));
-        construct.model(config.getInt("model"));
-        construct.unbreakable(config.getBoolean("unbreakable"));
-        construct.flagSerialize(config.getStringList("flags"));
-        construct.texture(config.getString("texture"));
-        construct.color(Color.fromRGB(config.getInt("color")));
-        construct.glow(config.getBoolean("glow"));
-        construct.tooltip(config.getBoolean("tooltip"));
-
-
-        // Serialize the enchants
-        CommentedConfigurationSection enchantments = config.getConfigurationSection("enchantments");
-        if (enchantments != null) {
-            for (String key : enchantments.getKeys(false)) {
-                Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(key));
-                if (enchantment == null) continue;
-
-                construct.enchant(enchantment, enchantments.getInt(key));
-            }
-        }
-
-        // Serialize the effects
-        CommentedConfigurationSection effects = config.getConfigurationSection("effects");
-        if (effects != null) {
-            List<Effect> effectList = new ArrayList<>();
-            for (String key : effects.getKeys(false)) {
-                String typeStr = effects.getString(key + ".type");
-                if (typeStr == null) continue;
-
-                PotionEffectType potionType = PotionEffectType.getByName(typeStr);
-                int duration = effects.getInt(key + ".duration");
-                int amplifier = effects.getInt(key + ".amplifier");
-                effectList.add(Effect.of(potionType, duration, amplifier));
-            }
-
-            construct.effects(effectList);
-        }
-
-        return construct;
     }
 
     /**
@@ -186,326 +93,268 @@ public class ItemConstruct {
      *
      * @return The itemstack
      */
+    @SuppressWarnings({ "UnstableApiUsage", "deprecation" })
     public ItemStack build(StringPlaceholders placeholders) {
         ItemStack stack = new ItemStack(this.type, this.amount);
         ItemMeta meta = stack.getItemMeta();
         if (meta == null) return stack; // Probably air
 
-        // REGULAR STUFF :D
-        if (this.name != null) meta.setDisplayName(HexUtils.colorify(placeholders.apply(this.name)));
-        if (this.lore != null && !this.lore.isEmpty()) {
-            List<String> lore = new ArrayList<>();
+        if (this.name != null) stack.setData(DataComponentTypes.CUSTOM_NAME, FishUtils.kyorify(placeholders.apply(this.name)));
+        if (this.lore != null) {
+            List<Component> lines = new ArrayList<>();
             for (String line : this.lore) {
                 String[] newLine = placeholders.apply(line).split("\n");
-                for (String s : newLine) {
-                    lore.add(HexUtils.colorify(s));
-                }
+                for (String s : newLine) lines.add(FishUtils.kyorify(s));
+
             }
-
-            meta.setLore(lore);
-        }
-        if (this.model != 0) meta.setCustomModelData(this.model);
-        if (this.amount > 1) stack.setAmount(this.amount);
-        if (this.unbreakable) meta.setUnbreakable(true);
-        if (this.glow) meta.setEnchantmentGlintOverride(true);
-        if (this.flags != null && !this.flags.isEmpty()) this.flags.forEach(meta::addItemFlags);
-        if (this.enchantment != null) {
-            for (Map.Entry<Enchantment, Integer> entry : this.enchantment.entrySet()) {
-                meta.addEnchant(entry.getKey(), entry.getValue(), true);
-            }
+            stack.setData(DataComponentTypes.LORE, ItemLore.lore(lines));
         }
 
-        // Apply the new color
-        if (this.color != null) {
-            if (meta instanceof LeatherArmorMeta armorMeta) armorMeta.setColor(this.color);
-            if (meta instanceof PotionMeta potionMeta) potionMeta.setColor(this.color);
-        }
+        if (this.amount != null) stack.setAmount(this.amount);
+        if (this.unbreakable.value()) stack.setData(DataComponentTypes.UNBREAKABLE, Unbreakable.unbreakable(this.unbreakable.tooltip()));
+        if (this.glowing) stack.setData(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, true);
+        if (!this.tooltip) stack.setData(DataComponentTypes.HIDE_TOOLTIP);
+        if (!this.additionalTooltip) stack.setData(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP);
+        if (this.edible != null) stack.setData(DataComponentTypes.FOOD, this.edible.create());
+        if (this.texture != null) stack.setData(DataComponentTypes.PROFILE, this.texture.create());
+        if (this.enchantments != null) stack.setData(DataComponentTypes.ENCHANTMENTS, this.enchantments.create());
+        if (this.storedEnchantments != null) stack.setData(DataComponentTypes.STORED_ENCHANTMENTS, this.storedEnchantments.create());
+        if (this.effects != null) stack.setData(DataComponentTypes.POTION_CONTENTS, this.effects.create());
+        if (this.glider) stack.setData(DataComponentTypes.GLIDER);
 
-        // Apply the potion effects
-        if (this.effects != null && !this.effects.isEmpty() && meta instanceof PotionMeta potionMeta) {
-            for (Effect effect : this.effects) {
-                potionMeta.addCustomEffect(effect.create(), true);
-            }
-        }
+        // TODO: CustomModelData ?? what did they do it to it....................
 
-        // Apply the skull texture
-        if (this.texture != null && meta instanceof SkullMeta skullMeta) {
-            SkullUtils.setSkullTexture(skullMeta, this.texture);
-        }
-
-        if (!this.tooltip) {
-            meta.setHideTooltip(true);
-        }
-
-        // Apply the item meta
-        stack.setItemMeta(meta);
         return stack;
     }
 
     /**
-     * @return The material of the item
+     * Load the settings from the configuration file
+     * I would recommend always super calling this method to save any settings that could be implemented
+     *
+     * @param config The configuration file to load
      */
-    public int amount() {
-        return this.amount;
+    @Override
+    public void loadSettings(@NotNull CommentedConfigurationSection config) {
+        this.type = Material.getMaterial(config.getString("type", "STONE"));
+        this.amount = config.getInt("amount", 1);
+        this.name = config.getString("name");
+        this.lore = config.getStringList("lore");
+        this.glowing = config.getBoolean("glowing", false);
+        this.tooltip = config.getBoolean("tooltip", true);
+        this.additionalTooltip = config.getBoolean("additional-tooltip", true);
+        this.glider = config.getBoolean("glider", false);
+
+        // advanced component values <3
+        this.unbreakable.loadSettings(this.pullSection(config, "unbreakable"));
+        this.enchantments.loadSettings(this.pullSection(config, "enchants"));
+        this.storedEnchantments.loadSettings(this.pullSection(config, "stored-enchants"));
+        this.effects.loadSettings(this.pullSection(config, "effects"));
+        this.texture.loadSettings(this.pullSection(config, "texture"));
+
+        // these components are extra weird and cant really be null
+        CommentedConfigurationSection edible = config.getConfigurationSection("edible");
+        if (edible != null) {
+            this.edible = new ItemEdible(1, 1, false);
+            this.edible.loadSettings(edible);
+        }
     }
 
     /**
-     * Apply the itemstack amount
+     * Save the configuration file for the configurable class
+     * I would recommend always super calling this method to save any settings that could be implemented
      *
-     * @param amount The amount of the item
-     *
-     * @return The itemstack constructor
+     * @param config The configuration file to save
      */
-    public ItemConstruct amount(int amount) {
+    @Override
+    public void saveSettings(@NotNull CommentedConfigurationSection config) {
+        config.set("type", this.type.name());
+        config.set("amount", this.amount);
+        config.set("name", this.name);
+        config.set("lore", this.lore);
+        config.set("glowing", this.glowing);
+        config.set("tooltip", this.tooltip);
+        config.set("additional-tooltip", this.additionalTooltip);
+        config.set("glider", this.glider);
+
+        // advanced component values <3
+        if (this.unbreakable != null) this.unbreakable.saveSettings(this.pullSection(config, "unbreakable"));
+        if (this.enchantments != null) this.enchantments.saveSettings(this.pullSection(config, "enchants"));
+        if (this.storedEnchantments != null) this.storedEnchantments.saveSettings(this.pullSection(config, "stored-enchants"));
+        if (this.effects != null) this.effects.saveSettings(this.pullSection(config, "effects"));
+        if (this.texture != null) this.texture.saveSettings(this.pullSection(config, "texture"));
+        if (this.edible != null) this.edible.saveSettings(this.pullSection(config, "edible"));
+    }
+
+    /**
+     * Deserialize the item construct from a configuration file
+     *
+     * @param config The configuration file to deserialize
+     *
+     * @return The item construct
+     */
+    public static ItemConstruct deserialize(CommentedConfigurationSection config) {
+        ItemConstruct construct = ItemConstruct.of(Material.STONE);
+        construct.loadSettings(config);
+        return construct;
+    }
+
+    /**
+     * @return a string representation of the object.
+     */
+    @Override
+    public String toString() {
+        return "ItemConstruct{" +
+               "type=" + this.type +
+               ", amount=" + this.amount +
+               ", name='" + this.name + '\'' +
+               ", lore=" + this.lore +
+               ", enchantments=" + this.enchantments +
+               ", storedEnchantments=" + this.storedEnchantments +
+               ", effects=" + this.effects +
+               ", texture=" + this.texture +
+               ", edible=" + this.edible +
+               ", unbreakable=" + this.unbreakable +
+               ", glowing=" + this.glowing +
+               ", tooltip=" + this.tooltip +
+               ", additionalTooltip=" + this.additionalTooltip +
+               ", glider=" + this.glider +
+               '}';
+    }
+
+    public Material type() {
+        return type;
+    }
+
+    public ItemConstruct setType(Material type) {
+        this.type = type;
+        return this;
+    }
+
+    public Integer amount() {
+        return amount;
+    }
+
+    public ItemConstruct amount(Integer amount) {
         this.amount = amount;
         return this;
     }
 
-    /**
-     * Apply the itemstack name
-     *
-     * @param name The name of the item
-     *
-     * @return The itemstack constructor
-     */
+    public String name() {
+        return name;
+    }
+
     public ItemConstruct name(String name) {
         this.name = name;
         return this;
     }
 
-    /**
-     * Apply the itemstack lore
-     *
-     * @param lore The lore of the item
-     *
-     * @return The itemstack constructor
-     */
+    public List<String> lore() {
+        return lore;
+    }
+
     public ItemConstruct lore(List<String> lore) {
         this.lore = lore;
         return this;
     }
 
-    /**
-     * Apply the itemstack lore
-     *
-     * @param lore The lore of the item
-     *
-     * @return The itemstack constructor
-     */
     public ItemConstruct lore(String... lore) {
-        return this.lore(List.of(lore));
-    }
-
-    /**
-     * Apply the itemstack enchantments
-     *
-     * @param model The model of the item
-     *
-     * @return The itemstack constructor
-     */
-    public ItemConstruct model(int model) {
-        this.model = model;
+        this.lore = List.of(lore);
         return this;
     }
 
-    /**
-     * Apply the itemstack enchantments
-     *
-     * @param enchantments The enchantments
-     *
-     * @return The itemstack constructor
-     */
-    public ItemConstruct enchant(Map<Enchantment, Integer> enchantments) {
-        this.enchantment = enchantments;
+    public ItemEnchant enchantments() {
+        return enchantments;
+    }
+
+    public ItemConstruct enchantments(ItemEnchant enchantments) {
+        this.enchantments = enchantments;
         return this;
     }
 
-    /**
-     * Apply a new enchantment to the itemstack
-     *
-     * @param enchantment The enchantment
-     * @param level       The level of the enchantment
-     *
-     * @return The itemstack constructor
-     */
-    public ItemConstruct enchant(Enchantment enchantment, int level) {
-        this.enchantment.put(enchantment, level);
+    public ItemEnchant storedEnchantments() {
+        return storedEnchantments;
+    }
+
+    public ItemConstruct storedEnchantments(ItemEnchant storedEnchantments) {
+        this.storedEnchantments = storedEnchantments;
         return this;
     }
 
-    /**
-     * Make the itemstack unbreakable
-     *
-     * @param unbreakable If the itemstack is unbreakable
-     *
-     * @return The itemstack constructor
-     */
-    public ItemConstruct unbreakable(boolean unbreakable) {
-        this.unbreakable = unbreakable;
+    public ItemEffect effects() {
+        return effects;
+    }
+
+    public ItemConstruct effects(ItemEffect effects) {
+        this.effects = effects;
         return this;
     }
 
-    /**
-     * Apply the itemstack flags
-     *
-     * @param flags The flags of the item
-     *
-     * @return The itemstack constructor
-     */
-    public ItemConstruct flags(List<ItemFlag> flags) {
-        this.flags = flags;
-        return this;
+    public ItemTexture texture() {
+        return texture;
     }
 
-    /**
-     * Apply the itemstack flags
-     *
-     * @param flags The flags of the item
-     *
-     * @return The itemstack constructor
-     */
-    public ItemConstruct flags(ItemFlag... flags) {
-        return this.flags(List.of(flags));
-    }
-
-    /**
-     * Apply the itemstack flags
-     *
-     * @param flags The flags of the item
-     *
-     * @return The itemstack constructor
-     */
-    public ItemConstruct flagSerialize(List<String> flags) {
-        List<ItemFlag> newFlags = new ArrayList<>();
-        try {
-            for (String flag : flags) {
-                newFlags.add(ItemFlag.valueOf(flag));
-            }
-        } catch (IllegalArgumentException ignored) {
-        }
-
-        return this.flags(newFlags);
-    }
-
-    /**
-     * Apply the itemstack texture
-     *
-     * @param texture The texture of the item
-     *
-     * @return The itemstack constructor
-     */
     public ItemConstruct texture(String texture) {
+        this.texture = new ItemTexture(texture);
+        return this;
+    }
+
+    public ItemConstruct texture(ItemTexture texture) {
         this.texture = texture;
         return this;
     }
 
-    /**
-     * Apply the itemstack color
-     *
-     * @param color The color of the item
-     *
-     * @return The itemstack constructor
-     */
-    public ItemConstruct color(Color color) {
-        this.color = color;
+    public ItemEdible edible() {
+        return edible;
+    }
+
+    public ItemConstruct edible(ItemEdible edible) {
+        this.edible = edible;
         return this;
     }
 
-    /**
-     * Apply the itemstack color through hex
-     *
-     * @param hex The hex color
-     *
-     * @return The itemstack constructor
-     */
-    public ItemConstruct color(String hex) {
-        try {
-            java.awt.Color awtColor = java.awt.Color.decode(hex);
-            this.color = Color.fromRGB(awtColor.getRed(), awtColor.getGreen(), awtColor.getBlue());
-        } catch (IllegalArgumentException ignored) {
-        }
+    public ItemValue<Boolean> unbreakable() {
+        return unbreakable;
+    }
 
+    public ItemConstruct unbreakable(ItemValue<Boolean> unbreakable) {
+        this.unbreakable = unbreakable;
         return this;
     }
 
-    /**
-     * Apply the itemstack glow
-     *
-     * @param glow If the itemstack should glow
-     *
-     * @return The itemstack constructor
-     */
-    public ItemConstruct glow(boolean glow) {
-        this.glow = glow;
+    public boolean glowing() {
+        return glowing;
+    }
+
+    public ItemConstruct glowing(boolean glowing) {
+        this.glowing = glowing;
         return this;
     }
 
-    /**
-     * Apply the itemstack should have a tooltip
-     *
-     * @param tooltip If the itemstack should have no tooltip
-     *
-     * @return The itemstack constructor
-     */
+    public boolean tooltip() {
+        return tooltip;
+    }
+
     public ItemConstruct tooltip(boolean tooltip) {
         this.tooltip = tooltip;
         return this;
     }
 
-    /**
-     * Apply the itemstack effects
-     *
-     * @param effects The effects of the item
-     *
-     * @return The itemstack constructor
-     */
-    public ItemConstruct effects(List<Effect> effects) {
-        this.effects = effects;
+    public boolean additionalTooltip() {
+        return additionalTooltip;
+    }
+
+    public ItemConstruct additionalTooltip(boolean additionalTooltip) {
+        this.additionalTooltip = additionalTooltip;
         return this;
     }
 
-    /**
-     * Apply the itemstack effects
-     *
-     * @param effects The effects of the item
-     *
-     * @return The itemstack constructor
-     */
-    public ItemConstruct effects(Effect... effects) {
-        return this.effects(List.of(effects));
+    public boolean glider() {
+        return glider;
     }
 
-    /**
-     * A data class to hold all the potion effects for Potion
-     *
-     * @param type     The type of potion
-     * @param duration The duration of the potion
-     * @param amp      The potion level +1
-     */
-    public record Effect(PotionEffectType type, int duration, int amp) {
-
-        /**
-         * Create a new potion effect from the builder
-         *
-         * @return The potion effect
-         */
-        public PotionEffect create() {
-            return new PotionEffect(this.type, this.duration, this.amp);
-        }
-
-        /**
-         * Create a new potion effect from the builder
-         *
-         * @param type     The potion effect type
-         * @param duration The duration of the potion effect
-         * @param amp      The amplifier of the potion effect
-         *
-         * @return The potion effect
-         */
-        public static Effect of(PotionEffectType type, int duration, int amp) {
-            return new Effect(type, duration, amp);
-        }
-
+    public ItemConstruct glider(boolean glider) {
+        this.glider = glider;
+        return this;
     }
 
 }

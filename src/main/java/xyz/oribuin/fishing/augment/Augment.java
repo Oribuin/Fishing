@@ -80,10 +80,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
         config.set("description", this.description);
         config.set("display-line", this.displayLine);
 
-        CommentedConfigurationSection section = config.getConfigurationSection("display-item");
-        if (section == null) section = config.createSection("display-item");
-
-        this.displayItem.serialize(section); // Serialize the display item
+        this.displayItem.saveSettings(this.pullSection(config, "display-item")); // Save the display item
     }
 
     /**
@@ -98,14 +95,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
         this.requiredLevel = config.getInt("required-level", 1);
         this.description = config.getStringList("description");
         this.displayLine = config.getString("display-line", "&c" + StringUtils.capitalize(this.name.replace("_", " ")) + " %level_roman%");
-
-        ItemConstruct construct = ItemConstruct.deserialize(config.getConfigurationSection("display-item"));
-        if (construct == null) {
-            FishingPlugin.get().getLogger().warning("Failed to load display item for augment: " + this.name);
-            return;
-        }
-
-        this.displayItem = construct;
+        this.displayItem = ItemConstruct.deserialize(this.pullSection(config, "display-item"));
     }
 
     /**
@@ -114,16 +104,19 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      * @return The default item
      */
     private ItemConstruct defaultItem() {
+        List<String> lore = new ArrayList<>(this.description);
+        lore.addAll(List.of(
+                "",
+                "&#4f73d6Information",
+                " &#4f73d6- &7Required Level: &f%required_level%",
+                " &#4f73d6- &7Max Level: &f%max_level%",
+                ""
+        ));
+
         return ItemConstruct.of(Material.FIREWORK_STAR)
                 .name("&f[&#4f73d6&l%display_name%&f]")
-                .lore("&7%description%",
-                        "",
-                        "&#4f73d6Information",
-                        " &#4f73d6- &7Required Level: &f%required_level%",
-                        " &#4f73d6- &7Max Level: &f%max_level%",
-                        ""
-                )
-                .glow(true);
+                .lore(lore)
+                .glowing(true);
     }
 
     /**
