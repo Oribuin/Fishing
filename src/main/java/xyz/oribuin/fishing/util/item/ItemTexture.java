@@ -21,8 +21,6 @@ import java.util.UUID;
 public final class ItemTexture implements Configurable {
 
     private String texture;
-    private PlayerProfile playerProfile;
-    private PlayerTextures playerTextures;
     /**
      * Define the player head texture of an item
      *
@@ -30,21 +28,6 @@ public final class ItemTexture implements Configurable {
      */
     public ItemTexture(String texture) {
         this.texture = texture;
-        if (texture == null || texture.isEmpty()) return;
-
-        try {
-            this.playerProfile = Bukkit.createProfile(UUID.nameUUIDFromBytes(texture.getBytes()), "");
-            this.playerTextures = playerProfile.getTextures();
-
-            String decodedTextureJson = new String(Base64.getDecoder().decode(texture));
-            String decodedTextureUrl = decodedTextureJson.substring(28, decodedTextureJson.length() - 4);
-
-            this.playerTextures.setSkin(new URL(decodedTextureUrl));
-            this.playerProfile.setTextures(playerTextures);
-        } catch (MalformedURLException ex) {
-            FishingPlugin.get().getLogger().severe("Failed to create player profile for texture: " + texture);
-        }
-
     }
 
     /**
@@ -53,9 +36,20 @@ public final class ItemTexture implements Configurable {
      * @return The potion effect
      */
     public ResolvableProfile create() {
-        if (this.playerProfile == null) return ResolvableProfile.resolvableProfile().build();
+        try {
+            PlayerProfile playerProfile = Bukkit.createProfile(UUID.nameUUIDFromBytes(texture.getBytes()), "");
+            PlayerTextures playerTextures = playerProfile.getTextures();
 
-        return ResolvableProfile.resolvableProfile(this.playerProfile);
+            String decodedTextureJson = new String(Base64.getDecoder().decode(texture));
+            String decodedTextureUrl = decodedTextureJson.substring(28, decodedTextureJson.length() - 4);
+
+            playerTextures.setSkin(new URL(decodedTextureUrl));
+            playerProfile.setTextures(playerTextures);
+
+            return ResolvableProfile.resolvableProfile(playerProfile);
+        } catch (MalformedURLException | NullPointerException ex) {
+            return ResolvableProfile.resolvableProfile().build();
+        }
     }
 
     /**
@@ -105,14 +99,6 @@ public final class ItemTexture implements Configurable {
 
     public void texture(String texture) {
         this.texture = texture;
-    }
-
-    public PlayerProfile playerProfile() {
-        return playerProfile;
-    }
-
-    public PlayerTextures playerTextures() {
-        return playerTextures;
     }
 
 }
