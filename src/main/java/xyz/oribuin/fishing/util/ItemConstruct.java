@@ -97,7 +97,7 @@ public class ItemConstruct implements Configurable {
         ItemMeta meta = stack.getItemMeta();
         if (meta == null) return stack; // Probably air
 
-        if (this.name != null) stack.setData(DataComponentTypes.CUSTOM_NAME, FishUtils.kyorify(placeholders.apply(this.name)));
+        if (this.name != null) stack.setData(DataComponentTypes.CUSTOM_NAME, FishUtils.kyorify(this.name, placeholders));
         if (this.lore != null) {
             List<Component> lines = new ArrayList<>();
             for (String line : this.lore) {
