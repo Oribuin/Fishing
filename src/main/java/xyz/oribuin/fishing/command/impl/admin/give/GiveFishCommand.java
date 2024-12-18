@@ -24,7 +24,12 @@ public class GiveFishCommand extends BaseRoseCommand {
         int fixedAmount = Math.max(1, Math.min(amount == null ? 1 : amount, 64));
 
         CommandSender sender = context.getSender();
-        ItemStack item = fish.createItemStack().asQuantity(fixedAmount);
+        ItemStack item = fish.createItemStack();
+        if (item == null) {
+            sender.sendMessage("An error occurred while creating the fish item."); // TODO: Plugin Message
+            return;
+        }
+
 
         if (target.getInventory().firstEmpty() == -1) {
             // TODO: Plugin Message
@@ -32,7 +37,7 @@ public class GiveFishCommand extends BaseRoseCommand {
             return;
         }
 
-        target.getInventory().addItem(item);
+        target.getInventory().addItem(item.asQuantity(fixedAmount));
         sender.sendMessage("You have given " + target.getName() + " " + fixedAmount + " " + fish.name() + " fish.");
     }
 

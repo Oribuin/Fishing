@@ -139,7 +139,8 @@ public class Fish implements Configurable {
             container.set(PersistKeys.FISH_TYPE, PersistentDataType.STRING, this.tier);
         });
 
-        return itemStack.clone(); // Clone the item stack to prevent any changes
+        this.itemStack = itemStack;
+        return this.itemStack.clone(); // Clone the item stack to prevent any changes
     }
 
     private StringPlaceholders placeholders() {

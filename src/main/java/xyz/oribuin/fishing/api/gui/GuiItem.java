@@ -87,10 +87,7 @@ public class GuiItem implements Configurable {
         List<String> slots = config.getStringList("slots");
         if (!slots.isEmpty()) this.slot = this.parseSlotList(slots);
 
-        CommentedConfigurationSection item = config.getConfigurationSection("item");
-        if (item != null) {
-            this.item = ItemConstruct.deserialize(item);
-        }
+        this.item = ItemConstruct.deserialize(this.pullSection(config, "display-item"));
     }
 
     /**
@@ -107,10 +104,7 @@ public class GuiItem implements Configurable {
         if (this.slot.size() == 1) config.set("slot", this.slot.get(0));
         else config.set("slots", this.slot.stream().map(String::valueOf).toList());
 
-        CommentedConfigurationSection item = config.getConfigurationSection("item");
-        if (item == null) item = config.createSection("item");
-
-        this.item.serialize(item);
+        this.item.saveSettings(this.pullSection(config, "display-item"));
     }
 
     /**

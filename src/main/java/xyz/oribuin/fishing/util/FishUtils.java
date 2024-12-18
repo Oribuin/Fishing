@@ -4,10 +4,15 @@ import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.hook.PlaceholderAPIHook;
 import dev.rosewood.rosegarden.utils.HexUtils;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import io.papermc.paper.registry.RegistryAccess;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Color;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.FishingPlugin;
@@ -29,9 +34,48 @@ import java.util.stream.Collectors;
 public final class FishUtils {
 
     public static ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
+    public static RegistryAccess REGISTRY = RegistryAccess.registryAccess();
+    public static LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacyAmpersand();
 
     public FishUtils() {
         throw new IllegalStateException("FishUtil is a utility class and cannot be instantiated.");
+    }
+
+    /**
+     * Convert a string to a component
+     *
+     * @param text The text to convert
+     *
+     * @return The component
+     */
+    public static Component kyorify(String text) {
+        return LEGACY_SERIALIZER.deserialize(text)
+                .decoration(TextDecoration.ITALIC, false);
+    }
+
+    /**
+     * Convert a string into a component with placeholders applied
+     *
+     * @param text         The text to convert
+     * @param placeholders The placeholders to apply
+     *
+     * @return The component
+     */
+    public static Component kyorify(String text, StringPlaceholders placeholders) {
+        return LEGACY_SERIALIZER.deserialize(placeholders.apply(text))
+                .decoration(TextDecoration.ITALIC, false);
+    }
+
+    /**
+     * Create a namespaced key from a string value, defaulting to the minecraft namespace
+     *
+     * @param value The value
+     *
+     * @return The namespaced key
+     */
+    public static NamespacedKey key(String value) {
+        if (value == null) return null;
+        return value.contains(":") ? NamespacedKey.fromString(value) : NamespacedKey.minecraft(value);
     }
 
     /**
@@ -322,7 +366,6 @@ public final class FishUtils {
 
         return builder.toString().trim();
     }
-
 
     /**
      * Parse a list of strings from 1-1 to a stringlist
