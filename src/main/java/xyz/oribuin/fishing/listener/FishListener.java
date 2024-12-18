@@ -60,14 +60,16 @@ public class FishListener implements Listener {
             event.getPlayer().sendMessage("You caught a " + fish.displayName() + "!"); // TODO: Replace with locale message
             //            locale.sendMessage(event.getPlayer(), "fish-caught", StringPlaceholders.of("fish", fish.displayName()));
 
+            ItemStack resultItem = fish.createItemStack();
+
             // Give the fish to the player
             PlayerInventory inv = event.getPlayer().getInventory();
             if (inv.firstEmpty() == -1) {
-                event.getPlayer().getWorld().dropItem(event.getPlayer().getLocation(), fish.createItemStack());
+                event.getPlayer().getWorld().dropItem(event.getPlayer().getLocation(), resultItem);
                 continue;
             }
 
-            inv.addItem(fish.createItemStack());
+            inv.addItem(resultItem);
         }
 
         Fisher fisher = this.plugin.getManager(DataManager.class).get(event.getPlayer().getUniqueId());

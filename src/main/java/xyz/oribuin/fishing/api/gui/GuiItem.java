@@ -4,6 +4,7 @@ import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.BaseGui;
+import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +19,7 @@ public class GuiItem implements Configurable {
     protected boolean enabled = true;
     protected String name = "item";
     protected List<Integer> slot = List.of(0);
-    protected ItemConstruct item = ItemConstruct.EMPTY;
+    protected ItemConstruct item = ItemConstruct.of(Material.STONE).tooltip(false);
 
     public GuiItem() {
     }

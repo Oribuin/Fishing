@@ -3,6 +3,7 @@ package xyz.oribuin.fishing.fish;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.stylesheets.LinkStyle;
 import xyz.oribuin.fishing.FishingPlugin;
@@ -43,29 +44,8 @@ public class Tier implements Configurable {
         Objects.requireNonNull(name, "Quality name cannot be null.");
 
         this.name = name;
-        this.baseDisplay = ItemConstruct.EMPTY;
+        this.baseDisplay = ItemConstruct.of(Material.COD);
         this.tierFile = FishUtils.createFile(FishingPlugin.get(), "tiers", name + ".yml");
-        this.config = CommentedFileConfiguration.loadConfiguration(this.tierFile);
-        this.fish = new HashMap<>();
-    }
-
-    /**
-     * Create a new quality name for a fish, Does not create a new file for the quality
-     *
-     * @param name     The name of the quality
-     * @param tierFile The file where the relational data is stored
-     */
-    public Tier(String name, File tierFile) {
-        Objects.requireNonNull(name, "Quality name cannot be null.");
-
-        this.name = name;
-        this.money = 0.0;
-        this.chance = 0.0;
-        this.entropy = 0;
-        this.fishExp = 0;
-        this.naturalExp = 0.0f;
-        this.baseDisplay = ItemConstruct.EMPTY;
-        this.tierFile = tierFile;
         this.config = CommentedFileConfiguration.loadConfiguration(this.tierFile);
         this.fish = new HashMap<>();
     }
@@ -81,7 +61,7 @@ public class Tier implements Configurable {
         this.money = config.getDouble("money", 0.0);
         this.chance = config.getDouble("chance", 0.0);
         this.entropy = config.getInt("entropy", 0);
-        this.baseDisplay = ItemConstruct.EMPTY;
+        this.baseDisplay = ItemConstruct.of(Material.STONE);
         this.baseDisplay.loadSettings(this.pullSection(config, "display-item"));
 
         this.fishExp = config.getInt("fish-exp", 0);
@@ -191,7 +171,7 @@ public class Tier implements Configurable {
     }
 
     public void baseDisplay(ItemConstruct baseDisplay) {
-        this.baseDisplay = baseDisplay != null ? baseDisplay : ItemConstruct.EMPTY;
+        this.baseDisplay = baseDisplay != null ? baseDisplay : ItemConstruct.of(Material.COD);
     }
 
     public int fishExp() {

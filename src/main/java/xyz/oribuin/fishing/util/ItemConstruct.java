@@ -27,8 +27,6 @@ import java.util.List;
 @SuppressWarnings({ "unused", "FieldMayBeFinal" })
 public class ItemConstruct implements Configurable {
 
-    public static ItemConstruct EMPTY = ItemConstruct.of(Material.STONE); // Empty itemstack
-
     private Material type;
     private Integer amount;
     private String name;
