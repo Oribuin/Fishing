@@ -9,11 +9,21 @@ import xyz.oribuin.fishing.command.impl.admin.give.GiveFishCommand;
 import xyz.oribuin.fishing.command.impl.admin.give.GiveTotemCommand;
 
 public class GiveCommand extends BaseRoseCommand {
-
+    
+    /**
+     * Create a new command instance with the provided plugin instance.
+     *
+     * @param rosePlugin The plugin instance.
+     */
     public GiveCommand(RosePlugin rosePlugin) {
         super(rosePlugin);
     }
 
+    /**
+     * Define the information for the command.
+     *
+     * @return The command information.
+     */
     @Override
     protected CommandInfo createCommandInfo() {
         return CommandInfo.builder("give")
@@ -23,6 +33,11 @@ public class GiveCommand extends BaseRoseCommand {
                 .build();
     }
 
+    /**
+     * Define the arguments for the command.
+     *
+     * @return The arguments required for the command.
+     */
     private ArgumentsDefinition createArguments() {
         return ArgumentsDefinition.builder()
                 .requiredSub(

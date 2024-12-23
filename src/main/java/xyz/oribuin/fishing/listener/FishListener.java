@@ -46,15 +46,15 @@ public class FishListener implements Listener {
             if (fish == null) continue;
 
             FishCatchEvent fishCatchEvent = new FishCatchEvent(event.getPlayer(), hand, event.getHook(), fish);
-            fishCatchEvent.setNaturalExp(naturalExp); // Set the base experience gained
+            fishCatchEvent.naturalExp(naturalExp); // Set the base experience gained
 
             fishCatchEvent.callEvent();
             if (fishCatchEvent.isCancelled()) continue; // If the event is cancelled, do nothing
 
             // Use the event values because they could have been modified
-            naturalExp += fishCatchEvent.getNaturalExp();
-            newFishExp += fishCatchEvent.getFishExp();
-            newEntropy += fishCatchEvent.getEntropy();
+            naturalExp += fishCatchEvent.naturalExp();
+            newFishExp += fishCatchEvent.fishExp();
+            newEntropy += fishCatchEvent.entropy();
 
             // Tell the player they caught a fish
             event.getPlayer().sendMessage("You caught a " + fish.displayName() + "!"); // TODO: Replace with locale message

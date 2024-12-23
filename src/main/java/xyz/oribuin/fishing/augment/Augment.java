@@ -1,20 +1,18 @@
 package xyz.oribuin.fishing.augment;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemFlag;
 import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.config.Configurable;
 import xyz.oribuin.fishing.api.event.FishEventHandler;
 import xyz.oribuin.fishing.economy.Cost;
 import xyz.oribuin.fishing.economy.Currencies;
-import xyz.oribuin.fishing.economy.Currency;
 import xyz.oribuin.fishing.util.FishUtils;
 import xyz.oribuin.fishing.util.ItemConstruct;
 
@@ -22,6 +20,13 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Augments are upgrades that can be crafted and applied to fishing rods to give them unique abilities to help the player produce more fish.
+ * <p>
+ * Use this class to create a new augment for the plugin. Any augments created should be registered using {@link AugmentRegistry#register(Augment)}
+ * <p>
+ * All augment classes should be titled AugmentName and named in snake_case.
+ */
 public abstract class Augment extends FishEventHandler implements Listener, Configurable {
 
     protected final String name;
@@ -35,10 +40,13 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
     protected Cost price;
 
     /**
-     * Create a new augment instance with a name and description
+     * Create a new type of augment with a name and description.
+     * <p>
+     * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
+     * <p>
      *
-     * @param name        The name of the augment
-     * @param description The description of the augment
+     * @param name        The unique name and identifier of the augment
+     * @param description The description of the augment that will be displayed in the GUI
      */
     public Augment(String name, String... description) {
         this.enabled = true;
@@ -53,19 +61,25 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
     }
 
     /**
-     * Create a new augment instance with a name and empty description
+     * Create a new type of augment with a name and description.
+     * <p>
+     * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
+     * <p>
      *
-     * @param name The name of the augment
+     * @param name The unique name and identifier of the augment
      */
     public Augment(String name) {
         this(name, "No Description");
     }
 
     /**
-     * The path to the configuration file to be loaded. All paths will be relative to the {@link #parentFolder()},
-     * If you wish to overwrite this functionality, override the {@link #parentFolder()} method
+     * The file path to a {@link CommentedFileConfiguration} file, This path by default will be relative {@link #parentFolder()}.
+     * <p>
+     * This by default is only used in the {@link #reload()} method to load the configuration file
+     * <p>
+     * This an optional method and should only be used if the Configurable class is its own file (E.g. {@link xyz.oribuin.fishing.augment.Augment} class)
      *
-     * @return The path
+     * @return The path to the configuration file
      */
     @Override
     public @NotNull Path configPath() {
@@ -73,9 +87,14 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
     }
 
     /**
-     * Save the configuration file for the configurable class
+     * Serialize the settings of the configurable class into a {@link CommentedConfigurationSection} to be saved later
+     * <p>
+     * This functionality will not update the configuration file, it will only save the settings into the section to be saved later.
+     * <p>
+     * The function {@link #reload()} will save the settings on first load, please override this method if you wish to save the settings regularly
+     * New sections should be created using {@link #pullSection(CommentedConfigurationSection, String)}
      *
-     * @param config The configuration file to save
+     * @param config The {@link CommentedConfigurationSection} to save the settings to, this cannot be null.
      */
     @Override
     public void saveSettings(@NotNull CommentedConfigurationSection config) {
@@ -91,9 +110,19 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
     }
 
     /**
-     * Load the settings from the configuration file
+     * Initialize a {@link CommentedConfigurationSection} from a configuration file to establish the settings
+     * for the configurable class, will be automatically called when the configuration file is loaded using {@link #reload()}
+     * <p>
+     * If your class inherits from another configurable class, make sure to call super.loadSettings(config)
+     * to save the settings from the parent class
+     * <p>
+     * A class must be initialized before settings are loaded, If you wish to have a configurable data class style, its best to create a
+     * static method that will create a new instance and call this method on the new instance
+     * <p>
+     * The {@link CommentedConfigurationSection} should never be null, when creating a new section,
+     * use {@link #pullSection(CommentedConfigurationSection, String)} to establish new section if it doesn't exist
      *
-     * @param config The configuration file to load
+     * @param config The {@link CommentedConfigurationSection} to load the settings from, this cannot be null.
      */
     @Override
     public void loadSettings(@NotNull CommentedConfigurationSection config) {

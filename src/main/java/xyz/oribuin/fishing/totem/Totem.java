@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.task.AsyncTicker;
+import xyz.oribuin.fishing.api.task.SyncTicker;
 import xyz.oribuin.fishing.manager.TotemManager;
 import xyz.oribuin.fishing.storage.util.PersistKeys;
 import xyz.oribuin.fishing.util.FishUtils;
@@ -438,7 +439,8 @@ public class Totem implements AsyncTicker {
      */
     @Override
     public Duration delay() {
-        return AsyncTicker.super.delay();
+        return Duration.ZERO;
     }
+
 
 }

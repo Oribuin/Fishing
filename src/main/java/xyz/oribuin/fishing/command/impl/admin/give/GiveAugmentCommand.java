@@ -14,7 +14,12 @@ import xyz.oribuin.fishing.augment.Augment;
 import xyz.oribuin.fishing.command.argument.AugmentArgument;
 
 public class GiveAugmentCommand extends BaseRoseCommand {
-
+    
+    /**
+     * Create a new command instance with the provided plugin instance.
+     *
+     * @param rosePlugin The plugin instance.
+     */
     public GiveAugmentCommand(RosePlugin rosePlugin) {
         super(rosePlugin);
     }
@@ -36,6 +41,11 @@ public class GiveAugmentCommand extends BaseRoseCommand {
         sender.sendMessage("You have given " + target.getName() + " " + fixedAmount + " " + augment.name() + " augment(s).");
     }
 
+    /**
+     * Define the information for the command.
+     *
+     * @return The command information.
+     */
     @Override
     protected CommandInfo createCommandInfo() {
         return CommandInfo.builder("augment")
@@ -45,6 +55,11 @@ public class GiveAugmentCommand extends BaseRoseCommand {
                 .build();
     }
 
+    /**
+     * Define the arguments for the command.
+     *
+     * @return The arguments required for the command.
+     */
     private ArgumentsDefinition createArguments() {
         return ArgumentsDefinition.builder()
                 .required("player", ArgumentHandlers.PLAYER)

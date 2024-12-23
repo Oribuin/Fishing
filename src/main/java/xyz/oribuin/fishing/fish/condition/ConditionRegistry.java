@@ -70,7 +70,7 @@ public class ConditionRegistry {
     }
 
     /**
-     * Check if the player can catch the fish with the current conditions
+     * Runs a fish context through all the conditions to check if the player can catch the fish or not.
      *
      * @param fish   The fish the player is trying to catch
      * @param player The player to check
@@ -92,7 +92,7 @@ public class ConditionRegistry {
             event.callEvent(); // Call the event
 
             if (event.isCancelled()) continue;
-            if (!event.getResult()) return false;
+            if (!event.result()) return false;
         }
 
         return true;

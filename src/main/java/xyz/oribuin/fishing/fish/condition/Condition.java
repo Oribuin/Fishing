@@ -2,6 +2,7 @@ package xyz.oribuin.fishing.fish.condition;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.World;
+import xyz.oribuin.fishing.api.event.ConditionCheckEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,16 +12,29 @@ import java.util.List;
  */
 public class Condition {
 
-    private List<String> biomes = new ArrayList<>();
-    private Weather weather = null;
-    private Time time = Time.ANY_TIME;
-    private List<String> worlds = new ArrayList<>();
-    private World.Environment environment = null;
-    private Integer waterDepth = null;
-    private boolean iceFishing = false;
-    private Pair<Integer, Integer> height = null;
-    private Integer lightLevel = null;
-    private boolean boatFishing = false;
+    private List<String> biomes;
+    private Weather weather;
+    private Time time;
+    private List<String> worlds;
+    private World.Environment environment;
+    private Integer waterDepth;
+    private boolean iceFishing;
+    private Pair<Integer, Integer> height;
+    private Integer lightLevel;
+    private boolean boatFishing;
+
+    public Condition() {
+        this.biomes = new ArrayList<>();
+        this.worlds = new ArrayList<>();
+        this.time = Time.ANY_TIME;
+        this.environment = null;
+        this.weather = null;
+        this.waterDepth = null;
+        this.iceFishing = false;
+        this.height = null;
+        this.lightLevel = null;
+        this.boatFishing = false;
+    }
 
     public List<String> biomes() {
         return biomes;

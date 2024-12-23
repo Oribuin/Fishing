@@ -88,10 +88,14 @@ public class TotemMainMenu extends PluginMenu {
     }
 
     /**
-     * Save the configuration file for the configurable class
-     * I would recommend always super calling this method to save any settings that could be implemented
+     * Serialize the settings of the configurable class into a {@link CommentedConfigurationSection} to be saved later
+     * <p>
+     * This functionality will not update the configuration file, it will only save the settings into the section to be saved later.
+     * <p>
+     * The function {@link #reload()} will save the settings on first load, please override this method if you wish to save the settings regularly
+     * New sections should be created using {@link #pullSection(CommentedConfigurationSection, String)}
      *
-     * @param config The configuration file to save
+     * @param config The {@link CommentedConfigurationSection} to save the settings to, this cannot be null.
      */
     @Override
     public void saveSettings(@NotNull CommentedConfigurationSection config) {

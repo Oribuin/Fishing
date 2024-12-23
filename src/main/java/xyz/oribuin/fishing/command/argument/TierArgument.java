@@ -28,7 +28,7 @@ public class TierArgument extends ArgumentHandler<Tier> {
 
     @Override
     public List<String> suggest(CommandContext context, Argument argument, String[] args) {
-        return FishingPlugin.get().getManager(TierManager.class).getTiers().keySet().stream().toList();
+        return FishingPlugin.get().getManager(TierManager.class).tiers().keySet().stream().toList();
     }
 
 }

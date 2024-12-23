@@ -16,6 +16,11 @@ public class FishCommand extends BaseRoseCommand {
         super(rosePlugin);
     }
 
+    /**
+     * Define the information for the command.
+     *
+     * @return The command information.
+     */
     @Override
     protected CommandInfo createCommandInfo() {
         return CommandInfo.builder("fish")
@@ -24,6 +29,11 @@ public class FishCommand extends BaseRoseCommand {
                 .build();
     }
 
+    /**
+     * Define the arguments for the command.
+     *
+     * @return The arguments required for the command.
+     */
     private ArgumentsDefinition createArguments() {
         return ArgumentsDefinition.builder()
                 .requiredSub(

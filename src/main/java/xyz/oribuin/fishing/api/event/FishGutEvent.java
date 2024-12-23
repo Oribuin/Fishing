@@ -54,21 +54,40 @@ public class FishGutEvent extends PlayerEvent implements Cancellable {
     public void setEntropy(int entropy) {
         this.entropy = entropy;
     }
-
+    /**
+     * Get the handlers for this event class
+     *
+     * @return The handlers for this event class
+     */
     @Override
     public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
 
+    /**
+     * Get the handlers for this event class
+     *
+     * @return The handlers for this event class
+     */
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }
 
+    /**
+     * Check if the event is cancelled
+     *
+     * @return If the event is cancelled
+     */
     @Override
     public boolean isCancelled() {
         return this.cancelled;
     }
 
+    /**
+     * Set the event to be cancelled
+     *
+     * @param b If the event should be cancelled
+     */
     @Override
     public void setCancelled(boolean b) {
         this.cancelled = b;

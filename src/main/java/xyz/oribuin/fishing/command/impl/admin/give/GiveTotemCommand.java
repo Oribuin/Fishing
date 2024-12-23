@@ -13,7 +13,12 @@ import org.bukkit.inventory.ItemStack;
 import xyz.oribuin.fishing.totem.Totem;
 
 public class GiveTotemCommand extends BaseRoseCommand {
-
+    
+    /**
+     * Create a new command instance with the provided plugin instance.
+     *
+     * @param rosePlugin The plugin instance.
+     */
     public GiveTotemCommand(RosePlugin rosePlugin) {
         super(rosePlugin);
     }
@@ -38,6 +43,11 @@ public class GiveTotemCommand extends BaseRoseCommand {
         sender.sendMessage("You have given " + target.getName() + " " + fixedAmount + " Fishing Totem(s).");
     }
 
+    /**
+     * Define the information for the command.
+     *
+     * @return The command information.
+     */
     @Override
     protected CommandInfo createCommandInfo() {
         return CommandInfo.builder("totem")
@@ -47,6 +57,11 @@ public class GiveTotemCommand extends BaseRoseCommand {
                 .build();
     }
 
+    /**
+     * Define the arguments for the command.
+     *
+     * @return The arguments required for the command.
+     */
     private ArgumentsDefinition createArguments() {
         return ArgumentsDefinition.builder()
                 .required("player", ArgumentHandlers.PLAYER)

@@ -1,9 +1,11 @@
 package xyz.oribuin.fishing.manager;
 
 import dev.rosewood.rosegarden.RosePlugin;
+import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.manager.Manager;
 import org.jetbrains.annotations.Nullable;
+import xyz.oribuin.fishing.api.config.Configurable;
 import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.fish.Tier;
 import xyz.oribuin.fishing.util.FishUtils;
@@ -16,6 +18,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class is responsible for loading all the tiers from the plugin's data folder and storing them in a map for easy access
+ *
+ * @see #reload() to see how the tiers are loaded from their respective files, which is not done using {@link Configurable#reload()}
+ * @see Tier#loadSettings(CommentedConfigurationSection) to see how the tier settings are loaded
+ */
 public class TierManager extends Manager {
 
     private final Map<String, Tier> tiers = new HashMap<>();
@@ -56,13 +64,15 @@ public class TierManager extends Manager {
     }
 
     /**
-     * Get the quality of fish dependent on the chance provided, filters through all chances
-     * sorted for rarest -> common, seeing if chance <= tier chance. When no tier is selected it will return null.
-     * Usually, a null tier means a player won't get a custom fish
+     * Selects a tier based on the chance number provided by the player, this will return the tier
+     * <p>
+     * This will prioritise the rarest tier first, up to the most common tier. This way it won't almost always return the lowest rarity
      *
      * @param chance The chance of obtaining the fish
      *
-     * @return The fish that can be provided.
+     * @return The quality of fish that can be provided, or null if no tier was selected
+     *
+     * @see xyz.oribuin.fishing.api.event.FishGenerateEvent to see how this is used in the plugin
      */
     @Nullable
     public Tier selectTier(double chance) {
@@ -78,22 +88,26 @@ public class TierManager extends Manager {
     }
 
     /**
-     * Get the tier based on the key
+     * Pull a reference to a cached tier based on the unique key provided
+     * <p>
+     * Used to get the tier from a fish or other classes
      *
-     * @param key The key of the tier
+     * @param key The identifier of the tier
      *
-     * @return The tier
+     * @return The {@link Tier} from the key
      */
     public Tier get(String key) {
         return this.tiers.get(key);
     }
 
     /**
-     * Get the fish from the tier based on the key
+     * Get a fish from all tiers based on the fish identifier provided
      *
-     * @param key The key of the fish
+     * @param key The identifier of the fish
      *
-     * @return The fish from the tier
+     * @return The fish instance, which are cached in the tier object
+     *
+     * @see Tier#fish() for all the fish caches
      */
     public Fish getFish(String key) {
         return this.tiers.values().stream()
@@ -103,7 +117,7 @@ public class TierManager extends Manager {
     }
 
     /**
-     * Get all the fish from all the tiers
+     * Get every single fish in the entire plugin from all the tiers
      *
      * @return All the fish from all the tiers
      */
@@ -118,7 +132,10 @@ public class TierManager extends Manager {
         this.tiers.clear(); // Clear the cached list of tiers
     }
 
-    public Map<String, Tier> getTiers() {
+    /**
+     * @return All the stored tiers in the plugin
+     */
+    public Map<String, Tier> tiers() {
         return this.tiers;
     }
 

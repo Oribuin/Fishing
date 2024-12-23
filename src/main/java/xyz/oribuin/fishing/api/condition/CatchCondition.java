@@ -8,16 +8,22 @@ import xyz.oribuin.fishing.fish.Fish;
 public interface CatchCondition {
 
     /**
-     * Check if the requirements are met to run the condition
+     * Decides whether the condition should be checked in the first place,
+     * <p>
+     * This is to prevent unnecessary checks on fish that don't have the condition type.
      *
-     * @param fish The fish to check
+     * @param fish The fish to check for
      *
-     * @return Results in true if the condition should run
+     * @return true if the fish has the condition applied. @see {@link #check(Fish, Player, ItemStack, FishHook)} for the actual condition check
      */
     boolean shouldRun(Fish fish);
 
     /**
-     * Check if the player can catch the fish with the current conditions
+     * Check if the player meets the condition to catch the fish or not, Requires {@link #shouldRun(Fish)} to return true before running
+     * <p>
+     * To see how this is used, check {@link xyz.oribuin.fishing.fish.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)}
+     * <p>
+     * All conditions are passed through {@link xyz.oribuin.fishing.api.event.ConditionCheckEvent} to overwrite the result if needed
      *
      * @param fish   The fish the player is trying to catch
      * @param player The player to check

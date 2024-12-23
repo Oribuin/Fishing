@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This event is fired whenever the plugin attempts to generate a fish for a player.
+ */
 public class FishGenerateEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
@@ -33,13 +36,17 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
     private boolean cancelled;
 
     /**
-     * This event is fired whenever the plugin attempts to generate a new fish.
-     * This will provide a list of valid fish that it can catch and select a random one
-     * This method will also provide all the augments the rod has and other stuff.
+     * Create a new FishGenerateEvent to be called when the plugin attempts to generate a fish for a player.
+     * <p>
+     * Use this event to modify the tier of fish that can be caught through {@link #addIncrease(double)}.
+     * <p>
+     * The base chance is a random number between 0 and 100. Use {@link java.util.concurrent.ThreadLocalRandom#nextDouble(double)} to generate new numbers.
      *
-     * @param who  The player who caught the fish
-     * @param rod  The fishing rod used
-     * @param hook The hook where the fish will spawn
+     * @param who  The {@link Player} who is catching the fish
+     * @param rod  The {@link ItemStack} fishing rod the player is using
+     * @param hook The {@link FishHook} the hook the fish was caught on
+     *
+     * @see xyz.oribuin.fishing.manager.FishManager#generateFish(Player, ItemStack, FishHook)  Where the event is called
      */
     public FishGenerateEvent(@NotNull Player who, @NotNull ItemStack rod, @NotNull FishHook hook) {
         super(who, !Bukkit.isPrimaryThread());
@@ -53,7 +60,7 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
     /**
      * Adds an increase to the base chance of the fish
      *
-     * @param increase The increase to add
+     * @param increase The increase to add to the base chance
      *
      * @return The new chance
      */
@@ -72,9 +79,10 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
-     * Generates a new fish for the player to catch, Chance System:
-     * baseChance + sum(chanceIncreases);
-     * Scans for each rarity from the highest rarity -> lowest rarity
+     * Generates a new {@link Fish} based on the base chance and the chance increases.
+     * <p>
+     * The formula is: baseChance + sumOf(chanceIncreases) = newChance
+     * Tiers are selected from the highest rarity -> the lowest rarity based on the newChance
      */
     public void generate() {
         TierManager tierProvider = FishingPlugin.get().getManager(TierManager.class);
@@ -99,51 +107,96 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
         this.fish = canCatch.get(FishUtils.RANDOM.nextInt(canCatch.size()));
     }
 
-    public @NotNull ItemStack getRod() {
+    /**
+     * The fishing rod the player is using
+     *
+     * @return The itemstack of the fishing rod
+     */
+    public @NotNull ItemStack rod() {
         return rod;
     }
 
-    public @NotNull FishHook getHook() {
+    /**
+     * The hook that the fish was caught on
+     *
+     * @return The fishhook entity
+     */
+    public @NotNull FishHook hook() {
         return hook;
     }
 
-    public double getBaseChance() {
+    /**
+     * The base chance of the fish, this was the original rarity chance of the fish
+     *
+     * @return The base chance of the fish
+     */
+    public double baseChance() {
         return baseChance;
     }
 
-    public List<Double> getChanceIncreases() {
+    /**
+     * The chance increases that have been added to the base chance
+     *
+     * @return The chance increases
+     */
+    public List<Double> chanceIncreases() {
         return chanceIncreases;
     }
 
-    public void setChanceIncreases(List<Double> chanceIncreases) {
-        this.chanceIncreases = chanceIncreases;
-    }
-
-    public @Nullable Fish getFish() {
+    /**
+     * The fish that was generated
+     *
+     * @return The fish that was generated
+     */
+    public @Nullable Fish fish() {
         return fish;
     }
 
-    public void setFish(@Nullable Fish fish) {
+    /**
+     * Set the fish that was generated
+     *
+     * @param fish The fish that was generated
+     */
+    public void fish(@Nullable Fish fish) {
         this.fish = fish;
     }
 
+    /**
+     * Get the handlers for this event class
+     *
+     * @return The handlers for this event class
+     */
     @Override
     public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
 
+    /**
+     * Get the handlers for this event class
+     *
+     * @return The handlers for this event class
+     */
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }
 
+    /**
+     * Check if the event is cancelled
+     *
+     * @return If the event is cancelled
+     */
     @Override
     public boolean isCancelled() {
         return this.cancelled;
     }
 
+    /**
+     * Set the event to be cancelled
+     *
+     * @param b If the event should be cancelled
+     */
     @Override
     public void setCancelled(boolean b) {
         this.cancelled = b;
     }
-
 }

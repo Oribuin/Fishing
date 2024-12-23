@@ -70,6 +70,13 @@ processResources {
     }
 }
 
+// Javadocs :)
+javadoc {
+    options {
+        links("https://jd.papermc.io/paper/${spigotVersion}/")
+    }
+}
+
 // Jar Publishing
 publishing {
     publications {

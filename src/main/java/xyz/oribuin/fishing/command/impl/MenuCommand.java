@@ -28,6 +28,11 @@ public class MenuCommand extends BaseRoseCommand {
 
     }
 
+    /**
+     * Define the information for the command.
+     *
+     * @return The command information.
+     */
     @Override
     protected CommandInfo createCommandInfo() {
         return CommandInfo.builder("menu")

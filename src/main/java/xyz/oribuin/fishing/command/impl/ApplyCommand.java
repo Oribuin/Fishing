@@ -17,12 +17,28 @@ import xyz.oribuin.fishing.command.argument.AugmentArgument;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Debugging command to apply an augment to a fishing rod for testing purposes.
+ * This will not be available in the final version of the plugin. (maybe)
+ */
 public class ApplyCommand extends BaseRoseCommand {
 
+    /**
+     * Create a new command instance with the provided plugin instance.
+     *
+     * @param rosePlugin The plugin instance.
+     */
     public ApplyCommand(RosePlugin rosePlugin) {
         super(rosePlugin);
     }
 
+    /**
+     * Apply an augment to the player's fishing rod. This is a debugging command.
+     *
+     * @param context The command context
+     * @param augment The augment to apply
+     * @param level   The level of the augment to apply
+     */
     @RoseExecutable
     public void execute(CommandContext context, Augment augment, Integer level) {
         if (!(context.getSender() instanceof Player player)) return;
@@ -43,6 +59,11 @@ public class ApplyCommand extends BaseRoseCommand {
         player.sendMessage("Successfully applied the augment to the fishing rod.");
     }
 
+    /**
+     * Define the information for the command.
+     *
+     * @return The command information.
+     */
     @Override
     protected CommandInfo createCommandInfo() {
         return CommandInfo.builder("apply")
@@ -51,6 +72,11 @@ public class ApplyCommand extends BaseRoseCommand {
                 .build();
     }
 
+    /**
+     * Define the arguments for the command.
+     *
+     * @return The arguments required for the command.
+     */
     private ArgumentsDefinition createArguments() {
         return ArgumentsDefinition.builder()
                 .required("augment", new AugmentArgument())

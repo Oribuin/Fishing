@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,6 +16,9 @@ import xyz.oribuin.fishing.fish.Fish;
 
 import java.util.Map;
 
+/**
+ * The event that is fired once a player has caught a fish. This event will be used to modify the rewards and the fish itself.
+ */
 public class FishCatchEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
@@ -27,13 +31,15 @@ public class FishCatchEvent extends PlayerEvent implements Cancellable {
     private float naturalExp;
 
     /**
-     * This event is fired whenever a player has sufficiently caught a fish.
-     * Use this to modify the fish properties or change the values provided to the player
-     * This method will also provide all the augments the rod has and other stuff.
+     * Create a new Fish Catch Event to be called when a player catches a fish. This event is used to change the rewards when a player catches a fish.
+     * Use this to change how much entropy / xp is earned from the fish.
      *
-     * @param who  The player who caught the fish
-     * @param rod  The fishing rod used
-     * @param hook The hook where the fish will spawn
+     * @param who  The {@link Player} who caught the fish
+     * @param rod  The {@link ItemStack} fishing rod the player is using
+     * @param hook The {@link FishHook} the hook the fish was caught on
+     * @param fish The {@link Fish} that was caught
+     *
+     * @see xyz.oribuin.fishing.listener.FishListener#onFish(PlayerFishEvent) Where the event is called
      */
     public FishCatchEvent(@NotNull Player who, @NotNull ItemStack rod, @NotNull FishHook hook, @NotNull Fish fish) {
         super(who, !Bukkit.isPrimaryThread());
@@ -47,68 +53,138 @@ public class FishCatchEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
-     * Pulls the list of augments that a player has equipped on their fishing rod.
+     * The list of every {@link Augment} used on the fishing rod used to catch the fish.
      *
-     * @return The list of augments used
+     * @return The list of augments and the level of the augment
      */
     public Map<Augment, Integer> augments() {
         return AugmentRegistry.from(this.rod);
     }
 
-    public @NotNull ItemStack getRod() {
+    /**
+     * The fishing rod the player is using to catch the fish
+     *
+     * @return The fishing rod {@link ItemStack}
+     */
+    public @NotNull ItemStack rod() {
         return rod;
     }
 
-    public @NotNull FishHook getHook() {
+    /**
+     * The fishhook entity the player is using to catch the fish
+     *
+     * @return The {@link FishHook} entity
+     */
+    public @NotNull FishHook hook() {
         return hook;
     }
 
-    public @Nullable Fish getFish() {
+    /**
+     * The fish that was caught
+     *
+     * @return The {@link Fish} that was caught
+     */
+    public @Nullable Fish fish() {
         return fish;
     }
 
-    public void setFish(@Nullable Fish fish) {
+    /**
+     * Set the fish that was caught
+     *
+     * @param fish The fish that was caught
+     */
+    public void fish(@Nullable Fish fish) {
         this.fish = fish;
     }
 
-    public int getEntropy() {
+    /**
+     * The amount of entropy the fish gives
+     *
+     * @return The amount of entropy the fish gives
+     */
+    public int entropy() {
         return entropy;
     }
 
-    public void setEntropy(int entropy) {
+    /**
+     * Set the amount of entropy the fish gives
+     *
+     * @param entropy The amount of entropy the fish gives
+     */
+    public void entropy(int entropy) {
         this.entropy = entropy;
     }
 
-    public int getFishExp() {
+    /**
+     * The amount of plugin experience the fish gives
+     *
+     * @return The amount of experience the fish gives
+     */
+    public int fishExp() {
         return fishExp;
     }
 
-    public void setFishExp(int fishExp) {
+    /**
+     * Set the amount of plugin experience the fish gives
+     *
+     * @param fishExp The amount of experience the fish gives
+     */
+    public void fishExp(int fishExp) {
         this.fishExp = fishExp;
     }
 
-    public float getNaturalExp() {
+    /**
+     * The base minecraft experience the fish gives
+     *
+     * @return The base minecraft experience the fish gives
+     */
+    public float naturalExp() {
         return naturalExp;
     }
 
-    public void setNaturalExp(float naturalExp) {
+    /**
+     * Set the base minecraft experience the fish gives
+     *
+     * @param naturalExp The base minecraft experience the fish gives
+     */
+    public void naturalExp(float naturalExp) {
         this.naturalExp = naturalExp;
     }
 
+    /**
+     * Get the handlers for this event class
+     *
+     * @return The handlers for this event class
+     */
     @Override
     public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
 
+    /**
+     * Get the handlers for this event class
+     *
+     * @return The handlers for this event class
+     */
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }
 
+    /**
+     * Check if the event is cancelled
+     *
+     * @return If the event is cancelled
+     */
     @Override
     public boolean isCancelled() {
         return this.cancelled;
     }
 
+    /**
+     * Set the event to be cancelled
+     *
+     * @param b If the event should be cancelled
+     */
     @Override
     public void setCancelled(boolean b) {
         this.cancelled = b;

@@ -1,6 +1,7 @@
 package xyz.oribuin.fishing.fish;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.StringUtils;
@@ -9,8 +10,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.config.Configurable;
+import xyz.oribuin.fishing.augment.Augment;
 import xyz.oribuin.fishing.fish.condition.Condition;
 import xyz.oribuin.fishing.fish.condition.Time;
 import xyz.oribuin.fishing.fish.condition.Weather;
@@ -48,10 +51,19 @@ public class Fish implements Configurable {
     }
 
     /**
-     * Load the settings from the configuration file
-     * I would recommend always super calling this method to save any settings that could be implemented
+     * Initialize a {@link CommentedConfigurationSection} from a configuration file to establish the settings
+     * for the configurable class, will be automatically called when the configuration file is loaded using {@link #reload()}
+     * <p>
+     * If your class inherits from another configurable class, make sure to call super.loadSettings(config)
+     * to save the settings from the parent class
+     * <p>
+     * A class must be initialized before settings are loaded, If you wish to have a configurable data class style, its best to create a
+     * static method that will create a new instance and call this method on the new instance
+     * <p>
+     * The {@link CommentedConfigurationSection} should never be null, when creating a new section,
+     * use {@link #pullSection(CommentedConfigurationSection, String)} to establish new section if it doesn't exist
      *
-     * @param config The configuration file to load
+     * @param config The {@link CommentedConfigurationSection} to load the settings from, this cannot be null.
      */
     @Override
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
@@ -73,10 +85,14 @@ public class Fish implements Configurable {
     }
 
     /**
-     * Save the configuration file for the configurable class
-     * I would recommend always super calling this method to save any settings that could be implemented
+     * Serialize the settings of the configurable class into a {@link CommentedConfigurationSection} to be saved later
+     * <p>
+     * This functionality will not update the configuration file, it will only save the settings into the section to be saved later.
+     * <p>
+     * The function {@link #reload()} will save the settings on first load, please override this method if you wish to save the settings regularly
+     * New sections should be created using {@link #pullSection(CommentedConfigurationSection, String)}
      *
-     * @param config The configuration file to save
+     * @param config The {@link CommentedConfigurationSection} to save the settings to, this cannot be null.
      */
     @Override
     public void saveSettings(@NotNull CommentedConfigurationSection config) {
@@ -101,13 +117,16 @@ public class Fish implements Configurable {
     }
 
     /**
-     * The path to the configuration file to be loaded. All paths will be relative to the {@link #parentFolder()},
-     * If you wish to overwrite this functionality, override the {@link #parentFolder()} method
+     * The file path to a {@link CommentedFileConfiguration} file, This path by default will be relative {@link #parentFolder()}.
+     * <p>
+     * This by default is only used in the {@link #reload()} method to load the configuration file
+     * <p>
+     * This an optional method and should only be used if the Configurable class is its own file (E.g. {@link Augment} class)
      *
-     * @return The path
+     * @return The path to the configuration file
      */
     @Override
-    public @NotNull Path configPath() {
+    public @Nullable Path configPath() {
         return this.tier().tierFile().toPath();
     }
 

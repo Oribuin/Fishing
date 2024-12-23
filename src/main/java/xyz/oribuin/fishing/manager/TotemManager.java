@@ -28,6 +28,7 @@ public class TotemManager extends Manager {
     public void reload() {
         this.unregisterTask();
 
+        // Define all ticking under one task to prevent 10000000 tasks running at once.
         this.asyncTicker = Bukkit.getScheduler().runTaskTimerAsynchronously(this.rosePlugin, () -> this.tick(totem -> {
             if (totem.delay() != Duration.ZERO && System.currentTimeMillis() - this.lastTick < totem.delay().toMillis()) return;
 

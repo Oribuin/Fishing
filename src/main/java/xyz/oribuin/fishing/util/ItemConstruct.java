@@ -43,9 +43,10 @@ public class ItemConstruct implements Configurable {
     private boolean glider;
 
     /**
-     * Create a new Item Construct with a Material
+     * Create a new config serializable itemstack constructor with a {@link Material} type.
+     * This constructor should not be used directly, instead use {@link #of(Material)}
      *
-     * @param type The Material
+     * @param type The Material type
      */
     private ItemConstruct(Material type) {
         this.type = type;
@@ -65,18 +66,20 @@ public class ItemConstruct implements Configurable {
     }
 
     /**
-     * Create a new Item Construct with a Material
+     * Create a new config serializable itemstack constructor with a {@link Material} type
+     * <p>
+     * Usage: ItemConstruct.of(Material.STONE).name("Hello World").build();
      *
-     * @param type The Material
-     *
-     * @return The itemstack constructor
+     * @param type The Material type
      */
     public static ItemConstruct of(Material type) {
         return new ItemConstruct(type);
     }
 
     /**
-     * Serialize the itemconstruct to a new itemstack with no placeholders
+     * Convert the {@link ItemConstruct} into a new {@link ItemStack} with the default values. All placeholders will be empty
+     * <p>
+     * Usage: ItemConstruct.of(Material.STONE).build();
      *
      * @return The itemstack
      */
@@ -85,11 +88,15 @@ public class ItemConstruct implements Configurable {
     }
 
     /**
-     * Serialize the itemconstruct to a new itemstack
+     * Convert the {@link ItemConstruct} into a new {@link ItemStack} with the default values. Adds applied placeholders to the Name and Lore.
+     * <p>
+     * Uses Paper's {@link DataComponentTypes} to apply the values to the itemstack instead of the traditional {@link ItemMeta}
+     * <p>
+     * Usage: ItemConstruct.of(Material.STONE).name("Hello World").build(StringPlaceholders.of("name", "Oribuin").build());
      *
-     * @param placeholders The placeholders to be applied to the Name and Lore
+     * @param placeholders The {@link StringPlaceholders} to apply to the itemstack
      *
-     * @return The itemstack
+     * @return The constructed {@link ItemStack} with the applied placeholders
      */
     @SuppressWarnings({ "UnstableApiUsage", "deprecation" })
     public ItemStack build(StringPlaceholders placeholders) {
@@ -103,8 +110,8 @@ public class ItemConstruct implements Configurable {
             for (String line : this.lore) {
                 String[] newLine = placeholders.apply(line).split("\n");
                 for (String s : newLine) lines.add(FishUtils.kyorify(s));
-
             }
+
             stack.setData(DataComponentTypes.LORE, ItemLore.lore(lines));
         }
 
@@ -126,10 +133,19 @@ public class ItemConstruct implements Configurable {
     }
 
     /**
-     * Load the settings from the configuration file
-     * I would recommend always super calling this method to save any settings that could be implemented
+     * Initialize a {@link CommentedConfigurationSection} from a configuration file to establish the settings
+     * for the configurable class, will be automatically called when the configuration file is loaded using {@link #reload()}
+     * <p>
+     * If your class inherits from another configurable class, make sure to call super.loadSettings(config)
+     * to save the settings from the parent class
+     * <p>
+     * A class must be initialized before settings are loaded, If you wish to have a configurable data class style, its best to create a
+     * static method that will create a new instance and call this method on the new instance
+     * <p>
+     * The {@link CommentedConfigurationSection} should never be null, when creating a new section,
+     * use {@link #pullSection(CommentedConfigurationSection, String)} to establish new section if it doesn't exist
      *
-     * @param config The configuration file to load
+     * @param config The {@link CommentedConfigurationSection} to load the settings from, this cannot be null.
      */
     @Override
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
@@ -158,10 +174,14 @@ public class ItemConstruct implements Configurable {
     }
 
     /**
-     * Save the configuration file for the configurable class
-     * I would recommend always super calling this method to save any settings that could be implemented
+     * Serialize the settings of the configurable class into a {@link CommentedConfigurationSection} to be saved later
+     * <p>
+     * This functionality will not update the configuration file, it will only save the settings into the section to be saved later.
+     * <p>
+     * The function {@link #reload()} will save the settings on first load, please override this method if you wish to save the settings regularly
+     * New sections should be created using {@link #pullSection(CommentedConfigurationSection, String)}
      *
-     * @param config The configuration file to save
+     * @param config The {@link CommentedConfigurationSection} to save the settings to, this cannot be null.
      */
     @Override
     public void saveSettings(@NotNull CommentedConfigurationSection config) {

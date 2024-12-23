@@ -26,10 +26,19 @@ public class ItemValue<T> implements Configurable {
     }
 
     /**
-     * Load the settings from the configuration file
-     * I would recommend always super calling this method to save any settings that could be implemented
+     * Initialize a {@link CommentedConfigurationSection} from a configuration file to establish the settings
+     * for the configurable class, will be automatically called when the configuration file is loaded using {@link #reload()}
+     * <p>
+     * If your class inherits from another configurable class, make sure to call super.loadSettings(config)
+     * to save the settings from the parent class
+     * <p>
+     * A class must be initialized before settings are loaded, If you wish to have a configurable data class style, its best to create a
+     * static method that will create a new instance and call this method on the new instance
+     * <p>
+     * The {@link CommentedConfigurationSection} should never be null, when creating a new section,
+     * use {@link #pullSection(CommentedConfigurationSection, String)} to establish new section if it doesn't exist
      *
-     * @param config The configuration file to load
+     * @param config The {@link CommentedConfigurationSection} to load the settings from, this cannot be null.
      */
     @Override
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
@@ -40,10 +49,14 @@ public class ItemValue<T> implements Configurable {
     }
 
     /**
-     * Save the configuration file for the configurable class
-     * I would recommend always super calling this method to save any settings that could be implemented
+     * Serialize the settings of the configurable class into a {@link CommentedConfigurationSection} to be saved later
+     * <p>
+     * This functionality will not update the configuration file, it will only save the settings into the section to be saved later.
+     * <p>
+     * The function {@link #reload()} will save the settings on first load, please override this method if you wish to save the settings regularly
+     * New sections should be created using {@link #pullSection(CommentedConfigurationSection, String)}
      *
-     * @param config The configuration file to save
+     * @param config The {@link CommentedConfigurationSection} to save the settings to, this cannot be null.
      */
     @Override
     public void saveSettings(@NotNull CommentedConfigurationSection config) {
