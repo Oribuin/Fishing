@@ -43,7 +43,6 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      * Create a new type of augment with a name and description.
      * <p>
      * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
-     * <p>
      *
      * @param name        The unique name and identifier of the augment
      * @param description The description of the augment that will be displayed in the GUI
@@ -64,7 +63,6 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      * Create a new type of augment with a name and description.
      * <p>
      * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
-     * <p>
      *
      * @param name The unique name and identifier of the augment
      */
@@ -137,9 +135,11 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
     }
 
     /**
-     * The default item for the augment
+     * The base itemstack design for the augment, this will be handed to players and shown in the codex
+     * <p>
+     * TODO: Replace this method with a global itemstack registry
      *
-     * @return The default item
+     * @return The default {@link ItemConstruct} for the augment
      */
     private ItemConstruct defaultItem() {
         List<String> lore = new ArrayList<>(this.description);
@@ -158,30 +158,31 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
     }
 
     /**
-     * Get the namespace key for the augment
+     * The {@link NamespacedKey} for the augment, used to identify the augment in the plugin
      *
-     * @return The namespace key
+     * @return The namespace key, typically this will be "fishing:augment_name"
      */
     public NamespacedKey key() {
         return new NamespacedKey(FishingPlugin.get(), this.name);
     }
 
     /**
-     * Get the namespace key for the augment lore, used to identify the augment in the lore of an item
+     * The {@link NamespacedKey} for the lore of the augment, used to identify which line in the item description belongs to the augment
      *
-     * @return The namespace key
+     * @return The namespace key for the lore of the augment, typically this will be "fishing:augment_name-lore"
      */
     public NamespacedKey loreKey() {
         return new NamespacedKey(FishingPlugin.get(), this.name + "-lore");
     }
 
     /**
-     * The placeholders for the augment when it is used
+     * All the placeholders that can be used when displaying information about the augment
      *
-     * @return The placeholders
+     * @return The {@link StringPlaceholders} for the augment
      */
     public StringPlaceholders placeholders() {
         return StringPlaceholders.builder()
+                .add("enabled", this.enabled)
                 .add("id", this.name)
                 .add("display_name", FishUtils.capitalizeFully(this.name.replace("_", " ")))
                 .add("max_level", this.maxLevel)
@@ -189,14 +190,13 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
                 .add("description", String.join("\n", this.description))
                 .add("display_line", this.displayLine)
                 .add("permission", this.permission)
-                .add("enabled", this.enabled)
                 .build();
     }
 
     /**
-     * The comments to be generated at the top of the file when it is created
+     * Information about the augment which will be displayed in top of the augment configuration file
      *
-     * @return The comments
+     * @return The comments for the augment
      */
     @Override
     public List<String> comments() {
@@ -204,7 +204,9 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
     }
 
     /**
-     * @return If the augment is enabled
+     * Checks if the augment is enabled
+     *
+     * @return true if the augment is enabled
      */
     public boolean enabled() {
         return enabled;
@@ -220,13 +222,17 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
     }
 
     /**
-     * @return The name of the augment
+     * the name of the augment
+     *
+     * @return The augment name / id
      */
     public final String name() {
         return name;
     }
 
     /**
+     * The description of the augment
+     *
      * @return The description of the augment
      */
     public final List<String> description() {
@@ -243,6 +249,8 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
     }
 
     /**
+     * The augments' display item that will be shown in the codex and given to players
+     *
      * @return The display item of the augment
      */
     public final ItemConstruct displayItem() {
@@ -259,6 +267,8 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
     }
 
     /**
+     * The maximum level this augment can reach when applied to a fishing rod
+     *
      * @return The max level of the augment
      */
     public int maxLevel() {
@@ -275,6 +285,8 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
     }
 
     /**
+     * The required fishing level to use and apply the augment
+     *
      * @return The required level of the augment
      */
     public int requiredLevel() {
@@ -291,14 +303,16 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
     }
 
     /**
-     * @return The lore line of the augment
+     * The line that will be described in the lore of the fishing rod when the augment is applied
+     *
+     * @return The display line of the augment
      */
     public String displayLine() {
         return displayLine;
     }
 
     /**
-     * Set the lore line of the augment
+     * Set the display line of the augment
      *
      * @param loreLine The lore line of the augment
      */
@@ -306,4 +320,43 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
         this.displayLine = loreLine;
     }
 
+    /**
+     * The required permission to use the augment in the plugin
+     *
+     * @return The permission required to use the augment
+     */
+    public String permission() {
+        return permission;
+    }
+
+    /**
+     * Set the permission required to use the augment
+     *
+     * @param permission The permission required to use the augment
+     */
+    public void permission(String permission) {
+        this.permission = permission;
+    }
+
+    /**
+     * The cost of the augment in the plugin
+     * <p>
+     * TODO: Needs to be moved into {@link xyz.oribuin.fishing.api.recipe.Recipe} class when implemented
+     *
+     * @return The cost of the augment
+     */
+    public Cost price() {
+        return price;
+    }
+
+    /**
+     * Set the cost of the augment
+     *
+     * @param price The cost of the augment
+     */
+    public void price(Cost price) {
+        this.price = price;
+    }
+
 }
+

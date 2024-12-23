@@ -11,12 +11,19 @@ import xyz.oribuin.fishing.util.FishUtils;
 import java.util.List;
 
 /**
- * The functionality of this augment is provided in BiomeCondition.java
+ * When a player catches a fish, there is a chance to ignore the biome restrictions.
+ *
+ * @see xyz.oribuin.fishing.fish.condition.impl.BiomeCondition Where the condition is checked
  */
 public class AugmentBiomeDisrupt extends Augment {
 
-    private String chanceFormula = "%level% * 0.20"; // 20% per level
+    private String chanceFormula = "%level% * 0.15"; // 20% per level
 
+    /**
+     * Create a new type of augment with a name and description.
+     * <p>
+     * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
+     */
     public AugmentBiomeDisrupt() {
         super("biome_disruption", "&7When a player catches a fish, there is", "&7a chance to ignore the biome restrictions.");
 
@@ -81,9 +88,9 @@ public class AugmentBiomeDisrupt extends Augment {
     }
 
     /**
-     * The comments to be generated at the top of the file when it is created
+     * Information about the augment which will be displayed in top of the augment configuration file
      *
-     * @return The comments
+     * @return The comments for the augment
      */
     @Override
     public List<String> comments() {

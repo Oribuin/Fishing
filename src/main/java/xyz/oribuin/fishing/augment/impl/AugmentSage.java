@@ -9,12 +9,17 @@ import xyz.oribuin.fishing.util.FishUtils;
 
 import java.util.List;
 
+/**
+ * Increases the base plugin xp earned from catching fish.
+ */
 public class AugmentSage extends Augment {
 
     private String formula = "(%entropy% + %level%) * 0.03";
 
     /**
-     * Create a new augment instance with a name and description
+     * Create a new type of augment with a name and description.
+     * <p>
+     * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
      */
     public AugmentSage() {
         super("sage", "&7Increases the base plugin xp", "&7earned from catching fish.");
@@ -76,9 +81,9 @@ public class AugmentSage extends Augment {
     }
 
     /**
-     * The comments to be generated at the top of the file when it is created
+     * Information about the augment which will be displayed in top of the augment configuration file
      *
-     * @return The comments
+     * @return The comments for the augment
      */
     @Override
     public List<String> comments() {

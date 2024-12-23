@@ -65,9 +65,9 @@ public class UpgradeTotemRadius extends TotemUpgrade implements Configurable {
     }
 
     /**
-     * The comments to be generated at the top of the file when it is created
+     * Information about the augment which will be displayed in top of the augment configuration file
      *
-     * @return The comments
+     * @return The comments for the augment
      */
     @Override
     public List<String> comments() {

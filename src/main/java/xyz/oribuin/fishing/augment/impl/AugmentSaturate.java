@@ -9,10 +9,19 @@ import xyz.oribuin.fishing.util.FishUtils;
 
 import java.util.List;
 
+/**
+ * Increases the player's saturation level when they catch a fish.
+ */
 public class AugmentSaturate extends Augment {
 
     private String chanceFormula = "%level% * 0.15"; // 15% per level
+    private float saturation = 5.0f;
 
+    /**
+     * Create a new type of augment with a name and description.
+     * <p>
+     * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
+     */
     public AugmentSaturate() {
         super("saturate", "&7Fully saturates the player", "&7when they catch a fish");
     }
@@ -33,8 +42,8 @@ public class AugmentSaturate extends Augment {
         double chance = FishUtils.evaluate(plc.apply(this.chanceFormula));
         if (Math.random() * 100 > chance) return;
 
-        event.getPlayer().setFoodLevel(20);
-        event.getPlayer().sendMessage("You have been fully saturated!"); // todo: use locale
+        event.getPlayer().setSaturation(this.saturation);
+        event.getPlayer().sendMessage("You have been saturated!"); // todo: use locale
     }
 
     /**
@@ -57,6 +66,7 @@ public class AugmentSaturate extends Augment {
         super.loadSettings(config);
 
         this.chanceFormula = config.getString("chance-formula", this.chanceFormula);
+        this.saturation = (float) config.getDouble("saturation", this.saturation);
     }
 
     /**
@@ -74,19 +84,21 @@ public class AugmentSaturate extends Augment {
         super.saveSettings(config);
 
         config.set("chance-formula", this.chanceFormula);
+        config.set("saturation", this.saturation);
     }
 
     /**
-     * The comments to be generated at the top of the file when it is created
+     * Information about the augment which will be displayed in top of the augment configuration file
      *
-     * @return The comments
+     * @return The comments for the augment
      */
     @Override
     public List<String> comments() {
         return List.of(
                 "Augment [Saturate] - Fully saturates the player when they catch a fish",
                 "",
-                "chance-formula: The formula to calculate the chance of the player being fully saturated"
+                "chance-formula: The formula to calculate the chance of the player being fully saturated",
+                "saturation: The saturation level to set the player to"
         );
     }
 

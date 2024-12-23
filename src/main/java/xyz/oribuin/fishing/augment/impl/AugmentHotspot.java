@@ -11,12 +11,20 @@ import xyz.oribuin.fishing.util.FishUtils;
 
 import java.util.List;
 
+/**
+ * When the weather is clear, there is a chance to catch multiple fish in a single catch.
+ */
 public class AugmentHotspot extends Augment {
 
     private String chanceFormula = "%level% * 0.05"; // 5% per level
     private int minFish = 1;
     private int maxFish = 3;
 
+    /**
+     * Create a new type of augment with a name and description.
+     * <p>
+     * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
+     */
     public AugmentHotspot() {
         super("hotspot", "&7Increases the amount of fish", "&7caught when the weather is clear");
 
@@ -90,9 +98,9 @@ public class AugmentHotspot extends Augment {
     }
 
     /**
-     * The comments to be generated at the top of the file when it is created
+     * Information about the augment which will be displayed in top of the augment configuration file
      *
-     * @return The comments
+     * @return The comments for the augment
      */
     @Override
     public List<String> comments() {
