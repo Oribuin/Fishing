@@ -6,6 +6,14 @@ import org.bukkit.inventory.ItemStack;
 import xyz.oribuin.fishing.api.condition.CatchCondition;
 import xyz.oribuin.fishing.fish.Fish;
 
+/**
+ * A condition that is checked when a player is trying to catch a fish
+ * <p>
+ * First, {@link #shouldRun(Fish)} is called to check if the fish has the condition type
+ * If the fish has the condition type, {@link #check(Fish, Player, ItemStack, FishHook)} is called to check if the player meets the condition to catch the fish
+ *
+ * @see xyz.oribuin.fishing.fish.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook) to see how this is used
+ */
 public class EnvironmentCondition implements CatchCondition {
 
     /**
