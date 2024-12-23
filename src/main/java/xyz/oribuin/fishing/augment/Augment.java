@@ -12,6 +12,9 @@ import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.FishingPlugin;
 import xyz.oribuin.fishing.api.config.Configurable;
 import xyz.oribuin.fishing.api.event.FishEventHandler;
+import xyz.oribuin.fishing.economy.Cost;
+import xyz.oribuin.fishing.economy.Currencies;
+import xyz.oribuin.fishing.economy.Currency;
 import xyz.oribuin.fishing.util.FishUtils;
 import xyz.oribuin.fishing.util.ItemConstruct;
 
@@ -29,6 +32,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
     protected int maxLevel;
     protected int requiredLevel;
     protected String permission;
+    protected Cost price;
 
     /**
      * Create a new augment instance with a name and description
@@ -45,6 +49,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
         this.displayItem = this.defaultItem();
         this.displayLine = "&c" + StringUtils.capitalize(this.name.replace("_", " ")) + " %level_roman%";
         this.permission = "fishing.augment." + name;
+        this.price = Cost.of(Currencies.ENTROPY.get(), 25000);
     }
 
     /**
@@ -82,6 +87,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
         config.set("display-line", this.displayLine);
 
         this.displayItem.saveSettings(this.pullSection(config, "display-item")); // Save the display item
+        this.price.saveSettings(this.pullSection(config, "price")); // Save the cost
     }
 
     /**
@@ -96,7 +102,9 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
         this.requiredLevel = config.getInt("required-level", 1);
         this.description = config.getStringList("description");
         this.displayLine = config.getString("display-line", "&c" + StringUtils.capitalize(this.name.replace("_", " ")) + " %level_roman%");
-        this.displayItem = ItemConstruct.deserialize(this.pullSection(config, "display-item"));
+
+        this.displayItem.loadSettings(this.pullSection(config, "display-item"));
+        this.price.loadSettings(this.pullSection(config, "price"));
     }
 
     /**
