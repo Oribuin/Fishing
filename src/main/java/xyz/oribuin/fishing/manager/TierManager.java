@@ -5,7 +5,6 @@ import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.manager.Manager;
 import org.jetbrains.annotations.Nullable;
-import xyz.oribuin.fishing.api.config.Configurable;
 import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.fish.Tier;
 import xyz.oribuin.fishing.util.FishUtils;
@@ -21,8 +20,8 @@ import java.util.Map;
 /**
  * This class is responsible for loading all the tiers from the plugin's data folder and storing them in a map for easy access
  *
- * @see #reload() to see how the tiers are loaded from their respective files, which is not done using {@link Configurable#reload()}
- * @see Tier#loadSettings(CommentedConfigurationSection) to see how the tier settings are loaded
+ * @see #reload() How the tiers are loaded
+ * @see Tier#loadSettings(CommentedConfigurationSection) How Tier Settings are loaded
  */
 public class TierManager extends Manager {
 
