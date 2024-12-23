@@ -74,6 +74,12 @@ processResources {
 javadoc {
     options {
         links("https://jd.papermc.io/paper/${spigotVersion}/")
+
+        addStringOption("Xdoclint:none", "-quiet")
+        addStringOption("encoding", "UTF-8")
+        addStringOption("docencoding", "UTF-8")
+        addStringOption("charset", "UTF-8")
+        addStringOption("locale", "en_US")
     }
 }
 
