@@ -121,7 +121,7 @@ public class TierManager extends Manager {
      *
      * @return All the fish from all the tiers
      */
-    public List<Fish> allFish() {
+    public List<Fish> fish() {
         List<Fish> fish = new ArrayList<>();
         this.tiers.values().forEach(x -> fish.addAll(x.fish().values()));
         return fish;
