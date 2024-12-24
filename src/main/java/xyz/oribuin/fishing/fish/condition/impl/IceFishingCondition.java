@@ -6,6 +6,7 @@ import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import xyz.oribuin.fishing.api.condition.CatchCondition;
+import xyz.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import xyz.oribuin.fishing.fish.Fish;
 
 /**
@@ -20,6 +21,11 @@ public class IceFishingCondition implements CatchCondition {
 
     private static final int MIN_RADIUS = 2;
     private static final int MAX_RADIUS = 3;
+
+    /**
+     * A condition that is checked when a player is fishing surrounded by ice blocks
+     */
+    private IceFishingCondition() {}
 
     /**
      * Decides whether the condition should be checked in the first place,
@@ -40,7 +46,7 @@ public class IceFishingCondition implements CatchCondition {
      * <p>
      * To see how this is used, check {@link xyz.oribuin.fishing.fish.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)}
      * <p>
-     * All conditions are passed through {@link xyz.oribuin.fishing.api.event.ConditionCheckEvent} to overwrite the result if needed
+     * All conditions are passed through {@link ConditionCheckEvent} to overwrite the result if needed
      *
      * @param fish   The fish the player is trying to catch
      * @param player The player to check

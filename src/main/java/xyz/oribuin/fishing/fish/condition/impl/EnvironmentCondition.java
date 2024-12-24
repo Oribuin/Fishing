@@ -4,6 +4,7 @@ import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import xyz.oribuin.fishing.api.condition.CatchCondition;
+import xyz.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import xyz.oribuin.fishing.fish.Fish;
 
 /**
@@ -15,6 +16,11 @@ import xyz.oribuin.fishing.fish.Fish;
  * @see xyz.oribuin.fishing.fish.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook) to see how this is used
  */
 public class EnvironmentCondition implements CatchCondition {
+
+    /**
+     * A condition that is checked when a player is fishing in a specific environment
+     */
+    private EnvironmentCondition() {}
 
     /**
      * Decides whether the condition should be checked in the first place,
@@ -35,7 +41,7 @@ public class EnvironmentCondition implements CatchCondition {
      * <p>
      * To see how this is used, check {@link xyz.oribuin.fishing.fish.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)}
      * <p>
-     * All conditions are passed through {@link xyz.oribuin.fishing.api.event.ConditionCheckEvent} to overwrite the result if needed
+     * All conditions are passed through {@link ConditionCheckEvent} to overwrite the result if needed
      *
      * @param fish   The fish the player is trying to catch
      * @param player The player to check
