@@ -2,10 +2,12 @@ package xyz.oribuin.fishing.augment;
 
 import dev.rosewood.rosegarden.utils.HexUtils;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import xyz.oribuin.fishing.api.event.FishEventHandler;
 import xyz.oribuin.fishing.augment.impl.AugmentBiomeDisrupt;
 import xyz.oribuin.fishing.augment.impl.AugmentCallOfTheSea;
 import xyz.oribuin.fishing.augment.impl.AugmentHotspot;
@@ -17,6 +19,7 @@ import xyz.oribuin.fishing.augment.impl.AugmentSaturate;
 import xyz.oribuin.fishing.util.math.RomanNumber;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +34,13 @@ import java.util.Map;
  * To get all augments in the registry, use {@link #all()} to get all augments in the registry.
  */
 public class AugmentRegistry {
+
+    /**
+     * A private constructor to prevent instantiation of the class
+     * <p>
+     * This should not be called outside of {@link AugmentRegistry#init()}
+     */
+    private AugmentRegistry() {}
 
     private static final Map<String, Augment> augments = new HashMap<>();
 
@@ -50,6 +60,26 @@ public class AugmentRegistry {
         register(new AugmentPrecisionCutting());
         register(new AugmentSage());
         register(new AugmentSaturate());
+    }
+
+    /**
+     * Call an event in the plugin to be used by the augments
+     *
+     * @param augments The augments to call the event with
+     * @param event    The event to call
+     */
+    public static void callEvent(Map<Augment, Integer> augments, Event event) {
+        if (!event.callEvent()) return; // Call the event through bukkit to allow other plugins to listen to the event
+
+        Map<Augment, Integer> applicable = new HashMap<>(augments);
+        applicable.keySet().removeIf(x -> !x.events().containsKey(event.getClass()));
+
+        // Form a Map.Entry<Augment, Integer> with a EventWrapper to call the event
+        applicable.entrySet()
+                .stream()
+                .map(entry -> new AugmentEventWrapper(entry.getKey(), entry.getValue(), event))
+                .sorted(Comparator.comparingInt(o -> o.wrapper.order().getSlot()))
+                .forEach(x -> x.wrapper.accept(event, x.level()));
     }
 
     /**
@@ -162,6 +192,60 @@ public class AugmentRegistry {
      */
     public static Map<String, Augment> all() {
         return augments;
+    }
+
+
+    /**
+     * Wrapper for an augment to be registered with a function
+     */
+    public static final class AugmentEventWrapper {
+
+        private final Augment augment;
+        private final int level;
+        private final FishEventHandler.EventWrapper<?> wrapper;
+
+        /**
+         * Wrapper for an augment to be registered with a function in an event, Used to make the stream less annoying
+         *
+         * @param augment The augment to be registered
+         * @param level   The level of the augment
+         * @param event   The event to be registered
+         *
+         * @see AugmentRegistry#callEvent(Map, Event) Where this is used
+         */
+        public AugmentEventWrapper(Augment augment, int level, Event event) {
+            this.augment = augment;
+            this.level = level;
+            this.wrapper = augment.getWrapper(event.getClass());
+        }
+
+        /**
+         * Get the augment that was registered
+         *
+         * @return The {@link Augment} that was registered
+         */
+        public Augment augment() {
+            return augment;
+        }
+
+        /**
+         * Get the level of the augment that was registered
+         *
+         * @return The level of the augment that was registered
+         */
+        public int level() {
+            return level;
+        }
+
+        /**
+         * Get the event wrapper that was registered
+         *
+         * @return The event wrapper that was registered
+         */
+        public FishEventHandler.EventWrapper<?> wrapper() {
+            return wrapper;
+        }
+
     }
 
 }

@@ -6,7 +6,8 @@ import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import xyz.oribuin.fishing.FishingPlugin;
-import xyz.oribuin.fishing.api.event.FishCatchEvent;
+import xyz.oribuin.fishing.api.event.impl.FishCatchEvent;
+import xyz.oribuin.fishing.augment.AugmentRegistry;
 import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.manager.FishManager;
 import xyz.oribuin.fishing.manager.base.DataManager;
@@ -47,8 +48,8 @@ public class FishListener implements Listener {
 
             FishCatchEvent fishCatchEvent = new FishCatchEvent(event.getPlayer(), hand, event.getHook(), fish);
             fishCatchEvent.naturalExp(naturalExp); // Set the base experience gained
+            AugmentRegistry.callEvent(AugmentRegistry.from(hand), fishCatchEvent);
 
-            fishCatchEvent.callEvent();
             if (fishCatchEvent.isCancelled()) continue; // If the event is cancelled, do nothing
 
             // Use the event values because they could have been modified

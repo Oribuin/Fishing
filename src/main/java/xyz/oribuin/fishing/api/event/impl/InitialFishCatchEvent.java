@@ -1,59 +1,45 @@
-package xyz.oribuin.fishing.api.event;
+package xyz.oribuin.fishing.api.event.impl;
 
+import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import xyz.oribuin.fishing.fish.Fish;
 
-import java.util.Map;
-
-public class FishGutEvent extends PlayerEvent implements Cancellable {
+public class InitialFishCatchEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
-    private final ItemStack rod;
-    private final Map<Fish, Integer> gutted;
-    private final int baseEntropy;
-    private int entropy;
     private boolean cancelled;
+    private final ItemStack rod;
+    private final FishHook hook;
+    private int amountToCatch;
 
-    public FishGutEvent(@NotNull Player who, @NotNull ItemStack rod, @NotNull Map<Fish, Integer> gutted) {
+    public InitialFishCatchEvent(@NotNull Player who, @NotNull ItemStack rod, @NotNull FishHook hook) {
         super(who, false);
 
         this.rod = rod;
-        this.gutted = gutted;
-        this.baseEntropy = this.calculateEntropy();
-        this.entropy = this.baseEntropy;
-    }
-
-    public int calculateEntropy() {
-        return this.gutted.entrySet()
-                .stream()
-                .mapToInt(e -> e.getKey().tier().entropy() * e.getValue()).
-                sum();
+        this.hook = hook;
+        this.amountToCatch = 1;
     }
 
     public ItemStack getRod() {
         return rod;
     }
 
-    public Map<Fish, Integer> getGutted() {
-        return gutted;
+    public FishHook getHook() {
+        return hook;
     }
 
-    public int getBaseEntropy() {
-        return baseEntropy;
+    public int getAmountToCatch() {
+        return amountToCatch;
     }
 
-    public int getEntropy() {
-        return entropy;
+    public void setAmountToCatch(int amountToCatch) {
+        this.amountToCatch = amountToCatch;
     }
 
-    public void setEntropy(int entropy) {
-        this.entropy = entropy;
-    }
     /**
      * Get the handlers for this event class
      *

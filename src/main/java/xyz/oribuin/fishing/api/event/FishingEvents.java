@@ -1,5 +1,11 @@
 package xyz.oribuin.fishing.api.event;
 
+import xyz.oribuin.fishing.api.event.impl.ConditionCheckEvent;
+import xyz.oribuin.fishing.api.event.impl.FishCatchEvent;
+import xyz.oribuin.fishing.api.event.impl.FishGenerateEvent;
+import xyz.oribuin.fishing.api.event.impl.FishGutEvent;
+import xyz.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
+
 /**
  * A global list of methods that can be used to modify all the relevant events in the plugin
  * <p>

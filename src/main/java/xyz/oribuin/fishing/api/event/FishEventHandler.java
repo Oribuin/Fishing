@@ -2,6 +2,7 @@ package xyz.oribuin.fishing.api.event;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
+import xyz.oribuin.fishing.augment.Augment;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +12,7 @@ import java.util.function.BiConsumer;
  * A global handler to parse any fishing related events, used to detect
  * and modify fish when they are caught, generated and given
  */
-public abstract class FishEventHandler implements FishingEvents{
+public abstract class FishEventHandler implements FishingEvents {
 
     private final Map<Class<? extends Event>, EventWrapper<?>> events = new HashMap<>();
 
@@ -76,6 +77,33 @@ public abstract class FishEventHandler implements FishingEvents{
     }
 
     /**
+     * Check if an {@link Event} is applicable to the handler and has a function registered
+     *
+     * @param event The event to check
+     *
+     * @return If the event is applicable
+     */
+    public boolean applicable(Event event) {
+        return this.events.containsKey(event.getClass());
+    }
+
+    /**
+     * Get the wrapper for an event
+     *
+     * @param event The event to get the wrapper for
+     * @param <T>   The event type to get the wrapper for
+     *
+     * @return The wrapper for the event
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends Event> EventWrapper<T> getWrapper(Class<T> event) {
+        if (!this.events.containsKey(event)) return null;
+
+        return (EventWrapper<T>) this.events.get(event);
+    }
+
+
+    /**
      * Wrapper for an event to be registered with a function
      *
      * @param event    The event to be registered
@@ -84,6 +112,16 @@ public abstract class FishEventHandler implements FishingEvents{
      * @param <T>      The event type to be registered with the function
      */
     public record EventWrapper<T extends Event>(Class<T> event, BiConsumer<T, Integer> function, EventPriority order) {
+
+        /**
+         * Call the function that was registered with the event, This will cast the event to the correct type
+         *
+         * @param event The {@link Event} to call
+         */
+        @SuppressWarnings("unchecked")
+        public void accept(Event event, int level) {
+            this.function.accept((T) event, level);
+        }
 
         /**
          * Get the event type that was registered

@@ -1,4 +1,4 @@
-package xyz.oribuin.fishing.api.event;
+package xyz.oribuin.fishing.api.event.impl;
 
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;

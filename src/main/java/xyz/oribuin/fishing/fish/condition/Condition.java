@@ -2,7 +2,6 @@ package xyz.oribuin.fishing.fish.condition;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.World;
-import xyz.oribuin.fishing.api.event.ConditionCheckEvent;
 
 import java.util.ArrayList;
 import java.util.List;

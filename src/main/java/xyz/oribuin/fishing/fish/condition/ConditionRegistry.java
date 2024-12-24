@@ -4,7 +4,7 @@ import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import xyz.oribuin.fishing.api.condition.CatchCondition;
-import xyz.oribuin.fishing.api.event.ConditionCheckEvent;
+import xyz.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.fish.condition.impl.BiomeCondition;
 import xyz.oribuin.fishing.fish.condition.impl.BoatCondition;

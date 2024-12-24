@@ -5,6 +5,7 @@ import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.manager.Manager;
 import org.jetbrains.annotations.Nullable;
+import xyz.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import xyz.oribuin.fishing.fish.Fish;
 import xyz.oribuin.fishing.fish.Tier;
 import xyz.oribuin.fishing.util.FishUtils;
@@ -71,7 +72,7 @@ public class TierManager extends Manager {
      *
      * @return The quality of fish that can be provided, or null if no tier was selected
      *
-     * @see xyz.oribuin.fishing.api.event.FishGenerateEvent to see how this is used in the plugin
+     * @see FishGenerateEvent to see how this is used in the plugin
      */
     @Nullable
     public Tier selectTier(double chance) {

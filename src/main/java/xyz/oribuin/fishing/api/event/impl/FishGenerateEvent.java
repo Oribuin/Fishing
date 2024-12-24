@@ -1,4 +1,4 @@
-package xyz.oribuin.fishing.api.event;
+package xyz.oribuin.fishing.api.event.impl;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.FishHook;
@@ -32,7 +32,7 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
     private final @NotNull FishHook hook;
     private final double baseChance;
     private @Nullable Fish fish;
-    private List<Double> chanceIncreases;
+    private final List<Double> chanceIncreases;
     private boolean cancelled;
 
     /**
@@ -46,7 +46,7 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
      * @param rod  The {@link ItemStack} fishing rod the player is using
      * @param hook The {@link FishHook} the hook the fish was caught on
      *
-     * @see xyz.oribuin.fishing.manager.FishManager#generateFish(Player, ItemStack, FishHook)  Where the event is called
+     * @see xyz.oribuin.fishing.manager.FishManager#generateFish(Map, Player, ItemStack, FishHook)   Where the event is called
      */
     public FishGenerateEvent(@NotNull Player who, @NotNull ItemStack rod, @NotNull FishHook hook) {
         super(who, !Bukkit.isPrimaryThread());

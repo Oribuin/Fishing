@@ -2,12 +2,11 @@ package xyz.oribuin.fishing.manager;
 
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.manager.Manager;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import xyz.oribuin.fishing.api.event.FishGenerateEvent;
-import xyz.oribuin.fishing.api.event.InitialFishCatchEvent;
+import xyz.oribuin.fishing.api.event.impl.FishGenerateEvent;
+import xyz.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
 import xyz.oribuin.fishing.augment.Augment;
 import xyz.oribuin.fishing.augment.AugmentRegistry;
 import xyz.oribuin.fishing.fish.Fish;
@@ -40,16 +39,15 @@ public class FishManager extends Manager {
         Map<Augment, Integer> augments = AugmentRegistry.from(rod);
 
         InitialFishCatchEvent event = new InitialFishCatchEvent(player, rod, hook);
-        event.callEvent();
 
         // Run the augments onInitialCatch method
-        augments.forEach((augment, integer) -> augment.onInitialCatch(event, integer));
+        AugmentRegistry.callEvent(augments, event);
 
         // Cancel the event if it is cancelled
         if (event.isCancelled()) return result;
 
         for (int i = 0; i < event.getAmountToCatch(); i++) {
-            result.add(this.generateFish(player, rod, hook));
+            result.add(this.generateFish(augments, player, rod, hook));
         }
 
         return result;
@@ -59,19 +57,19 @@ public class FishManager extends Manager {
      * Fires the {@link FishGenerateEvent} and returns the fish
      * This generates its own fish that can be overridden by augments or other plugins.
      *
-     * @param player The player to check
-     * @param rod    The fishing rod the player is using
-     * @param hook   The fishhook the player is using
+     * @param augments The augments on the fishing rod
+     * @param player   The player to check
+     * @param rod      The fishing rod the player is using
+     * @param hook     The fishhook the player is using
      *
      * @return The fish the player caught
      */
-    public Fish generateFish(Player player, ItemStack rod, FishHook hook) {
+    public Fish generateFish(Map<Augment, Integer> augments, Player player, ItemStack rod, FishHook hook) {
         FishGenerateEvent event = new FishGenerateEvent(player, rod, hook);
-        Bukkit.getPluginManager().callEvent(event);
+        event.generate(); // Generate the fish
 
-        event.generate();
+        AugmentRegistry.callEvent(augments, event); // Call the augments
         if (event.isCancelled()) return null;
-        if (event.fish() == null) return null;
 
         return event.fish();
     }

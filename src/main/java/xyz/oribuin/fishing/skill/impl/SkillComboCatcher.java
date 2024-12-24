@@ -4,10 +4,10 @@ import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import xyz.oribuin.fishing.api.event.ConditionCheckEvent;
-import xyz.oribuin.fishing.api.event.FishCatchEvent;
-import xyz.oribuin.fishing.api.event.FishGenerateEvent;
-import xyz.oribuin.fishing.api.event.InitialFishCatchEvent;
+import xyz.oribuin.fishing.api.event.impl.ConditionCheckEvent;
+import xyz.oribuin.fishing.api.event.impl.FishCatchEvent;
+import xyz.oribuin.fishing.api.event.impl.FishGenerateEvent;
+import xyz.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
 import xyz.oribuin.fishing.skill.Skill;
 import xyz.oribuin.fishing.util.FishUtils;
 

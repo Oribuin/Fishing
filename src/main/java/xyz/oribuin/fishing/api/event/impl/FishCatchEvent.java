@@ -1,4 +1,4 @@
-package xyz.oribuin.fishing.api.event;
+package xyz.oribuin.fishing.api.event.impl;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.FishHook;
@@ -22,13 +22,13 @@ import java.util.Map;
 public class FishCatchEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
-    private final @NotNull ItemStack rod;
-    private final @NotNull FishHook hook;
-    private @Nullable Fish fish;
-    private boolean cancelled;
+    private final ItemStack rod;
+    private final FishHook hook;
+    private Fish fish;
     private int entropy;
     private int fishExp;
     private float naturalExp;
+    private boolean cancelled;
 
     /**
      * Create a new Fish Catch Event to be called when a player catches a fish. This event is used to change the rewards when a player catches a fish.

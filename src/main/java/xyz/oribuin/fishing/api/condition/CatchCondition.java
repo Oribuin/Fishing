@@ -3,6 +3,7 @@ package xyz.oribuin.fishing.api.condition;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import xyz.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import xyz.oribuin.fishing.fish.Fish;
 
 /**
@@ -31,7 +32,7 @@ public interface CatchCondition {
      * <p>
      * To see how this is used, check {@link xyz.oribuin.fishing.fish.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)}
      * <p>
-     * All conditions are passed through {@link xyz.oribuin.fishing.api.event.ConditionCheckEvent} to overwrite the result if needed
+     * All conditions are passed through {@link ConditionCheckEvent} to overwrite the result if needed
      *
      * @param fish   The fish the player is trying to catch
      * @param player The player to check
