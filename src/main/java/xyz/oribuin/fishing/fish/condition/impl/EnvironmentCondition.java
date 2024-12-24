@@ -20,7 +20,7 @@ public class EnvironmentCondition implements CatchCondition {
     /**
      * A condition that is checked when a player is fishing in a specific environment
      */
-    private EnvironmentCondition() {}
+    public EnvironmentCondition() {}
 
     /**
      * Decides whether the condition should be checked in the first place,

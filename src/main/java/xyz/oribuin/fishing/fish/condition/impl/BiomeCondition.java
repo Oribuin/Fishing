@@ -27,7 +27,7 @@ public class BiomeCondition implements CatchCondition {
     /**
      * A condition that checks if the player is fishing in a specific biome
      */
-    private BiomeCondition() {}
+    public BiomeCondition() {}
 
     /**
      * Decides whether the condition should be checked in the first place,

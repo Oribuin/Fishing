@@ -21,7 +21,7 @@ public class BoatCondition implements CatchCondition {
     /**
      * A condition that is checked when a player is fishing in a boat
      */
-    private BoatCondition() {}
+    public BoatCondition() {}
 
     /**
      * Decides whether the condition should be checked in the first place,

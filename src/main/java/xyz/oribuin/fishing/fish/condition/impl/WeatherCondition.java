@@ -21,7 +21,7 @@ public class WeatherCondition implements CatchCondition {
     /**
      * A condition that is checked when a player is fishing in a specific weather
      */
-    private WeatherCondition() {}
+    public WeatherCondition() {}
 
     /**
      * Decides whether the condition should be checked in the first place,

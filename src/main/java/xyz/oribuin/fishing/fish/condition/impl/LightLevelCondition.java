@@ -20,7 +20,7 @@ public class LightLevelCondition implements CatchCondition {
     /**
      * A condition that is checked when a player is fishing in a specific light level
      */
-    private LightLevelCondition() {}
+    public LightLevelCondition() {}
 
     /**
      * Decides whether the condition should be checked in the first place,

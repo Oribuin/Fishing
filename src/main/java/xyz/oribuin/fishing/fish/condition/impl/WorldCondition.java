@@ -22,7 +22,7 @@ public class WorldCondition implements CatchCondition {
     /**
      * A condition that is checked when a player is fishing in a specific world
      */
-    private WorldCondition() {}
+    public WorldCondition() {}
 
     /**
      * Decides whether the condition should be checked in the first place,

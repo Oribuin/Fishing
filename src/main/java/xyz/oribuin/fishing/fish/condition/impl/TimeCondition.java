@@ -20,7 +20,7 @@ public class TimeCondition implements CatchCondition {
     /**
      * A condition that is checked when a player is fishing at a specific time
      */
-    private TimeCondition() {}
+    public TimeCondition() {}
 
     /**
      * Decides whether the condition should be checked in the first place,

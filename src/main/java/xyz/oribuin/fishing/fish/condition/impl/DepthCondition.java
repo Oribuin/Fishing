@@ -21,7 +21,7 @@ public class DepthCondition implements CatchCondition {
     /**
      * A condition that is checked when a fishing rod has certain water depth
      */
-    private DepthCondition() {}
+    public DepthCondition() {}
 
     /**
      * Decides whether the condition should be checked in the first place,
