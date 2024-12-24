@@ -37,13 +37,17 @@ public class SkillComboCatcher extends Skill {
     }
 
     /**
-     * The functionality provided when a fish is generated for the player
+     * The functionality provided when a fish is generated, Use this to modify the fish that are caught
+     * <p>
+     * Use {@link FishGenerateEvent#addIncrease(double)} to change the chances of catching a fish
+     * Use {@link #onInitialCatch(InitialFishCatchEvent, int)} to change the amount of fish caught
+     * Use {@link ConditionCheckEvent} to modify the conditions that are checked
      *
-     * @param event The event that is fired when a fish is generated
-     * @param level The level of the augment that was used
+     * @param event The event that was called when the fish was generated
+     * @param level The level of the ability that was used, if applicable (0 if not)
      */
     @Override
-    public void onGenerate(FishGenerateEvent event, int level) {
+    public void onFishGenerate(FishGenerateEvent event, int level) {
         Player player = event.getPlayer();
         ComboData data = this.combos.getOrDefault(player.getUniqueId(), ComboData.empty());
         if (data.current() == 0) return;
