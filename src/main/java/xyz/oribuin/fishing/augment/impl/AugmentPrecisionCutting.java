@@ -29,10 +29,10 @@ public class AugmentPrecisionCutting extends Augment {
     }
 
     /**
-     * The functionality provided when a collection of fish are gutted by the player
+     * The functionality provided when a player has gutted a fish, Use this to modify the rewards given to the player once gutted
      *
-     * @param event The context of the fish event
-     * @param level The level of the augment that was used
+     * @param event The event that was called when the fish was gutted
+     * @param level The level of the ability that was used, if applicable (0 if not)
      */
     @Override
     public void onFishGut(FishGutEvent event, int level) {

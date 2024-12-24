@@ -29,11 +29,14 @@ public class AugmentPerception extends Augment {
     }
 
     /**
-     * The functionality provided by the augment when a player obtains a fish from the initial catch
-     * This method is run for each fish caught
+     * The functionality provided when a player has finished catching a fish, Use this to modify the rewards given to the player once caught
+     * <p>
+     * Use {@link FishCatchEvent#entropy(int)} to change the entropy received
+     * Use {@link FishCatchEvent#naturalExp(float)} to change the minecraft experience received
+     * Use {@link FishCatchEvent#fishExp(int)} to change the fishing experience received
      *
-     * @param event The context of the fish event
-     * @param level The level of the augment that was used
+     * @param event The event that was called when the fish was caught
+     * @param level The level of the ability that was used, if applicable (0 if not)
      */
     @Override
     public void onFishCatch(FishCatchEvent event, int level) {

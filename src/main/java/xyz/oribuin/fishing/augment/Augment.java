@@ -27,7 +27,7 @@ import java.util.List;
  * <p>
  * All augment classes should be titled AugmentName and named in snake_case.
  */
-public abstract class Augment extends FishEventHandler implements Listener, Configurable {
+public abstract class Augment extends FishEventHandler implements Configurable {
 
     private final String name;
     private boolean enabled;
@@ -141,7 +141,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      *
      * @return The default {@link ItemConstruct} for the augment
      */
-    private ItemConstruct defaultItem() {
+    private final ItemConstruct defaultItem() {
         List<String> lore = new ArrayList<>(this.description);
         lore.addAll(List.of(
                 "",
@@ -162,7 +162,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      *
      * @return The namespace key, typically this will be "fishing:augment_name"
      */
-    public NamespacedKey key() {
+    public final NamespacedKey key() {
         return new NamespacedKey(FishingPlugin.get(), this.name);
     }
 
@@ -171,7 +171,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      *
      * @return The namespace key for the lore of the augment, typically this will be "fishing:augment_name-lore"
      */
-    public NamespacedKey loreKey() {
+    public final NamespacedKey loreKey() {
         return new NamespacedKey(FishingPlugin.get(), this.name + "-lore");
     }
 
@@ -180,7 +180,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      *
      * @return The {@link StringPlaceholders} for the augment
      */
-    public StringPlaceholders placeholders() {
+    public final StringPlaceholders placeholders() {
         return StringPlaceholders.builder()
                 .add("enabled", this.enabled)
                 .add("id", this.name)
@@ -208,7 +208,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      *
      * @return true if the augment is enabled
      */
-    public boolean enabled() {
+    public final boolean enabled() {
         return enabled;
     }
 
@@ -217,7 +217,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      *
      * @param enabled If the augment is enabled
      */
-    public void enabled(boolean enabled) {
+    public final void enabled(boolean enabled) {
         this.enabled = enabled;
     }
 
@@ -244,7 +244,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      *
      * @param description The description of the augment
      */
-    public void description(List<String> description) {
+    public final void description(List<String> description) {
         this.description = description;
     }
 
@@ -271,7 +271,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      *
      * @return The max level of the augment
      */
-    public int maxLevel() {
+    public final int maxLevel() {
         return maxLevel;
     }
 
@@ -280,7 +280,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      *
      * @param maxLevel The max level of the augment
      */
-    public void maxLevel(int maxLevel) {
+    public final void maxLevel(int maxLevel) {
         this.maxLevel = maxLevel;
     }
 
@@ -289,7 +289,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      *
      * @return The required level of the augment
      */
-    public int requiredLevel() {
+    public final int requiredLevel() {
         return requiredLevel;
     }
 
@@ -298,7 +298,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      *
      * @param requiredLevel The required level of the augment
      */
-    public void requiredLevel(int requiredLevel) {
+    public final void requiredLevel(int requiredLevel) {
         this.requiredLevel = requiredLevel;
     }
 
@@ -307,7 +307,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      *
      * @return The display line of the augment
      */
-    public String displayLine() {
+    public final String displayLine() {
         return displayLine;
     }
 
@@ -316,7 +316,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      *
      * @param loreLine The lore line of the augment
      */
-    public void displayLine(String loreLine) {
+    public final void displayLine(String loreLine) {
         this.displayLine = loreLine;
     }
 
@@ -325,7 +325,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      *
      * @return The permission required to use the augment
      */
-    public String permission() {
+    public final String permission() {
         return permission;
     }
 
@@ -334,7 +334,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      *
      * @param permission The permission required to use the augment
      */
-    public void permission(String permission) {
+    public final void permission(String permission) {
         this.permission = permission;
     }
 
@@ -345,7 +345,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      *
      * @return The cost of the augment
      */
-    public Cost price() {
+    public final Cost price() {
         return price;
     }
 
@@ -354,7 +354,7 @@ public abstract class Augment extends FishEventHandler implements Listener, Conf
      *
      * @param price The cost of the augment
      */
-    public void price(Cost price) {
+    public final void price(Cost price) {
         this.price = price;
     }
 

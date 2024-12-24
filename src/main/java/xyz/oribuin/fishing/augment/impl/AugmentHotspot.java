@@ -4,6 +4,8 @@ import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
+import xyz.oribuin.fishing.api.event.FishGenerateEvent;
+import xyz.oribuin.fishing.api.event.FishingEvents;
 import xyz.oribuin.fishing.api.event.InitialFishCatchEvent;
 import xyz.oribuin.fishing.augment.Augment;
 import xyz.oribuin.fishing.fish.condition.Weather;
@@ -33,11 +35,14 @@ public class AugmentHotspot extends Augment {
     }
 
     /**
-     * The functionality provided by the augment when a player catches a fish
-     * This is run before the fish are generated, Used to modify the amount of fish caught
+     * The functionality provided when a player is first starting to catch a fish, Use this to determine how many fish should be generated.
+     * <p>
+     * Use {@link InitialFishCatchEvent#setAmountToCatch(int)} to set the amount of fish to catch
+     * <p>
+     * Use {@link FishGenerateEvent#addIncrease(double)} to change the chances of catching a fish
      *
-     * @param event The initial fish catch event
-     * @param level The level of the augment that was used
+     * @param event The event that was called when the fish was caught
+     * @param level The level of the ability that was used, if applicable (0 if not)
      */
     @Override
     public void onInitialCatch(InitialFishCatchEvent event, int level) {

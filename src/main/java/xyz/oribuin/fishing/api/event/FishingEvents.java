@@ -13,7 +13,8 @@ public interface FishingEvents {
      * The functionality provided when a player is first starting to catch a fish, Use this to determine how many fish should be generated.
      * <p>
      * Use {@link InitialFishCatchEvent#setAmountToCatch(int)} to set the amount of fish to catch
-     * To modify the fish that are caught, use {@link #onFishGenerate(FishGenerateEvent, int)} instead
+     * <p>
+     * Use {@link FishGenerateEvent#addIncrease(double)} to change the chances of catching a fish
      *
      * @param event The event that was called when the fish was caught
      * @param level The level of the ability that was used, if applicable (0 if not)
@@ -23,8 +24,10 @@ public interface FishingEvents {
     /**
      * The functionality provided when a fish is generated, Use this to modify the fish that are caught
      * <p>
+     * Use {@link InitialFishCatchEvent#setAmountToCatch(int)} to change the amount of fish caught in the initial catch
+     * <p>
      * Use {@link FishGenerateEvent#addIncrease(double)} to change the chances of catching a fish
-     * Use {@link #onInitialCatch(InitialFishCatchEvent, int)} to change the amount of fish caught
+     * <p>
      * Use {@link ConditionCheckEvent} to modify the conditions that are checked
      *
      * @param event The event that was called when the fish was generated
@@ -36,7 +39,9 @@ public interface FishingEvents {
      * The functionality provided when a player has finished catching a fish, Use this to modify the rewards given to the player once caught
      * <p>
      * Use {@link FishCatchEvent#entropy(int)} to change the entropy received
+     * <p>
      * Use {@link FishCatchEvent#naturalExp(float)} to change the minecraft experience received
+     * <p>
      * Use {@link FishCatchEvent#fishExp(int)} to change the fishing experience received
      *
      * @param event The event that was called when the fish was caught
@@ -56,7 +61,7 @@ public interface FishingEvents {
      * The functionality provided when the plugin checks if a player could catch a fish. Use this to modify the outcome of the check
      * <p>
      * Use {@link ConditionCheckEvent#result(boolean)} change the result of the condition check
-     * Use {@link #onFishGenerate(FishGenerateEvent, int)} to modify which fish are caught before this check
+     * Use {@link FishGenerateEvent#addIncrease(double)} to change the chances of catching a fish
      *
      * @param event The event that was called when the fish was gutted
      * @param level The level of the ability that was used, if applicable (0 if not)

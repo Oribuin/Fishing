@@ -81,6 +81,7 @@ public abstract class FishEventHandler implements FishingEvents{
      * @param event    The event to be registered
      * @param function The function to be called when the event is fired
      * @param order    The priority of the event
+     * @param <T>      The event type to be registered with the function
      */
     public record EventWrapper<T extends Event>(Class<T> event, BiConsumer<T, Integer> function, EventPriority order) {
 

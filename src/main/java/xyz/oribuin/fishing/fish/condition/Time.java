@@ -24,7 +24,6 @@ public enum Time {
         this.upperBound = upperBound * 1000;
     }
 
-
     /**
      * Make sure the world time is within the bounds of the time
      *
@@ -38,4 +37,5 @@ public enum Time {
 
         return world.getTime() >= this.lowerBound && world.getTime() <= this.upperBound;
     }
+
 }

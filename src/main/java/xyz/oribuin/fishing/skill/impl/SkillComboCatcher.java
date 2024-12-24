@@ -4,8 +4,10 @@ import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import xyz.oribuin.fishing.api.event.ConditionCheckEvent;
 import xyz.oribuin.fishing.api.event.FishCatchEvent;
 import xyz.oribuin.fishing.api.event.FishGenerateEvent;
+import xyz.oribuin.fishing.api.event.InitialFishCatchEvent;
 import xyz.oribuin.fishing.skill.Skill;
 import xyz.oribuin.fishing.util.FishUtils;
 
@@ -36,11 +38,14 @@ public class SkillComboCatcher extends Skill {
         );
     }
 
+
     /**
      * The functionality provided when a fish is generated, Use this to modify the fish that are caught
      * <p>
+     * Use {@link InitialFishCatchEvent#setAmountToCatch(int)} to change the amount of fish caught in the initial catch
+     * <p>
      * Use {@link FishGenerateEvent#addIncrease(double)} to change the chances of catching a fish
-     * Use {@link #onInitialCatch(InitialFishCatchEvent, int)} to change the amount of fish caught
+     * <p>
      * Use {@link ConditionCheckEvent} to modify the conditions that are checked
      *
      * @param event The event that was called when the fish was generated
@@ -64,19 +69,14 @@ public class SkillComboCatcher extends Skill {
     }
 
     /**
-     * The functionality provided by the augment when a player obtains a fish from the initial catch
-     * This method is run for each fish caught
+     * The functionality provided when a player has finished catching a fish, Use this to modify the rewards given to the player once caught
+     * <p>
+     * Use {@link FishCatchEvent#entropy(int)} to change the entropy received
+     * Use {@link FishCatchEvent#naturalExp(float)} to change the minecraft experience received
+     * Use {@link FishCatchEvent#fishExp(int)} to change the fishing experience received
      *
-     * @param context The context of the fish event
-     * @param fish    The fish that was caught
-     * @param stack   The item stack of the fish
-     */
-    /**
-     * The functionality provided by the augment when a player obtains a fish from the initial catch
-     * This method is run for each fish caught
-     *
-     * @param event The context of the fish event
-     * @param level The level of the augment that was used
+     * @param event The event that was called when the fish was caught
+     * @param level The level of the ability that was used, if applicable (0 if not)
      */
     @Override
     public void onFishCatch(FishCatchEvent event, int level) {

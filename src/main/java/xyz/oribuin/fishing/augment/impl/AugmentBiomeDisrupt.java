@@ -4,6 +4,8 @@ import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.jetbrains.annotations.NotNull;
 import xyz.oribuin.fishing.api.event.ConditionCheckEvent;
+import xyz.oribuin.fishing.api.event.FishGenerateEvent;
+import xyz.oribuin.fishing.api.event.FishingEvents;
 import xyz.oribuin.fishing.augment.Augment;
 import xyz.oribuin.fishing.fish.condition.impl.BiomeCondition;
 import xyz.oribuin.fishing.util.FishUtils;
@@ -32,10 +34,13 @@ public class AugmentBiomeDisrupt extends Augment {
     }
 
     /**
-     * The functionality provided when a condition is checked, used to modify the result of the condition
+     * The functionality provided when the plugin checks if a player could catch a fish. Use this to modify the outcome of the check
+     * <p>
+     * Use {@link ConditionCheckEvent#result(boolean)} change the result of the condition check
+     * Use {@link FishGenerateEvent#addIncrease(double)} to change the chances of catching a fish
      *
-     * @param event The context of the fish event
-     * @param level The level of the augment that was used
+     * @param event The event that was called when the fish was gutted
+     * @param level The level of the ability that was used, if applicable (0 if not)
      */
     @Override
     public void onConditionCheck(ConditionCheckEvent event, int level) {
