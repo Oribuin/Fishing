@@ -36,7 +36,7 @@ public class AugmentRegistry {
 
     /**
      * Initialize all the default augments into the registry to be loaded
-     *
+     * <p>
      * This method should be called when the plugin is enabled to load all the augments into the registry
      */
     public static void init() {
@@ -157,6 +157,7 @@ public class AugmentRegistry {
 
     /**
      * Obtain all the augments in the registry as a map
+     *
      * @return The map of all augments in the registry
      */
     public static Map<String, Augment> all() {

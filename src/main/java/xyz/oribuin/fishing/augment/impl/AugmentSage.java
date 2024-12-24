@@ -23,6 +23,9 @@ public class AugmentSage extends Augment {
      */
     public AugmentSage() {
         super("sage", "&7Increases the base plugin xp", "&7earned from catching fish.");
+
+        this.maxLevel(5);
+        this.register(FishCatchEvent.class, this::onFishCatch);
     }
 
     /**
@@ -34,8 +37,6 @@ public class AugmentSage extends Augment {
      */
     @Override
     public void onFishCatch(FishCatchEvent event, int level) {
-        if (!this.enabled) return;
-
         StringPlaceholders plc = StringPlaceholders.of("level", level, "xp", event.fishExp());
         double xp = FishUtils.evaluate(plc.apply(this.formula));
         event.fishExp((int) xp);

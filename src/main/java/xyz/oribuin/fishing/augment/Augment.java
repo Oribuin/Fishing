@@ -29,15 +29,15 @@ import java.util.List;
  */
 public abstract class Augment extends FishEventHandler implements Listener, Configurable {
 
-    protected final String name;
-    protected boolean enabled;
-    protected List<String> description;
-    protected ItemConstruct displayItem;
-    protected String displayLine;
-    protected int maxLevel;
-    protected int requiredLevel;
-    protected String permission;
-    protected Cost price;
+    private final String name;
+    private boolean enabled;
+    private List<String> description;
+    private ItemConstruct displayItem;
+    private String displayLine;
+    private int maxLevel;
+    private int requiredLevel;
+    private String permission;
+    private Cost price;
 
     /**
      * Create a new type of augment with a name and description.

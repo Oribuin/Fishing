@@ -23,6 +23,9 @@ public class AugmentPrecisionCutting extends Augment {
      */
     public AugmentPrecisionCutting() {
         super("precision_cutting", "&7Increases the entropy ", "&7gained from gutting fish.");
+
+        this.maxLevel(12);
+        this.register(FishGutEvent.class, this::onFishGut);
     }
 
     /**
@@ -33,8 +36,6 @@ public class AugmentPrecisionCutting extends Augment {
      */
     @Override
     public void onFishGut(FishGutEvent event, int level) {
-        if (!this.enabled) return;
-
         StringPlaceholders plc = StringPlaceholders.of("level", level, "entropy", event.getEntropy());
         double entropy = FishUtils.evaluate(plc.apply(this.formula));
         event.setEntropy((int) entropy);

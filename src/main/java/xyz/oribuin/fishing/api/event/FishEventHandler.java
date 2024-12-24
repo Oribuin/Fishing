@@ -1,56 +1,119 @@
 package xyz.oribuin.fishing.api.event;
 
+import org.bukkit.event.Event;
+import org.bukkit.event.EventPriority;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
+
 /**
  * A global handler to parse any fishing related events, used to detect
  * and modify fish when they are caught, generated and given
  */
-public abstract class FishEventHandler {
+public abstract class FishEventHandler implements FishingEvents{
+
+    private final Map<Class<? extends Event>, EventWrapper<?>> events = new HashMap<>();
 
     /**
-     * The functionality provided by the augment when a player catches a fish
-     * This is run before the fish are generated, Used to modify the amount of fish caught
+     * Call an event from the handler's registered events, This will not take priority into account.
      *
-     * @param event The initial fish catch event
-     * @param level The level of the augment that was used
+     * @param event The {@link Event} to call
+     * @param level The level of the event
+     * @param <T>   The event type to call
+     *
+     * @return The event that was called
      */
-    public void onInitialCatch(InitialFishCatchEvent event, int level) {
+    @SuppressWarnings("unchecked")
+    public <T extends Event> T callEvent(T event, int level) {
+        EventWrapper<?> wrapper = this.events.get(event.getClass());
+        if (wrapper == null) return event;
+
+        ((EventWrapper<T>) wrapper).function().accept(event, level);
+        return event;
     }
 
     /**
-     * The functionality provided when a fish is generated for the player
+     * Register a function to be called when an {@link Event} is fired for the specified event with {@link EventPriority#NORMAL} priority
      *
-     * @param event The event that is fired when a fish is generated
-     * @param level The level of the augment that was used
+     * @param event    The event to register the function for
+     * @param function The function to be called when the event is fired
+     * @param <T>      The event type to register
      */
-    public void onGenerate(FishGenerateEvent event, int level) {
+    public <T extends Event> void register(Class<T> event, BiConsumer<T, Integer> function) {
+        this.register(new EventWrapper<>(event, function, EventPriority.NORMAL));
     }
 
     /**
-     * The functionality provided by the augment when a player obtains a fish from the initial catch
-     * This method is run for each fish caught
+     * Register a function to be called when an {@link Event} is fired for the specified event
      *
-     * @param event The context of the fish event
-     * @param level The level of the augment that was used
+     * @param event    The event to register the function for
+     * @param function The function to be called when the event is fired
+     * @param order    The priority of the event, used to determine when it is called relative to other events. Uses the {@link EventPriority} enum and behaves like Bukkit's event priority
+     * @param <T>      The event type to register
      */
-    public void onFishCatch(FishCatchEvent event, int level) {
+    public <T extends Event> void register(Class<T> event, BiConsumer<T, Integer> function, EventPriority order) {
+        this.register(new EventWrapper<>(event, function, order));
     }
 
     /**
-     * The functionality provided when a condition is checked, used to modify the result of the condition
+     * Register a function to be called when an {@link Event} is fired for the specified event
      *
-     * @param event The context of the fish event
-     * @param level The level of the augment that was used
+     * @param wrapper The event to register the function for
+     * @param <T>     The event type to register
      */
-    public void onConditionCheck(ConditionCheckEvent event, int level) {
+    public <T extends Event> void register(EventWrapper<T> wrapper) {
+        this.events.put(wrapper.event(), wrapper);
     }
 
     /**
-     * The functionality provided when a collection of fish are gutted by the player
+     * Get all the events that are registered with the handler
      *
-     * @param event The context of the fish event
-     * @param level The level of the augment that was used
+     * @return A map of all the events that are registered
      */
-    public void onFishGut(FishGutEvent event, int level) {
+    public Map<Class<? extends Event>, EventWrapper<?>> events() {
+        return events;
+    }
+
+    /**
+     * Wrapper for an event to be registered with a function
+     *
+     * @param event    The event to be registered
+     * @param function The function to be called when the event is fired
+     * @param order    The priority of the event
+     */
+    public record EventWrapper<T extends Event>(Class<T> event, BiConsumer<T, Integer> function, EventPriority order) {
+
+        /**
+         * Get the event type that was registered
+         *
+         * @return The event that was registered
+         */
+        @Override
+        public Class<T> event() {
+            return event;
+        }
+
+        /**
+         * Get the function that was registered
+         *
+         * @return The function that was registered
+         */
+        @Override
+        public BiConsumer<T, Integer> function() {
+            return function;
+        }
+
+        /**
+         * Get the priority of the event
+         *
+         * @return The priority of the event
+         */
+        @Override
+        public EventPriority order() {
+            return order;
+        }
+
     }
 
 }

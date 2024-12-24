@@ -24,7 +24,8 @@ public class AugmentIntellect extends Augment {
     public AugmentIntellect() {
         super("intellect", "&7Increases the base minecraft xp", "&7earned from catching fish.");
 
-        this.maxLevel = 3;
+        this.maxLevel(3);
+        this.register(FishCatchEvent.class, this::onFishCatch);
     }
 
     /**
@@ -36,8 +37,6 @@ public class AugmentIntellect extends Augment {
      */
     @Override
     public void onFishCatch(FishCatchEvent event, int level) {
-        if (!this.enabled) return;
-
         StringPlaceholders plc = StringPlaceholders.of("level", level, "xp", event.naturalExp());
         double xp = FishUtils.evaluate(plc.apply(this.formula));
         event.naturalExp((int) xp);

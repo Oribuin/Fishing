@@ -27,7 +27,8 @@ public class AugmentBiomeDisrupt extends Augment {
     public AugmentBiomeDisrupt() {
         super("biome_disruption", "&7When a player catches a fish, there is", "&7a chance to ignore the biome restrictions.");
 
-        this.maxLevel = 3;
+        this.maxLevel(3);
+        this.register(ConditionCheckEvent.class, this::onConditionCheck);
     }
 
     /**
@@ -38,7 +39,6 @@ public class AugmentBiomeDisrupt extends Augment {
      */
     @Override
     public void onConditionCheck(ConditionCheckEvent event, int level) {
-        if (!this.enabled) return;
         if (!(event.condition() instanceof BiomeCondition)) return;
 
         StringPlaceholders plc = StringPlaceholders.of("level", level);

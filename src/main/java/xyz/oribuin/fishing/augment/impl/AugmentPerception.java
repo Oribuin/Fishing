@@ -24,7 +24,8 @@ public class AugmentPerception extends Augment {
     public AugmentPerception() {
         super("perception", "&7Increases the entropy ", "&7earned from catching fish.");
 
-        this.maxLevel = 5;
+        this.maxLevel(5);
+        this.register(FishCatchEvent.class, this::onFishCatch);
     }
 
     /**
@@ -36,8 +37,6 @@ public class AugmentPerception extends Augment {
      */
     @Override
     public void onFishCatch(FishCatchEvent event, int level) {
-        if (!this.enabled) return;
-
         StringPlaceholders plc = StringPlaceholders.of("level", level, "entropy", event.entropy());
         double entropy = FishUtils.evaluate(plc.apply(this.formula));
         event.entropy((int) entropy);

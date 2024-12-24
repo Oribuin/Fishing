@@ -28,7 +28,8 @@ public class AugmentHotspot extends Augment {
     public AugmentHotspot() {
         super("hotspot", "&7Increases the amount of fish", "&7caught when the weather is clear");
 
-        this.maxLevel = 15;
+        this.maxLevel(15);
+        this.register(InitialFishCatchEvent.class, this::onInitialCatch);
     }
 
     /**
@@ -40,7 +41,6 @@ public class AugmentHotspot extends Augment {
      */
     @Override
     public void onInitialCatch(InitialFishCatchEvent event, int level) {
-        if (!this.enabled) return;
         if (!Weather.CLEAR.isState(event.getHook().getLocation())) return;
 
         StringPlaceholders plc = StringPlaceholders.of("level", level);

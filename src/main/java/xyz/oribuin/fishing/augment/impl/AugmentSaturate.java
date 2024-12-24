@@ -24,6 +24,9 @@ public class AugmentSaturate extends Augment {
      */
     public AugmentSaturate() {
         super("saturate", "&7Fully saturates the player", "&7when they catch a fish");
+
+        this.maxLevel(3);
+        this.register(InitialFishCatchEvent.class, this::onInitialCatch);
     }
 
     /**
@@ -36,7 +39,6 @@ public class AugmentSaturate extends Augment {
     @Override
     public void onInitialCatch(InitialFishCatchEvent event, int level) {
         if (event.getPlayer().getFoodLevel() >= 20.0) return;
-        if (!this.enabled) return;
 
         StringPlaceholders plc = StringPlaceholders.of("level", level);
         double chance = FishUtils.evaluate(plc.apply(this.chanceFormula));
