@@ -1,5 +1,5 @@
 name: Fishing
-main: xyz.oribuin.fishing.FishingPlugin
+main: dev.oribuin.fishing.FishingPlugin
 version: '@version@'
 api-version: '1.21'
 author: Oribuin
