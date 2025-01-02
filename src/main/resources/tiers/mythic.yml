@@ -1,5 +1,5 @@
 
-chance: .04 # Chance of getting this tier
+chance: 0.04 # Chance of getting this tier
 money: 100.0 # Money reward when the fish is sold
 entropy: 50 # Entropy reward when the fish is gutted
 fish-exp: 2000 # Fishing experience reward when caught
