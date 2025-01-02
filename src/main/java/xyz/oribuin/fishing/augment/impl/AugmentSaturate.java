@@ -48,7 +48,7 @@ public class AugmentSaturate extends Augment {
         double chance = FishUtils.evaluate(plc.apply(this.chanceFormula));
         if (Math.random() * 100 > chance) return;
 
-        event.getPlayer().setSaturation(this.saturation);
+        event.getPlayer().setSaturation(Math.min(20f, event.getPlayer().getSaturation() + this.saturation));
         event.getPlayer().sendMessage("You have been saturated!"); // todo: use locale
     }
 
