@@ -126,7 +126,6 @@ public class Totem implements AsyncTicker {
             this.lastActive = System.currentTimeMillis();
             this.rotation = 0;
             this.entity.setHeadRotations(Rotations.ZERO);
-            this.entity.getLocation().toVector().normalize()
             this.update(); // Update the totem
         }
     }

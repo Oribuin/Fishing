@@ -197,13 +197,12 @@ public class Fish implements Configurable {
         this.modelData = modelData;
     }
 
-    public Condition condition() {
-        return condition;
+    public List<CatchCondition> conditions() {
+        return conditions;
     }
 
-    public void condition(Condition condition) {
-        this.condition = condition;
+    public void conditions(List<CatchCondition> conditions) {
+        this.conditions = conditions;
     }
-
 
 }

@@ -82,8 +82,8 @@ public class ConditionRegistry {
      *
      * @return Results in true if the player can catch the fish
      */
-    public static boolean check(List<CatchCondition> conditions, Fish fish, Player player, ItemStack rod, FishHook hook) {
-        for (CatchCondition condition : conditions) {
+    public static boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
+        for (CatchCondition condition : fish.conditions()) {
             // Check the condition
             boolean result = condition.check(fish, player, rod, hook);
             ConditionCheckEvent event = new ConditionCheckEvent(player, rod, hook, condition, result);
