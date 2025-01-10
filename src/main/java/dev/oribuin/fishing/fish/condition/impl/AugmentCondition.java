@@ -1,15 +1,19 @@
 package dev.oribuin.fishing.fish.condition.impl;
 
+import dev.oribuin.fishing.api.condition.CatchCondition;
+import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
+import dev.oribuin.fishing.augment.Augment;
+import dev.oribuin.fishing.augment.AugmentRegistry;
+import dev.oribuin.fishing.fish.Fish;
+import dev.oribuin.fishing.fish.condition.ConditionRegistry;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import org.bukkit.entity.Boat;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import dev.oribuin.fishing.api.condition.CatchCondition;
-import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
-import dev.oribuin.fishing.fish.Fish;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A condition that is checked when a player is trying to catch a fish
@@ -19,18 +23,18 @@ import org.jetbrains.annotations.NotNull;
  *
  * @see dev.oribuin.fishing.fish.condition.ConditionRegistry#check(List, Fish, Player, ItemStack, FishHook)  to see how this is used
  */
-public class BoatCondition extends CatchCondition {
+public class AugmentCondition extends CatchCondition {
 
-    private boolean boatFishing = false;
+    private final Map<String, Integer> augments = new HashMap<>(); // List of augments to check for
 
     /**
-     * A condition that is checked when a player is fishing in a boat
+     * A condition that checks if the player is has a specific augment
      */
-    public BoatCondition() {}
+    public AugmentCondition() {}
 
     /**
      * Decides whether the condition should be checked in the first place,
-     * <p>
+     * <p>R
      * This is to prevent unnecessary checks on fish that don't have the condition type.
      *
      * @param fish The fish to check for
@@ -39,13 +43,13 @@ public class BoatCondition extends CatchCondition {
      */
     @Override
     public boolean shouldRun(Fish fish) {
-        return this.boatFishing;
+        return !this.augments.isEmpty();
     }
 
     /**
      * Check if the player meets the condition to catch the fish or not, Requires {@link #shouldRun(Fish)} to return true before running
      * <p>
-     * To see how this is used, check {@link dev.oribuin.fishing.fish.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)}
+     * To see how this is used, check {@link ConditionRegistry#check(Fish, Player, ItemStack, FishHook)}
      * <p>
      * All conditions are passed through {@link ConditionCheckEvent} to overwrite the result if needed
      *
@@ -58,10 +62,11 @@ public class BoatCondition extends CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        if (!player.isInsideVehicle()) return false;
-
-        Entity vehicle = player.getVehicle();
-        return vehicle instanceof Boat;
+        Map<Augment, Integer> playerAugments = AugmentRegistry.from(rod);
+        return this.augments.entrySet().stream().allMatch(entry -> {
+            Augment augment = AugmentRegistry.from(entry.getKey());
+            return playerAugments.containsKey(augment) && playerAugments.get(augment) >= entry.getValue();
+        });
     }
 
     /**
@@ -81,7 +86,8 @@ public class BoatCondition extends CatchCondition {
      */
     @Override
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        this.boatFishing = config.getBoolean("boat-fishing", false);
+        CommentedConfigurationSection augments = this.pullSection(config, "augments");
+        augments.getKeys(false).forEach(key -> this.augments.put(key, augments.getInt(key)));
     }
 
 }

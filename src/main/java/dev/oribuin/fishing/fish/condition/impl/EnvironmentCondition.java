@@ -1,11 +1,18 @@
 package dev.oribuin.fishing.fish.condition.impl;
 
-import org.bukkit.entity.FishHook;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import dev.oribuin.fishing.api.condition.CatchCondition;
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import dev.oribuin.fishing.fish.Fish;
+import dev.oribuin.fishing.util.FishUtils;
+import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import org.bukkit.World;
+import org.bukkit.entity.FishHook;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A condition that is checked when a player is trying to catch a fish
@@ -13,9 +20,11 @@ import dev.oribuin.fishing.fish.Fish;
  * First, {@link #shouldRun(Fish)} is called to check if the fish has the condition type
  * If the fish has the condition type, {@link #check(Fish, Player, ItemStack, FishHook)} is called to check if the player meets the condition to catch the fish
  *
- * @see dev.oribuin.fishing.fish.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook) to see how this is used
+ * @see dev.oribuin.fishing.fish.condition.ConditionRegistry#check(List, Fish, Player, ItemStack, FishHook)  to see how this is used
  */
-public class EnvironmentCondition implements CatchCondition {
+public class EnvironmentCondition extends CatchCondition {
+
+    private List<World.Environment> environments = new ArrayList<>();
 
     /**
      * A condition that is checked when a player is fishing in a specific environment
@@ -33,7 +42,7 @@ public class EnvironmentCondition implements CatchCondition {
      */
     @Override
     public boolean shouldRun(Fish fish) {
-        return fish.condition().environment() != null;
+        return !this.environments.isEmpty();
     }
 
     /**
@@ -52,7 +61,19 @@ public class EnvironmentCondition implements CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        return fish.condition().environment() == hook.getLocation().getWorld().getEnvironment();
+        return this.environments.contains(hook.getLocation().getWorld().getEnvironment());
+    }
+
+    /**
+     * Load the settings for the condition from a configuration section
+     *
+     * @param section The configuration section to load the settings from
+     */
+    @Override
+    public void loadSettings(@NotNull CommentedConfigurationSection section) {
+        this.environments = section.getStringList("environments").stream()
+                .map(x -> FishUtils.getEnum(World.Environment.class, x))
+                .toList();
     }
 
 }

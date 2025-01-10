@@ -1,36 +1,29 @@
 package dev.oribuin.fishing.fish.condition.impl;
 
-import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import org.bukkit.entity.Boat;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.FishHook;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import dev.oribuin.fishing.api.condition.CatchCondition;
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import dev.oribuin.fishing.fish.Fish;
+import dev.oribuin.fishing.fish.condition.ConditionRegistry;
+import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import org.bukkit.entity.FishHook;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * A condition that is checked when a player is trying to catch a fish
- * <p>
- * First, {@link #shouldRun(Fish)} is called to check if the fish has the condition type
- * If the fish has the condition type, {@link #check(Fish, Player, ItemStack, FishHook)} is called to check if the player meets the condition to catch the fish
- *
- * @see dev.oribuin.fishing.fish.condition.ConditionRegistry#check(List, Fish, Player, ItemStack, FishHook)  to see how this is used
- */
-public class BoatCondition extends CatchCondition {
+import java.util.List;
 
-    private boolean boatFishing = false;
+public class PermissionCondition extends CatchCondition {
+
+    private String permission = null;
 
     /**
-     * A condition that is checked when a player is fishing in a boat
+     * Checks if a player has a specific permission to catch a fish
      */
-    public BoatCondition() {}
+    public PermissionCondition() {}
 
     /**
      * Decides whether the condition should be checked in the first place,
-     * <p>
+     * <p>R
      * This is to prevent unnecessary checks on fish that don't have the condition type.
      *
      * @param fish The fish to check for
@@ -39,13 +32,13 @@ public class BoatCondition extends CatchCondition {
      */
     @Override
     public boolean shouldRun(Fish fish) {
-        return this.boatFishing;
+        return this.permission != null;
     }
 
     /**
      * Check if the player meets the condition to catch the fish or not, Requires {@link #shouldRun(Fish)} to return true before running
      * <p>
-     * To see how this is used, check {@link dev.oribuin.fishing.fish.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)}
+     * To see how this is used, check {@link ConditionRegistry#check(List, Fish, Player, ItemStack, FishHook)}
      * <p>
      * All conditions are passed through {@link ConditionCheckEvent} to overwrite the result if needed
      *
@@ -58,10 +51,11 @@ public class BoatCondition extends CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        if (!player.isInsideVehicle()) return false;
+        if (this.permission.startsWith("!")) {
+            return !player.hasPermission(this.permission.substring(1));
+        }
 
-        Entity vehicle = player.getVehicle();
-        return vehicle instanceof Boat;
+        return player.hasPermission(this.permission);
     }
 
     /**
@@ -81,7 +75,7 @@ public class BoatCondition extends CatchCondition {
      */
     @Override
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        this.boatFishing = config.getBoolean("boat-fishing", false);
+        this.permission = config.getString("permission", null);
     }
 
 }

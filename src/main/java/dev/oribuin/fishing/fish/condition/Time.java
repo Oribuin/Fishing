@@ -38,4 +38,18 @@ public enum Time {
         return world.getTime() >= this.lowerBound && world.getTime() <= this.upperBound;
     }
 
+    /**
+     * Make sure the hour is within the bounds of the time
+     *
+     * @param hour The hour to check
+     *
+     * @return If the time is within the bounds
+     */
+    public boolean matches(int hour) {
+        if (this == ANY_TIME)
+            return true;
+
+        return hour >= this.lowerBound && hour <= this.upperBound;
+    }
+
 }

@@ -1,28 +1,26 @@
 package dev.oribuin.fishing.fish;
 
+import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.api.condition.CatchCondition;
+import dev.oribuin.fishing.api.config.Configurable;
+import dev.oribuin.fishing.augment.Augment;
+import dev.oribuin.fishing.fish.condition.ConditionRegistry;
+import dev.oribuin.fishing.manager.TierManager;
+import dev.oribuin.fishing.storage.util.PersistKeys;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.apache.commons.lang3.StringUtils;
-import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.api.config.Configurable;
-import dev.oribuin.fishing.augment.Augment;
-import dev.oribuin.fishing.fish.condition.Condition;
-import dev.oribuin.fishing.fish.condition.Time;
-import dev.oribuin.fishing.fish.condition.Weather;
-import dev.oribuin.fishing.manager.TierManager;
-import dev.oribuin.fishing.storage.util.PersistKeys;
-import dev.oribuin.fishing.util.FishUtils;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Condition;
 
 public class Fish implements Configurable {
 
@@ -32,7 +30,7 @@ public class Fish implements Configurable {
     private List<String> description; // The description of the fish
     private int modelData; // The model data of the fish
     private ItemStack itemStack; // The item stack of the fish
-    private Condition condition; // The requirements to catch the fish
+    private List<CatchCondition> conditions; // The conditions to catch the fish
 
     /**
      * Create a new name of fish with a name and quality
@@ -43,10 +41,10 @@ public class Fish implements Configurable {
     public Fish(@NotNull String name, @NotNull String tier) {
         this.name = name;
         this.tier = tier;
-        this.condition = new Condition();
         this.displayName = StringUtils.capitalize(name.toLowerCase().replace("_", " "));
         this.description = new ArrayList<>();
         this.modelData = -1;
+        this.conditions = new ArrayList<>();
     }
 
     /**
@@ -70,17 +68,8 @@ public class Fish implements Configurable {
         this.description = config.getStringList("description");
         this.modelData = config.getInt("model-data", -1);
 
-        // Catch Conditions
-        this.condition.biomes(config.getStringList("biomes"));
-        this.condition.weather(FishUtils.getEnum(Weather.class, config.getString("weather")));
-        this.condition.time(FishUtils.getEnum(Time.class, config.getString("time")));
-        this.condition.worlds(config.getStringList("worlds"));
-        this.condition.environment(FishUtils.getEnum(World.Environment.class, config.getString("environment")));
-        this.condition.waterDepth((Integer) config.get("water-depth"));
-        this.condition.iceFishing(config.getBoolean("ice-fishing"));
-        this.condition.lightLevel((Integer) config.get("light-level"));
-        this.condition.height(FishUtils.getHeight(config.getString("height")));
-        this.condition.boatFishing(config.getBoolean("boat-fishing"));
+        // Catch Conditions for the fish
+        this.conditions = ConditionRegistry.loadConditions(this, this.pullSection(config, "conditions"));
     }
 
     /**
@@ -99,20 +88,6 @@ public class Fish implements Configurable {
         config.set(this.name + ".display-name", this.displayName);
         config.set(this.name + ".description", this.description);
         config.set(this.name + ".model-data", this.modelData);
-
-        // Conditions for the fish
-        config.set(this.name + ".biomes", this.condition.biomes());
-        config.set(this.name + ".worlds", this.condition.worlds());
-        config.set(this.name + ".ice-fishing", this.condition.iceFishing());
-        config.set(this.name + "boat-fishing", this.condition.boatFishing());
-
-        // ugly :)
-        if (this.condition.weather() != null) config.set(this.name + ".weather", this.condition.weather().name());
-        if (this.condition.time() != null) config.set(this.name + ".time", this.condition.time().name());
-        if (this.condition.environment() != null) config.set(this.name + ".environment", this.condition.environment().name());
-        if (this.condition.waterDepth() != null) config.set(this.name + ".water-depth", this.condition.waterDepth());
-        if (this.condition.lightLevel() != null) config.set(this.name + ".light-level", this.condition.lightLevel());
-        if (this.condition.height() != null) config.set(this.name + ".height", this.condition.height().getLeft() + "-" + condition.height().getRight());
     }
 
     /**
@@ -161,23 +136,16 @@ public class Fish implements Configurable {
         return this.itemStack.clone(); // Clone the item stack to prevent any changes
     }
 
-    private StringPlaceholders placeholders() {
-        return StringPlaceholders.builder()
+    public StringPlaceholders placeholders() {
+        StringPlaceholders.Builder builder = StringPlaceholders.builder()
                 .add("id", this.name)
                 .add("name", this.displayName)
                 .add("tier", this.tier)
-                .add("description", String.join("\n", this.description))
-                .add("biomes", this.condition.biomes().isEmpty() ? "Any Biome" : String.join(", ", this.condition.biomes()))
-                .add("weather", FishUtils.niceify(this.condition.weather(), "Any Weather"))
-                .add("time", FishUtils.niceify(this.condition.time(), "Any Time"))
-                .add("worlds", this.condition.worlds().isEmpty() ? "Any World" : String.join(", ", this.condition.worlds()))
-                .add("environment", FishUtils.niceify(this.condition.environment(), "Any Environment"))
-                .add("water-depth", this.condition.waterDepth() == null ? "Any Depth" : this.condition.waterDepth().toString())
-                .add("ice-fishing", this.condition.iceFishing() ? "Yes" : "No")
-                .add("height", this.condition.height() == null ? "All" : this.condition.height().getLeft() + " - " + this.condition.height().getRight())
-                .add("light-level", this.condition.lightLevel() == null ? "All" : this.condition.lightLevel().toString())
-                .add("boat-fishing", this.condition.boatFishing() ? "Yes" : "No")
-                .build();
+                .add("description", String.join("\n", this.description));
+
+        // Add all the placeholders from the conditions
+        this.conditions.forEach(condition -> builder.addAll(condition.placeholders()));
+        return builder.build();
     }
 
     /**
