@@ -15,6 +15,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A condition that is checked when a player is trying to catch a fish
+ * <p>
+ * First, {@link #shouldRun(Fish)} is called to check if the fish has the condition type
+ * If the fish has the condition type, {@link #check(Fish, Player, ItemStack, FishHook)} is called to check if the player meets the condition to catch the fish
+ *
+ * @see dev.oribuin.fishing.fish.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
+ */
 public class PlaceholderCondition extends CatchCondition {
 
     private final List<PlaceholderCheck> checks = new ArrayList<>();
