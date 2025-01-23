@@ -17,7 +17,7 @@ public class ExampleMenu extends PluginMenu<StaticMenu> {
      * @param plugin The plugin
      * @param gui    The gui
      */
-    protected ExampleMenu(FishingPlugin plugin, StaticMenu gui) {
+    public ExampleMenu(FishingPlugin plugin, StaticMenu gui) {
         super(plugin, gui);
     }
 

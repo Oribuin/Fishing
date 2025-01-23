@@ -12,11 +12,12 @@ import dev.oribuin.fishing.totem.Totem;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public class TotemManager extends Manager {
 
-    private final Map<FinePosition, Totem> totems = new HashMap<>();
+    private final Map<FinePosition, Totem> totems = new ConcurrentHashMap<>();
     private BukkitTask asyncTicker;
     private long lastTick = System.currentTimeMillis();
 
@@ -54,7 +55,7 @@ public class TotemManager extends Manager {
      * Tick all the totems in the totem manager.
      */
     public void tick(Consumer<Totem> action) {
-        new HashMap<>(this.totems).forEach((finePosition, totem) -> {
+        this.totems.forEach((finePosition, totem) -> {
             if (!totem.center().isChunkLoaded()) return;
 
             if (totem.entity() == null || totem.entity().isDead()) {

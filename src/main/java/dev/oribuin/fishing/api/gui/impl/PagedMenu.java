@@ -31,4 +31,21 @@ public abstract class PagedMenu extends BaseGui {
         this.pageNum = 1;
     }
 
+    /**
+     * Update the inventory with the static icons
+     */
+    @Override
+    public void update() {
+        super.update();
+    }
+
+
+    /**
+     * Get the current page number
+     *
+     * @return The current page number
+     */
+    public int pageSize() {
+        return this.pageIcons.size();
+    }
 }

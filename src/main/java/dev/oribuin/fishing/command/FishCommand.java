@@ -7,7 +7,6 @@ import dev.rosewood.rosegarden.command.framework.ArgumentsDefinition;
 import dev.rosewood.rosegarden.command.framework.BaseRoseCommand;
 import dev.rosewood.rosegarden.command.framework.CommandInfo;
 import dev.oribuin.fishing.command.impl.ApplyCommand;
-import dev.oribuin.fishing.command.impl.MenuCommand;
 import dev.oribuin.fishing.command.impl.admin.GiveCommand;
 
 public class FishCommand extends BaseRoseCommand {
@@ -40,7 +39,6 @@ public class FishCommand extends BaseRoseCommand {
                         new HelpCommand(this.rosePlugin, this),
                         new ReloadCommand(this.rosePlugin),
                         new ApplyCommand(this.rosePlugin),
-                        new MenuCommand(this.rosePlugin),
                         new GiveCommand(this.rosePlugin)
                 );
     }

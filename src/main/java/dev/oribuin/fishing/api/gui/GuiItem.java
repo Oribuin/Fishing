@@ -1,24 +1,24 @@
-package xyz.oribuin.fishing.api.gui;
+package dev.oribuin.fishing.api.gui;
 
+import dev.oribuin.fishing.api.config.Configurable;
+import dev.oribuin.fishing.util.ItemConstruct;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
-import dev.triumphteam.gui.components.GuiAction;
-import dev.triumphteam.gui.guis.BaseGui;
+import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import xyz.oribuin.fishing.api.config.Configurable;
-import xyz.oribuin.fishing.util.ItemConstruct;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class GuiItem implements Configurable {
 
     protected boolean enabled = true;
     protected String name = "item";
     protected List<Integer> slot = List.of(0);
-    protected ItemConstruct item = ItemConstruct.EMPTY;
+    protected ItemConstruct item = ItemConstruct.of(Material.STONE);
 
     public GuiItem() {
     }
@@ -44,7 +44,7 @@ public class GuiItem implements Configurable {
      * @param gui      The GUI to place the item in
      * @param function The function to run when the item is clicked
      */
-    public void place(BaseGui gui, GuiAction<InventoryClickEvent> function) {
+    public void place(BaseGui gui, Consumer<InventoryClickEvent> function) {
         this.place(gui, StringPlaceholders.empty(), function);
     }
 
@@ -55,18 +55,18 @@ public class GuiItem implements Configurable {
      * @param placeholders The placeholders to apply to the item
      * @param function     The function to run when the item is clicked
      */
-    public void place(BaseGui gui, StringPlaceholders placeholders, GuiAction<InventoryClickEvent> function) {
+    public void place(BaseGui gui, StringPlaceholders placeholders, Consumer<InventoryClickEvent> function) {
         if (gui == null) return;
         if (!this.enabled) return;
 
-        int guiSize = gui.getRows() * 9;
+        int guiSize = gui.rows() * 9;
         this.slot.forEach(x -> {
             if (x < 0 || x >= guiSize) return;
 
             ItemStack item = this.item.build(placeholders);
             if (item == null) return;
 
-            gui.setItem(slot, new dev.triumphteam.gui.guis.GuiItem(item, function));
+            // todo: gui setitem
         });
     }
 
@@ -107,10 +107,7 @@ public class GuiItem implements Configurable {
         if (this.slot.size() == 1) config.set("slot", this.slot.get(0));
         else config.set("slots", this.slot.stream().map(String::valueOf).toList());
 
-        CommentedConfigurationSection item = config.getConfigurationSection("item");
-        if (item == null) item = config.createSection("item");
-
-        this.item.serialize(item);
+        this.item.saveSettings(this.pullSection(config, "item"));
     }
 
     /**
