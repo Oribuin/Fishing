@@ -2,7 +2,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
     id "java-library"
-    id "com.github.johnrengelman.shadow" version "7.1.0"
+    id "com.gradleup.shadow" version "8.3.5"
     id "maven-publish"
 }
 
@@ -63,6 +63,18 @@ processResources {
         include '**/*.yml'
         filter ReplaceTokens, tokens: ["version": project.property("version")]
         duplicatesStrategy DuplicatesStrategy.INCLUDE
+    }
+}
+
+// Javadocs :)
+javadoc {
+    options {
+        links("https://jd.papermc.io/paper/${spigotVersion}/")
+
+        addStringOption("encoding", "UTF-8")
+        addStringOption("docencoding", "UTF-8")
+        addStringOption("charset", "UTF-8")
+        addStringOption("locale", "en_US")
     }
 }
 
