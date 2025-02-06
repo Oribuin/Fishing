@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class MenuManager extends Manager {
 
-    private static final Map<Class<?>, PluginMenu> menus = new HashMap<>();
+    private static final Map<Class<?>, PluginMenu<?>> menus = new HashMap<>();
 
     public MenuManager(RosePlugin rosePlugin) {
         super(rosePlugin);
@@ -38,7 +38,7 @@ public class MenuManager extends Manager {
      * @return The menu
      */
     @SuppressWarnings("unchecked")
-    public static <T extends PluginMenu> T from(Class<T> clazz) {
+    public static <T extends PluginMenu<?>> T from(Class<T> clazz) {
         try {
             return (T) menus.get(clazz);
         } catch (Exception e) {

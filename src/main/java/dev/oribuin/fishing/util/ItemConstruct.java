@@ -100,7 +100,7 @@ public class ItemConstruct implements Configurable {
      */
     @SuppressWarnings({ "UnstableApiUsage", "deprecation" })
     public ItemStack build(StringPlaceholders placeholders) {
-        ItemStack stack = new ItemStack(this.type, this.amount);
+        ItemStack stack = new ItemStack(this.type != null ? this.type : Material.STONE, this.amount);
         ItemMeta meta = stack.getItemMeta();
         if (meta == null) return stack; // Probably air
 

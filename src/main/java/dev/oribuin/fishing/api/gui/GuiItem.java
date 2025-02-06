@@ -17,24 +17,17 @@ import java.util.List;
 public class GuiItem implements Configurable {
 
     protected boolean enabled = true;
-    protected String name = "item";
     protected List<Integer> slot = List.of(0);
     protected ItemConstruct item = ItemConstruct.of(Material.STONE).tooltip(false);
 
     public GuiItem() {
     }
 
-    public GuiItem(String name) {
-        this.name = name;
-    }
-
-    public GuiItem(String name, ItemConstruct item) {
-        this.name = name;
+    public GuiItem(ItemConstruct item) {
         this.item = item;
     }
 
-    public GuiItem(String name, int slot, ItemConstruct item) {
-        this.name = name;
+    public GuiItem(int slot, ItemConstruct item) {
         this.slot = List.of(slot);
         this.item = item;
     }
@@ -89,7 +82,6 @@ public class GuiItem implements Configurable {
     @Override
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
         this.enabled = config.getBoolean("enabled", true);
-        this.name = config.getString("name");
 
         int slot = config.getInt("slot", -1);
         if (slot > 0) this.slot = List.of(slot);
@@ -113,7 +105,6 @@ public class GuiItem implements Configurable {
     @Override
     public void saveSettings(@NotNull CommentedConfigurationSection config) {
         config.set("enabled", this.enabled);
-        config.set("name", this.name);
 
         if (this.slot.size() == 1) config.set("slot", this.slot.get(0));
         else config.set("slots", this.slot.stream().map(String::valueOf).toList());
@@ -170,14 +161,6 @@ public class GuiItem implements Configurable {
 
     public void enabled(boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public String name() {
-        return name;
-    }
-
-    public void name(String name) {
-        this.name = name;
     }
 
     public List<Integer> slot() {

@@ -1,0 +1,85 @@
+#
+# Fishing Plugin Menu [totem - main_menu] -  Control panel for a totem
+# 
+# title - The title of the gui
+# rows - The amount of rows the gui has
+# items - all the items that have assigned functionality 
+# extra-items - additional decorative items, these do nothing
+title: Fishing Totem
+rows: 3
+items:
+  # Displays general information about the totem, does nothing
+  totem-stats:
+    enabled: true
+    slot: 4
+    display-item:
+      type: OAK_HANGING_SIGN
+      name: '&f[&#4f73d6&lTotem Details&f]'
+      lore:
+        - '&7Here are the current upgrades'
+        - '&7active have for the fishing totem'
+        - ''
+        - '&#4f73d6Statistics:'
+        - ' &#4f73d6- &7Active: &f%active%'
+        - ' &#4f73d6- &7Owner: &f%owner%'
+        - ' &#4f73d6- &7Radius: &f%radius% blocks'
+        - ' &#4f73d6- &7Duration: &f%duration%'
+        - ' &#4f73d6- &7Cooldown: &f%cooldown%'
+        - ''
+      glowing: true
+      additional-tooltip: false
+  # Activates the totem, only displays if the totem is not active and the cooldown is over 
+  totem-activate:
+    enabled: true
+    slot: 13
+    display-item:
+      type: LIME_DYE
+      name: '&f[&#05e653&lActivate Totem&f]'
+      lore:
+        - '&7Click here to activate the totem'
+        - ''
+        - '&#05e653Details:'
+        - ' &#05e653- &7Duration: &f%duration%'
+        - ' &#05e653- &7Cooldown: &f%cooldown%'
+        - ''
+      additional-tooltip: false
+  # Tells the player that the totem is on cooldown and displays the remaining time
+  totem-cooldown:
+    enabled: true
+    slot: 13
+    display-item:
+      type: RED_DYE
+      name: '&f[&#e60505&lCooldown&f]'
+      lore:
+        - '&7Your totem is currently on cooldown'
+        - ''
+        - '&#e60505- &7Available In: &f%cooldown_timer%'
+        - ''
+      additional-tooltip: false
+    # Tells the player the totem is active and displays the remaining time 
+  totem-active:
+    enabled: true
+    slot: 13
+    display-item:
+      type: ORANGE_DYE
+      name: '&f[&#e65f05&lActive&f]'
+      lore:
+        - '&7Your totem is currently active'
+        - ''
+        - '&#e65f05- &7Time Remaining: &f%timer%'
+        - ''
+      additional-tooltip: false
+
+# Decorative items that do nothing
+extra-items:
+  'border':
+    enabled: true
+    slots:
+      - '0-8'
+      - '18-26'
+      - '9'
+      - '17'
+    display-item:
+      type: BLACK_STAINED_GLASS_PANE
+      tooltip: false
+  

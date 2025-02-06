@@ -1,6 +1,7 @@
 package dev.oribuin.fishing.api.gui;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.BaseGui;
@@ -9,29 +10,32 @@ import dev.triumphteam.gui.guis.PaginatedGui;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.checkerframework.common.returnsreceiver.qual.This;
 import org.jetbrains.annotations.NotNull;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.config.Configurable;
 import dev.oribuin.fishing.util.ItemConstruct;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class PluginMenu implements Configurable {
+public abstract class PluginMenu<T extends BaseGui> implements Configurable {
 
     public static final ItemConstruct BORDER = ItemConstruct.of(Material.BLACK_STAINED_GLASS_PANE)
             .tooltip(false);
 
     protected final FishingPlugin plugin;
     protected final GuiAction<InventoryClickEvent> EMPTY = event -> {};
-
     protected final String name;
     protected String title;
     protected int rows;
     protected Map<String, GuiItem> items;
     protected Map<String, GuiItem> extraItems;
     protected int pageSize;
+
+    protected T gui;
 
     /**
      * Creates a new plugin menu instance, with the specified name
@@ -47,6 +51,7 @@ public abstract class PluginMenu implements Configurable {
         this.items = new HashMap<>();
         this.extraItems = new HashMap<>();
         this.pageSize = 0;
+        this.gui = null;
     }
 
     /**
@@ -54,8 +59,13 @@ public abstract class PluginMenu implements Configurable {
      *
      * @return The created GUI
      */
-    public Gui createRegular() {
-        return Gui.gui().disableAllInteractions().title(Component.text(this.title)).rows(this.rows).create();
+    @SuppressWarnings("unchecked")
+    public T createRegular() {
+        return this.gui = (T) Gui.gui()
+                .title(Component.text(this.title))
+                .rows(this.rows)
+                .disableAllInteractions()
+                .create();
     }
 
     /**
@@ -63,45 +73,71 @@ public abstract class PluginMenu implements Configurable {
      *
      * @return The created GUI
      */
-    public PaginatedGui createPaginated() {
-        return Gui.paginated().disableAllInteractions()
+    @SuppressWarnings("unchecked")
+    public T createPaginated() {
+        return this.gui = (T) Gui.paginated().disableAllInteractions()
                 .title(Component.text(this.title))
                 .rows(this.rows)
                 .create();
     }
 
     /**
-     * Place the items in the GUI
-     *
-     * @param gui The GUI to place the items in
+     * Place additional items in the GUI that are not part of the function of the menu
      */
-    public void placeExtras(BaseGui gui) {
-        this.extraItems.forEach((key, value) -> value.place(gui, EMPTY));
+    public void placeExtras(StringPlaceholders placeholders) {
+        if (this.gui == null) {
+            FishingPlugin.get().getLogger().warning("Failed to place extra items in menu: " + this.name + ". GUI is null.");
+            return;
+        }
+
+        this.extraItems.forEach((key, value) -> value.place(this.gui, placeholders, EMPTY));
+    }
+    
+    /**
+     * Place the item in the GUI
+     *
+     * @param key The key of the item to place
+     */
+    public void placeItem(String key) {
+        this.placeItem(key, StringPlaceholders.empty(), EMPTY);
     }
 
     /**
      * Place the item in the GUI
      *
-     * @param gui      The GUI to place the item in
+     * @param key          The key of the item to place
+     * @param placeholders The placeholders to apply to the item
+     */
+    public void placeItem(String key, StringPlaceholders placeholders) {
+        this.placeItem(key, placeholders, EMPTY);
+    }
+    
+    /**
+     * Place the item in the GUI
+     *
      * @param key      The key of the item to place
      * @param function The function to run when the item is clicked
      */
-    public void placeItem(BaseGui gui, String key, GuiAction<InventoryClickEvent> function) {
-        this.placeItem(gui, key, StringPlaceholders.empty(), function);
+    public void placeItem(String key, GuiAction<InventoryClickEvent> function) {
+        this.placeItem(key, StringPlaceholders.empty(), function);
     }
 
     /**
      * Place the item in the GUI
      *
-     * @param gui          The GUI to place the item in
      * @param key          The key of the item to place
      * @param placeholders The placeholders to apply to the item
      * @param function     The function to run when the item is clicked
      */
-    public void placeItem(BaseGui gui, String key, StringPlaceholders placeholders, GuiAction<InventoryClickEvent> function) {
+    public void placeItem(String key, StringPlaceholders placeholders, GuiAction<InventoryClickEvent> function) {
         GuiItem item = this.items.get(key.toLowerCase());
         if (item == null) {
             FishingPlugin.get().getLogger().warning("Failed to place item with key: " + key + " in menu: " + this.name + ". Item not found.");
+            return;
+        }
+
+        if (this.gui == null) {
+            FishingPlugin.get().getLogger().warning("Failed to place extra items in menu: " + this.name + ". GUI is null.");
             return;
         }
 
@@ -136,7 +172,7 @@ public abstract class PluginMenu implements Configurable {
 
                 GuiItem guiItem = new GuiItem();
                 guiItem.loadSettings(item);
-                this.items.put(guiItem.name().toLowerCase(), guiItem);
+                this.items.put(key.toLowerCase(), guiItem);
             });
         }
 
@@ -181,6 +217,30 @@ public abstract class PluginMenu implements Configurable {
             CommentedConfigurationSection item = this.pullSection(extraItems, key);
             value.saveSettings(item);
         });
+    }
+
+    /**
+     *
+     */
+    @Override
+    public void reload() {
+        FishingPlugin plugin = FishingPlugin.get();
+        Path path = this.configPath();
+        File targetFile = new File(this.parentFolder(), path.toString());
+
+        try {
+            // Create the file if it doesn't exist, set the defaults
+            if (!targetFile.exists()) {
+                plugin.saveResource(path.toString(), false);
+                plugin.getLogger().info("Created a new file at path " + this.configPath()); // TODO: Remove... perhaps
+            }
+
+            // Load the configuration file
+            CommentedFileConfiguration config = CommentedFileConfiguration.loadConfiguration(targetFile);
+            this.loadSettings(config);
+        } catch (Exception ex) {
+            plugin.getLogger().warning("Configurable: There was an error loading the config file at path " + this.configPath() + ": " + ex.getMessage());
+        }
     }
 
     /**

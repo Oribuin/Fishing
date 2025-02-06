@@ -174,6 +174,13 @@ public class Totem implements AsyncTicker {
         // Create spawning particles around the totem
         long startTime = System.currentTimeMillis();
         Bukkit.getScheduler().runTaskTimerAsynchronously(FishingPlugin.get(), task -> {
+            
+            // Remove the task if the entity or center is null
+            if (this.entity == null || this.center == null) {
+                task.cancel();
+                return;
+            }
+            
             // if longer than 3 seconds cancel
             if (System.currentTimeMillis() - startTime > Duration.ofSeconds(5).toMillis()) {
                 task.cancel();
@@ -275,7 +282,7 @@ public class Totem implements AsyncTicker {
                 .add("cooldown", FishUtils.formatTime(this.cooldown.toMillis()))
                 .add("active", this.active ? "Yes" : "No")
                 .add("timer", FishUtils.formatTime(this.duration.toMillis() - (System.currentTimeMillis() - this.lastActive)))
-                .add("cooldownTimer", FishUtils.formatTime(this.cooldown.toMillis() - (System.currentTimeMillis() - this.lastActive)))
+                .add("cooldown_timer", FishUtils.formatTime(this.cooldown.toMillis() - (System.currentTimeMillis() - this.lastActive)))
                 .build();
 
     }

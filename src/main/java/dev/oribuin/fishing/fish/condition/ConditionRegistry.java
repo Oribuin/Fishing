@@ -26,6 +26,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * The registry for all the catch conditions in the fishing plugin
+ */
 public class ConditionRegistry {
 
     private static final Set<Class<? extends CatchCondition>> CONDITIONS = new HashSet<>();
@@ -58,6 +61,7 @@ public class ConditionRegistry {
     /**
      * Load all the conditions from a configuration section and return them as a list
      *
+     * @param fish The fish to load the conditions for
      * @param base The configuration section to load the conditions from
      *
      * @return The condition list

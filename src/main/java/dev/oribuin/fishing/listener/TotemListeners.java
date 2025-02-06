@@ -66,6 +66,7 @@ public class TotemListeners implements Listener {
         Location center = relative.getLocation().toCenterLocation();
         totem.spawn(center);
 
+        event.getItem().setAmount(event.getItem().getAmount() - 1);
         this.plugin.getManager(TotemManager.class).registerTotem(totem);
         event.getPlayer().sendMessage("Totem placed.");
     }
@@ -85,17 +86,30 @@ public class TotemListeners implements Listener {
 
         event.setCancelled(true);
 
-        if (event.getPlayer().isSneaking()) {
-            totem.entity().remove(); // Remove the totem entity
-            manager.unregisterTotem(totem); // Unregister the totem
-            event.getPlayer().sendMessage("Totem removed."); // Send the player a message
+        if (!event.getPlayer().isSneaking()) {
+            TotemMainMenu.open(totem, event.getPlayer());
             return;
         }
 
-        TotemMainMenu menu = MenuManager.from(TotemMainMenu.class);
-        if (menu == null) return;
+        // Remove the totem if the player is the owner
+        if (!event.getPlayer().getUniqueId().equals(totem.owner())) {
+            event.getPlayer().sendMessage("You cannot remove your own totem.");
+            return;
+        }
 
-        menu.open(totem, event.getPlayer());
+        if (event.getPlayer().getInventory().firstEmpty() == -1) {
+            event.getPlayer().sendMessage("Your inventory is full.");
+            return;
+        }
+
+        totem.entity().remove(); // Remove the totem entity
+        manager.unregisterTotem(totem); // Unregister the totem
+        event.getPlayer().sendMessage("Totem removed."); // Send the player a message
+
+        ItemStack itemStack = Totem.DEFAULT_ITEM.build(totem.placeholders()); // TODO: Load the item from the configuration
+        totem.saveTo(itemStack);
+
+        event.getPlayer().getInventory().addItem(itemStack);
     }
 
     /**
