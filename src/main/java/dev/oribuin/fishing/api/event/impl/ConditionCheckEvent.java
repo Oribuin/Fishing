@@ -1,5 +1,6 @@
 package dev.oribuin.fishing.api.event.impl;
 
+import dev.oribuin.fishing.model.fish.condition.CatchCondition;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
@@ -8,7 +9,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import dev.oribuin.fishing.model.fish.condition.CatchCondition;
 
 /**
  * This event determines the result of a condition check, which can be modified by other conditions.

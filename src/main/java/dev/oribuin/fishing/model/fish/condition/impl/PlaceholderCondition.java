@@ -1,8 +1,8 @@
 package dev.oribuin.fishing.model.fish.condition.impl;
 
-import dev.oribuin.fishing.model.fish.condition.CatchCondition;
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import dev.oribuin.fishing.model.fish.Fish;
+import dev.oribuin.fishing.model.fish.condition.CatchCondition;
 import dev.oribuin.fishing.model.fish.condition.ConditionRegistry;
 import dev.oribuin.fishing.model.fish.condition.PlaceholderCheck;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;

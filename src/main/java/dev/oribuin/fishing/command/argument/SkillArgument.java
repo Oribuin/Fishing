@@ -1,12 +1,12 @@
 package dev.oribuin.fishing.command.argument;
 
+import dev.oribuin.fishing.model.skill.Skill;
+import dev.oribuin.fishing.model.skill.SkillRegistry;
 import dev.rosewood.rosegarden.command.framework.Argument;
 import dev.rosewood.rosegarden.command.framework.ArgumentHandler;
 import dev.rosewood.rosegarden.command.framework.CommandContext;
 import dev.rosewood.rosegarden.command.framework.InputIterator;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
-import dev.oribuin.fishing.model.skill.Skill;
-import dev.oribuin.fishing.model.skill.SkillRegistry;
 
 import java.util.List;
 

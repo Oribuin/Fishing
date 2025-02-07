@@ -1,15 +1,15 @@
 package dev.oribuin.fishing.command.impl.admin;
 
+import dev.oribuin.fishing.command.impl.admin.give.GiveAugmentCommand;
+import dev.oribuin.fishing.command.impl.admin.give.GiveFishCommand;
+import dev.oribuin.fishing.command.impl.admin.give.GiveTotemCommand;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.command.framework.ArgumentsDefinition;
 import dev.rosewood.rosegarden.command.framework.BaseRoseCommand;
 import dev.rosewood.rosegarden.command.framework.CommandInfo;
-import dev.oribuin.fishing.command.impl.admin.give.GiveAugmentCommand;
-import dev.oribuin.fishing.command.impl.admin.give.GiveFishCommand;
-import dev.oribuin.fishing.command.impl.admin.give.GiveTotemCommand;
 
 public class GiveCommand extends BaseRoseCommand {
-    
+
     /**
      * Create a new command instance with the provided plugin instance.
      *

@@ -1,10 +1,10 @@
 package dev.oribuin.fishing.manager;
 
-import dev.rosewood.rosegarden.RosePlugin;
-import dev.rosewood.rosegarden.manager.Manager;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.gui.PluginMenu;
 import dev.oribuin.fishing.gui.totem.TotemMainMenu;
+import dev.rosewood.rosegarden.RosePlugin;
+import dev.rosewood.rosegarden.manager.Manager;
 
 import java.util.HashMap;
 import java.util.Map;

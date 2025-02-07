@@ -2,7 +2,14 @@ package dev.oribuin.fishing.model.totem;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import com.jeff_media.morepersistentdatatypes.DataType;
+import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.api.task.AsyncTicker;
+import dev.oribuin.fishing.manager.TotemManager;
+import dev.oribuin.fishing.model.item.ItemConstruct;
 import dev.oribuin.fishing.model.item.ItemRegistry;
+import dev.oribuin.fishing.storage.util.PersistKeys;
+import dev.oribuin.fishing.util.FishUtils;
+import dev.oribuin.fishing.util.math.MathL;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import io.papermc.paper.math.Rotations;
 import net.kyori.adventure.text.Component;
@@ -17,13 +24,6 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
-import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.api.task.AsyncTicker;
-import dev.oribuin.fishing.manager.TotemManager;
-import dev.oribuin.fishing.storage.util.PersistKeys;
-import dev.oribuin.fishing.util.FishUtils;
-import dev.oribuin.fishing.model.item.ItemConstruct;
-import dev.oribuin.fishing.util.math.MathL;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -174,13 +174,13 @@ public class Totem implements AsyncTicker {
         // Create spawning particles around the totem
         long startTime = System.currentTimeMillis();
         Bukkit.getScheduler().runTaskTimerAsynchronously(FishingPlugin.get(), task -> {
-            
+
             // Remove the task if the entity or center is null
             if (this.entity == null || this.entity.isDead() || this.center == null) {
                 task.cancel();
                 return;
             }
-            
+
             // if longer than 3 seconds cancel
             if (System.currentTimeMillis() - startTime > Duration.ofSeconds(5).toMillis()) {
                 task.cancel();

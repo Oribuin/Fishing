@@ -1,11 +1,11 @@
 package dev.oribuin.fishing.api.recipe.type;
 
+import dev.oribuin.fishing.api.recipe.RecipeItem;
+import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import dev.oribuin.fishing.api.recipe.RecipeItem;
-import dev.oribuin.fishing.util.FishUtils;
 
 public class MaterialRecipeItem extends RecipeItem<Material> {
 

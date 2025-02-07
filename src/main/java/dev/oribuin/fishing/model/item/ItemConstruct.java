@@ -1,5 +1,11 @@
 package dev.oribuin.fishing.model.item;
 
+import dev.oribuin.fishing.config.Configurable;
+import dev.oribuin.fishing.model.item.component.ItemEdible;
+import dev.oribuin.fishing.model.item.component.ItemEffect;
+import dev.oribuin.fishing.model.item.component.ItemEnchant;
+import dev.oribuin.fishing.model.item.component.ItemTexture;
+import dev.oribuin.fishing.model.item.component.ItemValue;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
@@ -11,12 +17,6 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-import dev.oribuin.fishing.config.Configurable;
-import dev.oribuin.fishing.model.item.component.ItemEdible;
-import dev.oribuin.fishing.model.item.component.ItemEffect;
-import dev.oribuin.fishing.model.item.component.ItemEnchant;
-import dev.oribuin.fishing.model.item.component.ItemTexture;
-import dev.oribuin.fishing.model.item.component.ItemValue;
 
 import java.util.ArrayList;
 import java.util.List;

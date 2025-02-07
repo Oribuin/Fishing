@@ -1,18 +1,18 @@
 package dev.oribuin.fishing.listener;
 
+import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
+import dev.oribuin.fishing.augment.AugmentRegistry;
+import dev.oribuin.fishing.manager.DataManager;
+import dev.oribuin.fishing.manager.FishManager;
+import dev.oribuin.fishing.manager.LocaleManager;
+import dev.oribuin.fishing.model.fish.Fish;
+import dev.oribuin.fishing.storage.Fisher;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
-import dev.oribuin.fishing.augment.AugmentRegistry;
-import dev.oribuin.fishing.model.fish.Fish;
-import dev.oribuin.fishing.manager.FishManager;
-import dev.oribuin.fishing.manager.DataManager;
-import dev.oribuin.fishing.manager.LocaleManager;
-import dev.oribuin.fishing.storage.Fisher;
 
 import java.util.List;
 

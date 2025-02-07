@@ -1,12 +1,12 @@
 package dev.oribuin.fishing.api.event.impl;
 
+import dev.oribuin.fishing.model.fish.Fish;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import dev.oribuin.fishing.model.fish.Fish;
 
 import java.util.Map;
 
@@ -54,6 +54,7 @@ public class FishGutEvent extends PlayerEvent implements Cancellable {
     public void setEntropy(int entropy) {
         this.entropy = entropy;
     }
+
     /**
      * Get the handlers for this event class
      *

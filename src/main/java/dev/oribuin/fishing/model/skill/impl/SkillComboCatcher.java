@@ -1,15 +1,15 @@
 package dev.oribuin.fishing.model.skill.impl;
 
-import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
 import dev.oribuin.fishing.model.skill.Skill;
 import dev.oribuin.fishing.util.FishUtils;
+import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.util.HashMap;

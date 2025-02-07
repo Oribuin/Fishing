@@ -1,9 +1,9 @@
 package dev.oribuin.fishing.config;
 
+import dev.oribuin.fishing.FishingPlugin;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.RoseSetting;
 import dev.rosewood.rosegarden.config.RoseSettingSerializer;
-import dev.oribuin.fishing.FishingPlugin;
 
 import java.util.ArrayList;
 import java.util.List;

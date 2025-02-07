@@ -1,10 +1,10 @@
 package dev.oribuin.fishing.model.economy;
 
+import dev.oribuin.fishing.config.Configurable;
+import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
-import dev.oribuin.fishing.config.Configurable;
-import dev.oribuin.fishing.util.FishUtils;
 
 public class Cost implements Currency, Configurable {
 

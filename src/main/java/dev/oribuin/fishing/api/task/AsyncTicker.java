@@ -1,8 +1,8 @@
 package dev.oribuin.fishing.api.task;
 
+import dev.oribuin.fishing.FishingPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
-import dev.oribuin.fishing.FishingPlugin;
 
 import java.time.Duration;
 

@@ -1,11 +1,11 @@
 package dev.oribuin.fishing.model.fish;
 
 import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.model.fish.condition.CatchCondition;
-import dev.oribuin.fishing.config.Configurable;
 import dev.oribuin.fishing.augment.Augment;
-import dev.oribuin.fishing.model.fish.condition.ConditionRegistry;
+import dev.oribuin.fishing.config.Configurable;
 import dev.oribuin.fishing.manager.TierManager;
+import dev.oribuin.fishing.model.fish.condition.CatchCondition;
+import dev.oribuin.fishing.model.fish.condition.ConditionRegistry;
 import dev.oribuin.fishing.storage.util.PersistKeys;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;

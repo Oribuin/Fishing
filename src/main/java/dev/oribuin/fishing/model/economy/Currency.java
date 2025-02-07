@@ -1,10 +1,10 @@
 package dev.oribuin.fishing.model.economy;
 
-import org.bukkit.OfflinePlayer;
-import org.jetbrains.annotations.NotNull;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.manager.DataManager;
 import dev.oribuin.fishing.storage.Fisher;
+import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 
 public interface Currency {
 

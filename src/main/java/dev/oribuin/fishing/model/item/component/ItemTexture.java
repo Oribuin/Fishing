@@ -1,22 +1,23 @@
 package dev.oribuin.fishing.model.item.component;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
+import dev.oribuin.fishing.config.Configurable;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import io.papermc.paper.datacomponent.item.ResolvableProfile;
 import org.bukkit.Bukkit;
 import org.bukkit.profile.PlayerTextures;
 import org.jetbrains.annotations.NotNull;
-import dev.oribuin.fishing.config.Configurable;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Base64;
 import java.util.UUID;
 
-@SuppressWarnings({"UnstableApiUsage", "deprecation"})
+@SuppressWarnings({ "UnstableApiUsage", "deprecation" })
 public final class ItemTexture implements Configurable {
 
     private String texture;
+
     /**
      * Define the player head texture of an item
      *

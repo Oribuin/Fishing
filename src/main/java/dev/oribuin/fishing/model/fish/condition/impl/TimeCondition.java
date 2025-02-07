@@ -1,14 +1,14 @@
 package dev.oribuin.fishing.model.fish.condition.impl;
 
+import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
+import dev.oribuin.fishing.model.fish.Fish;
+import dev.oribuin.fishing.model.fish.condition.CatchCondition;
 import dev.oribuin.fishing.model.fish.condition.Time;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import dev.oribuin.fishing.model.fish.condition.CatchCondition;
-import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
-import dev.oribuin.fishing.model.fish.Fish;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Calendar;

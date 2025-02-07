@@ -1,9 +1,9 @@
 package dev.oribuin.fishing.model.economy.impl;
 
+import dev.oribuin.fishing.model.economy.Currency;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import dev.oribuin.fishing.model.economy.Currency;
 
 public class PlayerExpCurrency implements Currency {
 

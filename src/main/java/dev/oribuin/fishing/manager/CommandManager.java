@@ -1,10 +1,10 @@
 package dev.oribuin.fishing.manager;
 
+import dev.oribuin.fishing.command.FishCommand;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.command.framework.BaseRoseCommand;
 import dev.rosewood.rosegarden.manager.AbstractCommandManager;
 import org.jetbrains.annotations.NotNull;
-import dev.oribuin.fishing.command.FishCommand;
 
 import java.util.List;
 import java.util.function.Function;

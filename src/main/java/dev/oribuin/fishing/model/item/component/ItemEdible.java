@@ -1,9 +1,9 @@
 package dev.oribuin.fishing.model.item.component;
 
+import dev.oribuin.fishing.config.Configurable;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import io.papermc.paper.datacomponent.item.FoodProperties;
 import org.jetbrains.annotations.NotNull;
-import dev.oribuin.fishing.config.Configurable;
 
 @SuppressWarnings("UnstableApiUsage")
 public final class ItemEdible implements Configurable {

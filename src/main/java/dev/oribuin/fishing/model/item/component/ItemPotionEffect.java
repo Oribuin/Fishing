@@ -1,13 +1,13 @@
 package dev.oribuin.fishing.model.item.component;
 
+import dev.oribuin.fishing.config.Configurable;
+import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
-import dev.oribuin.fishing.config.Configurable;
-import dev.oribuin.fishing.util.FishUtils;
 
 public final class ItemPotionEffect implements Configurable {
 

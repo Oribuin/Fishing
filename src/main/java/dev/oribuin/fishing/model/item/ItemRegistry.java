@@ -1,8 +1,8 @@
 package dev.oribuin.fishing.model.item;
 
 import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.config.Configurable;
 import dev.oribuin.fishing.augment.Augment;
+import dev.oribuin.fishing.config.Configurable;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
@@ -25,7 +25,7 @@ public final class ItemRegistry implements Configurable {
         ItemRegistry registry = new ItemRegistry();
         registry.reload();
     }
-    
+
     /**
      * Register a custom item to the registry
      *
@@ -47,7 +47,7 @@ public final class ItemRegistry implements Configurable {
         try {
             if (CUSTOM_ITEMS.containsKey(key.toUpperCase())) return CUSTOM_ITEMS.get(key.toUpperCase());
             // TODO: Check if item is from Oraxen/Nexo/MythicMobs whatever plugin
-            
+
             Field field = ItemRegistry.class.getDeclaredField(key.toUpperCase());
             return (ItemConstruct) field.get(null);
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -89,15 +89,15 @@ public final class ItemRegistry implements Configurable {
                 FishingPlugin.get().getLogger().warning("Failed to load item: [" + field.getName() + "]. Error: " + e.getMessage());
             }
         }
-        
+
         // Load custom items from the configuration file
         CommentedConfigurationSection customItems = config.getConfigurationSection("custom-items");
         if (customItems == null) return;
-        
+
         customItems.getKeys(false).forEach(key -> {
             CommentedConfigurationSection section = customItems.getConfigurationSection(key);
             if (section == null) return;
-            
+
             CUSTOM_ITEMS.put(key.toUpperCase(), ItemConstruct.deserialize(section));
         });
     }
@@ -128,7 +128,7 @@ public final class ItemRegistry implements Configurable {
                 FishingPlugin.get().getLogger().warning("Failed to save item: [" + field.getName() + "]. Error: " + e.getMessage());
             }
         }
-        
+
         // Save custom items to the configuration file
         CommentedConfigurationSection customItems = this.pullSection(config, "custom-items");
         CUSTOM_ITEMS.forEach((key, item) -> {

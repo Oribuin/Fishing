@@ -1,13 +1,13 @@
 package dev.oribuin.fishing.listener;
 
+import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.manager.DataManager;
+import dev.oribuin.fishing.storage.Fisher;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.manager.DataManager;
-import dev.oribuin.fishing.storage.Fisher;
 
 import java.util.concurrent.CompletableFuture;
 

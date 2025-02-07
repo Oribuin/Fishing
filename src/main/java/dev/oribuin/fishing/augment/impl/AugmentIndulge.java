@@ -1,12 +1,12 @@
 package dev.oribuin.fishing.augment.impl;
 
-import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
-import org.jetbrains.annotations.NotNull;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
 import dev.oribuin.fishing.augment.Augment;
 import dev.oribuin.fishing.util.FishUtils;
+import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 

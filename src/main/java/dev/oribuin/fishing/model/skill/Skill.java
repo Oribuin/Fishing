@@ -1,13 +1,13 @@
 package dev.oribuin.fishing.model.skill;
 
 
+import dev.oribuin.fishing.api.event.FishEventHandler;
+import dev.oribuin.fishing.config.Configurable;
+import dev.oribuin.fishing.manager.DataManager;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import dev.oribuin.fishing.config.Configurable;
-import dev.oribuin.fishing.api.event.FishEventHandler;
-import dev.oribuin.fishing.manager.DataManager;
 
 import java.nio.file.Path;
 import java.util.List;

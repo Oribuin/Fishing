@@ -1,10 +1,10 @@
 package dev.oribuin.fishing.config;
 
+import dev.oribuin.fishing.FishingPlugin;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import dev.oribuin.fishing.FishingPlugin;
 
 import java.io.File;
 import java.io.IOException;

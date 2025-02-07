@@ -1,14 +1,14 @@
 package dev.oribuin.fishing.manager;
 
+import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
+import dev.oribuin.fishing.model.fish.Fish;
+import dev.oribuin.fishing.model.fish.Tier;
+import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.manager.Manager;
 import org.jetbrains.annotations.Nullable;
-import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
-import dev.oribuin.fishing.model.fish.Fish;
-import dev.oribuin.fishing.model.fish.Tier;
-import dev.oribuin.fishing.util.FishUtils;
 
 import java.io.File;
 import java.util.ArrayList;

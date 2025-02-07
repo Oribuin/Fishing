@@ -1,8 +1,8 @@
 package dev.oribuin.fishing.storage;
 
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import dev.oribuin.fishing.config.Setting;
 import dev.oribuin.fishing.util.FishUtils;
+import dev.rosewood.rosegarden.utils.StringPlaceholders;
 
 import java.util.HashMap;
 import java.util.Map;

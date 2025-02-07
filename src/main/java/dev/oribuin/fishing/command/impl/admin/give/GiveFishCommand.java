@@ -1,5 +1,7 @@
 package dev.oribuin.fishing.command.impl.admin.give;
 
+import dev.oribuin.fishing.command.argument.FishArgument;
+import dev.oribuin.fishing.model.fish.Fish;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.command.argument.ArgumentHandlers;
 import dev.rosewood.rosegarden.command.framework.ArgumentsDefinition;
@@ -10,11 +12,9 @@ import dev.rosewood.rosegarden.command.framework.annotation.RoseExecutable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import dev.oribuin.fishing.command.argument.FishArgument;
-import dev.oribuin.fishing.model.fish.Fish;
 
 public class GiveFishCommand extends BaseRoseCommand {
-    
+
     /**
      * Create a new command instance with the provided plugin instance.
      *

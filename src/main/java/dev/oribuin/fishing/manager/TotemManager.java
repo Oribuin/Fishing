@@ -1,13 +1,13 @@
 package dev.oribuin.fishing.manager;
 
+import dev.oribuin.fishing.model.totem.Totem;
+import dev.oribuin.fishing.storage.util.FinePosition;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.manager.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.scheduler.BukkitTask;
-import dev.oribuin.fishing.storage.util.FinePosition;
-import dev.oribuin.fishing.model.totem.Totem;
 
 import java.time.Duration;
 import java.util.HashMap;

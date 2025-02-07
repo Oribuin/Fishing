@@ -1,15 +1,15 @@
 package dev.oribuin.fishing.manager;
 
-import dev.rosewood.rosegarden.RosePlugin;
-import dev.rosewood.rosegarden.manager.Manager;
-import org.bukkit.entity.FishHook;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
 import dev.oribuin.fishing.augment.Augment;
 import dev.oribuin.fishing.augment.AugmentRegistry;
 import dev.oribuin.fishing.model.fish.Fish;
+import dev.rosewood.rosegarden.RosePlugin;
+import dev.rosewood.rosegarden.manager.Manager;
+import org.bukkit.entity.FishHook;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;

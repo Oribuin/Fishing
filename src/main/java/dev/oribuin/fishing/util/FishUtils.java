@@ -1,5 +1,6 @@
 package dev.oribuin.fishing.util;
 
+import dev.oribuin.fishing.FishingPlugin;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.hook.PlaceholderAPIHook;
 import dev.rosewood.rosegarden.utils.HexUtils;
@@ -15,7 +16,6 @@ import org.bukkit.Color;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import dev.oribuin.fishing.FishingPlugin;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -353,7 +353,9 @@ public final class FishUtils {
 
     /**
      * Format every word in a string to be capitalized
+     *
      * @param str The string to format
+     *
      * @return The formatted string
      */
     public static String capitalizeFully(String str) {

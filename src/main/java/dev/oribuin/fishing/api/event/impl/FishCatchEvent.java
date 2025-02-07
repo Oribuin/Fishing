@@ -1,5 +1,8 @@
 package dev.oribuin.fishing.api.event.impl;
 
+import dev.oribuin.fishing.augment.Augment;
+import dev.oribuin.fishing.augment.AugmentRegistry;
+import dev.oribuin.fishing.model.fish.Fish;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
@@ -10,9 +13,6 @@ import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import dev.oribuin.fishing.augment.Augment;
-import dev.oribuin.fishing.augment.AugmentRegistry;
-import dev.oribuin.fishing.model.fish.Fish;
 
 import java.util.Map;
 

@@ -1,9 +1,9 @@
 package dev.oribuin.fishing.model.item.component;
 
+import dev.oribuin.fishing.config.Configurable;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import org.bukkit.Color;
 import org.jetbrains.annotations.NotNull;
-import dev.oribuin.fishing.config.Configurable;
 
 public class ItemColor implements Configurable {
 
@@ -82,9 +82,9 @@ public class ItemColor implements Configurable {
         if (hex == null || hex.isEmpty()) return null;
 
         return Color.fromRGB(
-            Integer.valueOf(hex.substring(1, 3), 16),
-            Integer.valueOf(hex.substring(3, 5), 16),
-            Integer.valueOf(hex.substring(5, 7), 16)
+                Integer.valueOf(hex.substring(1, 3), 16),
+                Integer.valueOf(hex.substring(3, 5), 16),
+                Integer.valueOf(hex.substring(5, 7), 16)
         );
     }
 

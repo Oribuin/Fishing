@@ -1,11 +1,11 @@
 package dev.oribuin.fishing.model.economy.impl;
 
+import dev.oribuin.fishing.model.economy.Currency;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
-import dev.oribuin.fishing.model.economy.Currency;
 
 public class VaultCurrency implements Currency {
 

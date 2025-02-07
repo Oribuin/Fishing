@@ -1,5 +1,8 @@
 package dev.oribuin.fishing.api.gui;
 
+import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.config.Configurable;
+import dev.oribuin.fishing.model.item.ItemConstruct;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
@@ -10,9 +13,6 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
-import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.config.Configurable;
-import dev.oribuin.fishing.model.item.ItemConstruct;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -90,7 +90,7 @@ public abstract class PluginMenu<T extends BaseGui> implements Configurable {
 
         this.extraItems.forEach((key, value) -> value.place(this.gui, placeholders, EMPTY));
     }
-    
+
     /**
      * Place the item in the GUI
      *
@@ -109,7 +109,7 @@ public abstract class PluginMenu<T extends BaseGui> implements Configurable {
     public void placeItem(String key, StringPlaceholders placeholders) {
         this.placeItem(key, placeholders, EMPTY);
     }
-    
+
     /**
      * Place the item in the GUI
      *

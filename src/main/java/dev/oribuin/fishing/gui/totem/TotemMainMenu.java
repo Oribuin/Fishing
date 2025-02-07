@@ -1,13 +1,13 @@
 package dev.oribuin.fishing.gui.totem;
 
+import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.api.gui.PluginMenu;
 import dev.oribuin.fishing.manager.MenuManager;
+import dev.oribuin.fishing.model.totem.Totem;
 import dev.triumphteam.gui.guis.Gui;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.api.gui.PluginMenu;
-import dev.oribuin.fishing.model.totem.Totem;
 
 public class TotemMainMenu extends PluginMenu<Gui> {
 
@@ -30,7 +30,7 @@ public class TotemMainMenu extends PluginMenu<Gui> {
 
         Gui gui = menu.createRegular();
         menu.placeExtras(totem.placeholders());
-        
+
         Bukkit.getScheduler().runTaskTimerAsynchronously(FishingPlugin.get(), task -> {
             if (gui.getInventory().getViewers().isEmpty()) {
                 task.cancel();

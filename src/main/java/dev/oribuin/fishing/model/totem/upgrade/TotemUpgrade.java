@@ -1,10 +1,10 @@
 package dev.oribuin.fishing.model.totem.upgrade;
 
-import org.jetbrains.annotations.NotNull;
+import dev.oribuin.fishing.api.event.FishEventHandler;
 import dev.oribuin.fishing.config.Configurable;
 import dev.oribuin.fishing.model.economy.Cost;
-import dev.oribuin.fishing.api.event.FishEventHandler;
 import dev.oribuin.fishing.model.totem.Totem;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 

@@ -1,7 +1,7 @@
 package dev.oribuin.fishing.storage.util;
 
-import org.bukkit.NamespacedKey;
 import dev.oribuin.fishing.FishingPlugin;
+import org.bukkit.NamespacedKey;
 
 public class PersistKeys {
 

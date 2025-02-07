@@ -1,12 +1,12 @@
 package dev.oribuin.fishing.model.item.component;
 
+import dev.oribuin.fishing.config.Configurable;
+import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import io.papermc.paper.datacomponent.item.ItemEnchantments;
 import io.papermc.paper.registry.RegistryKey;
 import org.bukkit.enchantments.Enchantment;
 import org.jetbrains.annotations.NotNull;
-import dev.oribuin.fishing.config.Configurable;
-import dev.oribuin.fishing.util.FishUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -114,9 +114,9 @@ public final class ItemEnchant implements Configurable {
     @Override
     public String toString() {
         return "ItemEnchant{" +
-                "enchantments=" + enchantments +
-                ", tooltip=" + tooltip +
-                '}';
+               "enchantments=" + enchantments +
+               ", tooltip=" + tooltip +
+               '}';
     }
 
     public Map<Enchantment, Integer> enchantments() {

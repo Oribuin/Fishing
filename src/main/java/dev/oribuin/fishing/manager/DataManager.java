@@ -1,14 +1,14 @@
 package dev.oribuin.fishing.manager;
 
 import com.google.gson.Gson;
+import dev.oribuin.fishing.database.migration._1_CreateInitialTables;
+import dev.oribuin.fishing.storage.Fisher;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.database.DataMigration;
 import dev.rosewood.rosegarden.manager.AbstractDataManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import dev.oribuin.fishing.database.migration._1_CreateInitialTables;
-import dev.oribuin.fishing.storage.Fisher;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

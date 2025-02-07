@@ -1,5 +1,8 @@
 package dev.oribuin.fishing.command.impl;
 
+import dev.oribuin.fishing.augment.Augment;
+import dev.oribuin.fishing.augment.AugmentRegistry;
+import dev.oribuin.fishing.command.argument.AugmentArgument;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.command.argument.ArgumentHandlers;
 import dev.rosewood.rosegarden.command.framework.ArgumentsDefinition;
@@ -10,9 +13,6 @@ import dev.rosewood.rosegarden.command.framework.annotation.RoseExecutable;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import dev.oribuin.fishing.augment.Augment;
-import dev.oribuin.fishing.augment.AugmentRegistry;
-import dev.oribuin.fishing.command.argument.AugmentArgument;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,9 +1,9 @@
 package dev.oribuin.fishing.api.recipe;
 
+import dev.oribuin.fishing.config.Configurable;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import dev.oribuin.fishing.config.Configurable;
 
 public abstract class RecipeItem<T> implements Configurable {
 

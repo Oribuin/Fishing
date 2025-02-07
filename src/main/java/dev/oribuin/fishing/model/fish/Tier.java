@@ -1,14 +1,14 @@
 package dev.oribuin.fishing.model.fish;
 
+import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.config.Configurable;
+import dev.oribuin.fishing.model.item.ItemConstruct;
+import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
-import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.config.Configurable;
-import dev.oribuin.fishing.util.FishUtils;
-import dev.oribuin.fishing.model.item.ItemConstruct;
 
 import java.io.File;
 import java.nio.file.Path;

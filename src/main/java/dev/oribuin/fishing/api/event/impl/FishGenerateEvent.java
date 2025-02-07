@@ -1,5 +1,13 @@
 package dev.oribuin.fishing.api.event.impl;
 
+import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.augment.Augment;
+import dev.oribuin.fishing.augment.AugmentRegistry;
+import dev.oribuin.fishing.manager.TierManager;
+import dev.oribuin.fishing.model.fish.Fish;
+import dev.oribuin.fishing.model.fish.Tier;
+import dev.oribuin.fishing.model.fish.condition.ConditionRegistry;
+import dev.oribuin.fishing.util.FishUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
@@ -9,14 +17,6 @@ import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.augment.Augment;
-import dev.oribuin.fishing.augment.AugmentRegistry;
-import dev.oribuin.fishing.model.fish.Fish;
-import dev.oribuin.fishing.model.fish.Tier;
-import dev.oribuin.fishing.model.fish.condition.ConditionRegistry;
-import dev.oribuin.fishing.manager.TierManager;
-import dev.oribuin.fishing.util.FishUtils;
 
 import java.util.ArrayList;
 import java.util.List;

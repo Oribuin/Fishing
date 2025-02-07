@@ -1,22 +1,21 @@
 package dev.oribuin.fishing.api.recipe.type;
 
+import dev.oribuin.fishing.api.recipe.RecipeItem;
+import dev.oribuin.fishing.augment.Augment;
+import dev.oribuin.fishing.augment.AugmentRegistry;
+import dev.oribuin.fishing.storage.util.PersistKeys;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
-import dev.oribuin.fishing.api.recipe.RecipeItem;
-import dev.oribuin.fishing.augment.Augment;
-import dev.oribuin.fishing.augment.AugmentRegistry;
-import dev.oribuin.fishing.storage.util.PersistKeys;
 
 public class AugmentRecipeItem extends RecipeItem<Augment> {
 
     public AugmentRecipeItem() {
         super(Augment.class);
     }
-    
-    
+
 
     /**
      * Check if the item is the same as the recipe item

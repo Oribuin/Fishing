@@ -1,14 +1,14 @@
 package dev.oribuin.fishing.command;
 
+import dev.oribuin.fishing.command.impl.ApplyCommand;
+import dev.oribuin.fishing.command.impl.MenuCommand;
+import dev.oribuin.fishing.command.impl.admin.GiveCommand;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.command.HelpCommand;
 import dev.rosewood.rosegarden.command.ReloadCommand;
 import dev.rosewood.rosegarden.command.framework.ArgumentsDefinition;
 import dev.rosewood.rosegarden.command.framework.BaseRoseCommand;
 import dev.rosewood.rosegarden.command.framework.CommandInfo;
-import dev.oribuin.fishing.command.impl.ApplyCommand;
-import dev.oribuin.fishing.command.impl.MenuCommand;
-import dev.oribuin.fishing.command.impl.admin.GiveCommand;
 
 public class FishCommand extends BaseRoseCommand {
 

@@ -1,8 +1,8 @@
 package dev.oribuin.fishing.model.item.component;
 
+import dev.oribuin.fishing.config.Configurable;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import org.jetbrains.annotations.NotNull;
-import dev.oribuin.fishing.config.Configurable;
 
 /**
  * Defines a config option that has the choice to be a tooltip or not
@@ -18,7 +18,7 @@ public class ItemValue<T> implements Configurable {
     /**
      * Create a new item value with a type
      *
-     * @param def  The default value of the item value
+     * @param def The default value of the item value
      */
     public ItemValue(T def) {
         this.value = def;

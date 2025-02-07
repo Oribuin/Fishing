@@ -1,5 +1,15 @@
 package dev.oribuin.fishing.augment;
 
+import dev.oribuin.fishing.api.event.FishEventHandler;
+import dev.oribuin.fishing.augment.impl.AugmentBiomeBlend;
+import dev.oribuin.fishing.augment.impl.AugmentEnlightened;
+import dev.oribuin.fishing.augment.impl.AugmentFineSlicing;
+import dev.oribuin.fishing.augment.impl.AugmentGenius;
+import dev.oribuin.fishing.augment.impl.AugmentHotspot;
+import dev.oribuin.fishing.augment.impl.AugmentIndulge;
+import dev.oribuin.fishing.augment.impl.AugmentIntuition;
+import dev.oribuin.fishing.augment.impl.AugmentRainDance;
+import dev.oribuin.fishing.util.math.RomanNumber;
 import dev.rosewood.rosegarden.utils.HexUtils;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.event.Event;
@@ -7,16 +17,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import dev.oribuin.fishing.api.event.FishEventHandler;
-import dev.oribuin.fishing.augment.impl.AugmentBiomeBlend;
-import dev.oribuin.fishing.augment.impl.AugmentRainDance;
-import dev.oribuin.fishing.augment.impl.AugmentHotspot;
-import dev.oribuin.fishing.augment.impl.AugmentGenius;
-import dev.oribuin.fishing.augment.impl.AugmentIntuition;
-import dev.oribuin.fishing.augment.impl.AugmentFineSlicing;
-import dev.oribuin.fishing.augment.impl.AugmentEnlightened;
-import dev.oribuin.fishing.augment.impl.AugmentIndulge;
-import dev.oribuin.fishing.util.math.RomanNumber;
 
 import java.util.ArrayList;
 import java.util.Comparator;
