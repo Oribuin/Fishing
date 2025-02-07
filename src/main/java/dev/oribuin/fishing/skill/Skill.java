@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import dev.oribuin.fishing.api.config.Configurable;
 import dev.oribuin.fishing.api.event.FishEventHandler;
-import dev.oribuin.fishing.manager.base.DataManager;
+import dev.oribuin.fishing.manager.DataManager;
 
 import java.nio.file.Path;
 import java.util.List;

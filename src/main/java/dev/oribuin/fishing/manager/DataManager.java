@@ -1,4 +1,4 @@
-package dev.oribuin.fishing.manager.base;
+package dev.oribuin.fishing.manager;
 
 import com.google.gson.Gson;
 import dev.rosewood.rosegarden.RosePlugin;

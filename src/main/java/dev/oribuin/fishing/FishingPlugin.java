@@ -15,9 +15,9 @@ import dev.oribuin.fishing.manager.FishManager;
 import dev.oribuin.fishing.manager.MenuManager;
 import dev.oribuin.fishing.manager.TierManager;
 import dev.oribuin.fishing.manager.TotemManager;
-import dev.oribuin.fishing.manager.base.CommandManager;
-import dev.oribuin.fishing.manager.base.DataManager;
-import dev.oribuin.fishing.manager.base.LocaleManager;
+import dev.oribuin.fishing.manager.CommandManager;
+import dev.oribuin.fishing.manager.DataManager;
+import dev.oribuin.fishing.manager.LocaleManager;
 import dev.oribuin.fishing.skill.SkillRegistry;
 
 import java.util.List;

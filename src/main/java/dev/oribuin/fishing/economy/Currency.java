@@ -3,7 +3,7 @@ package dev.oribuin.fishing.economy;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.manager.base.DataManager;
+import dev.oribuin.fishing.manager.DataManager;
 import dev.oribuin.fishing.storage.Fisher;
 
 public interface Currency {

@@ -10,8 +10,8 @@ import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
 import dev.oribuin.fishing.augment.AugmentRegistry;
 import dev.oribuin.fishing.fish.Fish;
 import dev.oribuin.fishing.manager.FishManager;
-import dev.oribuin.fishing.manager.base.DataManager;
-import dev.oribuin.fishing.manager.base.LocaleManager;
+import dev.oribuin.fishing.manager.DataManager;
+import dev.oribuin.fishing.manager.LocaleManager;
 import dev.oribuin.fishing.storage.Fisher;
 
 import java.util.List;

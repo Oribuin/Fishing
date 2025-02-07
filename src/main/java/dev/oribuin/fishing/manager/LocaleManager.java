@@ -1,4 +1,4 @@
-package dev.oribuin.fishing.manager.base;
+package dev.oribuin.fishing.manager;
 
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.manager.AbstractLocaleManager;

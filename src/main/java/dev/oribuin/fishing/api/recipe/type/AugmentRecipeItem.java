@@ -15,6 +15,8 @@ public class AugmentRecipeItem extends RecipeItem<Augment> {
     public AugmentRecipeItem() {
         super(Augment.class);
     }
+    
+    
 
     /**
      * Check if the item is the same as the recipe item
