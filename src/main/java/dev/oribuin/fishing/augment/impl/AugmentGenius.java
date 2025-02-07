@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Increases the base minecraft xp earned from catching fish.
  */
-public class AugmentIntellect extends Augment {
+public class AugmentGenius extends Augment {
 
     private String formula = "%level% * 0.05";
 
@@ -21,8 +21,8 @@ public class AugmentIntellect extends Augment {
      * <p>
      * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
      */
-    public AugmentIntellect() {
-        super("intellect", "&7Increases the base minecraft xp", "&7earned from catching fish.");
+    public AugmentGenius() {
+        super("genius", "&7Increases the base minecraft xp", "&7earned from catching fish.");
 
         this.maxLevel(3);
         this.register(FishCatchEvent.class, this::onFishCatch);
@@ -92,7 +92,7 @@ public class AugmentIntellect extends Augment {
     @Override
     public List<String> comments() {
         return List.of(
-                "Augment [Sage] - Increases the base plugin xp earned from catching fish.",
+                "Augment [Genius] - Increases the base plugin xp earned from catching fish.",
                 "",
                 "formula: The formula to calculate the additional xp earned per level"
         );
