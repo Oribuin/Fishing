@@ -15,7 +15,7 @@ import dev.oribuin.fishing.augment.impl.AugmentIntellect;
 import dev.oribuin.fishing.augment.impl.AugmentPerception;
 import dev.oribuin.fishing.augment.impl.AugmentPrecisionCutting;
 import dev.oribuin.fishing.augment.impl.AugmentSage;
-import dev.oribuin.fishing.augment.impl.AugmentSaturate;
+import dev.oribuin.fishing.augment.impl.AugmentIndulge;
 import dev.oribuin.fishing.util.math.RomanNumber;
 
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public class AugmentRegistry {
         register(new AugmentPerception());
         register(new AugmentPrecisionCutting());
         register(new AugmentSage());
-        register(new AugmentSaturate());
+        register(new AugmentIndulge());
     }
 
     /**

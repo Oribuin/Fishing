@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Increases the player's saturation level when they catch a fish.
  */
-public class AugmentSaturate extends Augment {
+public class AugmentIndulge extends Augment {
 
     private String chanceFormula = "%level% * 0.15"; // 15% per level
     private float saturation = 5.0f;
@@ -23,8 +23,8 @@ public class AugmentSaturate extends Augment {
      * <p>
      * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
      */
-    public AugmentSaturate() {
-        super("saturate", "&7Fully saturates the player", "&7when they catch a fish");
+    public AugmentIndulge() {
+        super("indulge", "&7Restores a player's saturation", "&7when they catch a fish");
 
         this.maxLevel(3);
         this.register(InitialFishCatchEvent.class, this::onInitialCatch);
@@ -101,7 +101,7 @@ public class AugmentSaturate extends Augment {
     @Override
     public List<String> comments() {
         return List.of(
-                "Augment [Saturate] - Fully saturates the player when they catch a fish",
+                "Augment [Indulge] - Fully saturates the player when they catch a fish",
                 "",
                 "chance-formula: The formula to calculate the chance of the player being fully saturated",
                 "saturation: The saturation level to set the player to"
