@@ -74,6 +74,7 @@ processResources {
 javadoc {
     options {
         links("https://jd.papermc.io/paper/${spigotVersion}/")
+        links("https://www.javadoc.io/doc/dev.triumphteam/triumph-gui/${triumphVersion}/")
 
         addStringOption("encoding", "UTF-8")
         addStringOption("docencoding", "UTF-8")
