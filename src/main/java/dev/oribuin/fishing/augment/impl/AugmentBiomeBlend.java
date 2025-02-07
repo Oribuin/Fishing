@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @see dev.oribuin.fishing.fish.condition.impl.BiomeCondition Where the condition is checked
  */
-public class AugmentBiomeDisrupt extends Augment {
+public class AugmentBiomeBlend extends Augment {
 
     private String chanceFormula = "%level% * 0.15"; // 20% per level
 
@@ -25,8 +25,8 @@ public class AugmentBiomeDisrupt extends Augment {
      * <p>
      * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
      */
-    public AugmentBiomeDisrupt() {
-        super("biome_disruption", "&7When a player catches a fish, there is", "&7a chance to ignore the biome restrictions.");
+    public AugmentBiomeBlend() {
+        super("biome_Blend", "&7When a player catches a fish, there is", "&7a chance to ignore the biome restrictions.");
 
         this.maxLevel(3);
         this.register(ConditionCheckEvent.class, this::onConditionCheck);
@@ -99,7 +99,7 @@ public class AugmentBiomeDisrupt extends Augment {
     @Override
     public List<String> comments() {
         return List.of(
-                "Augment [Biome Disruption] - When a player catches a fish, there is a chance to ignore the biome restrictions.",
+                "Augment [Biome Blend] - When a player catches a fish, there is a chance to ignore the biome restrictions.",
                 "",
                 "chance-formula: The formula to calculate the chance to ignore the biome restrictions"
         );

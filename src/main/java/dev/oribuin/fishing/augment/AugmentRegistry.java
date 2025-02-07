@@ -8,7 +8,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import dev.oribuin.fishing.api.event.FishEventHandler;
-import dev.oribuin.fishing.augment.impl.AugmentBiomeDisrupt;
+import dev.oribuin.fishing.augment.impl.AugmentBiomeBlend;
 import dev.oribuin.fishing.augment.impl.AugmentCallOfTheSea;
 import dev.oribuin.fishing.augment.impl.AugmentHotspot;
 import dev.oribuin.fishing.augment.impl.AugmentIntellect;
@@ -52,7 +52,7 @@ public class AugmentRegistry {
     public static void init() {
         augments.clear();
 
-        register(new AugmentBiomeDisrupt());
+        register(new AugmentBiomeBlend());
         register(new AugmentCallOfTheSea());
         register(new AugmentHotspot());
         register(new AugmentIntellect());
