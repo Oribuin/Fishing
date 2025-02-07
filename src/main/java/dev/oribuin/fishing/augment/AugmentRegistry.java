@@ -14,7 +14,7 @@ import dev.oribuin.fishing.augment.impl.AugmentHotspot;
 import dev.oribuin.fishing.augment.impl.AugmentIntellect;
 import dev.oribuin.fishing.augment.impl.AugmentPerception;
 import dev.oribuin.fishing.augment.impl.AugmentPrecisionCutting;
-import dev.oribuin.fishing.augment.impl.AugmentSage;
+import dev.oribuin.fishing.augment.impl.AugmentEnlightened;
 import dev.oribuin.fishing.augment.impl.AugmentIndulge;
 import dev.oribuin.fishing.util.math.RomanNumber;
 
@@ -58,7 +58,7 @@ public class AugmentRegistry {
         register(new AugmentIntellect());
         register(new AugmentPerception());
         register(new AugmentPrecisionCutting());
-        register(new AugmentSage());
+        register(new AugmentEnlightened());
         register(new AugmentIndulge());
     }
 

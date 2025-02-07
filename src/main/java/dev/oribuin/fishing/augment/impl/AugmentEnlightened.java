@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Increases the base plugin xp earned from catching fish.
  */
-public class AugmentSage extends Augment {
+public class AugmentEnlightened extends Augment {
 
     private String formula = "(%entropy% + %level%) * 0.03";
 
@@ -21,8 +21,8 @@ public class AugmentSage extends Augment {
      * <p>
      * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
      */
-    public AugmentSage() {
-        super("sage", "&7Increases the base plugin xp", "&7earned from catching fish.");
+    public AugmentEnlightened() {
+        super("enlightened", "&7Increases the base plugin xp", "&7earned from catching fish.");
 
         this.maxLevel(5);
         this.register(FishCatchEvent.class, this::onFishCatch);
@@ -89,7 +89,7 @@ public class AugmentSage extends Augment {
     @Override
     public List<String> comments() {
         return List.of(
-                "Augment [Sage] - Increases the base plugin xp earned from catching fish.",
+                "Augment [Enlightened] - Increases the base plugin xp earned from catching fish.",
                 "",
                 "formula: The formula to calculate the additional xp earned per level"
         );
