@@ -6,15 +6,13 @@ import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.BaseGui;
 import dev.triumphteam.gui.guis.Gui;
-import dev.triumphteam.gui.guis.PaginatedGui;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.checkerframework.common.returnsreceiver.qual.This;
 import org.jetbrains.annotations.NotNull;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.config.Configurable;
-import dev.oribuin.fishing.util.ItemConstruct;
+import dev.oribuin.fishing.item.ItemConstruct;
 
 import java.io.File;
 import java.nio.file.Path;

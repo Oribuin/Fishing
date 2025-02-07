@@ -1,4 +1,4 @@
-package dev.oribuin.fishing.util.item;
+package dev.oribuin.fishing.item.component;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import io.papermc.paper.datacomponent.item.FoodProperties;

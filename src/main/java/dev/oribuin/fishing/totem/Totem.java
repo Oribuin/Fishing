@@ -2,6 +2,7 @@ package dev.oribuin.fishing.totem;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import com.jeff_media.morepersistentdatatypes.DataType;
+import dev.oribuin.fishing.item.ItemRegistry;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import io.papermc.paper.math.Rotations;
 import net.kyori.adventure.text.Component;
@@ -21,7 +22,7 @@ import dev.oribuin.fishing.api.task.AsyncTicker;
 import dev.oribuin.fishing.manager.TotemManager;
 import dev.oribuin.fishing.storage.util.PersistKeys;
 import dev.oribuin.fishing.util.FishUtils;
-import dev.oribuin.fishing.util.ItemConstruct;
+import dev.oribuin.fishing.item.ItemConstruct;
 import dev.oribuin.fishing.util.math.MathL;
 
 import java.time.Duration;
@@ -34,7 +35,6 @@ public class Totem implements AsyncTicker {
     private static final Duration PARTICLE_DELAY = Duration.ofSeconds(1);
 
     private static final String TEXTURE = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmY2MjRhNDRlNzdiOTVkYmUxY2M3MzU1MzY5NTNlODQwYmE2YzE5YjAxNTdjNTQ5ZDliODI1MzQ2NDhjOGNlNCJ9fX0=";
-    public static final ItemConstruct DEFAULT_ITEM = defaultItem();
 
     private final UUID owner;
     private String ownerName; // The name of the owner
@@ -160,7 +160,7 @@ public class Totem implements AsyncTicker {
             result.setCustomNameVisible(true);
             result.setPersistent(true);
             result.customName(Component.text(this.ownerName + "'s Totem")); // TODO: Allow configurable name
-            result.setItem(EquipmentSlot.HEAD, DEFAULT_ITEM.build());
+            result.setItem(EquipmentSlot.HEAD, ItemRegistry.FISHING_TOTEM.build());
 
             // Lock all the slots
             for (EquipmentSlot slot : EquipmentSlot.values()) {
@@ -176,7 +176,7 @@ public class Totem implements AsyncTicker {
         Bukkit.getScheduler().runTaskTimerAsynchronously(FishingPlugin.get(), task -> {
             
             // Remove the task if the entity or center is null
-            if (this.entity == null || this.center == null) {
+            if (this.entity == null || this.entity.isDead() || this.center == null) {
                 task.cancel();
                 return;
             }
@@ -434,8 +434,10 @@ public class Totem implements AsyncTicker {
 
     public void entity(ArmorStand entity) {
         this.entity = entity;
-        this.center = entity.getLocation();
-        this.bounds = this.bounds();
+        if (entity != null) {
+            this.center = entity.getLocation();
+            this.bounds = this.bounds();
+        }
     }
 
     /**

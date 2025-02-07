@@ -1,5 +1,6 @@
-package dev.oribuin.fishing.util;
+package dev.oribuin.fishing.item;
 
+import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import io.papermc.paper.datacomponent.DataComponentTypes;
@@ -11,11 +12,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import dev.oribuin.fishing.api.config.Configurable;
-import dev.oribuin.fishing.util.item.ItemEdible;
-import dev.oribuin.fishing.util.item.ItemEffect;
-import dev.oribuin.fishing.util.item.ItemEnchant;
-import dev.oribuin.fishing.util.item.ItemTexture;
-import dev.oribuin.fishing.util.item.ItemValue;
+import dev.oribuin.fishing.item.component.ItemEdible;
+import dev.oribuin.fishing.item.component.ItemEffect;
+import dev.oribuin.fishing.item.component.ItemEnchant;
+import dev.oribuin.fishing.item.component.ItemTexture;
+import dev.oribuin.fishing.item.component.ItemValue;
 
 import java.util.ArrayList;
 import java.util.List;

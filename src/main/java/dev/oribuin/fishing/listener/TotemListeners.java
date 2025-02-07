@@ -1,5 +1,6 @@
 package dev.oribuin.fishing.listener;
 
+import dev.oribuin.fishing.item.ItemRegistry;
 import io.papermc.paper.event.packet.PlayerChunkLoadEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -103,10 +104,11 @@ public class TotemListeners implements Listener {
         }
 
         totem.entity().remove(); // Remove the totem entity
+        totem.entity(null); // Set the totem entity to null
         manager.unregisterTotem(totem); // Unregister the totem
         event.getPlayer().sendMessage("Totem removed."); // Send the player a message
 
-        ItemStack itemStack = Totem.DEFAULT_ITEM.build(totem.placeholders()); // TODO: Load the item from the configuration
+        ItemStack itemStack = ItemRegistry.FISHING_TOTEM.build(totem.placeholders()); // TODO: Load the item from the configuration
         totem.saveTo(itemStack);
 
         event.getPlayer().getInventory().addItem(itemStack);

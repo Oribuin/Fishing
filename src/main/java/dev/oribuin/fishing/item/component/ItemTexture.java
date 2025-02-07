@@ -1,40 +1,29 @@
-package dev.oribuin.fishing.util.item;
+package dev.oribuin.fishing.item.component;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import io.papermc.paper.datacomponent.item.ItemEnchantments;
-import io.papermc.paper.registry.RegistryKey;
-import org.bukkit.enchantments.Enchantment;
+import io.papermc.paper.datacomponent.item.ResolvableProfile;
+import org.bukkit.Bukkit;
+import org.bukkit.profile.PlayerTextures;
 import org.jetbrains.annotations.NotNull;
 import dev.oribuin.fishing.api.config.Configurable;
-import dev.oribuin.fishing.util.FishUtils;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Base64;
+import java.util.UUID;
 
-@SuppressWarnings("UnstableApiUsage")
-public final class ItemEnchant implements Configurable {
+@SuppressWarnings({"UnstableApiUsage", "deprecation"})
+public final class ItemTexture implements Configurable {
 
-    private Map<Enchantment, Integer> enchantments;
-    private boolean tooltip;
-
+    private String texture;
     /**
-     * Define the enchants of an item
+     * Define the player head texture of an item
      *
-     * @param enchantment The enchantment to apply
-     * @param level       The level of the enchantment
+     * @param texture The base64 texture of the player head
      */
-    public ItemEnchant(Enchantment enchantment, int level) {
-        this.enchantments = new HashMap<>();
-        this.enchantments.put(enchantment, level);
-        this.tooltip = true;
-    }
-
-    /**
-     * Define the texture of an item that can be enchanted
-     */
-    public ItemEnchant() {
-        this.enchantments = new HashMap<>();
-        this.tooltip = true;
+    public ItemTexture(String texture) {
+        this.texture = texture;
     }
 
     /**
@@ -42,8 +31,21 @@ public final class ItemEnchant implements Configurable {
      *
      * @return The potion effect
      */
-    public ItemEnchantments create() {
-        return ItemEnchantments.itemEnchantments(this.enchantments, this.tooltip);
+    public ResolvableProfile create() {
+        try {
+            PlayerProfile playerProfile = Bukkit.createProfile(UUID.nameUUIDFromBytes(texture.getBytes()), "");
+            PlayerTextures playerTextures = playerProfile.getTextures();
+
+            String decodedTextureJson = new String(Base64.getDecoder().decode(texture));
+            String decodedTextureUrl = decodedTextureJson.substring(28, decodedTextureJson.length() - 4);
+
+            playerTextures.setSkin(new URL(decodedTextureUrl));
+            playerProfile.setTextures(playerTextures);
+
+            return ResolvableProfile.resolvableProfile(playerProfile);
+        } catch (MalformedURLException | NullPointerException ex) {
+            return ResolvableProfile.resolvableProfile().build();
+        }
     }
 
     /**
@@ -53,10 +55,8 @@ public final class ItemEnchant implements Configurable {
      *
      * @return The potion effect
      */
-    public static ItemEnchant of(CommentedConfigurationSection config) {
-        ItemEnchant effect = new ItemEnchant(Enchantment.SHARPNESS, 1);
-        effect.loadSettings(config);
-        return effect;
+    public static ItemTexture of(CommentedConfigurationSection config) {
+        return new ItemTexture(config.getString("texture"));
     }
 
     /**
@@ -71,11 +71,7 @@ public final class ItemEnchant implements Configurable {
      */
     @Override
     public void saveSettings(@NotNull CommentedConfigurationSection config) {
-        config.set("tooltip", this.tooltip);
-        this.enchantments.forEach((enchantment, level) ->
-                config.set("enchantments." + enchantment.key().namespace(), level)
-        );
-
+        config.set("texture", this.texture);
     }
 
     /**
@@ -95,17 +91,7 @@ public final class ItemEnchant implements Configurable {
      */
     @Override
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        this.tooltip = config.getBoolean("tooltip", true);
-
-        CommentedConfigurationSection enchantments = config.getConfigurationSection("enchantments");
-        if (enchantments == null) return;
-
-        for (String key : enchantments.getKeys(false)) {
-            Enchantment enchantment = FishUtils.REGISTRY.getRegistry(RegistryKey.ENCHANTMENT).get(FishUtils.key(key));
-            if (enchantment == null) continue;
-
-            this.enchantments.put(enchantment, enchantments.getInt(key));
-        }
+        this.texture = config.getString("texture");
     }
 
     /**
@@ -113,26 +99,15 @@ public final class ItemEnchant implements Configurable {
      */
     @Override
     public String toString() {
-        return "ItemEnchant{" +
-                "enchantments=" + enchantments +
-                ", tooltip=" + tooltip +
-                '}';
+        return String.format("ItemTexture{texture='%s'}", texture);
     }
 
-    public Map<Enchantment, Integer> enchantments() {
-        return enchantments;
+    public String texture() {
+        return texture;
     }
 
-    public void enchantments(Map<Enchantment, Integer> enchantments) {
-        this.enchantments = enchantments;
-    }
-
-    public boolean tooltip() {
-        return tooltip;
-    }
-
-    public void tooltip(boolean tooltip) {
-        this.tooltip = tooltip;
+    public void texture(String texture) {
+        this.texture = texture;
     }
 
 }

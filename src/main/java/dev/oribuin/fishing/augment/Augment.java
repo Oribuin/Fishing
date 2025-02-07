@@ -13,7 +13,7 @@ import dev.oribuin.fishing.api.event.FishEventHandler;
 import dev.oribuin.fishing.economy.Cost;
 import dev.oribuin.fishing.economy.Currencies;
 import dev.oribuin.fishing.util.FishUtils;
-import dev.oribuin.fishing.util.ItemConstruct;
+import dev.oribuin.fishing.item.ItemConstruct;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

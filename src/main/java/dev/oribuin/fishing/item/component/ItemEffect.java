@@ -1,4 +1,4 @@
-package dev.oribuin.fishing.util.item;
+package dev.oribuin.fishing.item.component;
 
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import io.papermc.paper.datacomponent.item.PotionContents;
@@ -6,7 +6,6 @@ import org.bukkit.Color;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import dev.oribuin.fishing.api.config.Configurable;
-import dev.oribuin.fishing.util.item.wrapper.ItemPotionEffect;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,5 +1,6 @@
 package dev.oribuin.fishing.command.impl.admin.give;
 
+import dev.oribuin.fishing.item.ItemRegistry;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.command.argument.ArgumentHandlers;
 import dev.rosewood.rosegarden.command.framework.ArgumentsDefinition;
@@ -36,7 +37,7 @@ public class GiveTotemCommand extends BaseRoseCommand {
             return;
         }
 
-        ItemStack itemStack = Totem.DEFAULT_ITEM.build(totem.placeholders());
+        ItemStack itemStack = ItemRegistry.FISHING_TOTEM.build(totem.placeholders());
         totem.saveTo(itemStack);
 
         target.getInventory().addItem(itemStack);

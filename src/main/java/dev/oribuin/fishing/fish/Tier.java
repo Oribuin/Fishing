@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.config.Configurable;
 import dev.oribuin.fishing.util.FishUtils;
-import dev.oribuin.fishing.util.ItemConstruct;
+import dev.oribuin.fishing.item.ItemConstruct;
 
 import java.io.File;
 import java.nio.file.Path;

@@ -1,5 +1,6 @@
 package dev.oribuin.fishing;
 
+import dev.oribuin.fishing.item.ItemRegistry;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.config.RoseSetting;
 import dev.rosewood.rosegarden.manager.Manager;
@@ -53,6 +54,7 @@ public class FishingPlugin extends RosePlugin {
 
         SkillRegistry.init();
         AugmentRegistry.init();
+        ItemRegistry.init();
     }
 
     @Override
