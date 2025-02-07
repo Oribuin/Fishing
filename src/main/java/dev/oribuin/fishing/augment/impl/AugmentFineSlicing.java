@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Increases the base plugin entropy earned from gutting fish.
  */
-public class AugmentPrecisionCutting extends Augment {
+public class AugmentFineSlicing extends Augment {
 
     private String formula = "(%entropy% + %level%) * 0.05";
 
@@ -21,8 +21,8 @@ public class AugmentPrecisionCutting extends Augment {
      * <p>
      * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
      */
-    public AugmentPrecisionCutting() {
-        super("precision_cutting", "&7Increases the entropy ", "&7gained from gutting fish.");
+    public AugmentFineSlicing() {
+        super("fine_slicing", "&7Increases the entropy ", "&7gained from gutting fish.");
 
         this.maxLevel(12);
         this.register(FishGutEvent.class, this::onFishGut);
@@ -88,7 +88,7 @@ public class AugmentPrecisionCutting extends Augment {
     @Override
     public List<String> comments() {
         return List.of(
-                "Augment [Precision Cutting] - Increases the entropy gained from gutting fish.",
+                "Augment [Fine Slicing] - Increases the entropy gained from gutting fish.",
                 "",
                 "formula: The formula to calculate the additional entropy earned per level"
         );
