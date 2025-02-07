@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * When it is raining, there is a chance to catch multiple fish in a single catch.
  */
-public class AugmentCallOfTheSea extends Augment {
+public class AugmentRainDance extends Augment {
 
     private String chanceFormula = "%level% * 0.05"; // 5% per level
     private int minFish = 1;
@@ -26,8 +26,8 @@ public class AugmentCallOfTheSea extends Augment {
      * <p>
      * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
      */
-    public AugmentCallOfTheSea() {
-        super("call_of_the_sea", "&7Increases the amount of fish", "&7caught when the weather is raining");
+    public AugmentRainDance() {
+        super("rain_dance", "&7Increases the amount of fish", "&7caught when the weather is raining");
 
         this.maxLevel(15);
         this.register(InitialFishCatchEvent.class, this::onInitialCatch);
@@ -108,7 +108,7 @@ public class AugmentCallOfTheSea extends Augment {
     @Override
     public List<String> comments() {
         return List.of(
-                "Augment [Call Of The Sea] - When it is raining, there is a chance to catch multiple fish",
+                "Augment [Rain Dance] - When it is raining, there is a chance to catch multiple fish",
                 "in a single catch.",
                 "",
                 "chance-formula: The formula to calculate the chance this augment triggers",

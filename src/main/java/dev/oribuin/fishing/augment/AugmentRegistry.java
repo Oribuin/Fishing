@@ -9,7 +9,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import dev.oribuin.fishing.api.event.FishEventHandler;
 import dev.oribuin.fishing.augment.impl.AugmentBiomeBlend;
-import dev.oribuin.fishing.augment.impl.AugmentCallOfTheSea;
+import dev.oribuin.fishing.augment.impl.AugmentRainDance;
 import dev.oribuin.fishing.augment.impl.AugmentHotspot;
 import dev.oribuin.fishing.augment.impl.AugmentIntellect;
 import dev.oribuin.fishing.augment.impl.AugmentPerception;
@@ -53,7 +53,7 @@ public class AugmentRegistry {
         augments.clear();
 
         register(new AugmentBiomeBlend());
-        register(new AugmentCallOfTheSea());
+        register(new AugmentRainDance());
         register(new AugmentHotspot());
         register(new AugmentIntellect());
         register(new AugmentPerception());
