@@ -12,7 +12,7 @@ import dev.oribuin.fishing.augment.impl.AugmentBiomeBlend;
 import dev.oribuin.fishing.augment.impl.AugmentRainDance;
 import dev.oribuin.fishing.augment.impl.AugmentHotspot;
 import dev.oribuin.fishing.augment.impl.AugmentIntellect;
-import dev.oribuin.fishing.augment.impl.AugmentPerception;
+import dev.oribuin.fishing.augment.impl.AugmentIntuition;
 import dev.oribuin.fishing.augment.impl.AugmentPrecisionCutting;
 import dev.oribuin.fishing.augment.impl.AugmentEnlightened;
 import dev.oribuin.fishing.augment.impl.AugmentIndulge;
@@ -56,7 +56,7 @@ public class AugmentRegistry {
         register(new AugmentRainDance());
         register(new AugmentHotspot());
         register(new AugmentIntellect());
-        register(new AugmentPerception());
+        register(new AugmentIntuition());
         register(new AugmentPrecisionCutting());
         register(new AugmentEnlightened());
         register(new AugmentIndulge());

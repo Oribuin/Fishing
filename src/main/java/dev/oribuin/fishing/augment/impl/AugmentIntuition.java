@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Increases the entropy earned from catching fish, based on the level of the augment.
  */
-public class AugmentPerception extends Augment {
+public class AugmentIntuition extends Augment {
 
     private String formula = "(%entropy% + %level%) * 0.05";
 
@@ -21,8 +21,8 @@ public class AugmentPerception extends Augment {
      * <p>
      * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
      */
-    public AugmentPerception() {
-        super("perception", "&7Increases the entropy ", "&7earned from catching fish.");
+    public AugmentIntuition() {
+        super("Intuition", "&7Increases the entropy ", "&7earned from catching fish.");
 
         this.maxLevel(5);
         this.register(FishCatchEvent.class, this::onFishCatch);
@@ -92,7 +92,7 @@ public class AugmentPerception extends Augment {
     @Override
     public List<String> comments() {
         return List.of(
-                "Augment [Perception] - Increases the base entropy earned from catching fish.",
+                "Augment [Intuition] - Increases the base entropy earned from catching fish.",
                 "",
                 "formula: The formula to calculate the additional entropy earned per level"
         );
