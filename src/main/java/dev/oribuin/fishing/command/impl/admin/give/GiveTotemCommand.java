@@ -1,6 +1,6 @@
 package dev.oribuin.fishing.command.impl.admin.give;
 
-import dev.oribuin.fishing.item.ItemRegistry;
+import dev.oribuin.fishing.model.item.ItemRegistry;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.command.argument.ArgumentHandlers;
 import dev.rosewood.rosegarden.command.framework.ArgumentsDefinition;
@@ -11,7 +11,7 @@ import dev.rosewood.rosegarden.command.framework.annotation.RoseExecutable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import dev.oribuin.fishing.totem.Totem;
+import dev.oribuin.fishing.model.totem.Totem;
 
 public class GiveTotemCommand extends BaseRoseCommand {
     

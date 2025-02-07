@@ -2,13 +2,12 @@ package dev.oribuin.fishing.gui.totem;
 
 import dev.oribuin.fishing.manager.MenuManager;
 import dev.triumphteam.gui.guis.Gui;
-import dev.triumphteam.gui.guis.PaginatedGui;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.gui.PluginMenu;
-import dev.oribuin.fishing.totem.Totem;
+import dev.oribuin.fishing.model.totem.Totem;
 
 public class TotemMainMenu extends PluginMenu<Gui> {
 

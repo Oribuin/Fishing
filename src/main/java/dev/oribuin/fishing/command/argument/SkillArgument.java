@@ -5,8 +5,8 @@ import dev.rosewood.rosegarden.command.framework.ArgumentHandler;
 import dev.rosewood.rosegarden.command.framework.CommandContext;
 import dev.rosewood.rosegarden.command.framework.InputIterator;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
-import dev.oribuin.fishing.skill.Skill;
-import dev.oribuin.fishing.skill.SkillRegistry;
+import dev.oribuin.fishing.model.skill.Skill;
+import dev.oribuin.fishing.model.skill.SkillRegistry;
 
 import java.util.List;
 

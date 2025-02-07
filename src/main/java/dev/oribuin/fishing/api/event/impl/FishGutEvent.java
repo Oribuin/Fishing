@@ -6,7 +6,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import dev.oribuin.fishing.fish.Fish;
+import dev.oribuin.fishing.model.fish.Fish;
 
 import java.util.Map;
 

@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
 import dev.oribuin.fishing.augment.Augment;
-import dev.oribuin.fishing.fish.condition.Weather;
+import dev.oribuin.fishing.model.fish.condition.Weather;
 import dev.oribuin.fishing.util.FishUtils;
 
 import java.util.List;

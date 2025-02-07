@@ -7,7 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.scheduler.BukkitTask;
 import dev.oribuin.fishing.storage.util.FinePosition;
-import dev.oribuin.fishing.totem.Totem;
+import dev.oribuin.fishing.model.totem.Totem;
 
 import java.time.Duration;
 import java.util.HashMap;

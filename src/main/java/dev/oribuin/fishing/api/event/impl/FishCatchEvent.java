@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import dev.oribuin.fishing.augment.Augment;
 import dev.oribuin.fishing.augment.AugmentRegistry;
-import dev.oribuin.fishing.fish.Fish;
+import dev.oribuin.fishing.model.fish.Fish;
 
 import java.util.Map;
 

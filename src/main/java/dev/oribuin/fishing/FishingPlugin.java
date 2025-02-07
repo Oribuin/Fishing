@@ -1,6 +1,6 @@
 package dev.oribuin.fishing;
 
-import dev.oribuin.fishing.item.ItemRegistry;
+import dev.oribuin.fishing.model.item.ItemRegistry;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.config.RoseSetting;
 import dev.rosewood.rosegarden.manager.Manager;
@@ -18,7 +18,7 @@ import dev.oribuin.fishing.manager.TotemManager;
 import dev.oribuin.fishing.manager.CommandManager;
 import dev.oribuin.fishing.manager.DataManager;
 import dev.oribuin.fishing.manager.LocaleManager;
-import dev.oribuin.fishing.skill.SkillRegistry;
+import dev.oribuin.fishing.model.skill.SkillRegistry;
 
 import java.util.List;
 

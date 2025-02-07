@@ -8,12 +8,12 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
 import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.api.config.Configurable;
+import dev.oribuin.fishing.config.Configurable;
 import dev.oribuin.fishing.api.event.FishEventHandler;
-import dev.oribuin.fishing.economy.Cost;
-import dev.oribuin.fishing.economy.Currencies;
+import dev.oribuin.fishing.model.economy.Cost;
+import dev.oribuin.fishing.model.economy.Currencies;
 import dev.oribuin.fishing.util.FishUtils;
-import dev.oribuin.fishing.item.ItemConstruct;
+import dev.oribuin.fishing.model.item.ItemConstruct;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

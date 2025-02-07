@@ -8,7 +8,7 @@ import org.bukkit.inventory.PlayerInventory;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
 import dev.oribuin.fishing.augment.AugmentRegistry;
-import dev.oribuin.fishing.fish.Fish;
+import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.manager.FishManager;
 import dev.oribuin.fishing.manager.DataManager;
 import dev.oribuin.fishing.manager.LocaleManager;

@@ -6,7 +6,7 @@ import dev.rosewood.rosegarden.command.framework.CommandContext;
 import dev.rosewood.rosegarden.command.framework.InputIterator;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.fish.Tier;
+import dev.oribuin.fishing.model.fish.Tier;
 import dev.oribuin.fishing.manager.TierManager;
 
 import java.util.List;

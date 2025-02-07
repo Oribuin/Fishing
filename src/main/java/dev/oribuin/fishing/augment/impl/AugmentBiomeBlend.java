@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.augment.Augment;
-import dev.oribuin.fishing.fish.condition.impl.BiomeCondition;
+import dev.oribuin.fishing.model.fish.condition.impl.BiomeCondition;
 import dev.oribuin.fishing.util.FishUtils;
 
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * When a player catches a fish, there is a chance to ignore the biome restrictions.
  *
- * @see dev.oribuin.fishing.fish.condition.impl.BiomeCondition Where the condition is checked
+ * @see dev.oribuin.fishing.model.fish.condition.impl.BiomeCondition Where the condition is checked
  */
 public class AugmentBiomeBlend extends Augment {
 

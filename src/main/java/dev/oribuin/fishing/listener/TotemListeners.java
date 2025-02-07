@@ -1,6 +1,6 @@
 package dev.oribuin.fishing.listener;
 
-import dev.oribuin.fishing.item.ItemRegistry;
+import dev.oribuin.fishing.model.item.ItemRegistry;
 import io.papermc.paper.event.packet.PlayerChunkLoadEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,9 +18,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.gui.totem.TotemMainMenu;
-import dev.oribuin.fishing.manager.MenuManager;
 import dev.oribuin.fishing.manager.TotemManager;
-import dev.oribuin.fishing.totem.Totem;
+import dev.oribuin.fishing.model.totem.Totem;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -9,7 +9,7 @@ import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
 import dev.oribuin.fishing.augment.Augment;
 import dev.oribuin.fishing.augment.AugmentRegistry;
-import dev.oribuin.fishing.fish.Fish;
+import dev.oribuin.fishing.model.fish.Fish;
 
 import java.util.ArrayList;
 import java.util.List;

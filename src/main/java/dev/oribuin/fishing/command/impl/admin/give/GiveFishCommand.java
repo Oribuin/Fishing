@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import dev.oribuin.fishing.command.argument.FishArgument;
-import dev.oribuin.fishing.fish.Fish;
+import dev.oribuin.fishing.model.fish.Fish;
 
 public class GiveFishCommand extends BaseRoseCommand {
     

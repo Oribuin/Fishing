@@ -8,8 +8,8 @@ import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import dev.oribuin.fishing.api.config.Configurable;
-import dev.oribuin.fishing.item.ItemConstruct;
+import dev.oribuin.fishing.config.Configurable;
+import dev.oribuin.fishing.model.item.ItemConstruct;
 
 import java.util.ArrayList;
 import java.util.List;
