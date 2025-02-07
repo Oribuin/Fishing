@@ -10,9 +10,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class ItemRegistry implements Configurable {
 
+    private static final Map<String, ItemConstruct> CUSTOM_ITEMS = new HashMap<>();
     public static ItemConstruct FISHING_TOTEM = Totem.defaultItem();
 
     /**
@@ -21,6 +24,16 @@ public final class ItemRegistry implements Configurable {
     public static void init() {
         ItemRegistry registry = new ItemRegistry();
         registry.reload();
+    }
+    
+    /**
+     * Register a custom item to the registry
+     *
+     * @param key  The key to register the item under
+     * @param item The item to register
+     */
+    public static void registerCustomItem(String key, ItemConstruct item) {
+        CUSTOM_ITEMS.put(key.toUpperCase(), item);
     }
 
     /**
@@ -32,7 +45,10 @@ public final class ItemRegistry implements Configurable {
      */
     public static ItemConstruct from(String key) {
         try {
-            Field field = ItemRegistry.class.getDeclaredField(key.toUpperCase()); // TODO: Custom item support in the future
+            if (CUSTOM_ITEMS.containsKey(key.toUpperCase())) return CUSTOM_ITEMS.get(key.toUpperCase());
+            // TODO: Check if item is from Oraxen/Nexo/MythicMobs whatever plugin
+            
+            Field field = ItemRegistry.class.getDeclaredField(key.toUpperCase());
             return (ItemConstruct) field.get(null);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             FishingPlugin.get().getLogger().warning("Failed to get item: [" + key + "]. Error: " + e.getMessage());
@@ -73,6 +89,17 @@ public final class ItemRegistry implements Configurable {
                 FishingPlugin.get().getLogger().warning("Failed to load item: [" + field.getName() + "]. Error: " + e.getMessage());
             }
         }
+        
+        // Load custom items from the configuration file
+        CommentedConfigurationSection customItems = config.getConfigurationSection("custom-items");
+        if (customItems == null) return;
+        
+        customItems.getKeys(false).forEach(key -> {
+            CommentedConfigurationSection section = customItems.getConfigurationSection(key);
+            if (section == null) return;
+            
+            CUSTOM_ITEMS.put(key.toUpperCase(), ItemConstruct.deserialize(section));
+        });
     }
 
     /**
@@ -101,6 +128,13 @@ public final class ItemRegistry implements Configurable {
                 FishingPlugin.get().getLogger().warning("Failed to save item: [" + field.getName() + "]. Error: " + e.getMessage());
             }
         }
+        
+        // Save custom items to the configuration file
+        CommentedConfigurationSection customItems = this.pullSection(config, "custom-items");
+        CUSTOM_ITEMS.forEach((key, item) -> {
+            CommentedConfigurationSection section = this.pullSection(customItems, key);
+            item.saveSettings(section);
+        });
     }
 
     /**
