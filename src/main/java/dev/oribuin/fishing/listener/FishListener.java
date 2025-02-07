@@ -2,7 +2,7 @@ package dev.oribuin.fishing.listener;
 
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
-import dev.oribuin.fishing.augment.AugmentRegistry;
+import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import dev.oribuin.fishing.manager.DataManager;
 import dev.oribuin.fishing.manager.FishManager;
 import dev.oribuin.fishing.manager.LocaleManager;

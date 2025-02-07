@@ -1,7 +1,7 @@
 package dev.oribuin.fishing.command.impl;
 
-import dev.oribuin.fishing.augment.Augment;
-import dev.oribuin.fishing.augment.AugmentRegistry;
+import dev.oribuin.fishing.model.augment.Augment;
+import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import dev.oribuin.fishing.command.argument.AugmentArgument;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.command.argument.ArgumentHandlers;

@@ -1,6 +1,6 @@
 package dev.oribuin.fishing;
 
-import dev.oribuin.fishing.augment.AugmentRegistry;
+import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import dev.oribuin.fishing.config.Setting;
 import dev.oribuin.fishing.listener.FishListener;
 import dev.oribuin.fishing.listener.PlayerListeners;

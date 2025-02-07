@@ -1,7 +1,7 @@
-package dev.oribuin.fishing.augment.impl;
+package dev.oribuin.fishing.model.augment.impl;
 
 import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
-import dev.oribuin.fishing.augment.Augment;
+import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;

@@ -1,4 +1,4 @@
-package dev.oribuin.fishing.augment;
+package dev.oribuin.fishing.model.augment;
 
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.FishEventHandler;
@@ -74,7 +74,7 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      * <p>
      * This by default is only used in the {@link #reload()} method to load the configuration file
      * <p>
-     * This an optional method and should only be used if the Configurable class is its own file (E.g. {@link dev.oribuin.fishing.augment.Augment} class)
+     * This an optional method and should only be used if the Configurable class is its own file (E.g. {@link dev.oribuin.fishing.model.augment.Augment} class)
      *
      * @return The path to the configuration file
      */

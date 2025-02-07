@@ -1,14 +1,14 @@
-package dev.oribuin.fishing.augment;
+package dev.oribuin.fishing.model.augment;
 
 import dev.oribuin.fishing.api.event.FishEventHandler;
-import dev.oribuin.fishing.augment.impl.AugmentBiomeBlend;
-import dev.oribuin.fishing.augment.impl.AugmentEnlightened;
-import dev.oribuin.fishing.augment.impl.AugmentFineSlicing;
-import dev.oribuin.fishing.augment.impl.AugmentGenius;
-import dev.oribuin.fishing.augment.impl.AugmentHotspot;
-import dev.oribuin.fishing.augment.impl.AugmentIndulge;
-import dev.oribuin.fishing.augment.impl.AugmentIntuition;
-import dev.oribuin.fishing.augment.impl.AugmentRainDance;
+import dev.oribuin.fishing.model.augment.impl.AugmentBiomeBlend;
+import dev.oribuin.fishing.model.augment.impl.AugmentEnlightened;
+import dev.oribuin.fishing.model.augment.impl.AugmentFineSlicing;
+import dev.oribuin.fishing.model.augment.impl.AugmentGenius;
+import dev.oribuin.fishing.model.augment.impl.AugmentHotspot;
+import dev.oribuin.fishing.model.augment.impl.AugmentIndulge;
+import dev.oribuin.fishing.model.augment.impl.AugmentIntuition;
+import dev.oribuin.fishing.model.augment.impl.AugmentRainDance;
 import dev.oribuin.fishing.util.math.RomanNumber;
 import dev.rosewood.rosegarden.utils.HexUtils;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;

@@ -1,35 +1,32 @@
-package dev.oribuin.fishing.augment.impl;
+package dev.oribuin.fishing.model.augment.impl;
 
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
-import dev.oribuin.fishing.augment.Augment;
-import dev.oribuin.fishing.model.fish.condition.Weather;
+import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
-import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 /**
- * When the weather is clear, there is a chance to catch multiple fish in a single catch.
+ * Increases the player's saturation level when they catch a fish.
  */
-public class AugmentHotspot extends Augment {
+public class AugmentIndulge extends Augment {
 
-    private String chanceFormula = "%level% * 0.05"; // 5% per level
-    private int minFish = 1;
-    private int maxFish = 3;
+    private String chanceFormula = "%level% * 0.15"; // 15% per level
+    private float saturation = 5.0f;
 
     /**
      * Create a new type of augment with a name and description.
      * <p>
      * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
      */
-    public AugmentHotspot() {
-        super("hotspot", "&7Increases the amount of fish", "&7caught when the weather is clear");
+    public AugmentIndulge() {
+        super("indulge", "&7Restores a player's saturation", "&7when they catch a fish");
 
-        this.maxLevel(15);
+        this.maxLevel(3);
         this.register(InitialFishCatchEvent.class, this::onInitialCatch);
     }
 
@@ -45,17 +42,14 @@ public class AugmentHotspot extends Augment {
      */
     @Override
     public void onInitialCatch(InitialFishCatchEvent event, int level) {
-        if (!Weather.CLEAR.isState(event.getHook().getLocation())) return;
+        if (event.getPlayer().getFoodLevel() >= 20.0) return;
 
         StringPlaceholders plc = StringPlaceholders.of("level", level);
         double chance = FishUtils.evaluate(plc.apply(this.chanceFormula));
         if (Math.random() * 100 > chance) return;
 
-        int fishCaught = this.minFish + (int) (Math.random() * (this.maxFish - this.minFish));
-        event.setAmountToCatch(event.getAmountToCatch() + fishCaught);
-        event.getPlayer().sendActionBar(Component.text("You have caught more fish due to the Hotspot augment!"));
-
-        // TODO: Tell player that they have caught more fish
+        event.getPlayer().setSaturation(Math.min(20f, event.getPlayer().getSaturation() + this.saturation));
+        event.getPlayer().sendMessage("You have been saturated!"); // todo: use locale
     }
 
     /**
@@ -77,9 +71,8 @@ public class AugmentHotspot extends Augment {
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
         super.loadSettings(config);
 
-        this.chanceFormula = config.getString("chance-formula", this.chanceFormula); // 5% per level
-        this.minFish = config.getInt("min-fish", 1); // Minimum fish caught
-        this.maxFish = config.getInt("max-fish", 3); // Maximum fish caught
+        this.chanceFormula = config.getString("chance-formula", this.chanceFormula);
+        this.saturation = (float) config.getDouble("saturation", this.saturation);
     }
 
     /**
@@ -97,8 +90,7 @@ public class AugmentHotspot extends Augment {
         super.saveSettings(config);
 
         config.set("chance-formula", this.chanceFormula);
-        config.set("min-fish", this.minFish);
-        config.set("max-fish", this.maxFish);
+        config.set("saturation", this.saturation);
     }
 
     /**
@@ -109,12 +101,10 @@ public class AugmentHotspot extends Augment {
     @Override
     public List<String> comments() {
         return List.of(
-                "Augment [Hotspot] - When the weather is clear, there is a chance to catch multiple fish",
-                "in a single catch.",
+                "Augment [Indulge] - Fully saturates the player when they catch a fish",
                 "",
-                "chance-formula: The formula to calculate the chance this augment triggers",
-                "min-fish: The minimum additional fish caught",
-                "max-fish: The maximum additional fish caught"
+                "chance-formula: The formula to calculate the chance of the player being fully saturated",
+                "saturation: The saturation level to set the player to"
         );
     }
 

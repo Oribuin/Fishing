@@ -1,7 +1,7 @@
-package dev.oribuin.fishing.augment.impl;
+package dev.oribuin.fishing.model.augment.impl;
 
 import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
-import dev.oribuin.fishing.augment.Augment;
+import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
@@ -10,39 +10,36 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * Increases the entropy earned from catching fish, based on the level of the augment.
+ * Increases the base plugin xp earned from catching fish.
  */
-public class AugmentIntuition extends Augment {
+public class AugmentEnlightened extends Augment {
 
-    private String formula = "(%entropy% + %level%) * 0.05";
+    private String formula = "(%entropy% + %level%) * 0.03";
 
     /**
      * Create a new type of augment with a name and description.
      * <p>
      * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
      */
-    public AugmentIntuition() {
-        super("Intuition", "&7Increases the entropy ", "&7earned from catching fish.");
+    public AugmentEnlightened() {
+        super("enlightened", "&7Increases the base plugin xp", "&7earned from catching fish.");
 
         this.maxLevel(5);
         this.register(FishCatchEvent.class, this::onFishCatch);
     }
 
     /**
-     * The functionality provided when a player has finished catching a fish, Use this to modify the rewards given to the player once caught
-     * <p>
-     * Use {@link FishCatchEvent#entropy(int)} to change the entropy received
-     * Use {@link FishCatchEvent#naturalExp(float)} to change the minecraft experience received
-     * Use {@link FishCatchEvent#fishExp(int)} to change the fishing experience received
+     * The functionality provided by the augment when a player obtains a fish from the initial catch
+     * This method is run for each fish caught
      *
-     * @param event The event that was called when the fish was caught
-     * @param level The level of the ability that was used, if applicable (0 if not)
+     * @param event The context of the fish event
+     * @param level The level of the augment that was used
      */
     @Override
     public void onFishCatch(FishCatchEvent event, int level) {
-        StringPlaceholders plc = StringPlaceholders.of("level", level, "entropy", event.entropy());
-        double entropy = FishUtils.evaluate(plc.apply(this.formula));
-        event.entropy((int) entropy);
+        StringPlaceholders plc = StringPlaceholders.of("level", level, "xp", event.fishExp());
+        double xp = FishUtils.evaluate(plc.apply(this.formula));
+        event.fishExp((int) xp);
     }
 
     /**
@@ -92,9 +89,9 @@ public class AugmentIntuition extends Augment {
     @Override
     public List<String> comments() {
         return List.of(
-                "Augment [Intuition] - Increases the base entropy earned from catching fish.",
+                "Augment [Enlightened] - Increases the base plugin xp earned from catching fish.",
                 "",
-                "formula: The formula to calculate the additional entropy earned per level"
+                "formula: The formula to calculate the additional xp earned per level"
         );
     }
 

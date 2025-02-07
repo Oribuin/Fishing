@@ -1,8 +1,8 @@
 package dev.oribuin.fishing.api.event.impl;
 
 import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.augment.Augment;
-import dev.oribuin.fishing.augment.AugmentRegistry;
+import dev.oribuin.fishing.model.augment.Augment;
+import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import dev.oribuin.fishing.manager.TierManager;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.fish.Tier;

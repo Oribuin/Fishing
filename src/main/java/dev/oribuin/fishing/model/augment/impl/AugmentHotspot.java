@@ -1,44 +1,61 @@
-package dev.oribuin.fishing.augment.impl;
+package dev.oribuin.fishing.model.augment.impl;
 
-import dev.oribuin.fishing.api.event.impl.FishGutEvent;
-import dev.oribuin.fishing.augment.Augment;
+import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
+import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
+import dev.oribuin.fishing.model.augment.Augment;
+import dev.oribuin.fishing.model.fish.condition.Weather;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 /**
- * Increases the base plugin entropy earned from gutting fish.
+ * When the weather is clear, there is a chance to catch multiple fish in a single catch.
  */
-public class AugmentFineSlicing extends Augment {
+public class AugmentHotspot extends Augment {
 
-    private String formula = "(%entropy% + %level%) * 0.05";
+    private String chanceFormula = "%level% * 0.05"; // 5% per level
+    private int minFish = 1;
+    private int maxFish = 3;
 
     /**
      * Create a new type of augment with a name and description.
      * <p>
      * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
      */
-    public AugmentFineSlicing() {
-        super("fine_slicing", "&7Increases the entropy ", "&7gained from gutting fish.");
+    public AugmentHotspot() {
+        super("hotspot", "&7Increases the amount of fish", "&7caught when the weather is clear");
 
-        this.maxLevel(12);
-        this.register(FishGutEvent.class, this::onFishGut);
+        this.maxLevel(15);
+        this.register(InitialFishCatchEvent.class, this::onInitialCatch);
     }
 
     /**
-     * The functionality provided when a player has gutted a fish, Use this to modify the rewards given to the player once gutted
+     * The functionality provided when a player is first starting to catch a fish, Use this to determine how many fish should be generated.
+     * <p>
+     * Use {@link InitialFishCatchEvent#setAmountToCatch(int)} to set the amount of fish to catch
+     * <p>
+     * Use {@link FishGenerateEvent#addIncrease(double)} to change the chances of catching a fish
      *
-     * @param event The event that was called when the fish was gutted
+     * @param event The event that was called when the fish was caught
      * @param level The level of the ability that was used, if applicable (0 if not)
      */
     @Override
-    public void onFishGut(FishGutEvent event, int level) {
-        StringPlaceholders plc = StringPlaceholders.of("level", level, "entropy", event.getEntropy());
-        double entropy = FishUtils.evaluate(plc.apply(this.formula));
-        event.setEntropy((int) entropy);
+    public void onInitialCatch(InitialFishCatchEvent event, int level) {
+        if (!Weather.CLEAR.isState(event.getHook().getLocation())) return;
+
+        StringPlaceholders plc = StringPlaceholders.of("level", level);
+        double chance = FishUtils.evaluate(plc.apply(this.chanceFormula));
+        if (Math.random() * 100 > chance) return;
+
+        int fishCaught = this.minFish + (int) (Math.random() * (this.maxFish - this.minFish));
+        event.setAmountToCatch(event.getAmountToCatch() + fishCaught);
+        event.getPlayer().sendActionBar(Component.text("You have caught more fish due to the Hotspot augment!"));
+
+        // TODO: Tell player that they have caught more fish
     }
 
     /**
@@ -60,7 +77,9 @@ public class AugmentFineSlicing extends Augment {
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
         super.loadSettings(config);
 
-        this.formula = config.getString("formula", this.formula);
+        this.chanceFormula = config.getString("chance-formula", this.chanceFormula); // 5% per level
+        this.minFish = config.getInt("min-fish", 1); // Minimum fish caught
+        this.maxFish = config.getInt("max-fish", 3); // Maximum fish caught
     }
 
     /**
@@ -77,7 +96,9 @@ public class AugmentFineSlicing extends Augment {
     public void saveSettings(@NotNull CommentedConfigurationSection config) {
         super.saveSettings(config);
 
-        config.set("formula", this.formula);
+        config.set("chance-formula", this.chanceFormula);
+        config.set("min-fish", this.minFish);
+        config.set("max-fish", this.maxFish);
     }
 
     /**
@@ -88,9 +109,12 @@ public class AugmentFineSlicing extends Augment {
     @Override
     public List<String> comments() {
         return List.of(
-                "Augment [Fine Slicing] - Increases the entropy gained from gutting fish.",
+                "Augment [Hotspot] - When the weather is clear, there is a chance to catch multiple fish",
+                "in a single catch.",
                 "",
-                "formula: The formula to calculate the additional entropy earned per level"
+                "chance-formula: The formula to calculate the chance this augment triggers",
+                "min-fish: The minimum additional fish caught",
+                "max-fish: The maximum additional fish caught"
         );
     }
 

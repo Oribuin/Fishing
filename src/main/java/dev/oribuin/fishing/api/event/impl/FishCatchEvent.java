@@ -1,7 +1,7 @@
 package dev.oribuin.fishing.api.event.impl;
 
-import dev.oribuin.fishing.augment.Augment;
-import dev.oribuin.fishing.augment.AugmentRegistry;
+import dev.oribuin.fishing.model.augment.Augment;
+import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import dev.oribuin.fishing.model.fish.Fish;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.FishHook;

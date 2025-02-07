@@ -1,8 +1,8 @@
 package dev.oribuin.fishing.api.recipe.type;
 
 import dev.oribuin.fishing.api.recipe.RecipeItem;
-import dev.oribuin.fishing.augment.Augment;
-import dev.oribuin.fishing.augment.AugmentRegistry;
+import dev.oribuin.fishing.model.augment.Augment;
+import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import dev.oribuin.fishing.storage.util.PersistKeys;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import org.bukkit.inventory.ItemStack;

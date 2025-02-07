@@ -1,9 +1,7 @@
-package dev.oribuin.fishing.augment.impl;
+package dev.oribuin.fishing.model.augment.impl;
 
-import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
-import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
-import dev.oribuin.fishing.augment.Augment;
-import dev.oribuin.fishing.model.fish.condition.impl.BiomeCondition;
+import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
+import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
@@ -12,44 +10,39 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * When a player catches a fish, there is a chance to ignore the biome restrictions.
- *
- * @see dev.oribuin.fishing.model.fish.condition.impl.BiomeCondition Where the condition is checked
+ * Increases the entropy earned from catching fish, based on the level of the augment.
  */
-public class AugmentBiomeBlend extends Augment {
+public class AugmentIntuition extends Augment {
 
-    private String chanceFormula = "%level% * 0.15"; // 20% per level
+    private String formula = "(%entropy% + %level%) * 0.05";
 
     /**
      * Create a new type of augment with a name and description.
      * <p>
      * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
      */
-    public AugmentBiomeBlend() {
-        super("biome_Blend", "&7When a player catches a fish, there is", "&7a chance to ignore the biome restrictions.");
+    public AugmentIntuition() {
+        super("Intuition", "&7Increases the entropy ", "&7earned from catching fish.");
 
-        this.maxLevel(3);
-        this.register(ConditionCheckEvent.class, this::onConditionCheck);
+        this.maxLevel(5);
+        this.register(FishCatchEvent.class, this::onFishCatch);
     }
 
     /**
-     * The functionality provided when the plugin checks if a player could catch a fish. Use this to modify the outcome of the check
+     * The functionality provided when a player has finished catching a fish, Use this to modify the rewards given to the player once caught
      * <p>
-     * Use {@link ConditionCheckEvent#result(boolean)} change the result of the condition check
-     * Use {@link FishGenerateEvent#addIncrease(double)} to change the chances of catching a fish
+     * Use {@link FishCatchEvent#entropy(int)} to change the entropy received
+     * Use {@link FishCatchEvent#naturalExp(float)} to change the minecraft experience received
+     * Use {@link FishCatchEvent#fishExp(int)} to change the fishing experience received
      *
-     * @param event The event that was called when the fish was gutted
+     * @param event The event that was called when the fish was caught
      * @param level The level of the ability that was used, if applicable (0 if not)
      */
     @Override
-    public void onConditionCheck(ConditionCheckEvent event, int level) {
-        if (!(event.condition() instanceof BiomeCondition)) return;
-
-        StringPlaceholders plc = StringPlaceholders.of("level", level);
-        double chance = FishUtils.evaluate(plc.apply(this.chanceFormula));
-        if (Math.random() > chance) return;
-
-        event.result(true);
+    public void onFishCatch(FishCatchEvent event, int level) {
+        StringPlaceholders plc = StringPlaceholders.of("level", level, "entropy", event.entropy());
+        double entropy = FishUtils.evaluate(plc.apply(this.formula));
+        event.entropy((int) entropy);
     }
 
     /**
@@ -71,7 +64,7 @@ public class AugmentBiomeBlend extends Augment {
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
         super.loadSettings(config);
 
-        this.chanceFormula = config.getString("chance-formula", this.chanceFormula);
+        this.formula = config.getString("formula", this.formula);
     }
 
     /**
@@ -88,7 +81,7 @@ public class AugmentBiomeBlend extends Augment {
     public void saveSettings(@NotNull CommentedConfigurationSection config) {
         super.saveSettings(config);
 
-        config.set("chance-formula", this.chanceFormula);
+        config.set("formula", this.formula);
     }
 
     /**
@@ -99,9 +92,9 @@ public class AugmentBiomeBlend extends Augment {
     @Override
     public List<String> comments() {
         return List.of(
-                "Augment [Biome Blend] - When a player catches a fish, there is a chance to ignore the biome restrictions.",
+                "Augment [Intuition] - Increases the base entropy earned from catching fish.",
                 "",
-                "chance-formula: The formula to calculate the chance to ignore the biome restrictions"
+                "formula: The formula to calculate the additional entropy earned per level"
         );
     }
 

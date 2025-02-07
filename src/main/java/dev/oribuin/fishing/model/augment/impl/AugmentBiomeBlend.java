@@ -1,60 +1,55 @@
-package dev.oribuin.fishing.augment.impl;
+package dev.oribuin.fishing.model.augment.impl;
 
+import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
-import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
-import dev.oribuin.fishing.augment.Augment;
-import dev.oribuin.fishing.model.fish.condition.Weather;
+import dev.oribuin.fishing.model.augment.Augment;
+import dev.oribuin.fishing.model.fish.condition.impl.BiomeCondition;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
-import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 /**
- * When it is raining, there is a chance to catch multiple fish in a single catch.
+ * When a player catches a fish, there is a chance to ignore the biome restrictions.
+ *
+ * @see dev.oribuin.fishing.model.fish.condition.impl.BiomeCondition Where the condition is checked
  */
-public class AugmentRainDance extends Augment {
+public class AugmentBiomeBlend extends Augment {
 
-    private String chanceFormula = "%level% * 0.05"; // 5% per level
-    private int minFish = 1;
-    private int maxFish = 3;
+    private String chanceFormula = "%level% * 0.15"; // 20% per level
 
     /**
      * Create a new type of augment with a name and description.
      * <p>
      * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
      */
-    public AugmentRainDance() {
-        super("rain_dance", "&7Increases the amount of fish", "&7caught when the weather is raining");
+    public AugmentBiomeBlend() {
+        super("biome_Blend", "&7When a player catches a fish, there is", "&7a chance to ignore the biome restrictions.");
 
-        this.maxLevel(15);
-        this.register(InitialFishCatchEvent.class, this::onInitialCatch);
+        this.maxLevel(3);
+        this.register(ConditionCheckEvent.class, this::onConditionCheck);
     }
 
     /**
-     * The functionality provided when a player is first starting to catch a fish, Use this to determine how many fish should be generated.
+     * The functionality provided when the plugin checks if a player could catch a fish. Use this to modify the outcome of the check
      * <p>
-     * Use {@link InitialFishCatchEvent#setAmountToCatch(int)} to set the amount of fish to catch
-     * <p>
+     * Use {@link ConditionCheckEvent#result(boolean)} change the result of the condition check
      * Use {@link FishGenerateEvent#addIncrease(double)} to change the chances of catching a fish
      *
-     * @param event The event that was called when the fish was caught
+     * @param event The event that was called when the fish was gutted
      * @param level The level of the ability that was used, if applicable (0 if not)
      */
     @Override
-    public void onInitialCatch(InitialFishCatchEvent event, int level) {
-        if (Weather.CLEAR.isState(event.getHook().getLocation())) return;
+    public void onConditionCheck(ConditionCheckEvent event, int level) {
+        if (!(event.condition() instanceof BiomeCondition)) return;
 
         StringPlaceholders plc = StringPlaceholders.of("level", level);
         double chance = FishUtils.evaluate(plc.apply(this.chanceFormula));
         if (Math.random() > chance) return;
 
-        int fishCaught = this.minFish + (int) (Math.random() * (this.maxFish - this.minFish));
-        event.setAmountToCatch(event.getAmountToCatch() + fishCaught);
-        event.getPlayer().sendActionBar(Component.text("You have caught more fish due to the Call of the Sea augment!"));
-        // TODO: Tell player that they have caught more fish
+        event.result(true);
     }
 
     /**
@@ -76,9 +71,7 @@ public class AugmentRainDance extends Augment {
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
         super.loadSettings(config);
 
-        this.chanceFormula = config.getString("chance-formula", this.chanceFormula); // 5% per level
-        this.minFish = config.getInt("min-fish", 1); // Minimum fish caught
-        this.maxFish = config.getInt("max-fish", 3); // Maximum fish caught
+        this.chanceFormula = config.getString("chance-formula", this.chanceFormula);
     }
 
     /**
@@ -96,8 +89,6 @@ public class AugmentRainDance extends Augment {
         super.saveSettings(config);
 
         config.set("chance-formula", this.chanceFormula);
-        config.set("min-fish", this.minFish);
-        config.set("max-fish", this.maxFish);
     }
 
     /**
@@ -108,12 +99,9 @@ public class AugmentRainDance extends Augment {
     @Override
     public List<String> comments() {
         return List.of(
-                "Augment [Rain Dance] - When it is raining, there is a chance to catch multiple fish",
-                "in a single catch.",
+                "Augment [Biome Blend] - When a player catches a fish, there is a chance to ignore the biome restrictions.",
                 "",
-                "chance-formula: The formula to calculate the chance this augment triggers",
-                "min-fish: The minimum additional fish caught",
-                "max-fish: The maximum additional fish caught"
+                "chance-formula: The formula to calculate the chance to ignore the biome restrictions"
         );
     }
 

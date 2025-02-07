@@ -1,7 +1,7 @@
 package dev.oribuin.fishing.model.item;
 
 import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.augment.Augment;
+import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.config.Configurable;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
