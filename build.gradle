@@ -73,8 +73,16 @@ processResources {
 // Javadocs :)
 javadoc {
     options {
+        
+        // other documentation links
         links("https://jd.papermc.io/paper/${spigotVersion}/")
         links("https://www.javadoc.io/doc/dev.triumphteam/triumph-gui/${triumphVersion}/")
+        
+        // no one needs this in the javadocs
+        exclude("**/command/*")
+        exclude("**/database/*")
+        exclude("**/listener/*")
+        exclude("**/gui/*")
 
         addStringOption("encoding", "UTF-8")
         addStringOption("docencoding", "UTF-8")
