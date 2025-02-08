@@ -107,7 +107,7 @@ public class TotemListeners implements Listener {
         manager.unregisterTotem(totem); // Unregister the totem
         event.getPlayer().sendMessage("Totem removed."); // Send the player a message
 
-        ItemStack itemStack = ItemRegistry.FISHING_TOTEM.build(totem.placeholders()); // TODO: Load the item from the configuration
+        ItemStack itemStack = ItemRegistry.FISHING_TOTEM.build(totem.placeholders());
         totem.saveTo(itemStack);
 
         event.getPlayer().getInventory().addItem(itemStack);
