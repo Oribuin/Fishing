@@ -7,7 +7,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 
-public class VaultCurrency implements Currency {
+public class VaultCurrency implements Currency<Double> {
 
     private static final RegisteredServiceProvider<Economy> PROVIDER = Bukkit.getServicesManager().getRegistration(Economy.class);
     private static final Economy API = PROVIDER != null ? PROVIDER.getProvider() : null;
@@ -23,26 +23,29 @@ public class VaultCurrency implements Currency {
     /**
      * Get the amount of currency the player has
      *
-     * @param player The player to check
+     * @param player  The player to check
+     * @param content The currency type to check
+     *
+     * @return The amount of currency the player has
      */
     @Override
-    public @NotNull Number amount(@NotNull OfflinePlayer player) {
+    public @NotNull Number amount(@NotNull OfflinePlayer player, @NotNull Double content) {
         return API != null ? API.getBalance(player) : 0.0;
     }
-
+    
     /**
      * Check if the player has enough currency to purchase an item
      *
-     * @param player The player who is purchasing the item
-     * @param amount The amount to check
+     * @param player  The player who is purchasing the item
+     * @param content The amount to check
      *
      * @return If the player has enough currency
      */
     @Override
-    public boolean has(@NotNull OfflinePlayer player, @NotNull Number amount) {
-        return API != null && API.has(player, amount.doubleValue());
+    public boolean has(@NotNull OfflinePlayer player, @NotNull Double content) {
+        return this.amount(player, content).intValue() >= content;
     }
-
+    
     /**
      * Give the player an amount of currency
      *
@@ -50,8 +53,8 @@ public class VaultCurrency implements Currency {
      * @param amount The amount to give
      */
     @Override
-    public void give(@NotNull OfflinePlayer player, @NotNull Number amount) {
-        if (API != null) API.depositPlayer(player, amount.doubleValue());
+    public void give(@NotNull OfflinePlayer player, @NotNull Double amount) {
+        if (API != null) API.depositPlayer(player, amount);
     }
 
     /**
@@ -61,8 +64,8 @@ public class VaultCurrency implements Currency {
      * @param amount The amount to take
      */
     @Override
-    public void take(@NotNull OfflinePlayer player, @NotNull Number amount) {
-        if (API != null) API.withdrawPlayer(player, amount.doubleValue());
+    public void take(@NotNull OfflinePlayer player, @NotNull Double amount) {
+        if (API != null) API.withdrawPlayer(player, amount);
     }
 
 }

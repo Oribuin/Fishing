@@ -3,7 +3,7 @@ package dev.oribuin.fishing.model.totem.upgrade.impl;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.Configurable;
 import dev.oribuin.fishing.model.economy.Cost;
-import dev.oribuin.fishing.model.economy.Currencies;
+import dev.oribuin.fishing.model.economy.CurrencyRegistry;
 import dev.oribuin.fishing.model.economy.Currency;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.model.totem.upgrade.TotemUpgrade;
@@ -58,7 +58,7 @@ public class UpgradeTotemRadius extends TotemUpgrade implements Configurable {
         Tier tier = this.tiers.get(level);
         if (tier == null) {
             FishingPlugin.get().getLogger().warning("Failed to get cost for upgrade: " + this.name() + ", The tier does not exist.");
-            return new Cost(Currencies.ENTROPY.get(), 0);
+            return new Cost(CurrencyRegistry.ENTROPY, 0);
         }
 
         return this.tiers.get(level).cost();
@@ -97,23 +97,16 @@ public class UpgradeTotemRadius extends TotemUpgrade implements Configurable {
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
         this.tiers.clear();
 
-        CommentedConfigurationSection tiers = config.getConfigurationSection("tiers");
-        if (tiers == null) return;
+        CommentedConfigurationSection tiers =  this.pullSection(config, "tiers");
 
         tiers.getKeys(false).forEach(key -> {
-            CommentedConfigurationSection section = tiers.getConfigurationSection(key);
-            if (section == null) return;
-
-            Currency currency = FishUtils.getEnum(Currencies.class, section.getString("currency"), Currencies.ENTROPY).get();
-            int amount = section.getInt("cost", 0);
+            CommentedConfigurationSection section = this.pullSection(tiers, key);
             int newRadius = section.getInt("radius", 0);
-
-            Cost cost = new Cost(currency, amount);
 
             // Add the tier to the list
             try {
                 int level = Integer.parseInt(key);
-                this.tiers.put(level, new Tier(cost, newRadius));
+                this.tiers.put(level, new Tier(Cost.of(this.pullSection(section, "cost")), newRadius));
             } catch (IllegalArgumentException ex) {
                 FishingPlugin.get().getLogger().warning("Failed to load tier: " + key + " in upgrade: " + this.name() + ", The tier must be a number.");
             }
@@ -133,12 +126,11 @@ public class UpgradeTotemRadius extends TotemUpgrade implements Configurable {
     @Override
     public void saveSettings(@NotNull CommentedConfigurationSection config) {
         this.tiers.forEach((level, tier) -> {
-            CommentedConfigurationSection section = config.createSection("tiers." + level);
-
-            // TODO: Improve c
-            //            section.set("currency", tier.cost().currency().name());
-            //            section.set("cost", tier.cost());
+            CommentedConfigurationSection section = this.pullSection(config, "tiers." + level);
             section.set("radius", tier.newRadius());
+
+            CommentedConfigurationSection costSection = this.pullSection(section, "cost");
+            tier.cost().saveSettings(costSection);  // Save the cost of the tier
         });
     }
 

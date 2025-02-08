@@ -5,7 +5,7 @@ import dev.oribuin.fishing.storage.Fisher;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-public class SkillpointCurrency implements Currency {
+public class SkillpointCurrency implements Currency<Integer> {
 
     /**
      * @return The name of the currency
@@ -18,26 +18,29 @@ public class SkillpointCurrency implements Currency {
     /**
      * Get the amount of currency the player has
      *
-     * @param player The player to check
+     * @param player  The player to check
+     * @param content The currency type to check
+     *
+     * @return The amount of currency the player has
      */
     @Override
-    public @NotNull Number amount(@NotNull OfflinePlayer player) {
+    public @NotNull Number amount(@NotNull OfflinePlayer player, @NotNull Integer content) {
         return this.fisher(player).points();
     }
 
     /**
      * Check if the player has enough currency to purchase an item
      *
-     * @param player The player who is purchasing the item
-     * @param amount The amount to check
+     * @param player  The player who is purchasing the item
+     * @param content The amount to check
      *
      * @return If the player has enough currency
      */
     @Override
-    public boolean has(@NotNull OfflinePlayer player, @NotNull Number amount) {
-        return this.amount(player).intValue() >= amount.intValue();
+    public boolean has(@NotNull OfflinePlayer player, @NotNull Integer content) {
+        return this.amount(player, content).intValue() >= content;
     }
-
+    
     /**
      * Give the player an amount of currency
      *
@@ -45,9 +48,9 @@ public class SkillpointCurrency implements Currency {
      * @param amount The amount to give
      */
     @Override
-    public void give(@NotNull OfflinePlayer player, @NotNull Number amount) {
+    public void give(@NotNull OfflinePlayer player, @NotNull Integer amount) {
         Fisher fisher = this.fisher(player);
-        fisher.points(fisher.points() + amount.intValue());
+        fisher.points(fisher.points() + amount);
     }
 
     /**
@@ -57,9 +60,9 @@ public class SkillpointCurrency implements Currency {
      * @param amount The amount to take
      */
     @Override
-    public void take(@NotNull OfflinePlayer player, @NotNull Number amount) {
+    public void take(@NotNull OfflinePlayer player, @NotNull Integer amount) {
         Fisher fisher = this.fisher(player);
-        fisher.points(fisher.points() - amount.intValue());
+        fisher.points(fisher.points() - amount);
     }
 
 }

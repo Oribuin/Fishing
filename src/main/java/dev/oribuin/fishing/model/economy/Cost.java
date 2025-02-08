@@ -9,9 +9,9 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The cost of an item or upgrade in the fishing plugin
  */
-public class Cost implements Currency, Configurable {
+public class Cost implements Configurable {
 
-    private Currency currency;
+    private Currency<?> currency;
     private Number price;
 
     /**
@@ -20,7 +20,7 @@ public class Cost implements Currency, Configurable {
      * @param currency The currency to use
      * @param price    The amount of currency to use
      */
-    public Cost(@NotNull Currency currency, @NotNull Number price) {
+    public Cost(@NotNull Currency<?> currency, @NotNull Number price) {
         this.currency = currency;
         this.price = price;
     }
@@ -30,11 +30,25 @@ public class Cost implements Currency, Configurable {
      *
      * @param currency The currency to use
      * @param price    The amount of currency to use
+     * @param <T>      The type of currency
      *
      * @return The cost object
      */
-    public static Cost of(Currency currency, Number price) {
+    public static <T> Cost of(@NotNull Currency<T> currency, @NotNull Number price) {
         return new Cost(currency, price);
+    }
+
+    /**
+     * Create a new cost object with a currency and amount
+     *
+     * @param config The configuration section to load the settings from
+     *
+     * @return The cost object
+     */
+    public static Cost of(CommentedConfigurationSection config) {
+        Cost cost = new Cost(CurrencyRegistry.ENTROPY, Integer.MAX_VALUE);
+        cost.loadSettings(config);
+        return cost;
     }
 
     /**
@@ -54,7 +68,7 @@ public class Cost implements Currency, Configurable {
      */
     @Override
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        this.currency = FishUtils.getEnum(Currencies.class, config.getString("type"), Currencies.VAULT).get();
+        this.currency = CurrencyRegistry.get(config.getString("type"));
         this.price = config.getDouble("price", this.price.doubleValue());
     }
 
@@ -75,56 +89,12 @@ public class Cost implements Currency, Configurable {
     }
 
     /**
-     * @return The name of the currency
-     */
-    @Override
-    public String name() {
-        return this.currency.name();
-    }
-
-    /**
-     * Get the amount of currency the player has
+     * Get the currency of the cost
      *
-     * @param player The player to check
+     * @return The currency of the cost
      */
-    @Override
-    public @NotNull Number amount(@NotNull OfflinePlayer player) {
-        return this.currency.amount(player);
-    }
-
-    /**
-     * Check if the player has enough currency to purchase an item
-     *
-     * @param player The player who is purchasing the item
-     * @param amount The amount to check
-     *
-     * @return If the player has enough currency
-     */
-    @Override
-    public boolean has(@NotNull OfflinePlayer player, @NotNull Number amount) {
-        return this.currency.has(player, amount);
-    }
-
-    /**
-     * Give the player an amount of currency
-     *
-     * @param player The player to give the currency to
-     * @param amount The amount to give
-     */
-    @Override
-    public void give(@NotNull OfflinePlayer player, @NotNull Number amount) {
-        this.currency.give(player, amount);
-    }
-
-    /**
-     * Take an amount of currency from the player
-     *
-     * @param player The player to take the currency from
-     * @param amount The amount to take
-     */
-    @Override
-    public void take(@NotNull OfflinePlayer player, @NotNull Number amount) {
-        this.currency.take(player, amount);
+    public Currency<?> currency() {
+        return currency;
     }
 
     /**

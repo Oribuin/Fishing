@@ -4,7 +4,7 @@ import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.FishEventHandler;
 import dev.oribuin.fishing.config.Configurable;
 import dev.oribuin.fishing.model.economy.Cost;
-import dev.oribuin.fishing.model.economy.Currencies;
+import dev.oribuin.fishing.model.economy.CurrencyRegistry;
 import dev.oribuin.fishing.model.item.ItemConstruct;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
@@ -55,7 +55,7 @@ public abstract class Augment extends FishEventHandler implements Configurable {
         this.displayItem = this.defaultItem();
         this.displayLine = "&c" + StringUtils.capitalize(this.name.replace("_", " ")) + " %level_roman%";
         this.permission = "fishing.augment." + name;
-        this.price = Cost.of(Currencies.ENTROPY.get(), 25000);
+        this.price = Cost.of(CurrencyRegistry.ENTROPY, 25000);
     }
 
     /**

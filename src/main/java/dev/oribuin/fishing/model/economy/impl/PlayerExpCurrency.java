@@ -5,7 +5,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class PlayerExpCurrency implements Currency {
+public class PlayerExpCurrency implements Currency<Integer> {
 
     /**
      * @return The name of the currency
@@ -18,10 +18,13 @@ public class PlayerExpCurrency implements Currency {
     /**
      * Get the amount of currency the player has
      *
-     * @param player The player to check
+     * @param player  The player to check
+     * @param content The currency type to check
+     *
+     * @return The amount of currency the player has
      */
     @Override
-    public @NotNull Number amount(@NotNull OfflinePlayer player) {
+    public @NotNull Number amount(@NotNull OfflinePlayer player, @NotNull Integer content) {
         Player online = player.getPlayer();
         if (online == null) return 0;
 
@@ -31,16 +34,15 @@ public class PlayerExpCurrency implements Currency {
     /**
      * Check if the player has enough currency to purchase an item
      *
-     * @param player The player who is purchasing the item
-     * @param amount The amount to check
+     * @param player  The player who is purchasing the item
+     * @param content The amount to check
      *
      * @return If the player has enough currency
      */
     @Override
-    public boolean has(@NotNull OfflinePlayer player, @NotNull Number amount) {
-        return this.amount(player).intValue() >= amount.intValue();
+    public boolean has(@NotNull OfflinePlayer player, @NotNull Integer content) {
+        return this.amount(player, content).intValue() >= content;
     }
-
     /**
      * Give the player an amount of currency
      *
@@ -48,11 +50,11 @@ public class PlayerExpCurrency implements Currency {
      * @param amount The amount to give
      */
     @Override
-    public void give(@NotNull OfflinePlayer player, @NotNull Number amount) {
+    public void give(@NotNull OfflinePlayer player, @NotNull Integer amount) {
         Player online = player.getPlayer();
         if (online == null) return;
 
-        online.giveExp(amount.intValue());
+        online.giveExp(amount);
     }
 
     /**
@@ -62,11 +64,11 @@ public class PlayerExpCurrency implements Currency {
      * @param amount The amount to take
      */
     @Override
-    public void take(@NotNull OfflinePlayer player, @NotNull Number amount) {
+    public void take(@NotNull OfflinePlayer player, @NotNull Integer amount) {
         Player online = player.getPlayer();
         if (online == null) return;
 
-        online.giveExp(-amount.intValue());
+        online.giveExp(-amount);
     }
 
 }
