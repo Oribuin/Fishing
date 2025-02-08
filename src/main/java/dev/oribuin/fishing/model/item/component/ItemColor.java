@@ -20,6 +20,8 @@ public class ItemColor implements Configurable {
 
     /**
      * Create a new color for the item builder
+     * 
+     * @return The color
      */
     public Color create() {
         return this.color;
