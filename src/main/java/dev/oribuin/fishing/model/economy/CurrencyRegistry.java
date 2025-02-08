@@ -1,6 +1,5 @@
 package dev.oribuin.fishing.model.economy;
 
-import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.model.economy.impl.EntropyCurrency;
 import dev.oribuin.fishing.model.economy.impl.FishExpCurrency;
 import dev.oribuin.fishing.model.economy.impl.ItemStackCurrency;
@@ -13,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * All the registered currency type in the fishing plugin
@@ -22,55 +22,25 @@ import java.util.Map;
  */
 public class CurrencyRegistry {
 
-    private static final Map<Class<? extends Currency<?>>, Currency<?>> registered = new HashMap<>();
-    public static final Currency<Integer> ENTROPY = register(EntropyCurrency.class);
-    public static final Currency<Integer> FISH_EXP = register(FishExpCurrency.class);
-    public static final Currency<Integer> PLAYER_EXP = register(PlayerExpCurrency.class);
-    public static final Currency<Integer> SKILLPOINTS = register(SkillpointCurrency.class);
-    public static final Currency<Double> VAULT = register(VaultCurrency.class);
-    public static final Currency<ItemStack> ITEM_STACK = register(ItemStackCurrency.class);
+    private static final Map<String, Currency<?>> registered = new HashMap<>();
+    public static final Currency<Integer> ENTROPY = register(EntropyCurrency::new);
+    public static final Currency<Integer> FISH_EXP = register(FishExpCurrency::new);
+    public static final Currency<Integer> PLAYER_EXP = register(PlayerExpCurrency::new);
+    public static final Currency<Integer> SKILLPOINTS = register(SkillpointCurrency::new);
+    public static final Currency<Double> VAULT = register(VaultCurrency::new);
+    public static final Currency<ItemStack> ITEMSTACK = register(ItemStackCurrency::new);
 
     /**
      * Register a currency type in the fishing plugin
      *
-     * @param currency The currency to register
+     * @param supplier The supplier to create the currency instance
      *
      * @return The currency instance
      */
-    @NotNull
-    public static <T extends Currency<?>> T register(@NotNull Class<T> currency) {
-        try {
-            T instance = currency.getDeclaredConstructor().newInstance();
-            registered.put(currency, instance);
-            return instance;
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to register currency: " + currency.getSimpleName() + ". Error: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Register a currency type in the fishing plugin
-     *
-     * @param currency The currency to register
-     *
-     * @return The currency instance
-     */
-    @SuppressWarnings("unchecked")
-    @NotNull
-    public static <T> Currency<T> register(@NotNull Currency<T> currency) {
-        registered.put((Class<? extends Currency<?>>) currency.getClass(), currency);
+    public static <T> Currency<T> register(Supplier<Currency<T>> supplier) {
+        Currency<T> currency = supplier.get();
+        registered.put(currency.name().toLowerCase(), currency);
         return currency;
-    }
-
-    /**
-     * Get a currency instance from the registered currencies
-     *
-     * @param currency The currency class to get
-     *
-     * @return The currency instance or null if not found
-     */
-    public static Currency<?> get(Class<? extends Currency<?>> currency) {
-        return registered.get(currency);
     }
 
     /**
@@ -84,11 +54,7 @@ public class CurrencyRegistry {
     public static Currency<?> get(@Nullable String name) {
         if (name == null) return null;
 
-        for (Currency<?> currency : registered.values()) {
-            if (currency.name().equalsIgnoreCase(name)) return currency;
-        }
-
-        return null;
+        return registered.get(name.toLowerCase());
     }
 
     /**
@@ -101,7 +67,7 @@ public class CurrencyRegistry {
      */
     @SuppressWarnings("unchecked")
     @NotNull
-    public static <T> Currency<T> getOrDefault(@Nullable String name, @NotNull Currency<T> defaultCurrency) {
+    public static <T> Currency<T> get(@Nullable String name, @NotNull Currency<T> defaultCurrency) {
         Currency<T> currency = (Currency<T>) get(name);
         return currency == null ? defaultCurrency : currency;
     }
