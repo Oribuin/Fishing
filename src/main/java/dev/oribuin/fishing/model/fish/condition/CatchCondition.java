@@ -78,35 +78,4 @@ public abstract class CatchCondition implements Configurable {
      */
     public abstract void loadSettings(@NotNull CommentedConfigurationSection config);
 
-    /**
-     * Create a new condition object. This is used to create a new condition object from a configuration section.
-     *
-     * @param clazz The class of the condition
-     * @param base  The configuration section to load the settings from
-     * @param <T>   The type of the condition
-     *
-     * @return The new condition object
-     */
-    public static <T extends CatchCondition> T create(Class<T> clazz, CommentedConfigurationSection base) {
-        try {
-            T condition = clazz.getDeclaredConstructor().newInstance();
-            if (base != null) condition.loadSettings(base);
-            return condition;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    /**
-     * Create a new condition object. This will be an empty condition object with no settings loaded.
-     *
-     * @param clazz The class of the condition
-     * @param <T>   The type of the condition
-     *
-     * @return The new condition object
-     */
-    public static <T extends CatchCondition> T create(Class<T> clazz) {
-        return create(clazz, null);
-    }
-
 }

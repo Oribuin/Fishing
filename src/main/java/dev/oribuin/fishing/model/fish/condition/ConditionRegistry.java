@@ -24,13 +24,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * The registry for all the catch conditions in the fishing plugin
  */
 public class ConditionRegistry {
 
-    private static final Set<Class<? extends CatchCondition>> CONDITIONS = new HashSet<>();
+    private static final Set<Supplier<CatchCondition>> CONDITIONS = new HashSet<>();
 
     /**
      * The default constructor for the condition registry, should be empty
@@ -38,19 +39,19 @@ public class ConditionRegistry {
     public ConditionRegistry() {}
 
     static {
-        register(AugmentCondition.class);
-        register(BiomeCondition.class);
-        register(BoatCondition.class);
-        register(DepthCondition.class);
-        register(EnvironmentCondition.class);
-        register(HeightCondition.class);
-        register(IceFishingCondition.class);
-        register(LightLevelCondition.class);
-        register(PermissionCondition.class);
-        register(PlaceholderCondition.class);
-        register(TimeCondition.class);
-        register(WorldCondition.class);
-        register(WeatherCondition.class);
+        register(AugmentCondition::new);
+        register(BiomeCondition::new);
+        register(BoatCondition::new);
+        register(DepthCondition::new);
+        register(EnvironmentCondition::new);
+        register(HeightCondition::new);
+        register(IceFishingCondition::new);
+        register(LightLevelCondition::new);
+        register(PermissionCondition::new);
+        register(PlaceholderCondition::new);
+        register(TimeCondition::new);
+        register(WorldCondition::new);
+        register(WeatherCondition::new);
     }
 
     /**
@@ -58,7 +59,7 @@ public class ConditionRegistry {
      *
      * @param condition The condition to register
      */
-    public static void register(Class<? extends CatchCondition> condition) {
+    public static void register(Supplier<CatchCondition> condition) {
         CONDITIONS.add(condition);
     }
 
@@ -72,9 +73,12 @@ public class ConditionRegistry {
      */
     public static List<CatchCondition> loadConditions(Fish fish, CommentedConfigurationSection base) {
         return CONDITIONS.stream()
-                .map(conditionClass -> {
-                    CatchCondition condition = CatchCondition.create(conditionClass, base);
-                    return condition != null && condition.shouldRun(fish) ? condition : null;
+                .map(conditionSupplier -> {
+                    CatchCondition condition = conditionSupplier.get();
+                    if (condition == null) return null;
+                    
+                    condition.loadSettings(base);
+                    return condition.shouldRun(fish) ? condition : null;
                 })
                 .filter(Objects::nonNull)
                 .toList();
