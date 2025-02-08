@@ -6,6 +6,9 @@ import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * The cost of an item or upgrade in the fishing plugin
+ */
 public class Cost implements Currency, Configurable {
 
     private Currency currency;
@@ -125,6 +128,8 @@ public class Cost implements Currency, Configurable {
     }
 
     /**
+     * The price of the item to purchase
+     *
      * @return The price of the item
      */
     public Number price() {

@@ -21,6 +21,11 @@ import org.jetbrains.annotations.NotNull;
 public abstract class CatchCondition implements Configurable {
 
     /**
+     * The default constructor for the condition, should be empty
+     */
+    public CatchCondition() {}
+
+    /**
      * Decides whether the condition should be checked in the first place,
      * <p>R
      * This is to prevent unnecessary checks on fish that don't have the condition type.

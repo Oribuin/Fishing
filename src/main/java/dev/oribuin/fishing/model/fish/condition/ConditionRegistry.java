@@ -32,6 +32,11 @@ public class ConditionRegistry {
 
     private static final Set<Class<? extends CatchCondition>> CONDITIONS = new HashSet<>();
 
+    /**
+     * The default constructor for the condition registry, should be empty
+     */
+    public ConditionRegistry() {}
+
     static {
         register(AugmentCondition.class);
         register(BiomeCondition.class);

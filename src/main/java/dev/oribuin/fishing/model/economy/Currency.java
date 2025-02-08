@@ -6,10 +6,15 @@ import dev.oribuin.fishing.storage.Fisher;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Represents a currency type in the plugin economy
+ */
 public interface Currency {
 
     /**
-     * @return The name of the currency
+     * The name of the currency type (e.g. "Dollars")
+     *
+     * @return The name
      */
     String name();
 
@@ -17,6 +22,8 @@ public interface Currency {
      * Get the amount of currency the player has
      *
      * @param player The player to check
+     *
+     * @return The amount of currency the player has
      */
     @NotNull
     Number amount(@NotNull OfflinePlayer player);
@@ -51,6 +58,8 @@ public interface Currency {
      * Get the Fisher object for the player
      *
      * @param player The player to get the Fisher object for
+     *
+     * @return The Fisher object for the player
      */
     default Fisher fisher(@NotNull OfflinePlayer player) {
         return FishingPlugin.get().getManager(DataManager.class).get(player.getUniqueId());
