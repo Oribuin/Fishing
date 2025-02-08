@@ -68,7 +68,7 @@ public class Fish implements Configurable {
         this.modelData = config.getInt("model-data", -1);
 
         // Catch Conditions for the fish
-        this.conditions = ConditionRegistry.loadConditions(this, this.pullSection(config, "conditions"));
+        this.conditions = ConditionRegistry.loadConditions(this.pullSection(config, "conditions"));
     }
 
     /**
@@ -144,6 +144,7 @@ public class Fish implements Configurable {
 
         // Add all the placeholders from the conditions
         this.conditions.forEach(condition -> builder.addAll(condition.placeholders()));
+
         return builder.build();
     }
 

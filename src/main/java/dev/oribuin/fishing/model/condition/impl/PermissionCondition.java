@@ -5,6 +5,7 @@ import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.condition.CatchCondition;
 import dev.oribuin.fishing.model.condition.ConditionRegistry;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -62,6 +63,18 @@ public class PermissionCondition extends CatchCondition {
         }
 
         return player.hasPermission(this.permission);
+    }
+
+    /**
+     * All the placeholders that can be used in the configuration file for this configurable class
+     *
+     * @return The placeholders
+     */
+    @Override
+    public StringPlaceholders placeholders() {
+        return StringPlaceholders.builder()
+                .add("permission", this.permission)
+                .build();
     }
 
     /**

@@ -44,15 +44,8 @@ public class AugmentRegistry {
      * This should not be called outside of {@link AugmentRegistry#init()}
      */
     private AugmentRegistry() {}
-
-    /**
-     * Initialize all the default augments into the registry to be loaded
-     * <p>
-     * This method should be called when the plugin is enabled to load all the augments into the registry
-     */
-    public static void init() {
-        augments.clear();
-
+    
+    static {
         register(AugmentBiomeBlend::new);
         register(AugmentRainDance::new);
         register(AugmentHotspot::new);
@@ -185,6 +178,13 @@ public class AugmentRegistry {
         });
 
         itemStack.setItemMeta(meta);
+    }
+    
+    /**
+     * Reload all the augments in the registry
+     */
+    public static void reload() {
+        augments.values().forEach(Augment::reload);
     }
 
     /**

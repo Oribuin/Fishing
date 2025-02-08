@@ -4,6 +4,7 @@ import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.condition.CatchCondition;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -58,6 +59,18 @@ public class LightLevelCondition extends CatchCondition {
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
         int hookLight = hook.getLocation().getBlock().getLightLevel();
         return this.lightLevel >= hookLight;
+    }
+
+    /**
+     * All the placeholders that can be used in the configuration file for this configurable class
+     *
+     * @return The placeholders
+     */
+    @Override
+    public StringPlaceholders placeholders() {
+        return StringPlaceholders.builder()
+                .add("light_level", this.lightLevel)
+                .build();
     }
 
     /**

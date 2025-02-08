@@ -4,6 +4,7 @@ import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.condition.CatchCondition;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.block.Block;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
@@ -66,6 +67,18 @@ public class DepthCondition extends CatchCondition {
         }
 
         return false;
+    }
+
+    /**
+     * All the placeholders that can be used in the configuration file for this configurable class
+     *
+     * @return The placeholders
+     */
+    @Override
+    public StringPlaceholders placeholders() {
+        return StringPlaceholders.builder()
+                .add("water_depth", this.waterDepth)
+                .build();
     }
 
     /**

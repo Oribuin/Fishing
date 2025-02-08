@@ -4,6 +4,7 @@ import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.condition.CatchCondition;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -65,6 +66,18 @@ public class WorldCondition extends CatchCondition {
             if (s.startsWith("!")) return !s.substring(1).equalsIgnoreCase(currentWorld);
             else return s.equalsIgnoreCase(currentWorld);
         });
+    }
+
+    /**
+     * All the placeholders that can be used in the configuration file for this configurable class
+     *
+     * @return The placeholders
+     */
+    @Override
+    public StringPlaceholders placeholders() {
+        return StringPlaceholders.builder()
+                .add("worlds", String.join(", ", this.worlds))
+                .build();
     }
 
     /**

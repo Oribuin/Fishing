@@ -6,6 +6,7 @@ import dev.oribuin.fishing.model.condition.CatchCondition;
 import dev.oribuin.fishing.model.condition.Time;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -67,6 +68,19 @@ public class TimeCondition extends CatchCondition {
 
         // please actually use the system time
         return this.time.matches(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
+    }
+
+    /**
+     * All the placeholders that can be used in the configuration file for this configurable class
+     *
+     * @return The placeholders
+     */
+    @Override
+    public StringPlaceholders placeholders() {
+        return StringPlaceholders.builder()
+                .add("time", this.time.name())
+                .add("use_system_time", this.systemTime)
+                .build();
     }
 
     /**

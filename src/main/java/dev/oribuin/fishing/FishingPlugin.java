@@ -51,12 +51,11 @@ public class FishingPlugin extends RosePlugin {
 
     @Override
     public void reload() {
-        super.reload();
-        
-        AugmentRegistry.init();
-        ConditionRegistry.init();
+        AugmentRegistry.reload();
         ItemRegistry.init();
         SkillRegistry.init();
+        
+        super.reload();
     }
 
     @Override

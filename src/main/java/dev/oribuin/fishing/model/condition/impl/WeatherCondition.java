@@ -6,9 +6,12 @@ import dev.oribuin.fishing.model.condition.CatchCondition;
 import dev.oribuin.fishing.model.condition.Weather;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -59,6 +62,18 @@ public class WeatherCondition extends CatchCondition {
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
         return Weather.test(hook.getLocation()) == this.weather;
+    }
+
+    /**
+     * All the placeholders that can be used in the configuration file for this configurable class
+     *
+     * @return The placeholders
+     */
+    @Override
+    public StringPlaceholders placeholders() {
+        return StringPlaceholders.builder()
+                .add("weather", StringUtils.capitalize(this.weather.name().toLowerCase()))
+                .build();
     }
 
     /**

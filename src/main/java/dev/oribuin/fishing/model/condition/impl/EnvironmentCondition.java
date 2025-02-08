@@ -5,6 +5,7 @@ import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.condition.CatchCondition;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.World;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
@@ -62,6 +63,22 @@ public class EnvironmentCondition extends CatchCondition {
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
         return this.environments.contains(hook.getLocation().getWorld().getEnvironment());
+    }
+
+    /**
+     * All the placeholders that can be used in the configuration file for this configurable class
+     *
+     * @return The placeholders
+     */
+    @Override
+    public StringPlaceholders placeholders() {
+        List<String> environments = this.environments.stream()
+                .map(x -> x.name().toLowerCase().replace("_", " "))
+                .toList();
+
+        return StringPlaceholders.builder()
+                .add("environments", this.environments.isEmpty() ? "All" : String.join(", ", environments))
+                .build();
     }
 
     /**

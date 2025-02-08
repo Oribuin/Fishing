@@ -38,14 +38,7 @@ public class ConditionRegistry {
      */
     public ConditionRegistry() {}
 
-    /**
-     * Initialize all the default conditions into the registry to be loaded
-     * <p>
-     * This method should be called when the plugin is enabled to load all the conditions into the registry
-     */
-    public static void init() {
-        conditions.clear();
-        
+    static {
         register(AugmentCondition::new);
         register(BiomeCondition::new);
         register(BoatCondition::new);
@@ -73,19 +66,18 @@ public class ConditionRegistry {
     /**
      * Load all the conditions from a configuration section and return them as a list
      *
-     * @param fish The fish to load the conditions for
      * @param base The configuration section to load the conditions from
      *
      * @return The condition list
      */
-    public static List<CatchCondition> loadConditions(Fish fish, CommentedConfigurationSection base) {
+    public static List<CatchCondition> loadConditions(CommentedConfigurationSection base) {
         return conditions.stream()
                 .map(conditionSupplier -> {
                     CatchCondition condition = conditionSupplier.get();
                     if (condition == null) return null;
                     
                     condition.loadSettings(base);
-                    return condition.shouldRun(fish) ? condition : null;
+                    return condition;
                 })
                 .filter(Objects::nonNull)
                 .toList();
@@ -103,6 +95,8 @@ public class ConditionRegistry {
      */
     public static boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
         for (CatchCondition condition : fish.conditions()) {
+            if (!condition.shouldRun(fish)) continue; // Don't run the condition they don't have
+            
             // Check the condition
             boolean result = condition.check(fish, player, rod, hook);
             ConditionCheckEvent event = new ConditionCheckEvent(player, rod, hook, condition, result);

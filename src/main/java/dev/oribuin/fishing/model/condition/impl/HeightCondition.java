@@ -5,6 +5,7 @@ import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.condition.CatchCondition;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
@@ -62,6 +63,19 @@ public class HeightCondition extends CatchCondition {
         int maxHookHeight = this.height.getRight();
         int hookHeight = hook.getLocation().getBlockY();
         return hookHeight >= minHookHeight && hookHeight <= maxHookHeight;
+    }
+
+    /**
+     * All the placeholders that can be used in the configuration file for this configurable class
+     *
+     * @return The placeholders
+     */
+    @Override
+    public StringPlaceholders placeholders() {
+        return StringPlaceholders.builder()
+                .add("min_height", this.height.getLeft())
+                .add("max_height", this.height.getRight())
+                .build();
     }
 
     /**

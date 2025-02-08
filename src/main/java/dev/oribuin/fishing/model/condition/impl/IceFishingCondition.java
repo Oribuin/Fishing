@@ -4,6 +4,7 @@ import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.condition.CatchCondition;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.Location;
 import org.bukkit.Tag;
 import org.bukkit.entity.FishHook;
@@ -76,6 +77,20 @@ public class IceFishingCondition extends CatchCondition {
         }
 
         return true;
+    }
+
+    /**
+     * All the placeholders that can be used in the configuration file for this configurable class
+     *
+     * @return The placeholders
+     */
+    @Override
+    public StringPlaceholders placeholders() {
+        return StringPlaceholders.builder()
+                .add("ice_fishing", this.iceFishing)
+                .add("ice_min_radius", MIN_RADIUS)
+                .add("ice_max_radius", MAX_RADIUS)
+                .build();
     }
 
     /**

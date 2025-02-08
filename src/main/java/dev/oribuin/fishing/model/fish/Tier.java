@@ -68,14 +68,15 @@ public class Tier implements Configurable {
         this.money = config.getDouble("money", 0.0);
         this.chance = config.getDouble("chance", 0.0);
         this.entropy = config.getInt("entropy", 0);
-        this.baseDisplay = ItemConstruct.of(Material.STONE);
-        this.baseDisplay.loadSettings(this.pullSection(config, "display-item"));
-
+        this.baseDisplay = ItemConstruct.deserialize(this.pullSection(config, "display-item"));
         this.fishExp = config.getInt("fish-exp", 0);
         this.naturalExp = (float) config.getDouble("natural-exp", 0.0);
 
         CommentedConfigurationSection section = config.getConfigurationSection("fish");
-        if (section == null) return;
+        if (section == null) {
+            FishingPlugin.get().getLogger().warning("No fish found in tier: " + this.name);
+            return;
+        }
 
         // Load all the fish from the config
         for (String key : section.getKeys(false)) {
