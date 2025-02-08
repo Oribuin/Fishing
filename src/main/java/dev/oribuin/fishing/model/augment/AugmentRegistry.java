@@ -92,7 +92,7 @@ public class AugmentRegistry {
     public static void register(Supplier<Augment> supplier) {
         Augment augment = supplier.get();
         augment.reload(); // Load the augment
-        augments.put(augment.name(), augment); // Register the augment
+        augments.put(augment.name().toLowerCase(), augment); // Register the augment
     }
 
     /**

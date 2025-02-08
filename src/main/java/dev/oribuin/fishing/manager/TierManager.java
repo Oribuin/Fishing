@@ -17,6 +17,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This class is responsible for loading all the tiers from the plugin's data folder and storing them in a map for easy access
@@ -112,6 +113,7 @@ public class TierManager extends Manager {
     public Fish getFish(String key) {
         return this.tiers.values().stream()
                 .map(x -> x.getFish(key))
+                .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(null);
     }

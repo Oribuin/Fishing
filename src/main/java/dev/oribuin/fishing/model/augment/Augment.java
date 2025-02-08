@@ -49,7 +49,7 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      */
     public Augment(String name, String... description) {
         this.enabled = true;
-        this.name = name;
+        this.name = name.toLowerCase();
         this.description = new ArrayList<>(List.of(description));
         this.maxLevel = 5;
         this.requiredLevel = 1;
@@ -81,7 +81,7 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      */
     @Override
     public @NotNull Path configPath() {
-        return Path.of("augments", this.name + ".yml");
+        return Path.of("augments", this.name.toLowerCase() + ".yml");
     }
 
     /**
@@ -141,7 +141,7 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      *
      * @return The default {@link ItemConstruct} for the augment
      */
-    private final ItemConstruct defaultItem() {
+    private ItemConstruct defaultItem() {
         List<String> lore = new ArrayList<>(this.description);
         lore.addAll(List.of(
                 "",

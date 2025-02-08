@@ -26,7 +26,7 @@ public class AugmentBiomeBlend extends Augment {
      * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
      */
     public AugmentBiomeBlend() {
-        super("biome_Blend", "&7When a player catches a fish, there is", "&7a chance to ignore the biome restrictions.");
+        super("biome_blend", "&7When a player catches a fish, there is", "&7a chance to ignore the biome restrictions.");
 
         this.maxLevel(3);
         this.register(ConditionCheckEvent.class, this::onConditionCheck);

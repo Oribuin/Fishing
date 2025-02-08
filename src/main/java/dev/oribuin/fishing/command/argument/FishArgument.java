@@ -39,6 +39,10 @@ public class FishArgument extends ArgumentHandler<Fish> {
     @Override
     public Fish handle(CommandContext context, Argument argument, InputIterator inputIterator) throws HandledArgumentException {
         String input = inputIterator.next();
+        if (input == null) {
+            throw new HandledArgumentException("argument-handler-fish", StringPlaceholders.of("input", "null"));
+        }
+        
         Fish fish = FishingPlugin.get().getManager(TierManager.class).getFish(input);
         if (fish != null) return fish;
 
