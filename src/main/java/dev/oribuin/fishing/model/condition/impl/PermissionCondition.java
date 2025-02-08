@@ -5,11 +5,15 @@ import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.condition.CatchCondition;
 import dev.oribuin.fishing.model.condition.ConditionRegistry;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A condition that is checked when a player is trying to catch a fish
@@ -21,7 +25,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PermissionCondition extends CatchCondition {
 
-    private String permission = null;
+    private List<String> permissions = new ArrayList<>(); // List of permissions to check for
+    private int minimum = 0;
 
     /**
      * Checks if a player has a specific permission to catch a fish
@@ -39,7 +44,7 @@ public class PermissionCondition extends CatchCondition {
      */
     @Override
     public boolean shouldRun(Fish fish) {
-        return this.permission != null;
+        return !this.permissions.isEmpty();
     }
 
     /**
@@ -58,11 +63,24 @@ public class PermissionCondition extends CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        if (this.permission.startsWith("!")) {
-            return !player.hasPermission(this.permission.substring(1));
-        }
+        int success = this.permissions.stream()
+                .map(x -> this.checkPermission(player, x))
+                .mapToInt(x -> x ? 1 : 0)
+                .sum();
+        
+        return this.minimum == 0 ? success == this.permissions.size() : success >= this.minimum;
+    }
 
-        return player.hasPermission(this.permission);
+    /**
+     * Check if a player has a specific permission, if the permission starts with "!" it will check if the player doesn't have the permission
+     *
+     * @param player     The player to check
+     * @param permission The permission to check
+     *
+     * @return true if the player has the permission
+     */
+    public boolean checkPermission(Player player, String permission) {
+        return permission.startsWith("!") ? !player.hasPermission(permission.substring(1)) : player.hasPermission(permission);
     }
 
     /**
@@ -73,7 +91,7 @@ public class PermissionCondition extends CatchCondition {
     @Override
     public StringPlaceholders placeholders() {
         return StringPlaceholders.builder()
-                .add("permission", this.permission)
+                .add("permission", String.join(", ", this.permissions))
                 .build();
     }
 
@@ -94,7 +112,8 @@ public class PermissionCondition extends CatchCondition {
      */
     @Override
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        this.permission = config.getString("permission", null);
+        this.minimum = config.getInt("minimum", 0);
+        this.permissions = config.getStringList("permissions");
     }
 
 }
