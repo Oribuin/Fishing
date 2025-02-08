@@ -30,16 +30,8 @@ public class TotemMainMenu extends PluginMenu<Gui> {
 
         Gui gui = menu.createRegular();
         menu.placeExtras(totem.placeholders());
-
-        Bukkit.getScheduler().runTaskTimerAsynchronously(FishingPlugin.get(), task -> {
-            if (gui.getInventory().getViewers().isEmpty()) {
-                task.cancel();
-                return;
-            }
-
-            menu.placeDynamics(totem, player);
-        }, 0L, 3 * 20L);
-
+        menu.updateTask(() -> menu.placeDynamics(totem, player));
+        
         gui.open(player);
     }
 

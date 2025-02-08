@@ -10,6 +10,7 @@ import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.BaseGui;
 import dev.triumphteam.gui.guis.Gui;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +33,7 @@ public abstract class PluginMenu<T extends BaseGui> implements Configurable {
     protected Map<String, GuiItem> items;
     protected Map<String, GuiItem> extraItems;
     protected int pageSize;
+    protected int updateFrequency;
 
     protected T gui;
 
@@ -49,6 +51,7 @@ public abstract class PluginMenu<T extends BaseGui> implements Configurable {
         this.items = new HashMap<>();
         this.extraItems = new HashMap<>();
         this.pageSize = 0;
+        this.updateFrequency = 60; // 3s
         this.gui = null;
     }
 
@@ -143,6 +146,24 @@ public abstract class PluginMenu<T extends BaseGui> implements Configurable {
     }
 
     /**
+     * Update the task for the menu to run a function every x ticks, this will automatically cancel the task if the GUI is closed
+     *
+     * @param runnable The function to run
+     */
+    public void updateTask(Runnable runnable) {
+        if (this.updateFrequency <= 0) this.updateFrequency = 60;
+
+        Bukkit.getScheduler().runTaskTimerAsynchronously(FishingPlugin.get(), task -> {
+            if (gui.getInventory().getViewers().isEmpty()) {
+                task.cancel();
+                return;
+            }
+
+            runnable.run();
+        }, 0L, this.updateFrequency);
+    }
+
+    /**
      * Initialize a {@link CommentedConfigurationSection} from a configuration file to establish the settings
      * for the configurable class, will be automatically called when the configuration file is loaded using {@link #reload()}
      * <p>
@@ -162,6 +183,7 @@ public abstract class PluginMenu<T extends BaseGui> implements Configurable {
         this.title = config.getString("title", this.name);
         this.rows = config.getInt("rows", 6);
         this.pageSize = config.getInt("page-size", 0);
+        this.updateFrequency = config.getInt("update-frequency", 60);
 
         CommentedConfigurationSection items = config.getConfigurationSection("items");
         if (items != null) {
@@ -201,6 +223,7 @@ public abstract class PluginMenu<T extends BaseGui> implements Configurable {
         config.set("title", this.title);
         config.set("rows", this.rows);
         config.set("page-size", this.pageSize);
+        config.set("update-frequency", this.updateFrequency);
 
         // Save the items
         CommentedConfigurationSection items = this.pullSection(config, "items");
