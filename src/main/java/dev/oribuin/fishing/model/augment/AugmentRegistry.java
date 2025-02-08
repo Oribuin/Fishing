@@ -1,5 +1,6 @@
 package dev.oribuin.fishing.model.augment;
 
+import com.google.common.base.Supplier;
 import dev.oribuin.fishing.api.event.FishEventHandler;
 import dev.oribuin.fishing.model.augment.impl.AugmentBiomeBlend;
 import dev.oribuin.fishing.model.augment.impl.AugmentEnlightened;
@@ -27,7 +28,7 @@ import java.util.Map;
 /**
  * The registry for all augments in the plugin, This is where all augments are registered and loaded.
  * <p>
- * To register an augment, use {@link #register(Augment)} to add the augment to the registry.
+ * To register an augment, use {@link #register(Supplier)} to add the augment to the registry.
  * To get an augment from the registry, use {@link #from(String)} to get the augment by its name.
  * To get all augments on a fish itemstack, use {@link #from(ItemStack)} to get all augments on the itemstack.
  * To save augments to an itemstack, use {@link #save(ItemStack, Map)} to save the augments to the itemstack.
@@ -52,14 +53,14 @@ public class AugmentRegistry {
     public static void init() {
         augments.clear();
 
-        register(new AugmentBiomeBlend());
-        register(new AugmentRainDance());
-        register(new AugmentHotspot());
-        register(new AugmentGenius());
-        register(new AugmentIntuition());
-        register(new AugmentFineSlicing());
-        register(new AugmentEnlightened());
-        register(new AugmentIndulge());
+        register(AugmentBiomeBlend::new);
+        register(AugmentRainDance::new);
+        register(AugmentHotspot::new);
+        register(AugmentGenius::new);
+        register(AugmentIntuition::new);
+        register(AugmentFineSlicing::new);
+        register(AugmentEnlightened::new);
+        register(AugmentIndulge::new);
     }
 
     /**
@@ -86,9 +87,10 @@ public class AugmentRegistry {
      * Loads an augment into the registry to be used in the plugin and caches it.
      * Calls {@link Augment#reload()} to load the augment.
      *
-     * @param augment The {@link Augment} to register
+     * @param supplier The {@link Augment} to register
      */
-    public static void register(Augment augment) {
+    public static void register(Supplier<Augment> supplier) {
+        Augment augment = supplier.get();
         augment.reload(); // Load the augment
         augments.put(augment.name(), augment); // Register the augment
     }
