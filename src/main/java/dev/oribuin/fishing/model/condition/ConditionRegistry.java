@@ -31,14 +31,16 @@ import java.util.function.Supplier;
  */
 public class ConditionRegistry {
 
-    private static final Set<Supplier<CatchCondition>> CONDITIONS = new HashSet<>();
+    private static final Set<Supplier<CatchCondition>> conditions = new HashSet<>();
 
     /**
      * The default constructor for the condition registry, should be empty
      */
     public ConditionRegistry() {}
 
-    static {
+    public static void init() {
+        conditions.clear();
+        
         register(AugmentCondition::new);
         register(BiomeCondition::new);
         register(BoatCondition::new);
@@ -60,7 +62,7 @@ public class ConditionRegistry {
      * @param condition The condition to register
      */
     public static void register(Supplier<CatchCondition> condition) {
-        CONDITIONS.add(condition);
+        conditions.add(condition);
     }
 
     /**
@@ -72,7 +74,7 @@ public class ConditionRegistry {
      * @return The condition list
      */
     public static List<CatchCondition> loadConditions(Fish fish, CommentedConfigurationSection base) {
-        return CONDITIONS.stream()
+        return conditions.stream()
                 .map(conditionSupplier -> {
                     CatchCondition condition = conditionSupplier.get();
                     if (condition == null) return null;

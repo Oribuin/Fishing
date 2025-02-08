@@ -35,15 +35,15 @@ import java.util.Map;
  * To get all augments in the registry, use {@link #all()} to get all augments in the registry.
  */
 public class AugmentRegistry {
-
+    
+    private static final Map<String, Augment> augments = new HashMap<>();
+    
     /**
      * A private constructor to prevent instantiation of the class
      * <p>
      * This should not be called outside of {@link AugmentRegistry#init()}
      */
     private AugmentRegistry() {}
-
-    private static final Map<String, Augment> augments = new HashMap<>();
 
     /**
      * Initialize all the default augments into the registry to be loaded

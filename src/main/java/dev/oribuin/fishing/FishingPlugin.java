@@ -12,6 +12,7 @@ import dev.oribuin.fishing.manager.LocaleManager;
 import dev.oribuin.fishing.manager.MenuManager;
 import dev.oribuin.fishing.manager.TierManager;
 import dev.oribuin.fishing.manager.TotemManager;
+import dev.oribuin.fishing.model.condition.ConditionRegistry;
 import dev.oribuin.fishing.model.item.ItemRegistry;
 import dev.oribuin.fishing.model.skill.SkillRegistry;
 import dev.rosewood.rosegarden.RosePlugin;
@@ -51,10 +52,11 @@ public class FishingPlugin extends RosePlugin {
     @Override
     public void reload() {
         super.reload();
-
-        SkillRegistry.init();
+        
         AugmentRegistry.init();
+        ConditionRegistry.init();
         ItemRegistry.init();
+        SkillRegistry.init();
     }
 
     @Override
