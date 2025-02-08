@@ -6,7 +6,7 @@ import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import dev.oribuin.fishing.manager.TierManager;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.fish.Tier;
-import dev.oribuin.fishing.model.fish.condition.ConditionRegistry;
+import dev.oribuin.fishing.model.condition.ConditionRegistry;
 import dev.oribuin.fishing.util.FishUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.FishHook;

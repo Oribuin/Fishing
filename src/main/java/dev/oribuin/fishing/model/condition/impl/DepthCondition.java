@@ -1,11 +1,10 @@
-package dev.oribuin.fishing.model.fish.condition.impl;
+package dev.oribuin.fishing.model.condition.impl;
 
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import dev.oribuin.fishing.model.fish.Fish;
-import dev.oribuin.fishing.model.fish.condition.CatchCondition;
+import dev.oribuin.fishing.model.condition.CatchCondition;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import org.bukkit.Location;
-import org.bukkit.Tag;
+import org.bukkit.block.Block;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -17,18 +16,16 @@ import org.jetbrains.annotations.NotNull;
  * First, {@link #shouldRun(Fish)} is called to check if the fish has the condition type
  * If the fish has the condition type, {@link #check(Fish, Player, ItemStack, FishHook)} is called to check if the player meets the condition to catch the fish
  *
- * @see dev.oribuin.fishing.model.fish.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
+ * @see dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
  */
-public class IceFishingCondition extends CatchCondition {
+public class DepthCondition extends CatchCondition {
 
-    private static final int MIN_RADIUS = 2;
-    private static final int MAX_RADIUS = 3;
-    private boolean iceFishing = false;
+    private Integer waterDepth = 0;
 
     /**
-     * A condition that is checked when a player is fishing surrounded by ice blocks
+     * A condition that is checked when a fishing rod has certain water depth
      */
-    public IceFishingCondition() {}
+    public DepthCondition() {}
 
     /**
      * Decides whether the condition should be checked in the first place,
@@ -41,13 +38,13 @@ public class IceFishingCondition extends CatchCondition {
      */
     @Override
     public boolean shouldRun(Fish fish) {
-        return this.iceFishing;
+        return this.waterDepth != null && this.waterDepth > 0;
     }
 
     /**
      * Check if the player meets the condition to catch the fish or not, Requires {@link #shouldRun(Fish)} to return true before running
      * <p>
-     * To see how this is used, check {@link dev.oribuin.fishing.model.fish.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)}
+     * To see how this is used, check {@link dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)}
      * <p>
      * All conditions are passed through {@link ConditionCheckEvent} to overwrite the result if needed
      *
@@ -60,22 +57,15 @@ public class IceFishingCondition extends CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        Location loc = hook.getLocation(); // Get the location of the fish hook
+        int hookDepth = hook.getLocation().getBlockY();
+        for (int i = 0; i < this.waterDepth; i++) {
+            if (hookDepth == i) return true;
 
-        // Make sure the hook is surrounded by ice blocks
-        for (int x = -MAX_RADIUS; x <= MAX_RADIUS; x++) {
-            for (int z = -MAX_RADIUS; z <= MAX_RADIUS; z++) {
-                if (Math.abs(x) < MIN_RADIUS && Math.abs(z) < MIN_RADIUS) continue;
-
-                Location check = loc.clone().add(x, 0, z);
-
-                // if the block is liquid, continue
-                if (check.getBlock().isLiquid()) continue;
-                if (!Tag.ICE.isTagged(check.getBlock().getType())) return false;
-            }
+            Block relative = hook.getLocation().getBlock().getRelative(0, -i, 0);
+            if (relative.isLiquid()) return true;
         }
 
-        return true;
+        return false;
     }
 
     /**
@@ -95,7 +85,7 @@ public class IceFishingCondition extends CatchCondition {
      */
     @Override
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        this.iceFishing = config.getBoolean("ice-fishing", false);
+        this.waterDepth = config.getInt("water-depth", 0);
     }
 
 }

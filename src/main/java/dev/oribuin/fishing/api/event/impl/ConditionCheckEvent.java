@@ -1,6 +1,6 @@
 package dev.oribuin.fishing.api.event.impl;
 
-import dev.oribuin.fishing.model.fish.condition.CatchCondition;
+import dev.oribuin.fishing.model.condition.CatchCondition;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;

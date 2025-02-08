@@ -1,12 +1,9 @@
-package dev.oribuin.fishing.model.fish.condition.impl;
+package dev.oribuin.fishing.model.condition.impl;
 
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import dev.oribuin.fishing.model.fish.Fish;
-import dev.oribuin.fishing.model.fish.condition.CatchCondition;
-import dev.oribuin.fishing.model.fish.condition.ConditionRegistry;
-import dev.oribuin.fishing.model.fish.condition.PlaceholderCheck;
+import dev.oribuin.fishing.model.condition.CatchCondition;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,18 +18,20 @@ import java.util.List;
  * First, {@link #shouldRun(Fish)} is called to check if the fish has the condition type
  * If the fish has the condition type, {@link #check(Fish, Player, ItemStack, FishHook)} is called to check if the player meets the condition to catch the fish
  *
- * @see dev.oribuin.fishing.model.fish.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
+ * @see dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
  */
-public class PlaceholderCondition extends CatchCondition {
+public class WorldCondition extends CatchCondition {
 
-    private final List<PlaceholderCheck> checks = new ArrayList<>();
-    private int minimum = 0;
+    private List<String> worlds = new ArrayList<>(); // List of worlds to check for
 
-    public PlaceholderCondition() {}
+    /**
+     * A condition that is checked when a player is fishing in a specific world
+     */
+    public WorldCondition() {}
 
     /**
      * Decides whether the condition should be checked in the first place,
-     * <p>R
+     * <p>
      * This is to prevent unnecessary checks on fish that don't have the condition type.
      *
      * @param fish The fish to check for
@@ -41,13 +40,13 @@ public class PlaceholderCondition extends CatchCondition {
      */
     @Override
     public boolean shouldRun(Fish fish) {
-        return !this.checks.isEmpty();
+        return !this.worlds.isEmpty();
     }
 
     /**
      * Check if the player meets the condition to catch the fish or not, Requires {@link #shouldRun(Fish)} to return true before running
      * <p>
-     * To see how this is used, check {@link ConditionRegistry#check(Fish, Player, ItemStack, FishHook)}
+     * To see how this is used, check {@link dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)}
      * <p>
      * All conditions are passed through {@link ConditionCheckEvent} to overwrite the result if needed
      *
@@ -60,24 +59,12 @@ public class PlaceholderCondition extends CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        StringPlaceholders.Builder builder = StringPlaceholders.builder();
-        builder.addAll(fish.placeholders());
-        builder.addAll(fish.tier().placeholders());
-        builder.add("player", player.getName());
-        StringPlaceholders built = builder.build();
+        String currentWorld = hook.getLocation().getWorld().getName();
 
-        int success = 0;
-        int required = Math.min(this.minimum, this.checks.size());
-        for (PlaceholderCheck check : this.checks) {
-            if (check.check(player, built)) {
-                success++;
-            }
-
-            // Stop checking if the required amount of checks has passed
-            if (success >= required) return true;
-        }
-
-        return false;
+        return this.worlds.stream().anyMatch(s -> {
+            if (s.startsWith("!")) return !s.substring(1).equalsIgnoreCase(currentWorld);
+            else return s.equalsIgnoreCase(currentWorld);
+        });
     }
 
     /**
@@ -97,13 +84,7 @@ public class PlaceholderCondition extends CatchCondition {
      */
     @Override
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        CommentedConfigurationSection section = this.pullSection(config, "placeholder-conditions");
-        this.minimum = section.getInt("minimum", 0);
-
-        section.getKeys(false).forEach(key -> {
-            PlaceholderCheck check = PlaceholderCheck.create(this.pullSection(section, key));
-            this.checks.add(check);
-        });
+        this.worlds = config.getStringList("worlds");
     }
 
 }

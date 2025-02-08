@@ -1,17 +1,14 @@
-package dev.oribuin.fishing.model.fish.condition.impl;
+package dev.oribuin.fishing.model.condition;
 
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
+import dev.oribuin.fishing.config.Configurable;
 import dev.oribuin.fishing.model.fish.Fish;
-import dev.oribuin.fishing.model.fish.condition.CatchCondition;
-import dev.oribuin.fishing.model.fish.condition.Time;
-import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
+import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Calendar;
 
 /**
  * A condition that is checked when a player is trying to catch a fish
@@ -19,36 +16,30 @@ import java.util.Calendar;
  * First, {@link #shouldRun(Fish)} is called to check if the fish has the condition type
  * If the fish has the condition type, {@link #check(Fish, Player, ItemStack, FishHook)} is called to check if the player meets the condition to catch the fish
  *
- * @see dev.oribuin.fishing.model.fish.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
+ * @see dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
  */
-public class TimeCondition extends CatchCondition {
-
-    private Time time = Time.ANY_TIME; // The time to check for
-    private boolean systemTime = false; // If the time is based on the system time
+public abstract class CatchCondition implements Configurable {
 
     /**
-     * A condition that is checked when a player is fishing at a specific time
+     * The default constructor for the condition, should be empty
      */
-    public TimeCondition() {}
+    public CatchCondition() {}
 
     /**
      * Decides whether the condition should be checked in the first place,
-     * <p>
+     * <p>R
      * This is to prevent unnecessary checks on fish that don't have the condition type.
      *
      * @param fish The fish to check for
      *
      * @return true if the fish has the condition applied. @see {@link #check(Fish, Player, ItemStack, FishHook)} for the actual condition check
      */
-    @Override
-    public boolean shouldRun(Fish fish) {
-        return this.time != Time.ANY_TIME;
-    }
+    public abstract boolean shouldRun(Fish fish);
 
     /**
      * Check if the player meets the condition to catch the fish or not, Requires {@link #shouldRun(Fish)} to return true before running
      * <p>
-     * To see how this is used, check {@link dev.oribuin.fishing.model.fish.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)}
+     * To see how this is used, check {@link dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)}
      * <p>
      * All conditions are passed through {@link ConditionCheckEvent} to overwrite the result if needed
      *
@@ -59,14 +50,15 @@ public class TimeCondition extends CatchCondition {
      *
      * @return Results in true if the player can catch the fish
      */
-    @Override
-    public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        if (!this.systemTime) {
-            return this.time.matches(player.getWorld());
-        }
+    public abstract boolean check(Fish fish, Player player, ItemStack rod, FishHook hook);
 
-        // please actually use the system time
-        return this.time.matches(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
+    /**
+     * All the placeholders that can be used in the configuration file for this configurable class
+     *
+     * @return The placeholders
+     */
+    public StringPlaceholders placeholders() {
+        return StringPlaceholders.empty();
     }
 
     /**
@@ -84,10 +76,6 @@ public class TimeCondition extends CatchCondition {
      *
      * @param config The {@link CommentedConfigurationSection} to load the settings from, this cannot be null.
      */
-    @Override
-    public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        this.time = FishUtils.getEnum(Time.class, config.getString("time"), Time.ANY_TIME);
-        this.systemTime = config.getBoolean("use-system-time", false);
-    }
+    public abstract void loadSettings(@NotNull CommentedConfigurationSection config);
 
 }

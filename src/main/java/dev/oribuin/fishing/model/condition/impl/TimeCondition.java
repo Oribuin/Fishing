@@ -1,15 +1,17 @@
-package dev.oribuin.fishing.model.fish.condition.impl;
+package dev.oribuin.fishing.model.condition.impl;
 
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import dev.oribuin.fishing.model.fish.Fish;
-import dev.oribuin.fishing.model.fish.condition.CatchCondition;
+import dev.oribuin.fishing.model.condition.CatchCondition;
+import dev.oribuin.fishing.model.condition.Time;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Calendar;
 
 /**
  * A condition that is checked when a player is trying to catch a fish
@@ -17,16 +19,17 @@ import org.jetbrains.annotations.NotNull;
  * First, {@link #shouldRun(Fish)} is called to check if the fish has the condition type
  * If the fish has the condition type, {@link #check(Fish, Player, ItemStack, FishHook)} is called to check if the player meets the condition to catch the fish
  *
- * @see dev.oribuin.fishing.model.fish.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
+ * @see dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
  */
-public class HeightCondition extends CatchCondition {
+public class TimeCondition extends CatchCondition {
 
-    private Pair<Integer, Integer> height = null;
+    private Time time = Time.ANY_TIME; // The time to check for
+    private boolean systemTime = false; // If the time is based on the system time
 
     /**
-     * A condition that is checked when a player is fishing at a specific height
+     * A condition that is checked when a player is fishing at a specific time
      */
-    public HeightCondition() {}
+    public TimeCondition() {}
 
     /**
      * Decides whether the condition should be checked in the first place,
@@ -39,13 +42,13 @@ public class HeightCondition extends CatchCondition {
      */
     @Override
     public boolean shouldRun(Fish fish) {
-        return this.height != null;
+        return this.time != Time.ANY_TIME;
     }
 
     /**
      * Check if the player meets the condition to catch the fish or not, Requires {@link #shouldRun(Fish)} to return true before running
      * <p>
-     * To see how this is used, check {@link dev.oribuin.fishing.model.fish.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)}
+     * To see how this is used, check {@link dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)}
      * <p>
      * All conditions are passed through {@link ConditionCheckEvent} to overwrite the result if needed
      *
@@ -58,10 +61,12 @@ public class HeightCondition extends CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        int minHookHeight = this.height.getLeft();
-        int maxHookHeight = this.height.getRight();
-        int hookHeight = hook.getLocation().getBlockY();
-        return hookHeight >= minHookHeight && hookHeight <= maxHookHeight;
+        if (!this.systemTime) {
+            return this.time.matches(player.getWorld());
+        }
+
+        // please actually use the system time
+        return this.time.matches(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
     }
 
     /**
@@ -81,7 +86,8 @@ public class HeightCondition extends CatchCondition {
      */
     @Override
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        this.height = FishUtils.getHeight(config.getString("height"));
+        this.time = FishUtils.getEnum(Time.class, config.getString("time"), Time.ANY_TIME);
+        this.systemTime = config.getBoolean("use-system-time", false);
     }
 
 }

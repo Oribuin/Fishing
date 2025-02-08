@@ -1,19 +1,15 @@
-package dev.oribuin.fishing.model.fish.condition.impl;
+package dev.oribuin.fishing.model.condition.impl;
 
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
-import dev.oribuin.fishing.model.augment.Augment;
-import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import dev.oribuin.fishing.model.fish.Fish;
-import dev.oribuin.fishing.model.fish.condition.CatchCondition;
-import dev.oribuin.fishing.model.fish.condition.ConditionRegistry;
+import dev.oribuin.fishing.model.condition.CatchCondition;
+import dev.oribuin.fishing.model.condition.Weather;
+import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A condition that is checked when a player is trying to catch a fish
@@ -21,20 +17,20 @@ import java.util.Map;
  * First, {@link #shouldRun(Fish)} is called to check if the fish has the condition type
  * If the fish has the condition type, {@link #check(Fish, Player, ItemStack, FishHook)} is called to check if the player meets the condition to catch the fish
  *
- * @see dev.oribuin.fishing.model.fish.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
+ * @see dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
  */
-public class AugmentCondition extends CatchCondition {
+public class WeatherCondition extends CatchCondition {
 
-    private final Map<String, Integer> augments = new HashMap<>(); // List of augments to check for
+    private Weather weather = null;
 
     /**
-     * A condition that checks if the player is has a specific augment
+     * A condition that is checked when a player is fishing in a specific weather
      */
-    public AugmentCondition() {}
+    public WeatherCondition() {}
 
     /**
      * Decides whether the condition should be checked in the first place,
-     * <p>R
+     * <p>
      * This is to prevent unnecessary checks on fish that don't have the condition type.
      *
      * @param fish The fish to check for
@@ -43,13 +39,13 @@ public class AugmentCondition extends CatchCondition {
      */
     @Override
     public boolean shouldRun(Fish fish) {
-        return !this.augments.isEmpty();
+        return this.weather != null;
     }
 
     /**
      * Check if the player meets the condition to catch the fish or not, Requires {@link #shouldRun(Fish)} to return true before running
      * <p>
-     * To see how this is used, check {@link ConditionRegistry#check(Fish, Player, ItemStack, FishHook)}
+     * To see how this is used, check {@link dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)}
      * <p>
      * All conditions are passed through {@link ConditionCheckEvent} to overwrite the result if needed
      *
@@ -62,11 +58,7 @@ public class AugmentCondition extends CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        Map<Augment, Integer> playerAugments = AugmentRegistry.from(rod);
-        return this.augments.entrySet().stream().allMatch(entry -> {
-            Augment augment = AugmentRegistry.from(entry.getKey());
-            return playerAugments.containsKey(augment) && playerAugments.get(augment) >= entry.getValue();
-        });
+        return Weather.test(hook.getLocation()) == this.weather;
     }
 
     /**
@@ -86,8 +78,7 @@ public class AugmentCondition extends CatchCondition {
      */
     @Override
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        CommentedConfigurationSection augments = this.pullSection(config, "augments");
-        augments.getKeys(false).forEach(key -> this.augments.put(key, augments.getInt(key)));
+        this.weather = FishUtils.getEnum(Weather.class, config.getString("weather"));
     }
 
 }

@@ -1,16 +1,14 @@
-package dev.oribuin.fishing.model.fish.condition.impl;
+package dev.oribuin.fishing.model.condition.impl;
 
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import dev.oribuin.fishing.model.fish.Fish;
-import dev.oribuin.fishing.model.fish.condition.CatchCondition;
+import dev.oribuin.fishing.model.condition.CatchCondition;
+import dev.oribuin.fishing.model.condition.ConditionRegistry;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A condition that is checked when a player is trying to catch a fish
@@ -18,20 +16,20 @@ import java.util.List;
  * First, {@link #shouldRun(Fish)} is called to check if the fish has the condition type
  * If the fish has the condition type, {@link #check(Fish, Player, ItemStack, FishHook)} is called to check if the player meets the condition to catch the fish
  *
- * @see dev.oribuin.fishing.model.fish.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
+ * @see dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
  */
-public class WorldCondition extends CatchCondition {
+public class PermissionCondition extends CatchCondition {
 
-    private List<String> worlds = new ArrayList<>(); // List of worlds to check for
+    private String permission = null;
 
     /**
-     * A condition that is checked when a player is fishing in a specific world
+     * Checks if a player has a specific permission to catch a fish
      */
-    public WorldCondition() {}
+    public PermissionCondition() {}
 
     /**
      * Decides whether the condition should be checked in the first place,
-     * <p>
+     * <p>R
      * This is to prevent unnecessary checks on fish that don't have the condition type.
      *
      * @param fish The fish to check for
@@ -40,13 +38,13 @@ public class WorldCondition extends CatchCondition {
      */
     @Override
     public boolean shouldRun(Fish fish) {
-        return !this.worlds.isEmpty();
+        return this.permission != null;
     }
 
     /**
      * Check if the player meets the condition to catch the fish or not, Requires {@link #shouldRun(Fish)} to return true before running
      * <p>
-     * To see how this is used, check {@link dev.oribuin.fishing.model.fish.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)}
+     * To see how this is used, check {@link ConditionRegistry#check(Fish, Player, ItemStack, FishHook)}
      * <p>
      * All conditions are passed through {@link ConditionCheckEvent} to overwrite the result if needed
      *
@@ -59,12 +57,11 @@ public class WorldCondition extends CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        String currentWorld = hook.getLocation().getWorld().getName();
+        if (this.permission.startsWith("!")) {
+            return !player.hasPermission(this.permission.substring(1));
+        }
 
-        return this.worlds.stream().anyMatch(s -> {
-            if (s.startsWith("!")) return !s.substring(1).equalsIgnoreCase(currentWorld);
-            else return s.equalsIgnoreCase(currentWorld);
-        });
+        return player.hasPermission(this.permission);
     }
 
     /**
@@ -84,7 +81,7 @@ public class WorldCondition extends CatchCondition {
      */
     @Override
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        this.worlds = config.getStringList("worlds");
+        this.permission = config.getString("permission", null);
     }
 
 }

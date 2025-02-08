@@ -1,4 +1,4 @@
-package dev.oribuin.fishing.model.fish.condition;
+package dev.oribuin.fishing.model.condition;
 
 
 import dev.oribuin.fishing.config.Configurable;

@@ -1,11 +1,9 @@
-package dev.oribuin.fishing.model.fish.condition.impl;
+package dev.oribuin.fishing.model.condition.impl;
 
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import dev.oribuin.fishing.model.fish.Fish;
-import dev.oribuin.fishing.model.fish.condition.CatchCondition;
+import dev.oribuin.fishing.model.condition.CatchCondition;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import org.bukkit.entity.Boat;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -17,16 +15,16 @@ import org.jetbrains.annotations.NotNull;
  * First, {@link #shouldRun(Fish)} is called to check if the fish has the condition type
  * If the fish has the condition type, {@link #check(Fish, Player, ItemStack, FishHook)} is called to check if the player meets the condition to catch the fish
  *
- * @see dev.oribuin.fishing.model.fish.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
+ * @see dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
  */
-public class BoatCondition extends CatchCondition {
+public class LightLevelCondition extends CatchCondition {
 
-    private boolean boatFishing = false;
+    private Integer lightLevel = null;
 
     /**
-     * A condition that is checked when a player is fishing in a boat
+     * A condition that is checked when a player is fishing in a specific light level
      */
-    public BoatCondition() {}
+    public LightLevelCondition() {}
 
     /**
      * Decides whether the condition should be checked in the first place,
@@ -39,13 +37,13 @@ public class BoatCondition extends CatchCondition {
      */
     @Override
     public boolean shouldRun(Fish fish) {
-        return this.boatFishing;
+        return this.lightLevel != null && this.lightLevel > -1;
     }
 
     /**
      * Check if the player meets the condition to catch the fish or not, Requires {@link #shouldRun(Fish)} to return true before running
      * <p>
-     * To see how this is used, check {@link dev.oribuin.fishing.model.fish.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)}
+     * To see how this is used, check {@link dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)}
      * <p>
      * All conditions are passed through {@link ConditionCheckEvent} to overwrite the result if needed
      *
@@ -58,10 +56,8 @@ public class BoatCondition extends CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        if (!player.isInsideVehicle()) return false;
-
-        Entity vehicle = player.getVehicle();
-        return vehicle instanceof Boat;
+        int hookLight = hook.getLocation().getBlock().getLightLevel();
+        return this.lightLevel >= hookLight;
     }
 
     /**
@@ -81,7 +77,7 @@ public class BoatCondition extends CatchCondition {
      */
     @Override
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        this.boatFishing = config.getBoolean("boat-fishing", false);
+        this.lightLevel = config.getInt("light-level", -1);
     }
 
 }

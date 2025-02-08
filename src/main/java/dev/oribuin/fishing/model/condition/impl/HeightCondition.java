@@ -1,21 +1,15 @@
-package dev.oribuin.fishing.model.fish.condition.impl;
+package dev.oribuin.fishing.model.condition.impl;
 
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import dev.oribuin.fishing.model.fish.Fish;
-import dev.oribuin.fishing.model.fish.condition.CatchCondition;
+import dev.oribuin.fishing.model.condition.CatchCondition;
+import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.utils.NMSUtil;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A condition that is checked when a player is trying to catch a fish
@@ -23,17 +17,16 @@ import java.util.List;
  * First, {@link #shouldRun(Fish)} is called to check if the fish has the condition type
  * If the fish has the condition type, {@link #check(Fish, Player, ItemStack, FishHook)} is called to check if the player meets the condition to catch the fish
  *
- * @see dev.oribuin.fishing.model.fish.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
+ * @see dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
  */
-@SuppressWarnings({ "deprecation", "removal" })
-public class BiomeCondition extends CatchCondition {
+public class HeightCondition extends CatchCondition {
 
-    private List<String> biomes = new ArrayList<>(); // List of biomes to check for
+    private Pair<Integer, Integer> height = null;
 
     /**
-     * A condition that checks if the player is fishing in a specific biome
+     * A condition that is checked when a player is fishing at a specific height
      */
-    public BiomeCondition() {}
+    public HeightCondition() {}
 
     /**
      * Decides whether the condition should be checked in the first place,
@@ -46,13 +39,13 @@ public class BiomeCondition extends CatchCondition {
      */
     @Override
     public boolean shouldRun(Fish fish) {
-        return this.biomes.isEmpty();
+        return this.height != null;
     }
 
     /**
      * Check if the player meets the condition to catch the fish or not, Requires {@link #shouldRun(Fish)} to return true before running
      * <p>
-     * To see how this is used, check {@link dev.oribuin.fishing.model.fish.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)}
+     * To see how this is used, check {@link dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)}
      * <p>
      * All conditions are passed through {@link ConditionCheckEvent} to overwrite the result if needed
      *
@@ -65,31 +58,10 @@ public class BiomeCondition extends CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        Location loc = hook.getLocation();
-
-        // 1.21.3+ Biome Check
-        String biomeKey;
-        if (NMSUtil.getVersionNumber() > 21 && NMSUtil.getMinorVersionNumber() >= 3) {
-            biomeKey = this.keyValue(loc.getBlock().getBiome().getKey());
-        } else {
-            biomeKey = this.keyValue(Bukkit.getUnsafe().getBiomeKey(loc.getWorld(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
-        }
-
-        String finalBiomeKey = biomeKey;
-        return this.biomes.stream().anyMatch(x -> {
-            if (x.startsWith("!")) return !x.substring(1).equalsIgnoreCase(finalBiomeKey);
-            else return x.equalsIgnoreCase(finalBiomeKey);
-        });
-    }
-
-    /**
-     * All the placeholders that can be used in the configuration file for this configurable class
-     *
-     * @return The placeholders
-     */
-    @Override
-    public StringPlaceholders placeholders() {
-        return StringPlaceholders.of("biomes", this.biomes.isEmpty() ? "Any" : String.join(", ", this.biomes));
+        int minHookHeight = this.height.getLeft();
+        int maxHookHeight = this.height.getRight();
+        int hookHeight = hook.getLocation().getBlockY();
+        return hookHeight >= minHookHeight && hookHeight <= maxHookHeight;
     }
 
     /**
@@ -109,20 +81,7 @@ public class BiomeCondition extends CatchCondition {
      */
     @Override
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        this.biomes = config.getStringList("biomes");
-    }
-
-    /**
-     * Get the key value of the biome
-     *
-     * @param key The key to get the value of
-     *
-     * @return The value of the key
-     */
-    private String keyValue(NamespacedKey key) {
-        if (key == null) return null;
-
-        return key.value();
+        this.height = FishUtils.getHeight(config.getString("height"));
     }
 
 }
