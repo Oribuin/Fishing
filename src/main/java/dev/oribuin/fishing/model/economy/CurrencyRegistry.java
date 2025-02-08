@@ -34,6 +34,7 @@ public class CurrencyRegistry {
      * Register a currency type in the fishing plugin
      *
      * @param supplier The supplier to create the currency instance
+     * @param <T>      The type of the currency
      *
      * @return The currency instance
      */
@@ -62,6 +63,7 @@ public class CurrencyRegistry {
      *
      * @param name            The currency name to get
      * @param defaultCurrency The currency to return if the currency is not found
+     * @param <T>            The type of the currency
      *
      * @return The currency instance or the default currency if not found
      */

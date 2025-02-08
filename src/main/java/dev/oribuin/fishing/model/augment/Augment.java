@@ -1,5 +1,6 @@
 package dev.oribuin.fishing.model.augment;
 
+import com.google.common.base.Supplier;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.FishEventHandler;
 import dev.oribuin.fishing.config.Configurable;
@@ -22,7 +23,7 @@ import java.util.List;
 /**
  * Augments are upgrades that can be crafted and applied to fishing rods to give them unique abilities to help the player produce more fish.
  * <p>
- * Use this class to create a new augment for the plugin. Any augments created should be registered using {@link AugmentRegistry#register(Augment)}
+ * Use this class to create a new augment for the plugin. Any augments created should be registered using {@link AugmentRegistry#register(Supplier)}
  * <p>
  * All augment classes should be titled AugmentName and named in snake_case.
  */

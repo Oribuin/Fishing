@@ -116,6 +116,7 @@ public abstract class FishEventHandler implements FishingEvents {
          * Call the function that was registered with the event, This will cast the event to the correct type
          *
          * @param event The {@link Event} to call
+         * @param level The level of the event
          */
         @SuppressWarnings("unchecked")
         public void accept(Event event, int level) {

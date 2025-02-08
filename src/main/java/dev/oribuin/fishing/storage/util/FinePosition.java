@@ -3,6 +3,14 @@ package dev.oribuin.fishing.storage.util;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
+/**
+ * Represents a fine position in the world with x, y, z, and world name
+ *
+ * @param world The world name
+ * @param x     The x position
+ * @param y     The y position
+ * @param z     The z position
+ */
 public record FinePosition(String world, int x, int y, int z) {
 
     /**

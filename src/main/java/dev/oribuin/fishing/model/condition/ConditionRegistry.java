@@ -38,6 +38,11 @@ public class ConditionRegistry {
      */
     public ConditionRegistry() {}
 
+    /**
+     * Initialize all the default conditions into the registry to be loaded
+     * <p>
+     * This method should be called when the plugin is enabled to load all the conditions into the registry
+     */
     public static void init() {
         conditions.clear();
         
