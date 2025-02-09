@@ -19,13 +19,6 @@ java {
     }
 }
 
-
-//compileJava {
-//    options.compilerArgs += ["-parameters"]
-//    options.fork = true
-//    options.encoding = "UTF-8"
-//}
-//
 repositories {
     mavenCentral()
     mavenLocal()
