@@ -3,7 +3,7 @@ package dev.oribuin.fishing.api.recipe.type;
 import dev.oribuin.fishing.api.recipe.RecipeItem;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.augment.AugmentRegistry;
-import dev.oribuin.fishing.storage.util.PersistKeys;
+import dev.oribuin.fishing.storage.util.KeyRegistry;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -29,7 +29,7 @@ public class AugmentRecipeItem extends RecipeItem<Augment> {
         if (item == null) return false;
 
         PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
-        String augmentType = container.get(PersistKeys.AUGMENT_TYPE, PersistentDataType.STRING);
+        String augmentType = container.get(KeyRegistry.AUGMENT_TYPE, PersistentDataType.STRING);
 
         return augmentType != null && augmentType.equalsIgnoreCase(this.item.name());
     }

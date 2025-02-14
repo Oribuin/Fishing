@@ -7,7 +7,7 @@ import dev.oribuin.fishing.api.task.AsyncTicker;
 import dev.oribuin.fishing.manager.TotemManager;
 import dev.oribuin.fishing.model.item.ItemConstruct;
 import dev.oribuin.fishing.model.item.ItemRegistry;
-import dev.oribuin.fishing.storage.util.PersistKeys;
+import dev.oribuin.fishing.storage.util.KeyRegistry;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.math.MathL;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
@@ -221,13 +221,13 @@ public class Totem implements AsyncTicker {
      * @param container The container to save the values to
      */
     public void saveToContainer(PersistentDataContainer container) {
-        container.set(PersistKeys.TOTEM_OWNER, DataType.UUID, this.owner);
-        container.set(PersistKeys.TOTEM_OWNERNAME, DataType.STRING, this.ownerName);
-        container.set(PersistKeys.TOTEM_RADIUS, DataType.INTEGER, this.radius);
-        container.set(PersistKeys.TOTEM_ACTIVE, DataType.BOOLEAN, this.active);
-        container.set(PersistKeys.TOTEM_DURATION, DataType.LONG, this.duration.toMillis());
-        container.set(PersistKeys.TOTEM_COOLDOWN, DataType.LONG, this.cooldown.toMillis());
-        container.set(PersistKeys.TOTEM_LASTACTIVE, DataType.LONG, this.lastActive);
+        container.set(KeyRegistry.TOTEM_OWNER, DataType.UUID, this.owner);
+        container.set(KeyRegistry.TOTEM_OWNERNAME, DataType.STRING, this.ownerName);
+        container.set(KeyRegistry.TOTEM_RADIUS, DataType.INTEGER, this.radius);
+        container.set(KeyRegistry.TOTEM_ACTIVE, DataType.BOOLEAN, this.active);
+        container.set(KeyRegistry.TOTEM_DURATION, DataType.LONG, this.duration.toMillis());
+        container.set(KeyRegistry.TOTEM_COOLDOWN, DataType.LONG, this.cooldown.toMillis());
+        container.set(KeyRegistry.TOTEM_LASTACTIVE, DataType.LONG, this.lastActive);
     }
 
     /**
@@ -238,13 +238,13 @@ public class Totem implements AsyncTicker {
      * @return The totem object
      */
     public static Totem fromContainer(PersistentDataContainer container) {
-        UUID owner = container.get(PersistKeys.TOTEM_OWNER, DataType.UUID);
-        String ownerName = container.getOrDefault(PersistKeys.TOTEM_OWNERNAME, DataType.STRING, "N/A");
-        Integer radius = container.get(PersistKeys.TOTEM_RADIUS, DataType.INTEGER);
-        boolean active = container.getOrDefault(PersistKeys.TOTEM_ACTIVE, DataType.BOOLEAN, false);
-        Long duration = container.get(PersistKeys.TOTEM_DURATION, DataType.LONG);
-        Long cooldown = container.get(PersistKeys.TOTEM_COOLDOWN, DataType.LONG);
-        long lastActive = container.getOrDefault(PersistKeys.TOTEM_LASTACTIVE, DataType.LONG, System.currentTimeMillis());
+        UUID owner = container.get(KeyRegistry.TOTEM_OWNER, DataType.UUID);
+        String ownerName = container.getOrDefault(KeyRegistry.TOTEM_OWNERNAME, DataType.STRING, "N/A");
+        Integer radius = container.get(KeyRegistry.TOTEM_RADIUS, DataType.INTEGER);
+        boolean active = container.getOrDefault(KeyRegistry.TOTEM_ACTIVE, DataType.BOOLEAN, false);
+        Long duration = container.get(KeyRegistry.TOTEM_DURATION, DataType.LONG);
+        Long cooldown = container.get(KeyRegistry.TOTEM_COOLDOWN, DataType.LONG);
+        long lastActive = container.getOrDefault(KeyRegistry.TOTEM_LASTACTIVE, DataType.LONG, System.currentTimeMillis());
 
         if (owner == null || radius == null || duration == null || cooldown == null) return null;
 

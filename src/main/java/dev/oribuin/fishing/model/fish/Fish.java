@@ -6,7 +6,7 @@ import dev.oribuin.fishing.config.Configurable;
 import dev.oribuin.fishing.manager.TierManager;
 import dev.oribuin.fishing.model.condition.CatchCondition;
 import dev.oribuin.fishing.model.condition.ConditionRegistry;
-import dev.oribuin.fishing.storage.util.PersistKeys;
+import dev.oribuin.fishing.storage.util.KeyRegistry;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
@@ -127,8 +127,8 @@ public class Fish implements Configurable {
 
             // fish data :-)
             PersistentDataContainer container = itemMeta.getPersistentDataContainer();
-            container.set(PersistKeys.FISH_TYPE, PersistentDataType.STRING, this.name);
-            container.set(PersistKeys.FISH_TYPE, PersistentDataType.STRING, this.tier);
+            container.set(KeyRegistry.FISH_TYPE, PersistentDataType.STRING, this.name);
+            container.set(KeyRegistry.FISH_TYPE, PersistentDataType.STRING, this.tier);
         });
 
         this.itemStack = itemStack;
