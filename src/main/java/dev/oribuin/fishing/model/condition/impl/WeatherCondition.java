@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class WeatherCondition extends CatchCondition {
 
-    private Weather weather = null;
+    private Weather weather = Weather.CLEAR;
 
     /**
      * A condition that is checked when a player is fishing in a specific weather
@@ -72,7 +72,7 @@ public class WeatherCondition extends CatchCondition {
     @Override
     public StringPlaceholders placeholders() {
         return StringPlaceholders.builder()
-                .add("weather", StringUtils.capitalize(this.weather.name().toLowerCase()))
+                .add("weather", this.weather != null ? StringUtils.capitalize(this.weather.name().toLowerCase()) : "Any")
                 .build();
     }
 

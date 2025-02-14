@@ -73,8 +73,8 @@ public class HeightCondition extends CatchCondition {
     @Override
     public StringPlaceholders placeholders() {
         return StringPlaceholders.builder()
-                .add("min_height", this.height.getLeft())
-                .add("max_height", this.height.getRight())
+                .add("min_height", this.height != null ? this.height.getLeft() : "N/A")
+                .add("max_height", this.height != null ? this.height.getRight() : "N/A")
                 .build();
     }
 

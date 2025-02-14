@@ -7,6 +7,7 @@ import dev.oribuin.fishing.model.condition.Time;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -78,7 +79,7 @@ public class TimeCondition extends CatchCondition {
     @Override
     public StringPlaceholders placeholders() {
         return StringPlaceholders.builder()
-                .add("time", this.time.name())
+                .add("time", StringUtils.capitalize(this.time.name()))
                 .add("use_system_time", this.systemTime)
                 .build();
     }
