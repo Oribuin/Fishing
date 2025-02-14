@@ -1,6 +1,6 @@
 name: Fishing
 main: dev.oribuin.fishing.FishingPlugin
-version: '${version}'
+version: '${commit}'
 api-version: '1.21'
 author: Oribuin
 description: fishing :)

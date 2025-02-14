@@ -1,3 +1,5 @@
+import java.io.ByteArrayOutputStream
+
 plugins {
     `java-library`
     `maven-publish`
@@ -5,14 +7,12 @@ plugins {
 }
 
 group = "dev.oribuin"
-version = "1.0-SNAPSHOT"
+version = "1.0"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
-
-    withJavadocJar()
-    withSourcesJar()
+    
     disableAutoTargetJvm()
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(21))
@@ -49,6 +49,14 @@ dependencies {
 }
 
 tasks {
+    val commitHash = let {
+        val process = ProcessBuilder("git", "rev-parse", "--short", "HEAD").start()
+        val output = ByteArrayOutputStream()
+        process.inputStream.copyTo(output)
+        
+        output.toString().trim()
+    }
+
     compileJava {
         this.options.compilerArgs.add("-parameters")
         this.options.isFork = true
@@ -56,8 +64,10 @@ tasks {
     }
 
     shadowJar {
+        // add commit hash to the jar name
         this.archiveClassifier.set("")
-
+        this.archiveVersion.set(commitHash)
+        
         this.relocate("dev.rosewood.rosegarden", "${project.group}.fishing.libs.rosegarden")
         this.relocate("com.jeff_media.morepersistentdatatypes", "${project.group}.fishing.libs.pdt")
         this.relocate("net.objecthunter.exp4j", "${project.group}.fishing.libs.exp4j")
@@ -69,8 +79,7 @@ tasks {
     }
 
     processResources {
-        // TODO: only expand version in plugin.yml
-        this.expand("version" to project.version)
+        this.expand("version" to project.version, "commit" to commitHash)
     }
 
     javadoc {
@@ -122,6 +131,7 @@ tasks {
             }
         }
     }
+
     build {
         this.dependsOn(javadoc)
         this.dependsOn(shadowJar)
