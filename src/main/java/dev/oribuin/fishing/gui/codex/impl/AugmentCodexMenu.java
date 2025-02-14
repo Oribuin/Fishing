@@ -1,41 +1,47 @@
 package dev.oribuin.fishing.gui.codex.impl;
 
 import dev.oribuin.fishing.gui.codex.BasicCodexMenu;
-import dev.oribuin.fishing.manager.TierManager;
-import dev.oribuin.fishing.model.fish.Fish;
-import dev.oribuin.fishing.model.fish.Tier;
+import dev.oribuin.fishing.model.augment.Augment;
+import dev.oribuin.fishing.model.augment.AugmentRegistry;
+import dev.oribuin.fishing.model.item.ItemConstruct;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.function.Predicate;
 
-public class FishCodexMenu extends BasicCodexMenu<Fish> {
+public class AugmentCodexMenu extends BasicCodexMenu<Augment> {
 
     /**
      * Creates a new plugin menu instance, with the specified name
      */
-    public FishCodexMenu() {
-        super("codex/fish");
+    public AugmentCodexMenu() {
+        super("codex/augment");
     }
+
 
     /**
      * Open the GUI for the specified player
      *
      * @param player The player to open the GUI for
-     * @param tier   The tier to open the GUI for
      */
-    public void open(Player player, Tier tier) {
+    public void open(Player player) {
         PaginatedGui gui = this.createPaginated();
-        this.placeExtras(tier.placeholders());
         this.placeItem("forward", x -> gui.next());
         this.placeItem("back", x -> gui.previous());
 
-        List<Fish> content = this.getContent(player, fish -> fish.tierName().equalsIgnoreCase(tier.name()));
+        List<Augment> content = this.getContent(player, x -> true);
 
         // Add all the fish to the GUI
-        content.forEach(fish -> gui.addItem(new GuiItem(fish.createItemStack())));
+        content.forEach(x -> {
+            ItemConstruct construct = x.displayItem();
+            if (construct == null) return;
+
+            ItemStack stack = construct.build(x.placeholders());
+            gui.addItem(new GuiItem(stack));
+        });
 
         gui.open(player);
     }
@@ -49,12 +55,8 @@ public class FishCodexMenu extends BasicCodexMenu<Fish> {
      * @return The content to display in the menu
      */
     @Override
-    public List<Fish> getContent(Player player, Predicate<Fish> condition) {
-        return this.plugin.getManager(TierManager.class)
-                .fish()
-                .stream()
-                .filter(condition)
-                .toList();
+    public List<Augment> getContent(Player player, Predicate<Augment> condition) {
+        return AugmentRegistry.all().values().stream().toList();
     }
 
 }

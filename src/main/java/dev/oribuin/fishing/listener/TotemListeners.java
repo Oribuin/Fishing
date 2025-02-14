@@ -1,6 +1,7 @@
 package dev.oribuin.fishing.listener;
 
 import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.gui.MenuRegistry;
 import dev.oribuin.fishing.gui.totem.TotemMainMenu;
 import dev.oribuin.fishing.manager.TotemManager;
 import dev.oribuin.fishing.model.item.ItemRegistry;
@@ -87,7 +88,7 @@ public class TotemListeners implements Listener {
         event.setCancelled(true);
 
         if (!event.getPlayer().isSneaking()) {
-            TotemMainMenu.open(totem, event.getPlayer());
+            MenuRegistry.get(TotemMainMenu.class).open(totem, event.getPlayer());
             return;
         }
 

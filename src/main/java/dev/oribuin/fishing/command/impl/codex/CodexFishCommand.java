@@ -1,6 +1,7 @@
 package dev.oribuin.fishing.command.impl.codex;
 
 import dev.oribuin.fishing.command.argument.TierArgument;
+import dev.oribuin.fishing.gui.MenuRegistry;
 import dev.oribuin.fishing.gui.codex.impl.FishCodexMenu;
 import dev.oribuin.fishing.model.fish.Tier;
 import dev.rosewood.rosegarden.RosePlugin;
@@ -20,7 +21,7 @@ public class CodexFishCommand extends BaseRoseCommand {
     @RoseExecutable
     public void execute(CommandContext context, Tier tier) {
         Player sender = (Player) context.getSender(); // todo: allow /fishing codex fish <tier> [player]
-        FishCodexMenu.open(sender, tier);
+        MenuRegistry.get(FishCodexMenu.class).open(sender, tier);
     }
 
     /**

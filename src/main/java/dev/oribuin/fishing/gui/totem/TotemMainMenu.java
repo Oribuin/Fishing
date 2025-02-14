@@ -1,21 +1,15 @@
 package dev.oribuin.fishing.gui.totem;
 
-import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.gui.PluginMenu;
-import dev.oribuin.fishing.manager.MenuManager;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.triumphteam.gui.guis.Gui;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
 public class TotemMainMenu extends PluginMenu<Gui> {
 
-    public TotemMainMenu(FishingPlugin plugin) {
-        super(plugin, "totem/main_menu");
-
-        this.title = "Totem Menu";
-        this.rows = 3;
+    public TotemMainMenu() {
+        super("totem/main_menu");
     }
 
     /**
@@ -24,13 +18,10 @@ public class TotemMainMenu extends PluginMenu<Gui> {
      * @param totem  The totem to open the GUI for
      * @param player The player to open the GUI for
      */
-    public static void open(Totem totem, Player player) {
-        TotemMainMenu menu = MenuManager.from(TotemMainMenu.class);
-        if (menu == null) return;
-
-        Gui gui = menu.createRegular();
-        menu.placeExtras(totem.placeholders());
-        menu.updateTask(() -> menu.placeDynamics(totem, player));
+    public void open(Totem totem, Player player) {
+        Gui gui = this.createRegular();
+        this.placeExtras(totem.placeholders());
+        this.updateTask(() -> this.placeDynamics(totem, player));
         
         gui.open(player);
     }

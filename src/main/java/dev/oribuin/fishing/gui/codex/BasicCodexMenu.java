@@ -1,6 +1,5 @@
 package dev.oribuin.fishing.gui.codex;
 
-import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.gui.PluginMenu;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import org.bukkit.entity.Player;
@@ -13,11 +12,10 @@ public abstract class BasicCodexMenu<T> extends PluginMenu<PaginatedGui> {
     /**
      * Creates a new plugin menu instance, with the specified name
      *
-     * @param plugin The plugin instance
-     * @param name   The name of the menu, will be also function as the menu path
+     * @param name The name of the menu, will be also function as the menu path
      */
-    public BasicCodexMenu(FishingPlugin plugin, String name) {
-        super(plugin, name);
+    public BasicCodexMenu(String name) {
+        super(name);
     }
 
     /**

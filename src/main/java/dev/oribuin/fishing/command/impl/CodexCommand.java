@@ -1,5 +1,6 @@
 package dev.oribuin.fishing.command.impl;
 
+import dev.oribuin.fishing.command.impl.codex.CodexAugmentCommand;
 import dev.oribuin.fishing.command.impl.codex.CodexFishCommand;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.command.framework.ArgumentsDefinition;
@@ -26,6 +27,7 @@ public class CodexCommand extends BaseRoseCommand {
 
     private ArgumentsDefinition createArguments() {
         return ArgumentsDefinition.builder().requiredSub(
+                new CodexAugmentCommand(this.rosePlugin),
                 new CodexFishCommand(this.rosePlugin)
         );
     }

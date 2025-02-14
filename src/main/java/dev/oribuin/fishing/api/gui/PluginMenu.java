@@ -40,11 +40,10 @@ public abstract class PluginMenu<T extends BaseGui> implements Configurable {
     /**
      * Creates a new plugin menu instance, with the specified name
      *
-     * @param plugin The plugin instance
      * @param name   The name of the menu, will be also function as the menu path
      */
-    public PluginMenu(FishingPlugin plugin, String name) {
-        this.plugin = plugin;
+    public PluginMenu(String name) {
+        this.plugin = FishingPlugin.get();
         this.name = name;
         this.title = name;
         this.rows = 6;
@@ -53,6 +52,7 @@ public abstract class PluginMenu<T extends BaseGui> implements Configurable {
         this.pageSize = 0;
         this.updateFrequency = 60; // 3s
         this.gui = null;
+        
     }
 
     /**
@@ -271,4 +271,12 @@ public abstract class PluginMenu<T extends BaseGui> implements Configurable {
         return Path.of("menus", this.name + ".yml");
     }
 
+    /**
+     * The name of the menu instance
+     *
+     * @return The name of the menu
+     */
+    public String name() {
+        return this.name;
+    }
 }
