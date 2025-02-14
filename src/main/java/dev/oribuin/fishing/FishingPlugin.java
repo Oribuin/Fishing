@@ -66,7 +66,6 @@ public class FishingPlugin extends RosePlugin {
         return List.of(
                 TierManager.class,
                 FishManager.class,
-                MenuManager.class,
                 TotemManager.class
         );
     }

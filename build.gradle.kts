@@ -66,7 +66,7 @@ tasks {
     shadowJar {
         // add commit hash to the jar name
         this.archiveClassifier.set("")
-        this.archiveVersion.set(commitHash)
+        this.archiveVersion.set("$version-[$commitHash]")
 
         this.relocate("dev.rosewood.rosegarden", "${project.group}.fishing.libs.rosegarden")
         this.relocate("com.jeff_media.morepersistentdatatypes", "${project.group}.fishing.libs.pdt")
