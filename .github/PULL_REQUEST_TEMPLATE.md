@@ -7,6 +7,7 @@
 
 ## Checklist
 <!-- Click on these checkboxes after you created the pull request. -->
+<!-- Use [X] to mark this a task as completed -->
 - [ ] I have tested all the changes that I have made
 - [ ] I have done sufficient performance optimisations and checks
 - [ ] I have stuck to the original codestyle and formatting and not invented my own halfway through
