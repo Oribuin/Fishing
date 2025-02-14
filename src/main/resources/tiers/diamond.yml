@@ -12,7 +12,7 @@ display-item:
     - '&7%description%'
     - ''
     - '&#B9F2FFInformation:'
-    - ' &#B9F2FF- &7Price: &f%price%'
+    - ' &#B9F2FF- &7Price: &f$%price%'
     - ' &#B9F2FF- &7Entropy: &f%entropy%'
     - ' &#B9F2FF- &7Biomes: &f%biomes%'
     - ' &#B9F2FF- &7Weather: &f%weather%'
