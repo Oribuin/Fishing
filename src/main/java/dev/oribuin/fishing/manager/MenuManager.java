@@ -2,6 +2,8 @@ package dev.oribuin.fishing.manager;
 
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.gui.PluginMenu;
+import dev.oribuin.fishing.gui.codex.BasicCodexMenu;
+import dev.oribuin.fishing.gui.codex.impl.FishCodexMenu;
 import dev.oribuin.fishing.gui.totem.TotemMainMenu;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.manager.Manager;
@@ -23,6 +25,7 @@ public class MenuManager extends Manager {
 
         // Register the menus
         menus.put(TotemMainMenu.class, new TotemMainMenu(FishingPlugin.get()));
+        menus.put(FishCodexMenu.class, new FishCodexMenu(FishingPlugin.get()));
 
         // Load all the menus
         menus.values().forEach(PluginMenu::reload);

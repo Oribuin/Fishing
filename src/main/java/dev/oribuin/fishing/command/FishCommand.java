@@ -1,8 +1,9 @@
 package dev.oribuin.fishing.command;
 
 import dev.oribuin.fishing.command.impl.ApplyCommand;
+import dev.oribuin.fishing.command.impl.CodexCommand;
 import dev.oribuin.fishing.command.impl.MenuCommand;
-import dev.oribuin.fishing.command.impl.admin.GiveCommand;
+import dev.oribuin.fishing.command.impl.GiveCommand;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.command.HelpCommand;
 import dev.rosewood.rosegarden.command.ReloadCommand;
@@ -41,7 +42,8 @@ public class FishCommand extends BaseRoseCommand {
                         new ReloadCommand(this.rosePlugin),
                         new ApplyCommand(this.rosePlugin),
                         new MenuCommand(this.rosePlugin),
-                        new GiveCommand(this.rosePlugin)
+                        new GiveCommand(this.rosePlugin),
+                        new CodexCommand(this.rosePlugin)
                 );
     }
 

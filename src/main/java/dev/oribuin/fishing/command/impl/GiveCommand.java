@@ -1,4 +1,4 @@
-package dev.oribuin.fishing.command.impl.admin;
+package dev.oribuin.fishing.command.impl;
 
 import dev.oribuin.fishing.command.impl.admin.give.GiveAugmentCommand;
 import dev.oribuin.fishing.command.impl.admin.give.GiveFishCommand;

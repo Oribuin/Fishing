@@ -1,0 +1,54 @@
+#
+# Fishing Plugin Menu [totem - main_menu] -  Control panel for a totem
+# 
+# title - The title of the gui
+# rows - The amount of rows the gui has
+# items - all the items that have assigned functionality 
+# extra-items - additional decorative items, these do nothing
+title: Fish Codex
+rows: 5
+items:
+  forward:
+    enabled: true
+    slot: 5
+    display-item:
+      type: ARROW
+      name: '&f[&#4f73d6&lNext Page&f]'
+      lore:
+        - ''
+        - '&7Click here to go to the next page'
+      additional-tooltip: false
+  back:
+    enabled: true
+    slot: 3
+    display-item:
+      type: ARROW
+      name: '&f[&#4f73d6&lPrevious Page&f]'
+      lore:
+        - ''
+        - '&7Click here to go to the previous page'
+      additional-tooltip: false
+
+# Decorative items that do nothing
+extra-items:
+  'border':
+    enabled: true
+    slots:
+      - '0-9'
+      - '35-44'
+      - '17-18'
+      - '26-27'
+    display-item:
+      type: BLACK_STAINED_GLASS_PANE
+      tooltip: false
+  menu-information:
+    enabled: true
+    slot: 4
+    display-item:
+      type: OAK_HANGING_SIGN
+      name: '&f[&#4f73d6&lFish Codex&f]'
+      lore:
+        - ''
+        - '&7Here are all the fish you can catch'
+      glowing: true
+      additional-tooltip: false

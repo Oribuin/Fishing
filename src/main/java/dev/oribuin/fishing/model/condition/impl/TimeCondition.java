@@ -79,7 +79,7 @@ public class TimeCondition extends CatchCondition {
     @Override
     public StringPlaceholders placeholders() {
         return StringPlaceholders.builder()
-                .add("time", StringUtils.capitalize(this.time.name()))
+                .add("time", StringUtils.capitalize(this.time.name().toLowerCase().replace("_", " ")))
                 .add("use_system_time", this.systemTime)
                 .build();
     }

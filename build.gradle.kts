@@ -12,7 +12,7 @@ version = "1.0"
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
-    
+
     disableAutoTargetJvm()
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(21))
@@ -34,7 +34,7 @@ repositories {
 }
 
 dependencies {
-    api("dev.rosewood:rosegarden:1.4.4")
+    api("dev.rosewood:rosegarden:1.4.7-SNAPSHOT")
     api("dev.triumphteam:triumph-gui:3.1.10") {  // https://mf.mattstudios.me/triumph-gui/introduction
         exclude(group = "com.google.code.gson", module = "gson") // Remove GSON, Already included in spigot api
         exclude(group = "net.kyori", module = "*") // Remove kyori
@@ -53,7 +53,7 @@ tasks {
         val process = ProcessBuilder("git", "rev-parse", "--short", "HEAD").start()
         val output = ByteArrayOutputStream()
         process.inputStream.copyTo(output)
-        
+
         output.toString().trim()
     }
 
@@ -67,7 +67,7 @@ tasks {
         // add commit hash to the jar name
         this.archiveClassifier.set("")
         this.archiveVersion.set(commitHash)
-        
+
         this.relocate("dev.rosewood.rosegarden", "${project.group}.fishing.libs.rosegarden")
         this.relocate("com.jeff_media.morepersistentdatatypes", "${project.group}.fishing.libs.pdt")
         this.relocate("net.objecthunter.exp4j", "${project.group}.fishing.libs.exp4j")
@@ -79,7 +79,9 @@ tasks {
     }
 
     processResources {
-        this.expand("version" to project.version, "commit" to commitHash)
+        this.from("src/main/java/resources/plugin.yml") { // todo: fix
+            this.expand("version" to project.version, "commit" to commitHash)
+        }
     }
 
     javadoc {
@@ -133,7 +135,7 @@ tasks {
     }
 
     build {
-        this.dependsOn(javadoc)
+//        this.dependsOn(javadoc)
         this.dependsOn(shadowJar)
     }
 }
