@@ -19,49 +19,8 @@ public class UpgradeTotemRadius extends TotemUpgrade implements Configurable {
 
     private final Map<Integer, Tier> tiers = new HashMap<>();
 
-    /**
-     * The name of the totem upgrade to be displayed to the player
-     *
-     * @return The name of the upgrade
-     */
-    @Override
-    public String name() {
-        return "Radius";
-    }
-
-    /**
-     * Apply the upgrade to the totem object
-     *
-     * @param totem The totem object to apply the upgrade to
-     * @param level The level of the upgrade
-     */
-    @Override
-    public void applyTo(Totem totem, int level) {
-        Tier tier = this.tiers.get(level);
-        if (tier == null) {
-            FishingPlugin.get().getLogger().warning("Failed to apply upgrade: " + this.name() + " to totem, The tier does not exist.");
-            return;
-        }
-
-        totem.radius(tier.newRadius());
-    }
-
-    /**
-     * Get the cost of the upgrade for a specific level
-     *
-     * @param level The level of the upgrade
-     *
-     * @return The cost of the upgrade
-     */
-    @Override
-    public Cost costFor(int level) {
-        Tier tier = this.tiers.get(level);
-        if (tier == null) {
-            FishingPlugin.get().getLogger().warning("Failed to get cost for upgrade: " + this.name() + ", The tier does not exist.");
-            return new Cost(CurrencyRegistry.ENTROPY, 0);
-        }
-
-        return this.tiers.get(level).cost();
+    public UpgradeTotemRadius() {
+        super("radius");
     }
 
     /**
@@ -108,7 +67,7 @@ public class UpgradeTotemRadius extends TotemUpgrade implements Configurable {
                 int level = Integer.parseInt(key);
                 this.tiers.put(level, new Tier(Cost.of(this.pullSection(section, "cost")), newRadius));
             } catch (IllegalArgumentException ex) {
-                FishingPlugin.get().getLogger().warning("Failed to load tier: " + key + " in upgrade: " + this.name() + ", The tier must be a number.");
+                FishingPlugin.get().getLogger().warning("Failed to load tier: " + key + " in upgrade: " + this.name + ", The tier must be a number.");
             }
         });
     }

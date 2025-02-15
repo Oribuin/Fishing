@@ -1,8 +1,6 @@
 package dev.oribuin.fishing.api.event;
 
-import com.google.common.base.Supplier;
 import dev.oribuin.fishing.model.augment.Augment;
-import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import org.bukkit.event.Event;
 
 import java.util.Map;
@@ -13,7 +11,7 @@ import java.util.Map;
 public class MutableEventWrapper<T extends FishEventHandler> {
 
     private final T type;
-    private final int level;
+    private final Integer level;
     private final EventWrapper<?> wrapper;
 
     /**
@@ -25,7 +23,7 @@ public class MutableEventWrapper<T extends FishEventHandler> {
      *
      * @see FishEventHandler#callEvents(Map, Event) Where this is used
      */
-    public MutableEventWrapper(T type, int level, Event event) {
+    public MutableEventWrapper(T type, Integer level, Event event) {
         this.type = type;
         this.level = level;
         this.wrapper = type.getWrapper(event.getClass());
@@ -44,6 +42,17 @@ public class MutableEventWrapper<T extends FishEventHandler> {
     }
 
     /**
+     * Compare the priority of two events to determine which one should be called first
+     *
+     * @param other The other event to compare
+     *
+     * @return The comparison of the two events
+     */
+    public int compare(MutableEventWrapper<T> other) {
+        return Integer.compare(this.wrapper.order().getSlot(), other.wrapper().order().getSlot());
+    }
+
+    /**
      * Get the augment that was registered
      *
      * @return The {@link Augment} that was registered
@@ -57,7 +66,7 @@ public class MutableEventWrapper<T extends FishEventHandler> {
      *
      * @return The level of the augment that was registered
      */
-    public int level() {
+    public Integer level() {
         return level;
     }
 

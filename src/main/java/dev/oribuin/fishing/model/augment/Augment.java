@@ -14,6 +14,7 @@ import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -191,6 +192,19 @@ public abstract class Augment extends FishEventHandler implements Configurable {
                 .add("display_line", this.displayLine)
                 .add("permission", this.permission)
                 .build();
+    }
+
+    /**
+     * Call an event from the handler's registered events, This will not take priority into account.
+     *
+     * @param event The {@link Event} to call
+     * @param level The level of the event
+     */
+    @Override
+    public <T extends Event> void callEvent(T event, int level) {
+        if (!this.enabled) return;
+        
+        super.callEvent(event, level);
     }
 
     /**

@@ -3,7 +3,6 @@ package dev.oribuin.fishing.api.event;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -22,17 +21,14 @@ public abstract class FishEventHandler implements FishingEvents {
      * @param event The {@link Event} to call
      * @param <T>   The event type to call
      */
-    public static <T extends FishEventHandler> void callEvents(Map<T, Integer> values, Event event) {
+    public static <T extends FishEventHandler, Z extends Event> void callEvents(Map<T, Integer> values, Z event) {
         if (!event.callEvent()) return; // Call the event through bukkit to allow other plugins to listen to the event
 
         Map<T, Integer> applicable = new HashMap<>(values);
-        applicable.keySet().removeIf(x -> !x.events().containsKey(event.getClass()));
+        applicable.keySet().removeIf(x -> !x.applicable(event));
 
-        applicable.entrySet()
-                .stream()
-                .map(x -> new MutableEventWrapper<>(x, event))
-                .sorted(Comparator.comparingInt(o -> o.wrapper().order().getSlot()))
-                .forEach(x -> x.wrapper().accept(event, x.level()));
+        // Sort the events by their priority and call them
+        applicable.entrySet().stream().map(x -> new MutableEventWrapper<>(x, event)).sorted(MutableEventWrapper::compare).forEachOrdered(x -> x.type().callEvent(event, x.level()));
     }
 
     /**
@@ -41,16 +37,13 @@ public abstract class FishEventHandler implements FishingEvents {
      * @param event The {@link Event} to call
      * @param level The level of the event
      * @param <T>   The event type to call
-     *
-     * @return The event that was called
      */
     @SuppressWarnings("unchecked")
-    public <T extends Event> T callEvent(T event, int level) {
+    public <T extends Event> void callEvent(T event, int level) {
         EventWrapper<?> wrapper = this.events.get(event.getClass());
-        if (wrapper == null) return event;
+        if (wrapper == null) return;
 
         ((EventWrapper<T>) wrapper).function().accept(event, level);
-        return event;
     }
 
     /**
