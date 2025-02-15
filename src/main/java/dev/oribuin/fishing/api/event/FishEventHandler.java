@@ -1,5 +1,7 @@
 package dev.oribuin.fishing.api.event;
 
+import dev.oribuin.fishing.api.event.def.FishingEvents;
+import dev.oribuin.fishing.api.event.def.TotemEvents;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 
@@ -11,7 +13,7 @@ import java.util.function.BiConsumer;
  * A global handler to parse any fishing related events, used to detect
  * and modify fish when they are caught, generated and given
  */
-public abstract class FishEventHandler implements FishingEvents {
+public abstract class FishEventHandler implements FishingEvents, TotemEvents {
 
     private final Map<Class<? extends Event>, EventWrapper<?>> events = new HashMap<>();
 

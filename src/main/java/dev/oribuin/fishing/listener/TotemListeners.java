@@ -1,11 +1,13 @@
 package dev.oribuin.fishing.listener;
 
+import com.jeff_media.morepersistentdatatypes.DataType;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.gui.MenuRegistry;
 import dev.oribuin.fishing.gui.totem.TotemMainMenu;
 import dev.oribuin.fishing.manager.TotemManager;
 import dev.oribuin.fishing.model.item.ItemRegistry;
 import dev.oribuin.fishing.model.totem.Totem;
+import dev.oribuin.fishing.storage.util.KeyRegistry;
 import io.papermc.paper.event.packet.PlayerChunkLoadEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,6 +26,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class TotemListeners implements Listener {
@@ -48,10 +51,8 @@ public class TotemListeners implements Listener {
         ItemStack item = event.getItem();
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;
-
-        Totem totem = Totem.fromContainer(meta.getPersistentDataContainer());
-        if (totem == null) return;
-
+        if (!meta.getPersistentDataContainer().has(KeyRegistry.TOTEM_ACTIVE, DataType.BOOLEAN)) return;
+        
         event.setCancelled(true);
         event.setUseItemInHand(Event.Result.DENY);
         event.setUseInteractedBlock(Event.Result.DENY);
@@ -65,6 +66,8 @@ public class TotemListeners implements Listener {
         }
 
         Location center = relative.getLocation().toCenterLocation();
+        Totem totem = new Totem(center, null);
+        totem.loadProperties(meta.getPersistentDataContainer());
         totem.spawn(center);
 
         event.getItem().setAmount(event.getItem().getAmount() - 1);
@@ -93,7 +96,8 @@ public class TotemListeners implements Listener {
         }
 
         // Remove the totem if the player is the owner
-        if (!event.getPlayer().getUniqueId().equals(totem.owner())) {
+        UUID owner = totem.getProperty(KeyRegistry.TOTEM_OWNER);
+        if (owner != null && !event.getPlayer().getUniqueId().equals(owner)) {
             event.getPlayer().sendMessage("You cannot remove your own totem.");
             return;
         }

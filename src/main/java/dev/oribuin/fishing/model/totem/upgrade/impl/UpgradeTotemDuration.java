@@ -8,25 +8,27 @@ import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
 import java.util.List;
 
 import static com.jeff_media.morepersistentdatatypes.DataType.INTEGER;
-import static dev.oribuin.fishing.storage.util.KeyRegistry.TOTEM_RADIUS;
+import static dev.oribuin.fishing.storage.util.KeyRegistry.TOTEM_DURATION;
 
 /**
- * A totem upgrade that increases the effective range of the totem
+ * A totem upgrade that increases the duration of the totem when activated
  */
-public class UpgradeTotemRadius extends TotemUpgrade implements Configurable {
+public class UpgradeTotemDuration extends TotemUpgrade implements Configurable {
 
-    private String radiusFormula = "%level% * 5"; // The formula to calculate the radius of the totem (5 blocks per level)
-
+    private String durationFormula = "60 + (%level% * 30)"; // The formula to calculate the duration of the totem (60 seconds + 30 seconds per level)
+    
     /**
      * Create a new totem upgrade with the name "radius"
      */
-    public UpgradeTotemRadius() {
-        super("radius", "Increases the effective range of the totem");
+    public UpgradeTotemDuration() {
+        super("duration", "Increases the duration of the totem when activated"); 
         
-        this.defaultLevel(1);
+        this.defaultLevel(0);
+        this.maxLevel(10);
     }
 
     /**
@@ -37,7 +39,20 @@ public class UpgradeTotemRadius extends TotemUpgrade implements Configurable {
      */
     @Override
     public void initialize(Totem totem, int level) {
-        totem.applyProperty(INTEGER, TOTEM_RADIUS, level);
+        totem.applyProperty(INTEGER, TOTEM_DURATION, level);
+    }
+
+    /**
+     * Calculate the radius of the totem based on the level of the upgrade
+     *
+     * @param totem The totem to calculate the radius for
+     *
+     * @return The radius of the totem
+     */
+    public Duration calculateDuration(Totem totem) {
+        Integer level = totem.getProperty(TOTEM_DURATION, this.defaultLevel());
+        StringPlaceholders plc = StringPlaceholders.of("level", level);
+        return Duration.ofMillis((long) FishUtils.evaluate(plc.apply(this.durationFormula)) * 1000);
     }
 
     /**
@@ -49,21 +64,12 @@ public class UpgradeTotemRadius extends TotemUpgrade implements Configurable {
      */
     @Override
     public StringPlaceholders placeholders(Totem totem) {
-        return StringPlaceholders.of("radius", this.calculateRadius(totem));
+        return StringPlaceholders.of(
+                "duration", FishUtils.formatTime(this.calculateDuration(totem).toMillis()),
+                "duration_timer", FishUtils.formatTime(totem.getCurrentDuration())
+        );
     }
 
-    /**
-     * Calculate the radius of the totem based on the level of the upgrade
-     *
-     * @param totem The totem to calculate the radius for
-     *
-     * @return The radius of the totem
-     */
-    public int calculateRadius(Totem totem) {
-        Integer level = totem.getProperty(TOTEM_RADIUS, this.defaultLevel());
-        StringPlaceholders plc = StringPlaceholders.of("level", level);
-        return (int) FishUtils.evaluate(plc.apply(this.radiusFormula));
-    }
 
     /**
      * Serialize the settings of the configurable class into a {@link CommentedConfigurationSection} to be saved later
@@ -79,7 +85,7 @@ public class UpgradeTotemRadius extends TotemUpgrade implements Configurable {
     public void saveSettings(@NotNull CommentedConfigurationSection config) {
         super.saveSettings(config);
 
-        config.set("radius-formula", this.radiusFormula);
+        config.set("duration-formula", this.durationFormula);
     }
 
     /**
@@ -101,7 +107,7 @@ public class UpgradeTotemRadius extends TotemUpgrade implements Configurable {
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
         super.loadSettings(config);
 
-        this.radiusFormula = config.getString("radius-formula", this.radiusFormula);
+        this.durationFormula = config.getString("duration-formula", this.durationFormula);
     }
 
     /**
@@ -112,9 +118,9 @@ public class UpgradeTotemRadius extends TotemUpgrade implements Configurable {
     @Override
     public List<String> comments() {
         return List.of(
-                "Totem Upgrade [Radius] - Increases the effective range of the totem",
+                "Totem Upgrade [Duration] - Increases the duration of the totem when activated",
                 "",
-                "This upgrade will increase the radius of the totem by a set amount"
+                "This upgrade will increase the duration of the totem by a set amount"
         );
     }
 

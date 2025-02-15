@@ -13,6 +13,7 @@ import dev.oribuin.fishing.manager.TierManager;
 import dev.oribuin.fishing.manager.TotemManager;
 import dev.oribuin.fishing.model.item.ItemRegistry;
 import dev.oribuin.fishing.model.skill.SkillRegistry;
+import dev.oribuin.fishing.model.totem.upgrade.UpgradeRegistry;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.config.RoseSetting;
 import dev.rosewood.rosegarden.manager.Manager;
@@ -50,6 +51,7 @@ public class FishingPlugin extends RosePlugin {
     @Override
     public void reload() {
         AugmentRegistry.reload();
+        UpgradeRegistry.reload();
         ItemRegistry.init();
         SkillRegistry.init();
         

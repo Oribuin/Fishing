@@ -1,7 +1,6 @@
 package dev.oribuin.fishing.manager;
 
 import dev.oribuin.fishing.api.event.FishEventHandler;
-import dev.oribuin.fishing.api.event.FishingEvents;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
 import dev.oribuin.fishing.model.augment.Augment;

@@ -2,6 +2,7 @@ package dev.oribuin.fishing.gui.totem;
 
 import dev.oribuin.fishing.api.gui.PluginMenu;
 import dev.oribuin.fishing.model.totem.Totem;
+import dev.oribuin.fishing.storage.util.KeyRegistry;
 import dev.triumphteam.gui.guis.Gui;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -36,17 +37,18 @@ public class TotemMainMenu extends PluginMenu<Gui> {
         this.placeItem("totem-stats", totem.placeholders());
 
         // The totem is active, display the active totem item
-        if (totem.active()) {
+        boolean active = totem.getProperty(KeyRegistry.TOTEM_ACTIVE, false);
+        if (active) {
             this.placeItem("totem-active", totem.placeholders());
         }
-
+        
         // The totem is not active and is on cooldown, display the cooldown item
-        if (!totem.active() && totem.onCooldown()) {
+        if (!active && totem.onCooldown()) {
             this.placeItem("totem-cooldown", totem.placeholders());
         }
 
         // The totem is not active and is not on cooldown, display the button to activate the totem
-        if (!totem.active() && !totem.onCooldown()) {
+        if (!active && !totem.onCooldown()) {
             this.placeItem("totem-activate", totem.placeholders(), x -> {
                 totem.activate(); // Activate the totem
                 player.sendMessage("§aYou have activated the totem!");

@@ -29,7 +29,7 @@ public class GiveTotemCommand extends BaseRoseCommand {
         int fixedAmount = Math.max(1, Math.min(amount == null ? 1 : amount, 64));
 
         CommandSender sender = context.getSender();
-        Totem totem = new Totem(target.getUniqueId(), target.getName());
+        Totem totem = new Totem(null, target);
 
         if (target.getInventory().firstEmpty() == -1) {
             // TODO: Plugin Message

@@ -2,6 +2,7 @@ package dev.oribuin.fishing.manager;
 
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.storage.util.FinePosition;
+import dev.oribuin.fishing.storage.util.KeyRegistry;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.manager.Manager;
 import org.bukkit.Bukkit;
@@ -112,7 +113,7 @@ public class TotemManager extends Manager {
      * @return The closest active totem.
      */
     public Totem getClosestActive(Location location) {
-        return this.totems.values().stream().filter(Totem::active).min((t1, t2) -> {
+        return this.totems.values().stream().filter(x -> x.getProperty(KeyRegistry.TOTEM_ACTIVE)).min((t1, t2) -> {
             double distance1 = t1.center().distance(location);
             double distance2 = t2.center().distance(location);
             return Double.compare(distance1, distance2);

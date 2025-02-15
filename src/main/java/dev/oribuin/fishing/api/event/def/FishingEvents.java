@@ -1,5 +1,7 @@
-package dev.oribuin.fishing.api.event;
+package dev.oribuin.fishing.api.event.def;
 
+import dev.oribuin.fishing.api.event.EventWrapper;
+import dev.oribuin.fishing.api.event.FishEventHandler;
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
@@ -11,8 +13,9 @@ import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
  * <p>
  * This is to be used as a template reference for all augments, skills and other classes that need to modify the fish events
  * <p>
- * If you are implementing these methods, They should be registered through {@link FishEventHandler#register(FishEventHandler.EventWrapper)} class.
+ * If you are implementing these methods, They should be registered through {@link FishEventHandler#register(EventWrapper)} class.
  */
+@SuppressWarnings("unused")
 public interface FishingEvents {
 
     /**
