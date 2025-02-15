@@ -3,6 +3,7 @@ package dev.oribuin.fishing.model.totem;
 import com.destroystokyo.paper.ParticleBuilder;
 import com.jeff_media.morepersistentdatatypes.DataType;
 import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.api.Propertied;
 import dev.oribuin.fishing.api.task.AsyncTicker;
 import dev.oribuin.fishing.manager.TotemManager;
 import dev.oribuin.fishing.model.item.ItemConstruct;
@@ -30,20 +31,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class Totem implements AsyncTicker {
+import static com.jeff_media.morepersistentdatatypes.DataType.LONG;
+import static com.jeff_media.morepersistentdatatypes.DataType.UUID;
+import static dev.oribuin.fishing.storage.util.KeyRegistry.TOTEM_LASTACTIVE;
+import static dev.oribuin.fishing.storage.util.KeyRegistry.TOTEM_OWNER;
+
+public class Totem extends Propertied implements AsyncTicker {
 
     private static final Duration PARTICLE_DELAY = Duration.ofSeconds(1);
-
     private static final String TEXTURE = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmY2MjRhNDRlNzdiOTVkYmUxY2M3MzU1MzY5NTNlODQwYmE2YzE5YjAxNTdjNTQ5ZDliODI1MzQ2NDhjOGNlNCJ9fX0=";
 
     private final UUID owner;
-    private String ownerName; // The name of the owner
-    private boolean active; // If the totem is active
-    private int radius; // Radius of the totem
-    private Duration duration; // Duration for the totem
-    private Duration cooldown; // Cooldown for the totem
-    private long lastActive; // Last time the totem was active
     private Location center; // Center of the totem
+    private long lastActive; // The last time the totem was active
 
     private ArmorStand entity; // The entity that will be spawned.
     private long lastTick; // The last time the totem was ticked
@@ -68,6 +68,7 @@ public class Totem implements AsyncTicker {
 
     /**
      * Create a new totem owner with all the required values
+     * =
      *
      * @param owner  The owner of the totem
      * @param center The block the totem lives
@@ -450,5 +451,17 @@ public class Totem implements AsyncTicker {
         return Duration.ZERO;
     }
 
-
+    /**
+     * Register all the default properties to the class so they can be loaded and saved
+     *
+     * @param container The container to register the properties to
+     *
+     * @see #saveProperties(PersistentDataContainer)
+     */
+    @Override
+    public void defineProperties(PersistentDataContainer container) {
+        this.registerProperty(UUID, TOTEM_OWNER, this.owner);
+        this.registerProperty(LONG, TOTEM_LASTACTIVE, this.lastActive);
+    }
+    
 }
