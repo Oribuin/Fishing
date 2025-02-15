@@ -1,5 +1,7 @@
 package dev.oribuin.fishing.manager;
 
+import dev.oribuin.fishing.api.event.FishEventHandler;
+import dev.oribuin.fishing.api.event.FishingEvents;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
 import dev.oribuin.fishing.model.augment.Augment;
@@ -41,7 +43,7 @@ public class FishManager extends Manager {
         InitialFishCatchEvent event = new InitialFishCatchEvent(player, rod, hook);
 
         // Run the augments onInitialCatch method
-        AugmentRegistry.callEvent(augments, event);
+        FishEventHandler.callEvents(augments, event);
 
         // Cancel the event if it is cancelled
         if (event.isCancelled()) return result;
@@ -68,7 +70,7 @@ public class FishManager extends Manager {
         FishGenerateEvent event = new FishGenerateEvent(player, rod, hook);
         event.generate(); // Generate the fish
 
-        AugmentRegistry.callEvent(augments, event); // Call the augments
+        FishEventHandler.callEvents(augments, event); // Call the augments
         if (event.isCancelled()) return null;
 
         return event.fish();

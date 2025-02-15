@@ -1,11 +1,13 @@
 package dev.oribuin.fishing.listener;
 
 import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.api.event.FishEventHandler;
 import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
 import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import dev.oribuin.fishing.manager.DataManager;
 import dev.oribuin.fishing.manager.FishManager;
 import dev.oribuin.fishing.manager.LocaleManager;
+import dev.oribuin.fishing.model.economy.CurrencyRegistry;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.storage.Fisher;
 import org.bukkit.event.EventHandler;
@@ -48,8 +50,9 @@ public class FishListener implements Listener {
 
             FishCatchEvent fishCatchEvent = new FishCatchEvent(event.getPlayer(), hand, event.getHook(), fish);
             fishCatchEvent.naturalExp(naturalExp); // Set the base experience gained
-            AugmentRegistry.callEvent(AugmentRegistry.from(hand), fishCatchEvent);
 
+            FishEventHandler.callEvents(AugmentRegistry.from(hand), fishCatchEvent);
+            
             if (fishCatchEvent.isCancelled()) continue; // If the event is cancelled, do nothing
 
             // Use the event values because they could have been modified
@@ -72,7 +75,7 @@ public class FishListener implements Listener {
 
             inv.addItem(resultItem);
         }
-
+        
         Fisher fisher = this.plugin.getManager(DataManager.class).get(event.getPlayer().getUniqueId());
         if (fisher == null) return;
 

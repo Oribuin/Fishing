@@ -3,6 +3,7 @@ package dev.oribuin.fishing.api.event;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -14,6 +15,25 @@ import java.util.function.BiConsumer;
 public abstract class FishEventHandler implements FishingEvents {
 
     private final Map<Class<? extends Event>, EventWrapper<?>> events = new HashMap<>();
+
+    /**
+     * Call an event from the handler's registered events, This will take priority into account.
+     *
+     * @param event The {@link Event} to call
+     * @param <T>   The event type to call
+     */
+    public static <T extends FishEventHandler> void callEvents(Map<T, Integer> values, Event event) {
+        if (!event.callEvent()) return; // Call the event through bukkit to allow other plugins to listen to the event
+
+        Map<T, Integer> applicable = new HashMap<>(values);
+        applicable.keySet().removeIf(x -> !x.events().containsKey(event.getClass()));
+
+        applicable.entrySet()
+                .stream()
+                .map(x -> new MutableEventWrapper<>(x, event))
+                .sorted(Comparator.comparingInt(o -> o.wrapper().order().getSlot()))
+                .forEach(x -> x.wrapper().accept(event, x.level()));
+    }
 
     /**
      * Call an event from the handler's registered events, This will not take priority into account.
@@ -99,60 +119,6 @@ public abstract class FishEventHandler implements FishingEvents {
         if (!this.events.containsKey(event)) return null;
 
         return (EventWrapper<T>) this.events.get(event);
-    }
-
-
-    /**
-     * Wrapper for an event to be registered with a function
-     *
-     * @param event    The event to be registered
-     * @param function The function to be called when the event is fired
-     * @param order    The priority of the event
-     * @param <T>      The event type to be registered with the function
-     */
-    public record EventWrapper<T extends Event>(Class<T> event, BiConsumer<T, Integer> function, EventPriority order) {
-
-        /**
-         * Call the function that was registered with the event, This will cast the event to the correct type
-         *
-         * @param event The {@link Event} to call
-         * @param level The level of the event
-         */
-        @SuppressWarnings("unchecked")
-        public void accept(Event event, int level) {
-            this.function.accept((T) event, level);
-        }
-
-        /**
-         * Get the event type that was registered
-         *
-         * @return The event that was registered
-         */
-        @Override
-        public Class<T> event() {
-            return event;
-        }
-
-        /**
-         * Get the function that was registered
-         *
-         * @return The function that was registered
-         */
-        @Override
-        public BiConsumer<T, Integer> function() {
-            return function;
-        }
-
-        /**
-         * Get the priority of the event
-         *
-         * @return The priority of the event
-         */
-        @Override
-        public EventPriority order() {
-            return order;
-        }
-
     }
 
 }

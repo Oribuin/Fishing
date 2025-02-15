@@ -2,6 +2,7 @@ package dev.oribuin.fishing.model.augment;
 
 import com.google.common.base.Supplier;
 import dev.oribuin.fishing.api.event.FishEventHandler;
+import dev.oribuin.fishing.api.event.MutableEventWrapper;
 import dev.oribuin.fishing.model.augment.impl.AugmentBiomeBlend;
 import dev.oribuin.fishing.model.augment.impl.AugmentEnlightened;
 import dev.oribuin.fishing.model.augment.impl.AugmentFineSlicing;
@@ -55,27 +56,7 @@ public class AugmentRegistry {
         register(AugmentEnlightened::new);
         register(AugmentIndulge::new);
     }
-
-    /**
-     * Call an event in the plugin to be used by the augments
-     *
-     * @param augments The augments to call the event with
-     * @param event    The event to call
-     */
-    public static void callEvent(Map<Augment, Integer> augments, Event event) {
-        if (!event.callEvent()) return; // Call the event through bukkit to allow other plugins to listen to the event
-
-        Map<Augment, Integer> applicable = new HashMap<>(augments);
-        applicable.keySet().removeIf(x -> !x.events().containsKey(event.getClass()));
-
-        // Form a Map.Entry<Augment, Integer> with a EventWrapper to call the event
-        applicable.entrySet()
-                .stream()
-                .map(entry -> new AugmentEventWrapper(entry.getKey(), entry.getValue(), event))
-                .sorted(Comparator.comparingInt(o -> o.wrapper.order().getSlot()))
-                .forEach(x -> x.wrapper.accept(event, x.level()));
-    }
-
+    
     /**
      * Loads an augment into the registry to be used in the plugin and caches it.
      * Calls {@link Augment#reload()} to load the augment.
@@ -194,60 +175,6 @@ public class AugmentRegistry {
      */
     public static Map<String, Augment> all() {
         return augments;
-    }
-
-
-    /**
-     * Wrapper for an augment to be registered with a function
-     */
-    public static final class AugmentEventWrapper {
-
-        private final Augment augment;
-        private final int level;
-        private final FishEventHandler.EventWrapper<?> wrapper;
-
-        /**
-         * Wrapper for an augment to be registered with a function in an event, Used to make the stream less annoying
-         *
-         * @param augment The augment to be registered
-         * @param level   The level of the augment
-         * @param event   The event to be registered
-         *
-         * @see AugmentRegistry#callEvent(Map, Event) Where this is used
-         */
-        public AugmentEventWrapper(Augment augment, int level, Event event) {
-            this.augment = augment;
-            this.level = level;
-            this.wrapper = augment.getWrapper(event.getClass());
-        }
-
-        /**
-         * Get the augment that was registered
-         *
-         * @return The {@link Augment} that was registered
-         */
-        public Augment augment() {
-            return augment;
-        }
-
-        /**
-         * Get the level of the augment that was registered
-         *
-         * @return The level of the augment that was registered
-         */
-        public int level() {
-            return level;
-        }
-
-        /**
-         * Get the event wrapper that was registered
-         *
-         * @return The event wrapper that was registered
-         */
-        public FishEventHandler.EventWrapper<?> wrapper() {
-            return wrapper;
-        }
-
     }
 
 }
