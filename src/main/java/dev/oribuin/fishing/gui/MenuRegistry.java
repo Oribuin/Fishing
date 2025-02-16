@@ -4,6 +4,7 @@ import dev.oribuin.fishing.api.gui.PluginMenu;
 import dev.oribuin.fishing.gui.codex.impl.AugmentCodexMenu;
 import dev.oribuin.fishing.gui.codex.impl.FishCodexMenu;
 import dev.oribuin.fishing.gui.totem.TotemMainMenu;
+import dev.oribuin.fishing.gui.totem.TotemUpgradeMenu;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -12,16 +13,18 @@ import java.util.function.Supplier;
 
 public class MenuRegistry {
 
-    private static final Map<Class<?> , PluginMenu<?>> menus = new HashMap<>();
-    
+    private static final Map<Class<?>, PluginMenu<?>> menus = new HashMap<>();
+
     static {
         // Codex menus
         register(AugmentCodexMenu::new);
         register(FishCodexMenu::new);
-        
+
         // Totem Menus
         register(TotemMainMenu::new);
+        register(TotemUpgradeMenu::new);
     }
+
     /**
      * Register a new menu to the registry with the specified name
      *
@@ -40,7 +43,7 @@ public class MenuRegistry {
 
     /**
      * Get a registered menu by the specified class
-     * 
+     *
      * @param menu The menu class
      *
      * @return The menu
@@ -49,6 +52,13 @@ public class MenuRegistry {
     public static <T extends PluginMenu<?>> T get(Class<T> menu) {
         return (T) menus.get(menu);
     }
-    
-    
+
+    /**
+     * Reload all the menus in the registry
+     */
+    public static void reload() {
+        menus.values().forEach(PluginMenu::reload);
+    }
+
+
 }

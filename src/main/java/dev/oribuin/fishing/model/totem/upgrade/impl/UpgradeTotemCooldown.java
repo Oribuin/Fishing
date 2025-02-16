@@ -12,7 +12,6 @@ import java.time.Duration;
 import java.util.List;
 
 import static com.jeff_media.morepersistentdatatypes.DataType.INTEGER;
-import static dev.oribuin.fishing.storage.util.KeyRegistry.TOTEM_COOLDOWN;
 
 /**
  * A totem upgrade that decreases the cooldown of the totem once deactivated
@@ -30,18 +29,7 @@ public class UpgradeTotemCooldown extends TotemUpgrade implements Configurable {
         this.defaultLevel(0);
         this.maxLevel(15);
     }
-
-    /**
-     * Initialize the upgrade to the totem at the specified level
-     *
-     * @param totem The totem to apply the upgrade to
-     * @param level The level of the upgrade
-     */
-    @Override
-    public void initialize(Totem totem, int level) {
-        totem.applyProperty(INTEGER, TOTEM_COOLDOWN, level);
-    }
-
+    
     /**
      * Calculate the radius of the totem based on the level of the upgrade
      *
@@ -50,13 +38,16 @@ public class UpgradeTotemCooldown extends TotemUpgrade implements Configurable {
      * @return The radius of the totem
      */
     public Duration calculateCooldown(Totem totem) {
-        Integer level = totem.getProperty(TOTEM_COOLDOWN, this.defaultLevel());
+        Integer level = totem.getProperty(this.key(), this.defaultLevel());
         StringPlaceholders plc = StringPlaceholders.of("level", level);
         return Duration.ofMillis((long) FishUtils.evaluate(plc.apply(this.cooldownFormula)) * 1000);
     }
 
     /**
-     * The totem upgrade placeholders for the upgrade
+     * The totem upgrade placeholders for the upgrade.
+     * All upgrades are added to the totems placeholders as "upgrade_<name>_<placeholder>"
+     * <p>
+     * Example: upgrade_radius_value
      *
      * @param totem The totem to apply the upgrade to
      *
@@ -64,10 +55,11 @@ public class UpgradeTotemCooldown extends TotemUpgrade implements Configurable {
      */
     @Override
     public StringPlaceholders placeholders(Totem totem) {
-        return StringPlaceholders.of(
-                "cooldown", FishUtils.formatTime(this.calculateCooldown(totem).toMillis()),
-                "cooldown_timer", FishUtils.formatTime(totem.getCurrentCooldown())
-        );
+        return StringPlaceholders.builder()
+                .addAll(super.placeholders(totem))
+                .add("value", FishUtils.formatTime(this.calculateCooldown(totem).toMillis()))
+                .add("timer", FishUtils.formatTime(totem.getCurrentCooldown()))
+                .build();
     }
 
     /**

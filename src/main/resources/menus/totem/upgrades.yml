@@ -5,8 +5,8 @@
 # rows - The amount of rows the gui has
 # items - all the items that have assigned functionality 
 # extra-items - additional decorative items, these do nothing
-title: Fish Codex
-rows: 5
+title: Fishing Totem - Upgrades
+rows: 3
 items:
   forward:
     enabled: true
@@ -34,21 +34,27 @@ extra-items:
   'border':
     enabled: true
     slots:
-      - '0-9'
-      - '35-44'
-      - '17-18'
-      - '26-27'
+      - '0-8'
+      - '18-26'
     display-item:
       type: BLACK_STAINED_GLASS_PANE
       tooltip: false
-  menu-information:
+  totem-stats:
     enabled: true
     slot: 4
     display-item:
       type: OAK_HANGING_SIGN
-      name: '&f[&#4f73d6&lFish Codex&f]'
+      name: '&f[&#4f73d6&lTotem Details&f]'
       lore:
+        - '&7Here are the current upgrades'
+        - '&7active have for the fishing totem'
         - ''
-        - '&7Here are all the fish you can catch'
+        - '&#4f73d6Statistics:'
+        - ' &#4f73d6- &7Active: &f%active%'
+        - ' &#4f73d6- &7Owner: &f%owner%'
+        - ' &#4f73d6- &7Radius: &f%upgrade_radius_value% blocks'
+        - ' &#4f73d6- &7Duration: &f%upgrade_duration_value%'
+        - ' &#4f73d6- &7Cooldown: &f%upgrade_cooldown_value%'
+        - ''
       glowing: true
       additional-tooltip: false

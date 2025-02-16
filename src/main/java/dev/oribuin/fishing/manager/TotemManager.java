@@ -113,6 +113,8 @@ public class TotemManager extends Manager {
      * @return The closest active totem.
      */
     public Totem getClosestActive(Location location) {
+        if (this.totems.isEmpty()) return null;
+        
         return this.totems.values().stream().filter(x -> x.getProperty(KeyRegistry.TOTEM_ACTIVE)).min((t1, t2) -> {
             double distance1 = t1.center().distance(location);
             double distance2 = t2.center().distance(location);

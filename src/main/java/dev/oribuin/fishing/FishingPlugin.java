@@ -1,5 +1,6 @@
 package dev.oribuin.fishing;
 
+import dev.oribuin.fishing.gui.MenuRegistry;
 import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import dev.oribuin.fishing.config.Setting;
 import dev.oribuin.fishing.listener.FishListener;
@@ -54,6 +55,7 @@ public class FishingPlugin extends RosePlugin {
         UpgradeRegistry.reload();
         ItemRegistry.init();
         SkillRegistry.init();
+        MenuRegistry.reload();
         
         super.reload();
     }

@@ -35,7 +35,7 @@ public final class ItemRegistry implements Configurable {
     public static void registerCustomItem(String key, ItemConstruct item) {
         CUSTOM_ITEMS.put(key.toUpperCase(), item);
     }
-
+    
     /**
      * Get an {@link ItemConstruct} from the key provided
      *
@@ -55,6 +55,7 @@ public final class ItemRegistry implements Configurable {
             return null;
         }
     }
+    
 
     /**
      * Initialize a {@link CommentedConfigurationSection} from a configuration file to establish the settings

@@ -12,7 +12,6 @@ import java.time.Duration;
 import java.util.List;
 
 import static com.jeff_media.morepersistentdatatypes.DataType.INTEGER;
-import static dev.oribuin.fishing.storage.util.KeyRegistry.TOTEM_DURATION;
 
 /**
  * A totem upgrade that increases the duration of the totem when activated
@@ -20,13 +19,13 @@ import static dev.oribuin.fishing.storage.util.KeyRegistry.TOTEM_DURATION;
 public class UpgradeTotemDuration extends TotemUpgrade implements Configurable {
 
     private String durationFormula = "60 + (%level% * 30)"; // The formula to calculate the duration of the totem (60 seconds + 30 seconds per level)
-    
+
     /**
      * Create a new totem upgrade with the name "radius"
      */
     public UpgradeTotemDuration() {
-        super("duration", "Increases the duration of the totem when activated"); 
-        
+        super("duration", "Increases the duration of the totem when activated");
+
         this.defaultLevel(0);
         this.maxLevel(10);
     }
@@ -39,7 +38,7 @@ public class UpgradeTotemDuration extends TotemUpgrade implements Configurable {
      */
     @Override
     public void initialize(Totem totem, int level) {
-        totem.applyProperty(INTEGER, TOTEM_DURATION, level);
+        totem.applyProperty(INTEGER, this.key(), level);
     }
 
     /**
@@ -50,13 +49,16 @@ public class UpgradeTotemDuration extends TotemUpgrade implements Configurable {
      * @return The radius of the totem
      */
     public Duration calculateDuration(Totem totem) {
-        Integer level = totem.getProperty(TOTEM_DURATION, this.defaultLevel());
+        Integer level = totem.getProperty(this.key(), this.defaultLevel());
         StringPlaceholders plc = StringPlaceholders.of("level", level);
         return Duration.ofMillis((long) FishUtils.evaluate(plc.apply(this.durationFormula)) * 1000);
     }
 
     /**
-     * The totem upgrade placeholders for the upgrade
+     * The totem upgrade placeholders for the upgrade.
+     * All upgrades are added to the totems placeholders as "upgrade_<name>_<placeholder>"
+     * <p>
+     * Example: upgrade_radius_value
      *
      * @param totem The totem to apply the upgrade to
      *
@@ -64,10 +66,11 @@ public class UpgradeTotemDuration extends TotemUpgrade implements Configurable {
      */
     @Override
     public StringPlaceholders placeholders(Totem totem) {
-        return StringPlaceholders.of(
-                "duration", FishUtils.formatTime(this.calculateDuration(totem).toMillis()),
-                "duration_timer", FishUtils.formatTime(totem.getCurrentDuration())
-        );
+        return StringPlaceholders.builder()
+                .addAll(super.placeholders(totem))
+                .add("value", FishUtils.formatTime(this.calculateDuration(totem).toMillis()))
+                .add("timer", FishUtils.formatTime(totem.getCurrentDuration()))
+                .build();
     }
 
 

@@ -20,10 +20,7 @@ public class KeyRegistry {
     public static final NamespacedKey AUGMENT_TYPE = register("augment_type");
     public static final NamespacedKey TOTEM_OWNER = register("totem_owner");
     public static final NamespacedKey TOTEM_OWNER_NAME = register("totem_owner_name");
-    public static final NamespacedKey TOTEM_RADIUS = register("totem_radius");
     public static final NamespacedKey TOTEM_ACTIVE = register("totem_active");
-    public static final NamespacedKey TOTEM_DURATION = register("totem_duration");
-    public static final NamespacedKey TOTEM_COOLDOWN = register("totem_cooldown");
     public static final NamespacedKey TOTEM_LAST_ACTIVE = register("totem_last_active");
 
     /**

@@ -58,7 +58,6 @@ public class Totem extends Propertied implements AsyncTicker {
         this.applyProperty(UUID, TOTEM_OWNER, owner == null ? null : owner.getUniqueId());
         this.applyProperty(STRING, TOTEM_OWNER_NAME, owner == null ? "Unknown" : owner.getName());
 
-
         // Load the upgrades
         this.upgrades = UpgradeRegistry.from(this);
 
@@ -99,6 +98,7 @@ public class Totem extends Propertied implements AsyncTicker {
             // Spawn additional particles around the totem bounds while active
             if (active) {
                 ParticleBuilder dust = this.dust(Color.LIME);
+                this.bounds = this.bounds(); // regularly update the bounds of the totem
                 this.bounds.forEach(x -> dust.clone().location(x.clone().add(0, 1.5, 0)).spawn());
             }
 
@@ -136,6 +136,7 @@ public class Totem extends Propertied implements AsyncTicker {
             return;
         }
 
+        this.bounds = this.bounds(); // Update the bounds of the totem
         this.setProperty(TOTEM_ACTIVE, true);
         this.setProperty(TOTEM_LAST_ACTIVE, System.currentTimeMillis());
         this.update();
@@ -243,7 +244,13 @@ public class Totem extends Propertied implements AsyncTicker {
         // Add the upgrade placeholders
         this.upgrades.forEach((upgrade, level) -> {
             builder.add("upgrade_" + upgrade.name(), level);
-            builder.addAll(upgrade.placeholders(this));
+
+            // Add all the placeholders for the upgrade
+            upgrade.placeholders(this)
+                    .getPlaceholders()
+                    .forEach((key, value) ->
+                            builder.add(String.format("upgrade_%s_%s", upgrade.name(), key), value)
+                    );
         });
 
         return builder.build();
@@ -328,7 +335,7 @@ public class Totem extends Propertied implements AsyncTicker {
         // Radius will be in a circle around the center
         if (location.getWorld() != this.center.getWorld()) return false;
 
-        return location.distance(this.center) <= UpgradeRegistry.RADIUS_UPGRADE.calculateRadius(this);
+        return location.distance(this.center) <= UpgradeRegistry.RADIUS_UPGRADE.calculateRadius(this); 
     }
 
     /**
@@ -362,9 +369,9 @@ public class Totem extends Propertied implements AsyncTicker {
                         "",
                         "&#4f73d6Information",
                         " &#4f73d6- &7Owner: &f%owner%",
-                        " &#4f73d6- &7Radius: &f%radius% blocks",
-                        " &#4f73d6- &7Duration: &f%duration%",
-                        " &#4f73d6- &7Cooldown: &f%cooldown%",
+                        " &#4f73d6- &7Radius: &f%upgrade_radius_value% blocks",
+                        " &#4f73d6- &7Duration: &f%upgrade_duration_value%",
+                        " &#4f73d6- &7Cooldown: &f%upgrade_cooldown_value%",
                         ""
                 )
                 .glowing(true)
@@ -391,6 +398,24 @@ public class Totem extends Propertied implements AsyncTicker {
             this.center = entity.getLocation();
             this.bounds = this.bounds();
         }
+    }
+
+    /**
+     * Get the upgrades of the totem
+     *
+     * @return The upgrades of the totem
+     */
+    public Map<TotemUpgrade, Integer> upgrades() {
+        return upgrades;
+    }
+
+    /**
+     * Set the upgrades of the totem
+     *
+     * @param upgrades The upgrades of the totem
+     */
+    public void upgrades(Map<TotemUpgrade, Integer> upgrades) {
+        this.upgrades = upgrades;
     }
 
     /**

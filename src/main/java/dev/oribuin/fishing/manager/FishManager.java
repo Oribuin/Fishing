@@ -1,11 +1,13 @@
 package dev.oribuin.fishing.manager;
 
+import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.FishEventHandler;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import dev.oribuin.fishing.model.fish.Fish;
+import dev.oribuin.fishing.model.totem.Totem;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.manager.Manager;
 import org.bukkit.entity.FishHook;
@@ -43,7 +45,13 @@ public class FishManager extends Manager {
 
         // Run the augments onInitialCatch method
         FishEventHandler.callEvents(augments, event);
-
+        
+        // Run Totem Stuff
+        Totem nearest = FishingPlugin.get().getManager(TotemManager.class).getClosestActive(hook.getLocation());
+        if (nearest != null) {
+            FishEventHandler.callEvents(nearest.upgrades(), event);
+        }
+         
         // Cancel the event if it is cancelled
         if (event.isCancelled()) return result;
 

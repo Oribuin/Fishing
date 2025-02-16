@@ -10,9 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.jeff_media.morepersistentdatatypes.DataType.INTEGER;
-import static dev.oribuin.fishing.storage.util.KeyRegistry.TOTEM_RADIUS;
-
 /**
  * A totem upgrade that increases the effective range of the totem
  */
@@ -25,23 +22,16 @@ public class UpgradeTotemRadius extends TotemUpgrade implements Configurable {
      */
     public UpgradeTotemRadius() {
         super("radius", "Increases the effective range of the totem");
-        
+
         this.defaultLevel(1);
+        this.maxLevel(5);
     }
 
     /**
-     * Initialize the upgrade to the totem at the specified level
-     *
-     * @param totem The totem to apply the upgrade to
-     * @param level The level of the upgrade
-     */
-    @Override
-    public void initialize(Totem totem, int level) {
-        totem.applyProperty(INTEGER, TOTEM_RADIUS, level);
-    }
-
-    /**
-     * The totem upgrade placeholders for the upgrade
+     * The totem upgrade placeholders for the upgrade.
+     * All upgrades are added to the totems placeholders as "upgrade_<name>_<placeholder>"
+     * <p>
+     * Example: upgrade_radius_value
      *
      * @param totem The totem to apply the upgrade to
      *
@@ -49,7 +39,10 @@ public class UpgradeTotemRadius extends TotemUpgrade implements Configurable {
      */
     @Override
     public StringPlaceholders placeholders(Totem totem) {
-        return StringPlaceholders.of("radius", this.calculateRadius(totem));
+        return StringPlaceholders.builder()
+                .addAll(super.placeholders(totem))
+                .add("value", this.calculateRadius(totem))
+                .build();
     }
 
     /**
@@ -60,7 +53,7 @@ public class UpgradeTotemRadius extends TotemUpgrade implements Configurable {
      * @return The radius of the totem
      */
     public int calculateRadius(Totem totem) {
-        Integer level = totem.getProperty(TOTEM_RADIUS, this.defaultLevel());
+        Integer level = totem.getProperty(this.key(), this.defaultLevel());
         StringPlaceholders plc = StringPlaceholders.of("level", level);
         return (int) FishUtils.evaluate(plc.apply(this.radiusFormula));
     }

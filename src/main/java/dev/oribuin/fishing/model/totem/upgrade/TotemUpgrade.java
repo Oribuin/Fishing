@@ -8,8 +8,10 @@ import dev.oribuin.fishing.model.item.ItemConstruct;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -37,10 +39,10 @@ public abstract class TotemUpgrade extends FishEventHandler implements Configura
      * @param description The description of the upgrade
      */
     public TotemUpgrade(String name, String... description) {
-        this.name = name;
+        this.name = name.toLowerCase();
         this.description = List.of(description);
         this.enabled = true;
-        this.icon = ItemConstruct.of(Material.STONE); // TODO: Change this to a custom item
+        this.icon = defaultItem();
         this.defaultLevel = 0;
         this.maxLevel = 1;
         this.permission = "fishing.upgrade." + this.name;
@@ -55,16 +57,79 @@ public abstract class TotemUpgrade extends FishEventHandler implements Configura
     public void initialize(Totem totem, int level) {
         totem.applyProperty(DataType.INTEGER, this.key(), level);
     }
-    
+
     /**
-     * The totem upgrade placeholders for the upgrade 
+     * Upgrade the totem to the specified level of the upgrade
+     *
+     * @param player The person who is upgrading the totem
+     * @param totem  The totem to upgrade
+     *
+     * @return If the upgrade was successful
+     */
+    public boolean levelup(Player player, Totem totem) {
+        int level = totem.getProperty(this.key(), this.defaultLevel);
+        if (level >= this.maxLevel) {
+            player.sendMessage("You have reached the maximum level for this upgrade.");
+            return false;
+        }
+
+        if (!player.hasPermission(this.permission)) {
+            player.sendMessage("You do not have permission to purchase this upgrade.");
+            return false;
+        }
+
+        // TODO: Cost check here
+
+        level++;
+        totem.applyProperty(DataType.INTEGER, this.key(), level); // Apply the upgrade to the totem
+        totem.update(); // Update the totem to apply the changes 
+        player.sendMessage("You have successfully upgraded your totem.");
+        return true;
+    }
+
+    /**
+     * The default {@link ItemConstruct} for the upgrade when displayed in a GUI
+     *
+     * @return The default {@link ItemConstruct} for the upgrade
+     */
+    public static ItemConstruct defaultItem() {
+        return ItemConstruct.of(Material.HEART_OF_THE_SEA)
+                .name("&f[&#4f73d6&l%name%&f]")
+                .lore(
+                        "&7%description%",
+                        "",
+                        "&#4f73d6Information",
+                        " &#4f73d6- &7Current: &f%level%",
+                        " &#4f73d6- &7Max Level: &f%max_level%",
+                        ""
+                )
+                .glowing(true)
+                .additionalTooltip(false);
+    }
+
+    /**
+     * The totem upgrade placeholders for the upgrade.
+     * All upgrades are added to the totems placeholders as "upgrade_<name>_<placeholder>"
+     * <p>
+     * Example: upgrade_radius_value
      *
      * @param totem The totem to apply the upgrade to
      *
      * @return The value of the upgrade
      */
     public StringPlaceholders placeholders(Totem totem) {
-        return StringPlaceholders.empty();
+        StringPlaceholders.Builder base = StringPlaceholders.builder();
+        base.add("name", StringUtils.capitalize(this.name));
+        base.add("max_level", this.maxLevel);
+        base.add("description", String.join("\n", this.description));
+
+        if (totem != null) {
+            base.add("level", totem.getProperty(this.key(), this.defaultLevel));
+            base.add("next_level", Math.min(totem.getProperty(this.key(), this.defaultLevel) + 1, this.maxLevel));
+            // todo: base.add("cost" , cost);
+        }
+
+        return base.build();
     }
 
     /**
@@ -75,6 +140,18 @@ public abstract class TotemUpgrade extends FishEventHandler implements Configura
     public NamespacedKey key() {
         return new NamespacedKey(FishingPlugin.get(), "upgrade_" + this.name);
     }
+
+    /**
+     * The path to the configuration file to be loaded. All paths will be relative to the {@link #parentFolder()},
+     * If you wish to overwrite this functionality, override the {@link #parentFolder()} method
+     *
+     * @return The path
+     */
+    @Override
+    public @NotNull Path configPath() {
+        return Path.of("totem", "upgrade", this.name.toLowerCase() + ".yml");
+    }
+
 
     /**
      * Serialize the settings of the configurable class into a {@link CommentedConfigurationSection} to be saved later
@@ -120,17 +197,6 @@ public abstract class TotemUpgrade extends FishEventHandler implements Configura
         this.permission = config.getString("permission", this.permission);
 
         this.icon = ItemConstruct.deserialize(this.pullSection(config, "icon"));
-    }
-
-    /**
-     * The path to the configuration file to be loaded. All paths will be relative to the {@link #parentFolder()},
-     * If you wish to overwrite this functionality, override the {@link #parentFolder()} method
-     *
-     * @return The path
-     */
-    @Override
-    public @NotNull Path configPath() {
-        return Path.of("totem", "upgrade", this.name.toLowerCase() + ".yml");
     }
 
     /**

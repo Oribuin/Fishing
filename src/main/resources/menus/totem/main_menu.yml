@@ -22,9 +22,26 @@ items:
         - '&#4f73d6Statistics:'
         - ' &#4f73d6- &7Active: &f%active%'
         - ' &#4f73d6- &7Owner: &f%owner%'
-        - ' &#4f73d6- &7Radius: &f%radius% blocks'
-        - ' &#4f73d6- &7Duration: &f%duration%'
-        - ' &#4f73d6- &7Cooldown: &f%cooldown%'
+        - ' &#4f73d6- &7Radius: &f%upgrade_radius_value% blocks'
+        - ' &#4f73d6- &7Duration: &f%upgrade_duration_value%'
+        - ' &#4f73d6- &7Cooldown: &f%upgrade_cooldown_value%'
+        - ''
+      glowing: true
+      additional-tooltip: false
+  totem-upgrade:
+    enabled: true
+    slot: 0
+    display-item:
+      type: NETHERITE_UPGRADE_SMITHING_TEMPLATE
+      name: '&f[&#4f73d6&lTotem Upgrade&f]'
+      lore:
+        - '&7Click here to view and level'
+        - '&7up your totem upgrades'
+        - ''
+        - '&#4f73d6Levels:'
+        - ' &#4f73d6- &7Radius: &f%upgrade_radius_level%'
+        - ' &#4f73d6- &7Duration: &f%upgrade_duration_level%'
+        - ' &#4f73d6- &7Cooldown: &f%upgrade_cooldown_level%'
         - ''
       glowing: true
       additional-tooltip: false
@@ -39,8 +56,8 @@ items:
         - '&7Click here to activate the totem'
         - ''
         - '&#05e653Details:'
-        - ' &#05e653- &7Duration: &f%duration%'
-        - ' &#05e653- &7Cooldown: &f%cooldown%'
+        - ' &#05e653- &7Duration: &f%upgrade_duration_value%'
+        - ' &#05e653- &7Cooldown: &f%upgrade_cooldown_value%'
         - ''
       additional-tooltip: false
   # Tells the player that the totem is on cooldown and displays the remaining time
@@ -53,7 +70,7 @@ items:
       lore:
         - '&7Your totem is currently on cooldown'
         - ''
-        - '&#e60505- &7Available In: &f%cooldown_timer%'
+        - '&#e60505- &7Available In: &f%upgrade_cooldown_timer%'
         - ''
       additional-tooltip: false
     # Tells the player the totem is active and displays the remaining time 
@@ -66,7 +83,7 @@ items:
       lore:
         - '&7Your totem is currently active'
         - ''
-        - '&#e65f05- &7Time Remaining: &f%duration_timer%'
+        - '&#e65f05- &7Time Remaining: &f%upgrade_duration_timer%'
         - ''
       additional-tooltip: false
 
