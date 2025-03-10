@@ -3,6 +3,9 @@ package dev.oribuin.fishing.model.totem;
 import com.destroystokyo.paper.ParticleBuilder;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.Propertied;
+import dev.oribuin.fishing.api.event.FishEventHandler;
+import dev.oribuin.fishing.api.event.impl.TotemActivateEvent;
+import dev.oribuin.fishing.api.event.impl.TotemDeactivateEvent;
 import dev.oribuin.fishing.api.task.AsyncTicker;
 import dev.oribuin.fishing.manager.TotemManager;
 import dev.oribuin.fishing.model.item.ItemConstruct;
@@ -124,13 +127,18 @@ public class Totem extends Propertied implements AsyncTicker {
             this.rotation = 0;
             this.entity.setHeadRotations(Rotations.ZERO);
             this.update(); // Update the totem
+
+            // Call the totem activate event on upgrades
+            FishEventHandler.callEvents(this.upgrades, new TotemDeactivateEvent(this));
         }
     }
 
     /**
      * Activate the totem for the player to use
+     *
+     * @param player The activating player
      */
-    public void activate() {
+    public void activate(Player player) {
         if (this.onCooldown()) {
             FishingPlugin.get().getLogger().warning("Failed to activate totem, The totem is on cooldown.");
             return;
@@ -140,6 +148,9 @@ public class Totem extends Propertied implements AsyncTicker {
         this.setProperty(TOTEM_ACTIVE, true);
         this.setProperty(TOTEM_LAST_ACTIVE, System.currentTimeMillis());
         this.update();
+
+        // Call the totem activate event on upgrades
+        FishEventHandler.callEvents(this.upgrades, new TotemActivateEvent(this, player));
     }
 
     /**
@@ -335,7 +346,7 @@ public class Totem extends Propertied implements AsyncTicker {
         // Radius will be in a circle around the center
         if (location.getWorld() != this.center.getWorld()) return false;
 
-        return location.distance(this.center) <= UpgradeRegistry.RADIUS_UPGRADE.calculateRadius(this); 
+        return location.distance(this.center) <= UpgradeRegistry.RADIUS_UPGRADE.calculateRadius(this);
     }
 
     /**

@@ -46,7 +46,9 @@ public class UpgradeTotemRadius extends TotemUpgrade implements Configurable {
     }
 
     /**
-     * Calculate the radius of the totem based on the level of the upgrade
+     * Calculate the radius of the totem based on the level of the upgrade.
+     * <p>
+     * Radius is divided by 2 so it acts as a radius instead of a diameter.
      *
      * @param totem The totem to calculate the radius for
      *
@@ -55,7 +57,7 @@ public class UpgradeTotemRadius extends TotemUpgrade implements Configurable {
     public int calculateRadius(Totem totem) {
         Integer level = totem.getProperty(this.key(), this.defaultLevel());
         StringPlaceholders plc = StringPlaceholders.of("level", level);
-        return (int) FishUtils.evaluate(plc.apply(this.radiusFormula));
+        return (int) FishUtils.evaluate(plc.apply(this.radiusFormula)) / 2;
     }
 
     /**

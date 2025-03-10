@@ -15,10 +15,17 @@ import dev.oribuin.fishing.api.event.impl.TotemActivateEvent;
 public interface TotemEvents {
 
     /**
-     * The functionality provided when a player activates a fishing totem ability
+     * The functionality provided when a player activates the fishing totem
      *
      * @param event The event that was called when a player activates a totem
      */
     default void onActivate(TotemActivateEvent event) {}
+    
+    /**
+     * The functionality provided when the fishing totem deactivates
+     *
+     * @param event The event that was called when the totem deactivates
+     */
+    default void onDeactivate(TotemActivateEvent event) {}
     
 }

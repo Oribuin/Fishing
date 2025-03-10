@@ -37,7 +37,7 @@ public class FishListener implements Listener {
         FishManager manager = this.plugin.getManager(FishManager.class);
 
         // If caught no fish, do nothing
-        List<Fish> caught = manager.tryCatch(event.getPlayer(), hand, event.getHook());
+        List<Fish> caught = manager.tryCatch(event);
         if (caught.isEmpty()) return;
 
         // Add the fish into the player inventory

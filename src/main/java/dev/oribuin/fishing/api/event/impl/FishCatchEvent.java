@@ -3,6 +3,7 @@ package dev.oribuin.fishing.api.event.impl;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import dev.oribuin.fishing.model.fish.Fish;
+import dev.oribuin.fishing.model.fish.Tier;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
@@ -25,6 +26,10 @@ public class FishCatchEvent extends PlayerEvent implements Cancellable {
     private final ItemStack rod;
     private final FishHook hook;
     private Fish fish;
+    
+    private final int baseEntropy;
+    private final int baseFishExp;
+    private final float baseNaturalExp;
     private int entropy;
     private int fishExp;
     private float naturalExp;
@@ -47,9 +52,15 @@ public class FishCatchEvent extends PlayerEvent implements Cancellable {
         this.rod = rod;
         this.hook = hook;
         this.fish = fish;
-        this.entropy = fish.tier().entropy();
-        this.fishExp = fish.tier().fishExp();
-        this.naturalExp = fish.tier().naturalExp();
+        
+        // Set the base values for the fish
+        Tier tier = this.fish.tier();
+        this.baseEntropy = tier.entropy();
+        this.entropy = tier.entropy();
+        this.baseFishExp = tier.fishExp();
+        this.fishExp = tier.fishExp();
+        this.baseNaturalExp = tier.naturalExp();
+        this.naturalExp = tier.naturalExp();
     }
 
     /**
@@ -63,7 +74,7 @@ public class FishCatchEvent extends PlayerEvent implements Cancellable {
 
     /**
      * The fishing rod the player is using to catch the fish
-     *
+     *-
      * @return The fishing rod {@link ItemStack}
      */
     public @NotNull ItemStack rod() {
@@ -96,6 +107,15 @@ public class FishCatchEvent extends PlayerEvent implements Cancellable {
     public void fish(@Nullable Fish fish) {
         this.fish = fish;
     }
+    
+    /**
+     * The base amount of entropy the fish gives
+     *
+     * @return The base amount of entropy the fish gives
+     */
+    public int baseEntropy() {
+        return baseEntropy;
+    }
 
     /**
      * The amount of entropy the fish gives
@@ -114,6 +134,15 @@ public class FishCatchEvent extends PlayerEvent implements Cancellable {
     public void entropy(int entropy) {
         this.entropy = entropy;
     }
+    
+    /**
+     * The base amount of plugin experience the fish gives
+     *
+     * @return The base amount of experience the fish gives
+     */
+    public int baseFishExp() {
+        return baseFishExp;
+    }
 
     /**
      * The amount of plugin experience the fish gives
@@ -131,6 +160,15 @@ public class FishCatchEvent extends PlayerEvent implements Cancellable {
      */
     public void fishExp(int fishExp) {
         this.fishExp = fishExp;
+    }
+    
+    /**
+     * The base minecraft experience the fish gives
+     *
+     * @return The base minecraft experience the fish gives
+     */
+    public float baseNaturalExp() {
+        return baseNaturalExp;
     }
 
     /**

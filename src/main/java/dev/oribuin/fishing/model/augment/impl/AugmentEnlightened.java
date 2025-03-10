@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class AugmentEnlightened extends Augment {
 
-    private String formula = "(%entropy% + %level%) * 0.03";
+    private String formula = "(%xp% + %level%) * 0.03";
 
     /**
      * Create a new type of augment with a name and description.
@@ -37,7 +37,7 @@ public class AugmentEnlightened extends Augment {
      */
     @Override
     public void onFishCatch(FishCatchEvent event, int level) {
-        StringPlaceholders plc = StringPlaceholders.of("level", level, "xp", event.fishExp());
+        StringPlaceholders plc = StringPlaceholders.of("level", level, "xp", event.baseFishExp());
         double xp = FishUtils.evaluate(plc.apply(this.formula));
         event.fishExp((int) xp);
     }

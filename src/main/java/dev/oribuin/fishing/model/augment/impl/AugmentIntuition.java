@@ -40,7 +40,7 @@ public class AugmentIntuition extends Augment {
      */
     @Override
     public void onFishCatch(FishCatchEvent event, int level) {
-        StringPlaceholders plc = StringPlaceholders.of("level", level, "entropy", event.entropy());
+        StringPlaceholders plc = StringPlaceholders.of("level", level, "entropy", event.baseEntropy());
         double entropy = FishUtils.evaluate(plc.apply(this.formula));
         event.entropy((int) entropy);
     }
