@@ -8,6 +8,10 @@ import dev.oribuin.fishing.api.event.impl.TotemActivateEvent;
 import dev.oribuin.fishing.api.event.impl.TotemDeactivateEvent;
 import dev.oribuin.fishing.api.task.AsyncTicker;
 import dev.oribuin.fishing.manager.TotemManager;
+import dev.oribuin.fishing.model.animation.Animated;
+import dev.oribuin.fishing.model.animation.Animation;
+import dev.oribuin.fishing.model.animation.impl.particle.RingParticleAnimation;
+import dev.oribuin.fishing.model.animation.type.ParticleAnimation;
 import dev.oribuin.fishing.model.item.ItemConstruct;
 import dev.oribuin.fishing.model.item.ItemRegistry;
 import dev.oribuin.fishing.model.totem.upgrade.TotemUpgrade;
@@ -26,17 +30,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import static com.jeff_media.morepersistentdatatypes.DataType.*;
 import static dev.oribuin.fishing.storage.util.KeyRegistry.*;
 
-public class Totem extends Propertied implements AsyncTicker {
+public class Totem extends Propertied implements AsyncTicker, Animated {
 
     private static final Duration PARTICLE_DELAY = Duration.ofSeconds(1);
     private static final String TEXTURE = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmY2MjRhNDRlNzdiOTVkYmUxY2M3MzU1MzY5NTNlODQwYmE2YzE5YjAxNTdjNTQ5ZDliODI1MzQ2NDhjOGNlNCJ9fX0=";
@@ -183,6 +189,7 @@ public class Totem extends Propertied implements AsyncTicker {
 
         // Create spawning particles around the totem
         long startTime = System.currentTimeMillis();
+        // TODO: Spawn particles in a better way than a task
         Bukkit.getScheduler().runTaskTimerAsynchronously(FishingPlugin.get(), task -> {
 
             // Remove the task if the entity or center is null
@@ -198,6 +205,7 @@ public class Totem extends Propertied implements AsyncTicker {
             }
 
             // Spawn dust particles to display the totem radius
+            // TODO: RadiusParticleAnimation 
             this.bounds.forEach(x -> this.dust(Color.LIME).location(x.clone().add(0, 0.5, 0)).spawn());
         }, 0L, 5L);
     }
@@ -437,5 +445,25 @@ public class Totem extends Propertied implements AsyncTicker {
     @Override
     public Duration delay() {
         return Duration.ZERO;
+    }
+
+    /**
+     * Create a list of animations to be used in the module
+     *
+     * @return A list of animations
+     */
+    @Override
+    public @NotNull List<Supplier<Animation>> createAnimations() {
+        return new ArrayList<>();
+    }
+
+    /**
+     * Get the source location of the animation to be used
+     *
+     * @return The source location
+     */
+    @Override
+    public @NotNull Supplier<Location> getSource() {
+        return null;
     }
 }

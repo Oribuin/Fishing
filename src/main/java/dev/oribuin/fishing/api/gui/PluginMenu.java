@@ -3,6 +3,7 @@ package dev.oribuin.fishing.api.gui;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.Configurable;
 import dev.oribuin.fishing.model.item.ItemConstruct;
+import dev.oribuin.fishing.util.PluginTask;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
@@ -153,6 +154,7 @@ public abstract class PluginMenu<T extends BaseGui> implements Configurable {
     public void updateTask(Runnable runnable) {
         if (this.updateFrequency <= 0) this.updateFrequency = 60;
 
+        // TODO: Swap to use PluginTask
         Bukkit.getScheduler().runTaskTimerAsynchronously(FishingPlugin.get(), task -> {
             if (gui.getInventory().getViewers().isEmpty()) {
                 task.cancel();

@@ -1,6 +1,7 @@
 package dev.oribuin.fishing.api.task;
 
 import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.util.PluginTask;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -36,10 +37,10 @@ public interface SyncTicker {
      *
      * @return The BukkitTask instance
      */
-    default BukkitTask schedule() {
+    default PluginTask schedule() {
         if (this.delay().toSeconds() == 0) return null; // If the delay is 0, return null
 
-        return Bukkit.getScheduler().runTaskTimer(FishingPlugin.get(), this::tickSync, 0L, this.delay().toSeconds() * 20L);
+        return PluginTask.scheduleRepeating(this::tickSync, this.delay());
     }
 
 }

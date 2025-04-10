@@ -14,8 +14,7 @@ public class FishExpCurrency implements Currency<Integer> {
     public String name() {
         return "fish_exp";
     }
-
-
+    
     /**
      * Get the amount of currency the player has
      *

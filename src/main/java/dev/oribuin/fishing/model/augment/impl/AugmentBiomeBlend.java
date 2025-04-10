@@ -31,7 +31,7 @@ public class AugmentBiomeBlend extends Augment {
         this.maxLevel(3);
         this.register(ConditionCheckEvent.class, this::onConditionCheck);
     }
-
+    
     /**
      * The functionality provided when the plugin checks if a player could catch a fish. Use this to modify the outcome of the check
      * <p>

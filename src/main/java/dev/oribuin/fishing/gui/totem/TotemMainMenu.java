@@ -54,7 +54,7 @@ public class TotemMainMenu extends PluginMenu<Gui> {
         // The totem is not active and is not on cooldown, display the button to activate the totem
         if (!active && !totem.onCooldown()) {
             this.placeItem("totem-activate", placeholders, x -> {
-                totem.activate(); // Activate the totem
+                totem.activate(player); // Activate the totem
                 player.sendMessage("§aYou have activated the totem!");
                 player.closeInventory(InventoryCloseEvent.Reason.PLUGIN); // Close the player's inventory
             });

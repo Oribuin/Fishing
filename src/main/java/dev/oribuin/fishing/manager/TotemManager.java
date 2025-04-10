@@ -3,6 +3,7 @@ package dev.oribuin.fishing.manager;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.storage.util.FinePosition;
 import dev.oribuin.fishing.storage.util.KeyRegistry;
+import dev.oribuin.fishing.util.PluginTask;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.manager.Manager;
 import org.bukkit.Bukkit;
@@ -13,12 +14,13 @@ import org.bukkit.scheduler.BukkitTask;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class TotemManager extends Manager {
 
     private final Map<FinePosition, Totem> totems = new HashMap<>();
-    private BukkitTask asyncTicker;
+    private PluginTask asyncTicker = PluginTask.empty();
     private long lastTick = System.currentTimeMillis();
 
     public TotemManager(RosePlugin rosePlugin) {
@@ -27,28 +29,19 @@ public class TotemManager extends Manager {
 
     @Override
     public void reload() {
-        this.unregisterTask();
-
         // Define all ticking under one task to prevent 10000000 tasks running at once.
-        this.asyncTicker = Bukkit.getScheduler().runTaskTimerAsynchronously(this.rosePlugin, () -> this.tick(totem -> {
+        this.asyncTicker.cancel(); 
+        this.asyncTicker = PluginTask.scheduleRepeating(() -> this.tick(totem -> {
             if (totem.delay() != Duration.ZERO && System.currentTimeMillis() - this.lastTick < totem.delay().toMillis()) return;
 
             this.lastTick = System.currentTimeMillis();
             totem.tickAsync();
-        }), 0, 1);
+        }), Duration.ofSeconds(1));
     }
 
     @Override
     public void disable() {
-        this.unregisterTask();
-    }
-
-    /**
-     * Unregister the ticking task for the totem manager.
-     */
-    private void unregisterTask() {
-        if (this.asyncTicker != null) this.asyncTicker.cancel();
-        this.asyncTicker = null;
+        this.asyncTicker.cancel();
     }
 
     /**
