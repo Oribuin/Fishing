@@ -7,6 +7,7 @@ import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.FishGutEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 
 /**
  * A global list of methods that can be used to modify all the relevant events in the plugin
@@ -77,4 +78,11 @@ public interface FishingEvents {
      */
     default void onConditionCheck(ConditionCheckEvent event, int level) {}
 
+    /**
+     * The functionality provided when a fish bites the rod before it is caught
+     * @param event The fishing event 
+     * @param level The level of the ability that was used, if applicable (0 if not)
+     */
+    default void onBite(PlayerFishEvent event, int level) {}
+    
 }

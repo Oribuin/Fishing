@@ -1,6 +1,5 @@
 package dev.oribuin.fishing.manager;
 
-import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.FishEventHandler;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
@@ -10,9 +9,9 @@ import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.manager.Manager;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -44,32 +43,24 @@ public class FishManager extends Manager {
         ItemStack rod = event.getPlayer().getInventory().getItem(event.getHand());
         Map<Augment, Integer> augments = AugmentRegistry.from(rod);
         Totem nearest = this.rosePlugin.getManager(TotemManager.class).getClosestActive(event.getHook().getLocation());
-
-        FishEventHandler.callEvents(augments, event);
-        
-        if (nearest != null) {
-            FishEventHandler.callEvents(nearest.upgrades(), event);
-        }
-        
         if (event.isCancelled()) return result; // Cancel the event if it is cancelled
-        
+
         InitialFishCatchEvent catchEvent = new InitialFishCatchEvent(event.getPlayer(), rod, event.getHook());
 
         // Run the augments onInitialCatch method
         FishEventHandler.callEvents(augments, catchEvent);
-        
+
         // Run Totem Stuff
         if (nearest != null) {
             FishEventHandler.callEvents(nearest.upgrades(), catchEvent);
         }
-         
+
         // Cancel the event if it is cancelled
         if (catchEvent.isCancelled()) return result;
 
         for (int i = 0; i < catchEvent.getAmountToCatch(); i++) {
             result.add(this.generateFish(augments, event.getPlayer().getPlayer(), rod, event.getHook()));
         }
-
         return result;
     }
 

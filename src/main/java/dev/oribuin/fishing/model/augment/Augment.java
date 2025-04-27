@@ -12,6 +12,7 @@ import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.apache.commons.lang3.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.Event;
@@ -20,6 +21,9 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Logger;
 
 /**
  * Augments are upgrades that can be crafted and applied to fishing rods to give them unique abilities to help the player produce more fish.
@@ -30,6 +34,9 @@ import java.util.List;
  */
 public abstract class Augment extends FishEventHandler implements Configurable {
 
+    protected final Random random = ThreadLocalRandom.current();
+    
+    protected final Logger logger;
     private final String name;
     private boolean enabled;
     private List<String> description;
@@ -58,6 +65,8 @@ public abstract class Augment extends FishEventHandler implements Configurable {
         this.displayLine = "&c" + StringUtils.capitalize(this.name.replace("_", " ")) + " %level_roman%";
         this.permission = "fishing.augment." + name;
         this.price = Cost.of(CurrencyRegistry.ENTROPY, 25000);
+        
+        this.logger = Logger.getLogger("fishing-augment:" + this.name);
     }
 
     /**

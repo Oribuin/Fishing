@@ -10,6 +10,7 @@ import dev.oribuin.fishing.model.augment.impl.AugmentGenius;
 import dev.oribuin.fishing.model.augment.impl.AugmentHotspot;
 import dev.oribuin.fishing.model.augment.impl.AugmentIndulge;
 import dev.oribuin.fishing.model.augment.impl.AugmentIntuition;
+import dev.oribuin.fishing.model.augment.impl.AugmentMakeItRain;
 import dev.oribuin.fishing.model.augment.impl.AugmentRainDance;
 import dev.oribuin.fishing.util.math.RomanNumber;
 import dev.rosewood.rosegarden.utils.HexUtils;
@@ -48,13 +49,14 @@ public class AugmentRegistry {
     
     static {
         register(AugmentBiomeBlend::new);
-        register(AugmentRainDance::new);
-        register(AugmentHotspot::new);
-        register(AugmentGenius::new);
-        register(AugmentIntuition::new);
-        register(AugmentFineSlicing::new);
         register(AugmentEnlightened::new);
+        register(AugmentFineSlicing::new);
+        register(AugmentGenius::new);
+        register(AugmentHotspot::new);
         register(AugmentIndulge::new);
+        register(AugmentIntuition::new);
+        register(AugmentMakeItRain::new);
+        register(AugmentRainDance::new);
     }
     
     /**

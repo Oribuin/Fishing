@@ -1,7 +1,6 @@
 package dev.oribuin.fishing.model.condition;
 
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
-import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.condition.impl.AugmentCondition;
 import dev.oribuin.fishing.model.condition.impl.BiomeCondition;
 import dev.oribuin.fishing.model.condition.impl.BoatCondition;
@@ -15,6 +14,7 @@ import dev.oribuin.fishing.model.condition.impl.PlaceholderCondition;
 import dev.oribuin.fishing.model.condition.impl.TimeCondition;
 import dev.oribuin.fishing.model.condition.impl.WeatherCondition;
 import dev.oribuin.fishing.model.condition.impl.WorldCondition;
+import dev.oribuin.fishing.model.fish.Fish;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
@@ -75,7 +75,7 @@ public class ConditionRegistry {
                 .map(conditionSupplier -> {
                     CatchCondition condition = conditionSupplier.get();
                     if (condition == null) return null;
-                    
+
                     condition.loadSettings(base);
                     return condition;
                 })
@@ -95,7 +95,9 @@ public class ConditionRegistry {
      */
     public static boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
         for (CatchCondition condition : fish.conditions()) {
-            if (!condition.shouldRun(fish)) continue; // Don't run the condition they don't have
+            if (!condition.shouldRun(fish)) {
+                continue; // Don't run the condition they don't have 
+            }
             
             // Check the condition
             boolean result = condition.check(fish, player, rod, hook);

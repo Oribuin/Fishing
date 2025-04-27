@@ -47,7 +47,7 @@ public class AugmentBiomeBlend extends Augment {
 
         StringPlaceholders plc = StringPlaceholders.of("level", level);
         double chance = FishUtils.evaluate(plc.apply(this.chanceFormula));
-        if (Math.random() > chance) return;
+        if (this.random.nextDouble(100) <= chance) return;
 
         event.result(true);
     }

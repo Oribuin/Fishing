@@ -30,7 +30,9 @@ public abstract class FishEventHandler implements FishingEvents, TotemEvents {
         applicable.keySet().removeIf(x -> !x.applicable(event));
 
         // Sort the events by their priority and call them
-        applicable.entrySet().stream().map(x -> new MutableEventWrapper<>(x, event)).sorted(MutableEventWrapper::compare).forEachOrdered(x -> x.type().callEvent(event, x.level()));
+        applicable.entrySet().stream().map(x -> new MutableEventWrapper<>(x, event))
+                .sorted(MutableEventWrapper::compare)
+                .forEachOrdered(x -> x.type().callEvent(event, x.level()));
     }
 
     /**

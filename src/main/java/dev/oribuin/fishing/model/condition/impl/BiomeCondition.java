@@ -46,7 +46,7 @@ public class BiomeCondition extends CatchCondition {
      */
     @Override
     public boolean shouldRun(Fish fish) {
-        return this.biomes.isEmpty();
+        return !this.biomes.isEmpty();
     }
 
     /**

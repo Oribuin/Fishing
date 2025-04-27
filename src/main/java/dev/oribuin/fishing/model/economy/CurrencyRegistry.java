@@ -3,9 +3,11 @@ package dev.oribuin.fishing.model.economy;
 import dev.oribuin.fishing.model.economy.impl.EntropyCurrency;
 import dev.oribuin.fishing.model.economy.impl.FishExpCurrency;
 import dev.oribuin.fishing.model.economy.impl.ItemStackCurrency;
+import dev.oribuin.fishing.model.economy.impl.MaterialCurrency;
 import dev.oribuin.fishing.model.economy.impl.PlayerExpCurrency;
 import dev.oribuin.fishing.model.economy.impl.SkillpointCurrency;
 import dev.oribuin.fishing.model.economy.impl.VaultCurrency;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,6 +31,7 @@ public class CurrencyRegistry {
     public static final Currency<Integer> SKILLPOINTS = register(SkillpointCurrency::new);
     public static final Currency<Double> VAULT = register(VaultCurrency::new);
     public static final Currency<ItemStack> ITEMSTACK = register(ItemStackCurrency::new);
+    public static final Currency<Material> MATERIAL = register(MaterialCurrency::new);
 
     /**
      * Register a currency type in the fishing plugin
@@ -63,7 +66,7 @@ public class CurrencyRegistry {
      *
      * @param name            The currency name to get
      * @param defaultCurrency The currency to return if the currency is not found
-     * @param <T>            The type of the currency
+     * @param <T>             The type of the currency
      *
      * @return The currency instance or the default currency if not found
      */

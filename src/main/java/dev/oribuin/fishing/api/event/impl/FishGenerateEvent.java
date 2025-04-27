@@ -1,12 +1,12 @@
 package dev.oribuin.fishing.api.event.impl;
 
 import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.manager.TierManager;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.augment.AugmentRegistry;
-import dev.oribuin.fishing.manager.TierManager;
+import dev.oribuin.fishing.model.condition.ConditionRegistry;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.fish.Tier;
-import dev.oribuin.fishing.model.condition.ConditionRegistry;
 import dev.oribuin.fishing.util.FishUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.FishHook;
@@ -101,10 +101,14 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
                 .filter(x -> ConditionRegistry.check(x, player, rod, hook))
                 .toList();
 
+        System.out.println("Total fish that can be caught: " + canCatch.size());
         if (canCatch.isEmpty()) return;
 
         // Pick a random fish from the list
-        this.fish = canCatch.get(FishUtils.RANDOM.nextInt(canCatch.size()));
+        int index = FishUtils.RANDOM.nextInt(canCatch.size());
+        System.out.println("Chosen Index: " + index);
+        this.fish = canCatch.get(index);
+        System.out.println("Chosen Fish: " + this.fish);
     }
 
     /**

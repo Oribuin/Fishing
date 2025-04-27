@@ -52,7 +52,8 @@ public class FishCatchEvent extends PlayerEvent implements Cancellable {
         this.rod = rod;
         this.hook = hook;
         this.fish = fish;
-        
+        this.cancelled = false;
+
         // Set the base values for the fish
         Tier tier = this.fish.tier();
         this.baseEntropy = tier.entropy();

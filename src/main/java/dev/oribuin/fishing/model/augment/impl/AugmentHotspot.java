@@ -49,7 +49,7 @@ public class AugmentHotspot extends Augment {
 
         StringPlaceholders plc = StringPlaceholders.of("level", level);
         double chance = FishUtils.evaluate(plc.apply(this.chanceFormula));
-        if (Math.random() * 100 > chance) return;
+        if (this.random.nextDouble(100) <= chance) return;
 
         int fishCaught = this.minFish + (int) (Math.random() * (this.maxFish - this.minFish));
         event.setAmountToCatch(event.getAmountToCatch() + fishCaught);

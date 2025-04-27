@@ -46,7 +46,7 @@ public class AugmentIndulge extends Augment {
 
         StringPlaceholders plc = StringPlaceholders.of("level", level);
         double chance = FishUtils.evaluate(plc.apply(this.chanceFormula));
-        if (Math.random() * 100 > chance) return;
+        if (this.random.nextDouble(100) <= chance) return;
 
         event.getPlayer().setSaturation(Math.min(20f, event.getPlayer().getSaturation() + this.saturation));
         event.getPlayer().sendMessage("You have been saturated!"); // todo: use locale
