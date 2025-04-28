@@ -1,7 +1,7 @@
 package dev.oribuin.fishing.model.augment.impl;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
 import dev.oribuin.fishing.manager.TierManager;
 import dev.oribuin.fishing.model.augment.Augment;
@@ -12,7 +12,8 @@ import dev.oribuin.fishing.util.FishUtils;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,13 +30,10 @@ import java.util.UUID;
  */
 public class AugmentMakeItRain extends Augment {
 
-    private Map<UUID, Long> cooldown = new HashMap<>();
     private String chanceFormula = "%level% * 0.5";
     private int minAttempts = 2;
     private int maxAttempts = 6;
-
-    public static final Duration COOLDOWN = Duration.ofSeconds(10);
-
+    
     /**
      * Create a new type of augment with a name and description.
      * <p>
@@ -62,8 +60,8 @@ public class AugmentMakeItRain extends Augment {
     public void onInitialCatch(InitialFishCatchEvent event, int level) {
         StringPlaceholders plc = StringPlaceholders.of("level", level);
         double chance = FishUtils.evaluate(plc.apply(this.chanceFormula));
-//        double current = this.random.nextDouble(100);
-//        if (current <= chance) return;
+        double current = this.random.nextDouble(100);
+        if (current <= chance) return;
 
         List<Fish> result = new ArrayList<>();
         for (int i = this.minAttempts; i < this.maxAttempts; i++) {
@@ -72,11 +70,21 @@ public class AugmentMakeItRain extends Augment {
         }
 
         Location location = event.getPlayer().getLocation().clone();
-        result.forEach(fish -> {
-            double randX = FishUtils.RANDOM.nextDouble(-0.5, 0.5);
-            double randZ = FishUtils.RANDOM.nextDouble(-0.5, 0.5);
+        ParticleBuilder rainCloud = new ParticleBuilder(Particle.FALLING_DUST) // falling dust looks better than cloud
+                .data(Material.WHITE_CONCRETE.createBlockData())
+                .count(20)
+                .extra(0)
+                .offset(0.5, 0.5, 0.5);
 
-            location.getWorld().dropItem(location.clone().add(randX, 3, randZ), fish.createItemStack());
+        result.forEach(fish -> {
+            double randX = FishUtils.RANDOM.nextDouble(-1, 1);
+            double randZ = FishUtils.RANDOM.nextDouble(-1, 1);
+            Location spawnPoint = location.clone().add(randX, 4, randZ);
+
+            location.getWorld().dropItem(spawnPoint, fish.createItemStack());
+            rainCloud.clone().location(spawnPoint)
+                    .receivers(10)
+                    .spawn(); // spawn rain clouds
         });
     }
 
