@@ -18,6 +18,7 @@ public class PlaceholderCheck implements Configurable {
     private String input;
     private String output;
     private boolean inverted;
+    private boolean required;
 
     /**
      * Create a new instance of the placeholder checking class, used to check if a placeholder based condition is met or not
@@ -25,11 +26,13 @@ public class PlaceholderCheck implements Configurable {
      * @param input    The input string to check
      * @param output   The output string to check
      * @param inverted Whether the check should be inverted
+     * @param required Whether the check is required to pass to continue
      */
-    private PlaceholderCheck(String input, String output, boolean inverted) {
+    private PlaceholderCheck(String input, String output, boolean inverted, boolean required) {
         this.input = input;
         this.output = output;
         this.inverted = inverted;
+        this.required = required;
     }
 
     /**
@@ -41,8 +44,8 @@ public class PlaceholderCheck implements Configurable {
      *
      * @return The new instance of the placeholder checking class
      */
-    public static PlaceholderCheck create(String input, String output, boolean inverted) {
-        return new PlaceholderCheck(input, output, inverted);
+    public static PlaceholderCheck create(String input, String output, boolean inverted, boolean required) {
+        return new PlaceholderCheck(input, output, inverted, required);
     }
 
     /**
@@ -54,7 +57,7 @@ public class PlaceholderCheck implements Configurable {
      * @return The new instance of the placeholder checking class
      */
     public static PlaceholderCheck create(String input, String output) {
-        return new PlaceholderCheck(input, output, false);
+        return new PlaceholderCheck(input, output, false, true);
     }
 
     /**
@@ -65,7 +68,7 @@ public class PlaceholderCheck implements Configurable {
      * @return The new instance of the placeholder checking class
      */
     public static PlaceholderCheck create(String input) {
-        return new PlaceholderCheck(input, null, false);
+        return new PlaceholderCheck(input, null, false, true);
     }
 
     /**
@@ -76,7 +79,7 @@ public class PlaceholderCheck implements Configurable {
      * @return The new instance of the placeholder checking class
      */
     public static PlaceholderCheck create(CommentedConfigurationSection config) {
-        PlaceholderCheck check = new PlaceholderCheck(null, null, false);
+        PlaceholderCheck check = new PlaceholderCheck(null, null, false, true);
         check.loadSettings(config);
         return check;
     }
@@ -101,6 +104,7 @@ public class PlaceholderCheck implements Configurable {
         this.input = config.getString("input", null);
         this.output = config.getString("output", null);
         this.inverted = config.getBoolean("inverted", false);
+        this.required = config.getBoolean("required", true);
         this.type = FishUtils.getEnum(CheckType.class, config.getString("type"), CheckType.EQUALS);
     }
 
@@ -119,6 +123,7 @@ public class PlaceholderCheck implements Configurable {
         config.set("input", this.input);
         config.set("output", this.output);
         config.set("inverted", this.inverted);
+        config.set("required", this.required);
         config.set("type", this.type.name().toLowerCase());
     }
 
@@ -130,7 +135,7 @@ public class PlaceholderCheck implements Configurable {
      *
      * @return Results in true if the condition is met
      */
-    public boolean check(Player player, StringPlaceholders placeholders) {
+    public boolean attempt(Player player, StringPlaceholders placeholders) {
         return switch (this.type) {
             case EQUALS -> this.equals(player, placeholders);
             case CONTAINS -> this.contains(player, placeholders);
@@ -251,4 +256,9 @@ public class PlaceholderCheck implements Configurable {
     public boolean inverted() {
         return inverted;
     }
+    
+    public boolean required() {
+        return required;
+    }
+    
 }

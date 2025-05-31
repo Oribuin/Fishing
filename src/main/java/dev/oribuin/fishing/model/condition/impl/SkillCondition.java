@@ -1,10 +1,12 @@
 package dev.oribuin.fishing.model.condition.impl;
 
+import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
+import dev.oribuin.fishing.manager.DataManager;
 import dev.oribuin.fishing.model.condition.CatchCondition;
 import dev.oribuin.fishing.model.condition.ConditionRegistry;
-import dev.oribuin.fishing.model.condition.PlaceholderCheck;
 import dev.oribuin.fishing.model.fish.Fish;
+import dev.oribuin.fishing.storage.Fisher;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.entity.FishHook;
@@ -12,8 +14,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A condition that is checked when a player is trying to catch a fish
@@ -21,14 +23,16 @@ import java.util.List;
  * First, {@link #shouldRun(Fish)} is called to check if the fish has the condition type
  * If the fish has the condition type, {@link #check(Fish, Player, ItemStack, FishHook)} is called to check if the player meets the condition to catch the fish
  *
- * @see dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
+ * @see ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
  */
-public class PlaceholderCondition extends CatchCondition {
+public class SkillCondition extends CatchCondition {
 
-    private final List<PlaceholderCheck> checks = new ArrayList<>();
-    private int minimum = 0; // 0 = all need to pass
+    private final Map<String, Integer> skills = new HashMap<>(); // List of skills to check for
 
-    public PlaceholderCondition() {}
+    /**
+     * A condition that checks if the player is has a specific augment
+     */
+    public SkillCondition() {}
 
     /**
      * Decides whether the condition should be checked in the first place,
@@ -41,7 +45,7 @@ public class PlaceholderCondition extends CatchCondition {
      */
     @Override
     public boolean shouldRun(Fish fish) {
-        return !this.checks.isEmpty();
+        return !this.skills.isEmpty();
     }
 
     /**
@@ -60,24 +64,13 @@ public class PlaceholderCondition extends CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        StringPlaceholders.Builder builder = StringPlaceholders.builder();
-        builder.addAll(fish.placeholders());
-        builder.addAll(fish.tier().placeholders());
-        builder.add("player", player.getName());
-        StringPlaceholders built = builder.build();
+        Fisher fisher = FishingPlugin.get().getManager(DataManager.class).get(player.getUniqueId());
+        if (fisher == null) return false; //  get fisher from cache
 
-        int success = 0;
-        int required = this.minimum <= 0 ? this.checks.size() : this.minimum;
-        for (PlaceholderCheck check : this.checks) {
-            boolean result = check.attempt(player, built);
-            if (!result && check.required()) return false; // check is required to pass for everything else to go through
-            if (result) success++;
-
-            // Stop checking if the required amount of checks has passed
-            if (success >= required) return true;
-        }
-
-        return false;
+        return fisher.skills().entrySet().stream().allMatch(entry -> {
+            int required = this.skills.getOrDefault(entry.getKey(), 0);
+            return required > 0 && entry.getValue() >= required;
+        });
     }
 
     /**
@@ -97,13 +90,22 @@ public class PlaceholderCondition extends CatchCondition {
      */
     @Override
     public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        CommentedConfigurationSection section = this.pullSection(config, "placeholder-conditions");
-        this.minimum = section.getInt("minimum", 0);
+        CommentedConfigurationSection augments = this.pullSection(config, "skills");
+        augments.getKeys(false).forEach(key -> this.skills.put(key, augments.getInt(key)));
+    }
 
-        section.getKeys(false).forEach(key -> {
-            PlaceholderCheck check = PlaceholderCheck.create(this.pullSection(section, key));
-            this.checks.add(check);
-        });
+    /**
+     * All the placeholders that can be used in the configuration file for this configurable class
+     *
+     * @return The placeholders
+     */
+    @Override
+    public StringPlaceholders placeholders() {
+        return StringPlaceholders.of("skills", 
+                this.skills.isEmpty() 
+                        ? "None" 
+                        : String.join(", ", this.skills.keySet())
+        );
     }
 
 }

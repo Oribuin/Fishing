@@ -40,7 +40,7 @@ dependencies {
         exclude(group = "net.kyori", module = "*") // Remove kyori
     }
 
-    compileOnly("io.papermc.paper:paper-api:1.21.3-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.5-R0.1-SNAPSHOT")
     compileOnly("com.mojang:authlib:1.5.21")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
 

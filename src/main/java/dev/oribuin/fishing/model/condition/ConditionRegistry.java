@@ -11,6 +11,7 @@ import dev.oribuin.fishing.model.condition.impl.IceFishingCondition;
 import dev.oribuin.fishing.model.condition.impl.LightLevelCondition;
 import dev.oribuin.fishing.model.condition.impl.PermissionCondition;
 import dev.oribuin.fishing.model.condition.impl.PlaceholderCondition;
+import dev.oribuin.fishing.model.condition.impl.SkillCondition;
 import dev.oribuin.fishing.model.condition.impl.TimeCondition;
 import dev.oribuin.fishing.model.condition.impl.WeatherCondition;
 import dev.oribuin.fishing.model.condition.impl.WorldCondition;
@@ -49,6 +50,7 @@ public class ConditionRegistry {
         register(LightLevelCondition::new);
         register(PermissionCondition::new);
         register(PlaceholderCondition::new);
+        register(SkillCondition::new);
         register(TimeCondition::new);
         register(WorldCondition::new);
         register(WeatherCondition::new);
@@ -98,7 +100,7 @@ public class ConditionRegistry {
             if (!condition.shouldRun(fish)) {
                 continue; // Don't run the condition they don't have 
             }
-            
+
             // Check the condition
             boolean result = condition.check(fish, player, rod, hook);
             ConditionCheckEvent event = new ConditionCheckEvent(player, rod, hook, condition, result);
