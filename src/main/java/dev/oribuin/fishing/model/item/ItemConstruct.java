@@ -11,7 +11,7 @@ import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemLore;
-import io.papermc.paper.datacomponent.item.Unbreakable;
+import io.papermc.paper.datacomponent.item.TooltipDisplay;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -117,10 +117,10 @@ public class ItemConstruct implements Configurable {
         }
 
         if (this.amount != null) stack.setAmount(this.amount);
-        if (this.unbreakable.value()) stack.setData(DataComponentTypes.UNBREAKABLE, Unbreakable.unbreakable(this.unbreakable.tooltip()));
+        if (this.unbreakable.value()) stack.setData(DataComponentTypes.UNBREAKABLE);
         if (this.glowing) stack.setData(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, true);
-        if (!this.tooltip) stack.setData(DataComponentTypes.HIDE_TOOLTIP);
-        if (!this.additionalTooltip) stack.setData(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP);
+        if (!this.tooltip) stack.setData(DataComponentTypes.TOOLTIP_DISPLAY, TooltipDisplay.tooltipDisplay()
+                .hideTooltip(true));
         if (this.edible != null) stack.setData(DataComponentTypes.FOOD, this.edible.create());
         if (this.texture != null) stack.setData(DataComponentTypes.PROFILE, this.texture.create());
         if (this.enchantments != null) stack.setData(DataComponentTypes.ENCHANTMENTS, this.enchantments.create());

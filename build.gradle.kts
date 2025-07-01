@@ -34,15 +34,17 @@ repositories {
 }
 
 dependencies {
-    api("dev.rosewood:rosegarden:1.4.7-SNAPSHOT")
-    api("dev.triumphteam:triumph-gui:3.1.10") {  // https://mf.mattstudios.me/triumph-gui/introduction
+    api("dev.rosewood:rosegarden:1.5.1")
+    api("dev.triumphteam:triumph-gui:3.1.11") {  // https://mf.mattstudios.me/triumph-gui/introduction
         exclude(group = "com.google.code.gson", module = "gson") // Remove GSON, Already included in spigot api
         exclude(group = "net.kyori", module = "*") // Remove kyori
     }
 
     compileOnly("io.papermc.paper:paper-api:1.21.5-R0.1-SNAPSHOT")
     compileOnly("com.mojang:authlib:1.5.21")
-    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
+        exclude(group = "org.bukkit", module = "*")
+    }
 
     implementation("net.objecthunter:exp4j:0.4.8")
     implementation("com.jeff-media:MorePersistentDataTypes:2.4.0")

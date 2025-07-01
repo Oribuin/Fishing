@@ -43,7 +43,7 @@ public final class ItemEnchant implements Configurable {
      * @return The potion effect
      */
     public ItemEnchantments create() {
-        return ItemEnchantments.itemEnchantments(this.enchantments, this.tooltip);
+        return ItemEnchantments.itemEnchantments(this.enchantments);
     }
 
     /**

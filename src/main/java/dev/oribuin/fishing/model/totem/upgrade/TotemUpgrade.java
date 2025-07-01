@@ -8,7 +8,7 @@ import dev.oribuin.fishing.model.item.ItemConstruct;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
