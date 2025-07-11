@@ -123,7 +123,7 @@ public class Fish implements Configurable {
 
         ItemStack itemStack = fishTier.baseDisplay().build(placeholders.build());
         itemStack.editMeta(itemMeta -> {
-            if (this.modelData > 0) itemMeta.setCustomModelData(this.modelData);
+//            if (this.modelData > 0) itemMeta.setCustomModelData(this.modelData);
 
             // fish data :-)
             PersistentDataContainer container = itemMeta.getPersistentDataContainer();

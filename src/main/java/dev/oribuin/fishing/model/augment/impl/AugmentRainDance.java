@@ -1,25 +1,27 @@
 package dev.oribuin.fishing.model.augment.impl;
 
+import dev.oribuin.fishing.api.config.Message;
+import dev.oribuin.fishing.api.config.Option;
+import dev.oribuin.fishing.api.config.TextMessage;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.condition.Weather;
 import dev.oribuin.fishing.util.FishUtils;
-import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
-import net.kyori.adventure.text.Component;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import static dev.rosewood.rosegarden.config.SettingSerializers.INTEGER;
+import static dev.rosewood.rosegarden.config.SettingSerializers.STRING;
 
 /**
  * When it is raining, there is a chance to catch multiple fish in a single catch.
  */
 public class AugmentRainDance extends Augment {
 
-    private String chanceFormula = "%level% * 0.05"; // 5% per level
-    private int minFish = 1;
-    private int maxFish = 3;
+    private final Option<String> FORMULA = new Option<>(STRING, "%level% * 0.05"); // 5% per level
+    private final Option<Integer> MIN_FISH = new Option<>(INTEGER, 1, "Minimum fish to be spawned");
+    private final Option<Integer> MAX_FISH = new Option<>(INTEGER, 3, "Maximum fish to be spawned");
+    private final Message CAUGHT_MORE = TextMessage.ofConfig("<#4f73d6><bold>Fish</bold> <gray>| <white>You have caught additional fish from Rain Dance.");
 
     /**
      * Create a new type of augment with a name and description.
@@ -48,56 +50,13 @@ public class AugmentRainDance extends Augment {
         if (Weather.CLEAR.isState(event.getHook().getLocation())) return;
 
         StringPlaceholders plc = StringPlaceholders.of("level", level);
-        double chance = FishUtils.evaluate(plc.apply(this.chanceFormula));
+        double chance = FishUtils.evaluate(plc.apply(FORMULA.value()));
         if (this.random.nextDouble(100) <= chance) return;
 
-        int fishCaught = this.minFish + (int) (Math.random() * (this.maxFish - this.minFish));
+        int fishCaught = MIN_FISH.value() + (int) (Math.random() * (MAX_FISH.value() - MIN_FISH.value()));
         event.setAmountToCatch(event.getAmountToCatch() + fishCaught);
-        event.getPlayer().sendActionBar(Component.text("You have caught more fish due to the Call of the Sea augment!"));
-        // TODO: Tell player that they have caught more fish
-    }
-
-    /**
-     * Initialize a {@link CommentedConfigurationSection} from a configuration file to establish the settings
-     * for the configurable class, will be automatically called when the configuration file is loaded using {@link #reload()}
-     * <p>
-     * If your class inherits from another configurable class, make sure to call super.loadSettings(config)
-     * to save the settings from the parent class
-     * <p>
-     * A class must be initialized before settings are loaded, If you wish to have a configurable data class style, its best to create a
-     * static method that will create a new instance and call this method on the new instance
-     * <p>
-     * The {@link CommentedConfigurationSection} should never be null, when creating a new section,
-     * use {@link #pullSection(CommentedConfigurationSection, String)} to establish new section if it doesn't exist
-     *
-     * @param config The {@link CommentedConfigurationSection} to load the settings from, this cannot be null.
-     */
-    @Override
-    public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        super.loadSettings(config);
-
-        this.chanceFormula = config.getString("chance-formula", this.chanceFormula); // 5% per level
-        this.minFish = config.getInt("min-fish", 1); // Minimum fish caught
-        this.maxFish = config.getInt("max-fish", 3); // Maximum fish caught
-    }
-
-    /**
-     * Serialize the settings of the configurable class into a {@link CommentedConfigurationSection} to be saved later
-     * <p>
-     * This functionality will not update the configuration file, it will only save the settings into the section to be saved later.
-     * <p>
-     * The function {@link #reload()} will save the settings on first load, please override this method if you wish to save the settings regularly
-     * New sections should be created using {@link #pullSection(CommentedConfigurationSection, String)}
-     *
-     * @param config The {@link CommentedConfigurationSection} to save the settings to, this cannot be null.
-     */
-    @Override
-    public void saveSettings(@NotNull CommentedConfigurationSection config) {
-        super.saveSettings(config);
-
-        config.set("chance-formula", this.chanceFormula);
-        config.set("min-fish", this.minFish);
-        config.set("max-fish", this.maxFish);
+        
+        CAUGHT_MORE.send(event.getPlayer(), StringPlaceholders.of("additional", fishCaught));
     }
 
     /**
@@ -105,16 +64,16 @@ public class AugmentRainDance extends Augment {
      *
      * @return The comments for the augment
      */
-    @Override
-    public List<String> comments() {
-        return List.of(
-                "Augment [Rain Dance] - When it is raining, there is a chance to catch multiple fish",
-                "in a single catch.",
-                "",
-                "chance-formula: The formula to calculate the chance this augment triggers",
-                "min-fish: The minimum additional fish caught",
-                "max-fish: The maximum additional fish caught"
-        );
-    }
+//    @Override
+//    public List<String> comments() {
+//        return List.of(
+//                "Augment [Rain Dance] - When it is raining, there is a chance to catch multiple fish",
+//                "in a single catch.",
+//                "",
+//                "chance-formula: The formula to calculate the chance this augment triggers",
+//                "min-fish: The minimum additional fish caught",
+//                "max-fish: The maximum additional fish caught"
+//        );
+//    }
 
 }

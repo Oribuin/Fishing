@@ -2,28 +2,30 @@ package dev.oribuin.fishing.model.augment;
 
 import com.google.common.base.Supplier;
 import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.api.config.ConfigOptionType;
+import dev.oribuin.fishing.api.config.Configurable;
+import dev.oribuin.fishing.api.config.Option;
 import dev.oribuin.fishing.api.event.FishEventHandler;
-import dev.oribuin.fishing.config.Configurable;
 import dev.oribuin.fishing.model.economy.Cost;
 import dev.oribuin.fishing.model.economy.CurrencyRegistry;
 import dev.oribuin.fishing.model.item.ItemConstruct;
 import dev.oribuin.fishing.util.FishUtils;
-import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.apache.commons.lang3.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.Event;
-import org.jetbrains.annotations.NotNull;
+import org.slf4j.LoggerFactory;
 
-import java.nio.file.Path;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Logger;
+
+import static dev.rosewood.rosegarden.config.SettingSerializers.*;
 
 /**
  * Augments are upgrades that can be crafted and applied to fishing rods to give them unique abilities to help the player produce more fish.
@@ -34,18 +36,23 @@ import java.util.logging.Logger;
  */
 public abstract class Augment extends FishEventHandler implements Configurable {
 
-    protected final Random random = ThreadLocalRandom.current();
+    private static final File AUGMENTS_FOLDER = new File(FishingPlugin.get().getDataFolder(), "augments");
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Augment.class);
+    private final List<ConfigOptionType<?>> options;
     
+    protected final Random random = ThreadLocalRandom.current();
     protected final Logger logger;
-    private final String name;
-    private boolean enabled;
-    private List<String> description;
-    private ItemConstruct displayItem;
-    private String displayLine;
-    private int maxLevel;
-    private int requiredLevel;
-    private String permission;
-    private Cost price;
+    protected final String name;
+    protected final Option<Boolean> enabled;
+    protected final Option<Integer> maxLevel;
+    protected final Option<Integer> requiredLevel;
+    protected final Option<List<String>> description;
+    protected final Option<String> displayLine;
+    protected final Option<String> permission;
+    protected ItemConstruct displayItem;
+    protected Cost price;
+    protected File file;
+    protected CommentedFileConfiguration config;
 
     /**
      * Create a new type of augment with a name and description.
@@ -56,17 +63,24 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      * @param description The description of the augment that will be displayed in the GUI
      */
     public Augment(String name, String... description) {
-        this.enabled = true;
         this.name = name.toLowerCase();
-        this.description = new ArrayList<>(List.of(description));
-        this.maxLevel = 5;
-        this.requiredLevel = 1;
-        this.displayItem = this.defaultItem();
-        this.displayLine = "&c" + StringUtils.capitalize(this.name.replace("_", " ")) + " %level_roman%";
-        this.permission = "fishing.augment." + name;
-        this.price = Cost.of(CurrencyRegistry.ENTROPY, 25000);
-        
         this.logger = Logger.getLogger("fishing-augment:" + this.name);
+        this.enabled = new Option<>(BOOLEAN, true);
+        this.maxLevel = new Option<>(INTEGER, 5);
+        this.requiredLevel = new Option<>(INTEGER, 1);
+        this.description = new Option<>(STRING_LIST, List.of(description));
+        this.displayLine = new Option<>(STRING, "&c" + StringUtils.capitalize(name.replace("_", " ")) + " %level_roman%");
+        this.permission = new Option<>(STRING, "fishing.augment." + name);
+        this.file = new File(AUGMENTS_FOLDER, name.toLowerCase() + ".yml");
+        this.config = CommentedFileConfiguration.loadConfiguration(this.file);
+        this.options = new ArrayList<>();
+        
+        this.registerClass();
+        this.reload(this.file, this.config);
+        
+        // todo: make the below load from a config
+        this.displayItem = this.defaultItem();
+        this.price = Cost.of(CurrencyRegistry.ENTROPY, 25000);
     }
 
     /**
@@ -81,70 +95,6 @@ public abstract class Augment extends FishEventHandler implements Configurable {
     }
 
     /**
-     * The file path to a {@link CommentedFileConfiguration} file, This path by default will be relative {@link #parentFolder()}.
-     * <p>
-     * This by default is only used in the {@link #reload()} method to load the configuration file
-     * <p>
-     * This an optional method and should only be used if the Configurable class is its own file (E.g. {@link dev.oribuin.fishing.model.augment.Augment} class)
-     *
-     * @return The path to the configuration file
-     */
-    @Override
-    public @NotNull Path configPath() {
-        return Path.of("augments", this.name.toLowerCase() + ".yml");
-    }
-
-    /**
-     * Serialize the settings of the configurable class into a {@link CommentedConfigurationSection} to be saved later
-     * <p>
-     * This functionality will not update the configuration file, it will only save the settings into the section to be saved later.
-     * <p>
-     * The function {@link #reload()} will save the settings on first load, please override this method if you wish to save the settings regularly
-     * New sections should be created using {@link #pullSection(CommentedConfigurationSection, String)}
-     *
-     * @param config The {@link CommentedConfigurationSection} to save the settings to, this cannot be null.
-     */
-    @Override
-    public void saveSettings(@NotNull CommentedConfigurationSection config) {
-        config.addComments(this.comments().toArray(new String[0]));
-        config.set("enabled", this.enabled);
-        config.set("max-level", this.maxLevel);
-        config.set("required-level", this.requiredLevel);
-        config.set("description", this.description);
-        config.set("display-line", this.displayLine);
-
-        this.displayItem.saveSettings(this.pullSection(config, "display-item")); // Save the display item
-        this.price.saveSettings(this.pullSection(config, "price")); // Save the cost
-    }
-
-    /**
-     * Initialize a {@link CommentedConfigurationSection} from a configuration file to establish the settings
-     * for the configurable class, will be automatically called when the configuration file is loaded using {@link #reload()}
-     * <p>
-     * If your class inherits from another configurable class, make sure to call super.loadSettings(config)
-     * to save the settings from the parent class
-     * <p>
-     * A class must be initialized before settings are loaded, If you wish to have a configurable data class style, its best to create a
-     * static method that will create a new instance and call this method on the new instance
-     * <p>
-     * The {@link CommentedConfigurationSection} should never be null, when creating a new section,
-     * use {@link #pullSection(CommentedConfigurationSection, String)} to establish new section if it doesn't exist
-     *
-     * @param config The {@link CommentedConfigurationSection} to load the settings from, this cannot be null.
-     */
-    @Override
-    public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        this.enabled = config.getBoolean("enabled", true);
-        this.maxLevel = config.getInt("max-level", 1);
-        this.requiredLevel = config.getInt("required-level", 1);
-        this.description = config.getStringList("description");
-        this.displayLine = config.getString("display-line", "&c" + StringUtils.capitalize(this.name.replace("_", " ")) + " %level_roman%");
-
-        this.displayItem.loadSettings(this.pullSection(config, "display-item"));
-        this.price.loadSettings(this.pullSection(config, "price"));
-    }
-
-    /**
      * The base itemstack design for the augment, this will be handed to players and shown in the codex
      * <p>
      * TODO: Replace this method with a global itemstack registry
@@ -152,7 +102,7 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      * @return The default {@link ItemConstruct} for the augment
      */
     private ItemConstruct defaultItem() {
-        List<String> lore = new ArrayList<>(this.description);
+        List<String> lore = new ArrayList<>(this.description.value());
         lore.addAll(List.of(
                 "",
                 "&#4f73d6Information",
@@ -165,6 +115,16 @@ public abstract class Augment extends FishEventHandler implements Configurable {
                 .name("&f[&#4f73d6&l%display_name%&f]")
                 .lore(lore)
                 .glowing(true);
+    }
+
+    /**
+     * Required list of all the config options available in the class
+     *
+     * @return The provided config options
+     */
+    @Override
+    public List<ConfigOptionType<?>> options() {
+        return this.options;
     }
 
     /**
@@ -197,7 +157,7 @@ public abstract class Augment extends FishEventHandler implements Configurable {
                 .add("display_name", FishUtils.capitalizeFully(this.name.replace("_", " ")))
                 .add("max_level", this.maxLevel)
                 .add("required_level", this.requiredLevel)
-                .add("description", String.join("\n", this.description))
+                .add("description", String.join("\n", this.description.value()))
                 .add("display_line", this.displayLine)
                 .add("permission", this.permission)
                 .build();
@@ -211,19 +171,9 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      */
     @Override
     public <T extends Event> void callEvent(T event, int level) {
-        if (!this.enabled) return;
-        
-        super.callEvent(event, level);
-    }
+        if (!this.enabled.value()) return;
 
-    /**
-     * Information about the augment which will be displayed in top of the augment configuration file
-     *
-     * @return The comments for the augment
-     */
-    @Override
-    public List<String> comments() {
-        return this.description.isEmpty() ? List.of("No Description") : this.description;
+        super.callEvent(event, level);
     }
 
     /**
@@ -232,7 +182,7 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      * @return true if the augment is enabled
      */
     public final boolean enabled() {
-        return enabled;
+        return this.enabled.value();
     }
 
     /**
@@ -241,7 +191,7 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      * @param enabled If the augment is enabled
      */
     public final void enabled(boolean enabled) {
-        this.enabled = enabled;
+        this.enabled.value(enabled);
     }
 
     /**
@@ -259,7 +209,7 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      * @return The description of the augment
      */
     public final List<String> description() {
-        return description;
+        return this.description.value();
     }
 
     /**
@@ -268,7 +218,7 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      * @param description The description of the augment
      */
     public final void description(List<String> description) {
-        this.description = description;
+        this.description.value(description);
     }
 
     /**
@@ -295,7 +245,7 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      * @return The max level of the augment
      */
     public final int maxLevel() {
-        return maxLevel;
+        return maxLevel.value();
     }
 
     /**
@@ -304,7 +254,7 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      * @param maxLevel The max level of the augment
      */
     public final void maxLevel(int maxLevel) {
-        this.maxLevel = maxLevel;
+        this.maxLevel.value(maxLevel);
     }
 
     /**
@@ -313,7 +263,7 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      * @return The required level of the augment
      */
     public final int requiredLevel() {
-        return requiredLevel;
+        return requiredLevel.value();
     }
 
     /**
@@ -322,7 +272,7 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      * @param requiredLevel The required level of the augment
      */
     public final void requiredLevel(int requiredLevel) {
-        this.requiredLevel = requiredLevel;
+        this.requiredLevel.value(requiredLevel);
     }
 
     /**
@@ -331,16 +281,16 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      * @return The display line of the augment
      */
     public final String displayLine() {
-        return displayLine;
+        return displayLine.value();
     }
 
     /**
      * Set the display line of the augment
      *
-     * @param loreLine The lore line of the augment
+     * @param displayLine The lore line of the augment
      */
-    public final void displayLine(String loreLine) {
-        this.displayLine = loreLine;
+    public final void displayLine(String displayLine) {
+        this.displayLine.value(displayLine);
     }
 
     /**
@@ -349,7 +299,7 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      * @return The permission required to use the augment
      */
     public final String permission() {
-        return permission;
+        return permission.value();
     }
 
     /**
@@ -358,7 +308,7 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      * @param permission The permission required to use the augment
      */
     public final void permission(String permission) {
-        this.permission = permission;
+        this.permission.value(permission);
     }
 
     /**

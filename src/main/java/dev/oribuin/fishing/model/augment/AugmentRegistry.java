@@ -1,8 +1,6 @@
 package dev.oribuin.fishing.model.augment;
 
 import com.google.common.base.Supplier;
-import dev.oribuin.fishing.api.event.FishEventHandler;
-import dev.oribuin.fishing.api.event.MutableEventWrapper;
 import dev.oribuin.fishing.model.augment.impl.AugmentBiomeBlend;
 import dev.oribuin.fishing.model.augment.impl.AugmentEnlightened;
 import dev.oribuin.fishing.model.augment.impl.AugmentFineSlicing;
@@ -15,14 +13,12 @@ import dev.oribuin.fishing.model.augment.impl.AugmentRainDance;
 import dev.oribuin.fishing.util.math.RomanNumber;
 import dev.rosewood.rosegarden.utils.HexUtils;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
-import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,8 +38,6 @@ public class AugmentRegistry {
     
     /**
      * A private constructor to prevent instantiation of the class
-     * <p>
-     * This should not be called outside of {@link AugmentRegistry#init()}
      */
     private AugmentRegistry() {}
     
@@ -61,13 +55,11 @@ public class AugmentRegistry {
     
     /**
      * Loads an augment into the registry to be used in the plugin and caches it.
-     * Calls {@link Augment#reload()} to load the augment.
      *
      * @param supplier The {@link Augment} to register
      */
     public static void register(Supplier<Augment> supplier) {
         Augment augment = supplier.get();
-        augment.reload(); // Load the augment
         augments.put(augment.name().toLowerCase(), augment); // Register the augment
     }
 
@@ -167,7 +159,7 @@ public class AugmentRegistry {
      * Reload all the augments in the registry
      */
     public static void reload() {
-        augments.values().forEach(Augment::reload);
+        augments.values().forEach(x -> x.reload(x.file, x.config));
     }
 
     /**
