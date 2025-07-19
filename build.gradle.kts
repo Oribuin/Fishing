@@ -4,6 +4,7 @@ plugins {
     `java-library`
     `maven-publish`
     id("com.gradleup.shadow") version "8.3.5"
+    id("de.eldoria.plugin-yml.bukkit") version "0.7.1"
 }
 
 group = "dev.oribuin"
@@ -58,7 +59,9 @@ tasks {
 
         output.toString().trim()
     }
-
+    
+    project.version = commitHash
+    
     compileJava {
         this.options.compilerArgs.add("-parameters")
         this.options.isFork = true
@@ -68,7 +71,7 @@ tasks {
     shadowJar {
         // add commit hash to the jar name
         this.archiveClassifier.set("")
-        this.archiveVersion.set("$version-[$commitHash]")
+//        this.archiveVersion.set("$version-[$commitHash]")
 
         this.relocate("dev.rosewood.rosegarden", "${project.group}.fishing.libs.rosegarden")
         this.relocate("com.jeff_media.morepersistentdatatypes", "${project.group}.fishing.libs.pdt")
@@ -79,13 +82,16 @@ tasks {
         this.relocate("com.zaxxer", "${project.group}.fishing.libs.hikari")
         this.relocate("org.slf4j", "${project.group}.fishing.libs.slf4j")
     }
-
-    processResources {
-        this.from("src/main/java/resources/plugin.yml") { // todo: fix
-            this.expand("version" to project.version, "commit" to commitHash)
-        }
+    
+    bukkit {
+        this.main = "dev.oribuin.fishing.FishingPlugin"
+        this.version = project.version as String?
+        this.author = "Oribuin"
+        this.description = "hello"
+        this.apiVersion = "1.21"
+        this.softDepend = listOf("Vault")
     }
-
+    
     javadoc {
         this.options {
             this as StandardJavadocDocletOptions
