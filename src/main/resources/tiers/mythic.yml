@@ -1,101 +1,103 @@
-
-chance: 0.04 # Chance of getting this tier
-money: 100.0 # Money reward when the fish is sold
-entropy: 50 # Entropy reward when the fish is gutted
-fish-exp: 2000 # Fishing experience reward when caught
-natural-exp: 25.0 # Rewards additional % experience when caught naturally
-display-item:
+name: mythic # The name of the tier
+chance: 0.004 # Chance of getting this tier
+catch-entropy: 10000 # Entropy reward when the fish is caught
+gut-entropy: -1 # Entropy rewarded when the fish is gutted
+catch-money: 0.0 # Money reward when the fish is caught
+sell-money: 15000 # Money reward when the fish is sold in the fish store
+catch-experience: 6000 # The fishing experience rewarded when the fish is caught
+natural-experience: 5 # The natural minecraft experience rewarded when the fish is caught
+item:
   type: COD
-  name: '&#FF4500&l%name%'
+  name: '&#FF4500&l<name>'
   lore:
     - ''
-    - '&7%description%'
+    - '<gray>%description%'
     - ''
     - '&#FF4500Information:'
-    - ' &#FF4500- &7Price: &f$%price%'
-    - ' &#FF4500- &7Entropy: &f%entropy%'
-    - ' &#FF4500- &7Biomes: &f%biomes%'
-    - ' &#FF4500- &7Weather: &f%weather%'
-    - ' &#FF4500- &7Time: &f%time%'
+    - ' &#FF4500- <gray>Price: &f$<price>'
+    - ' &#FF4500- <gray>Entropy: &f<entropy>'
+    - ' &#FF4500- <gray>Biomes: &f%biomes%'
+    - ' &#FF4500- <gray>Weather: &f%weather%'
+    - ' &#FF4500- <gray>Time: &f%time%'
     - ''
 fish:
   alligator_gar:
     display-name: 'Alligator Gar'
     description:
-      - '&7a very slippery guy'
-      - '&7a &overy very &7slippery guy'
+      - '<gray>a very slippery guy'
+      - '<gray>a &overy very <gray>slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
   swordtail:
     display-name: 'Swordtail'
     description:
-      - '&7a very slippery guy'
-      - '&7a &overy very &7slippery guy'
+      - '<gray>a very slippery guy'
+      - '<gray>a &overy very <gray>slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
   discus:
     display-name: 'Discus'
     description:
-      - '&7a very slippery guy'
-      - '&7a &overy very &7slippery guy'
+      - '<gray>a very slippery guy'
+      - '<gray>a &overy very <gray>slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
   clownfish:
     display-name: 'Clownfish'
     description:
-      - '&7a very slippery guy'
-      - '&7a &overy very &7slippery guy'
+      - '<gray>a very slippery guy'
+      - '<gray>a &overy very <gray>slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
   mahi_mahi:
     display-name: 'Mahi Mahi'
     description:
-      - '&7a very slippery guy'
-      - '&7a &overy very &7slippery guy'
+      - '<gray>a very slippery guy'
+      - '<gray>a &overy very <gray>slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
   triggerfish:
     display-name: 'Triggerfish'
     description:
-      - '&7a very slippery guy'
-      - '&7a &overy very &7slippery guy'
+      - '<gray>a very slippery guy'
+      - '<gray>a &overy very <gray>slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
   parrotfish:
     display-name: 'Parrotfish'
     description:
-      - '&7a very slippery guy'
-      - '&7a &overy very &7slippery guy'
+      - '<gray>a very slippery guy'
+      - '<gray>a &overy very <gray>slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
   snakehead:
     display-name: 'Snakehead'
     description:
-      - '&7a very slippery guy'
-      - '&7a &overy very &7slippery guy'
+      - '<gray>a very slippery guy'
+      - '<gray>a &overy very <gray>slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
   clown_loach:
     display-name: 'Clown Loach'
     description:
-      - '&7a very slippery guy'
-      - '&7a &overy very &7slippery guy'
+      - '<gray>a very slippery guy'
+      - '<gray>a &overy very <gray>slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
   bichir:
     display-name: 'Bichir'
     description:
-      - '&7a very slippery guy'
-      - '&7a &overy very &7slippery guy'
+      - '<gray>a very slippery guy'
+      - '<gray>a &overy very <gray>slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY

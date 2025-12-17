@@ -8,19 +8,15 @@ import dev.oribuin.fishing.model.augment.impl.AugmentGenius;
 import dev.oribuin.fishing.model.augment.impl.AugmentHotspot;
 import dev.oribuin.fishing.model.augment.impl.AugmentIndulge;
 import dev.oribuin.fishing.model.augment.impl.AugmentIntuition;
-import dev.oribuin.fishing.model.augment.impl.AugmentMakeItRain;
 import dev.oribuin.fishing.model.augment.impl.AugmentRainDance;
+import dev.oribuin.fishing.util.Placeholders;
 import dev.oribuin.fishing.util.math.RomanNumber;
-import dev.rosewood.rosegarden.utils.HexUtils;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,14 +29,14 @@ import java.util.Map;
  * To get all augments in the registry, use {@link #all()} to get all augments in the registry.
  */
 public class AugmentRegistry {
-    
+
     private static final Map<String, Augment> augments = new HashMap<>();
-    
+
     /**
      * A private constructor to prevent instantiation of the class
      */
     private AugmentRegistry() {}
-    
+
     static {
         register(AugmentBiomeBlend::new);
         register(AugmentEnlightened::new);
@@ -49,10 +45,10 @@ public class AugmentRegistry {
         register(AugmentHotspot::new);
         register(AugmentIndulge::new);
         register(AugmentIntuition::new);
-        register(AugmentMakeItRain::new);
+        //        register(AugmentMakeItRain::new); // TODO: Redo
         register(AugmentRainDance::new);
     }
-    
+
     /**
      * Loads an augment into the registry to be used in the plugin and caches it.
      *
@@ -60,7 +56,7 @@ public class AugmentRegistry {
      */
     public static void register(Supplier<Augment> supplier) {
         Augment augment = supplier.get();
-        augments.put(augment.name().toLowerCase(), augment); // Register the augment
+        augments.put(augment.getName().toLowerCase(), augment); // Register the augment
     }
 
     /**
@@ -82,7 +78,7 @@ public class AugmentRegistry {
             Integer level = container.get(augment.key(), PersistentDataType.INTEGER);
             if (level == null || level <= 0) return;
 
-            result.put(augment, Math.min(level, augment.maxLevel())); // Use the maximum level of the augment
+            result.put(augment, Math.min(level, augment.getMaxLevel())); // Use the maximum level of the augment
         });
 
         return result;
@@ -112,54 +108,61 @@ public class AugmentRegistry {
 
         PersistentDataContainer container = meta.getPersistentDataContainer();
         augments.forEach((augment, level) -> {
-            int newLevel = Math.min(level, augment.maxLevel());
+            int newLevel = Math.min(level, augment.getMaxLevel());
             container.set(augment.key(), PersistentDataType.INTEGER, newLevel);
 
-            String current = container.getOrDefault(augment.loreKey(), PersistentDataType.STRING, augment.displayLine());
-            StringPlaceholders placeholders = StringPlaceholders.of(
+            String current = container.getOrDefault(augment.loreKey(), PersistentDataType.STRING, augment.getDisplayLine());
+            Placeholders placeholders = Placeholders.of(
                     "level", newLevel,
                     "level_roman", RomanNumber.toRoman(newLevel)
             );
 
-            container.set(augment.loreKey(), PersistentDataType.STRING, placeholders.apply(augment.displayLine()));
-
-            // Modify the lore of the item
-            List<String> lore = new ArrayList<>();
-            List<String> itemLore = meta.getLore();
-            String formatted = HexUtils.colorify(current);
-            boolean found = false;
-            if (itemLore != null) {
-                lore.addAll(itemLore);
-            }
-
-            for (int index = 0; index < lore.size(); index++) {
-                String line = lore.get(index);
-                if (line == null) continue;
-                if (found) break;
-
-                // Check if the line contains the augment lore key
-                if (line.contains(formatted)) {
-                    lore.set(index, HexUtils.colorify(placeholders.apply(augment.displayLine())));
-                    found = true;
-                }
-            }
-
-            // If the augment was not found in the lore, add it to the end
-            if (!found) {
-                lore.add(HexUtils.colorify(placeholders.apply(augment.displayLine())));
-            }
-
-            meta.setLore(lore);
+            // TODO: Redo lore adjustment to start using components
+            //            container.set(
+            //                    augment.loreKey(), 
+            //                    DataType.STRING, 
+            //                    placeholders.apply(augment.getDisplayLine()));
+            //
+            //            // Modify the lore of the item
+            //            List<String> lore = new ArrayList<>();
+            //            List<String> itemLore = meta.getLore();
+            //            String formatted = HexUtils.colorify(current);
+            //            boolean found = false;
+            //            if (itemLore != null) {
+            //                lore.addAll(itemLore);
+            //            }
+            //
+            //            for (int index = 0; index < lore.size(); index++) {
+            //                String line = lore.get(index);
+            //                if (line == null) continue;
+            //                if (found) break;
+            //
+            //                // Check if the line contains the augment lore key
+            //                if (line.contains(formatted)) {
+            //                    lore.set(index, HexUtils.colorify(placeholders.apply(augment.getDisplayLine())));
+            //                    found = true;
+            //                }
+            //            }
+            //
+            //            // If the augment was not found in the lore, add it to the end
+            //            if (!found) {
+            //                lore.add(HexUtils.colorify(placeholders.apply(augment.getDisplayLine())));
+            //            }
+            //
+            //            meta.setLore(lore);
         });
 
         itemStack.setItemMeta(meta);
     }
-    
+
     /**
      * Reload all the augments in the registry
      */
     public static void reload() {
-        augments.values().forEach(x -> x.reload(x.file, x.config));
+        augments.values().forEach(augment -> {
+            augment.getConfigHandler().unload();
+            augment.getConfigHandler().save();
+        });
     }
 
     /**

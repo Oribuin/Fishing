@@ -5,7 +5,7 @@ import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.gui.MenuRegistry;
 import dev.oribuin.fishing.gui.totem.TotemMainMenu;
 import dev.oribuin.fishing.manager.TotemManager;
-import dev.oribuin.fishing.model.item.ItemRegistry;
+import dev.oribuin.fishing.item.ItemRegistry;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.storage.util.KeyRegistry;
 import io.papermc.paper.event.packet.PlayerChunkLoadEvent;
@@ -71,7 +71,7 @@ public class TotemListeners implements Listener {
         totem.spawn(center);
 
         event.getItem().setAmount(event.getItem().getAmount() - 1);
-        this.plugin.getManager(TotemManager.class).registerTotem(totem);
+        this.plugin.getTotemManager().registerTotem(totem);
         event.getPlayer().sendMessage("Totem placed.");
     }
 
@@ -84,7 +84,7 @@ public class TotemListeners implements Listener {
     public void onInteract(PlayerInteractAtEntityEvent event) {
         if (!(event.getRightClicked() instanceof ArmorStand stand)) return;
 
-        TotemManager manager = this.plugin.getManager(TotemManager.class);
+        TotemManager manager = this.plugin.getTotemManager();
         Totem totem = manager.getTotem(stand);
         if (totem == null) return;
 
@@ -125,7 +125,7 @@ public class TotemListeners implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onChunkLoad(PlayerChunkLoadEvent event) {
-        TotemManager totemManager = this.plugin.getManager(TotemManager.class);
+        TotemManager totemManager = this.plugin.getTotemManager();
         CompletableFuture.runAsync(() -> Arrays.stream(event.getChunk().getEntities()).forEach(entity -> {
             if (!(entity instanceof ArmorStand stand)) return;
 
@@ -143,8 +143,8 @@ public class TotemListeners implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onChunkUnload(ChunkUnloadEvent event) {
-        TotemManager totemManager = this.plugin.getManager(TotemManager.class);
-        new ArrayList<>(totemManager.totems().values()).forEach(totem -> {
+        TotemManager totemManager = this.plugin.getTotemManager();
+        new ArrayList<>(totemManager.getTotems().values()).forEach(totem -> {
             if (!totem.center().getWorld().getName().equalsIgnoreCase(event.getWorld().getName())) return;
 
             int chunkX = totem.center().getBlockX() >> 4;

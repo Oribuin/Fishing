@@ -16,15 +16,14 @@ import dev.oribuin.fishing.model.condition.impl.TimeCondition;
 import dev.oribuin.fishing.model.condition.impl.WeatherCondition;
 import dev.oribuin.fishing.model.condition.impl.WorldCondition;
 import dev.oribuin.fishing.model.fish.Fish;
-import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Supplier;
 
 /**
@@ -32,7 +31,7 @@ import java.util.function.Supplier;
  */
 public class ConditionRegistry {
 
-    private static final Set<Supplier<CatchCondition>> conditions = new HashSet<>();
+    private static final Map<String, Supplier<CatchCondition>> conditions = new HashMap<>();
 
     /**
      * The default constructor for the condition registry, should be empty
@@ -59,30 +58,27 @@ public class ConditionRegistry {
     /**
      * Register a new condition to the fishing plugin
      *
-     * @param condition The condition to register
+     * @param supplier The condition to register
      */
-    public static void register(Supplier<CatchCondition> condition) {
-        conditions.add(condition);
+    public static void register(Supplier<CatchCondition> supplier) {
+        CatchCondition catchCondition = supplier.get();
+        if (catchCondition == null) return;
+
+        conditions.put(catchCondition.getClass().getSimpleName().toLowerCase(), supplier);
     }
 
     /**
-     * Load all the conditions from a configuration section and return them as a list
+     * Get a catch condition supplier from the registered list
      *
-     * @param base The configuration section to load the conditions from
+     * @param name The name of the condition
      *
-     * @return The condition list
+     * @return The condition supplier if available 
      */
-    public static List<CatchCondition> loadConditions(CommentedConfigurationSection base) {
-        return conditions.stream()
-                .map(conditionSupplier -> {
-                    CatchCondition condition = conditionSupplier.get();
-                    if (condition == null) return null;
-
-                    condition.loadSettings(base);
-                    return condition;
-                })
-                .filter(Objects::nonNull)
-                .toList();
+    public static CatchCondition from(String name) {
+        Supplier<CatchCondition> supplier = conditions.get(name.toLowerCase());
+        if (supplier == null) return null;
+        
+        return supplier.get();
     }
 
     /**
@@ -96,7 +92,7 @@ public class ConditionRegistry {
      * @return Results in true if the player can catch the fish
      */
     public static boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        for (CatchCondition condition : fish.conditions()) {
+        for (CatchCondition condition : fish.getConditions()) {
             if (!condition.shouldRun(fish)) {
                 continue; // Don't run the condition they don't have 
             }

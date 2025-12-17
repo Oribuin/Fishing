@@ -2,21 +2,18 @@ package dev.oribuin.fishing.model.augment;
 
 import com.google.common.base.Supplier;
 import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.api.config.ConfigOptionType;
-import dev.oribuin.fishing.api.config.Configurable;
-import dev.oribuin.fishing.api.config.Option;
 import dev.oribuin.fishing.api.event.FishEventHandler;
+import dev.oribuin.fishing.config.ConfigHandler;
 import dev.oribuin.fishing.model.economy.Cost;
 import dev.oribuin.fishing.model.economy.CurrencyRegistry;
-import dev.oribuin.fishing.model.item.ItemConstruct;
+import dev.oribuin.fishing.item.ItemConstruct;
 import dev.oribuin.fishing.util.FishUtils;
-import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import dev.oribuin.fishing.util.Placeholders;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.Event;
-import org.slf4j.LoggerFactory;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,8 +22,6 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Logger;
 
-import static dev.rosewood.rosegarden.config.SettingSerializers.*;
-
 /**
  * Augments are upgrades that can be crafted and applied to fishing rods to give them unique abilities to help the player produce more fish.
  * <p>
@@ -34,25 +29,24 @@ import static dev.rosewood.rosegarden.config.SettingSerializers.*;
  * <p>
  * All augment classes should be titled AugmentName and named in snake_case.
  */
-public abstract class Augment extends FishEventHandler implements Configurable {
+@ConfigSerializable
+public abstract class Augment extends FishEventHandler {
 
     private static final File AUGMENTS_FOLDER = new File(FishingPlugin.get().getDataFolder(), "augments");
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Augment.class);
-    private final List<ConfigOptionType<?>> options;
-    
-    protected final Random random = ThreadLocalRandom.current();
-    protected final Logger logger;
-    protected final String name;
-    protected final Option<Boolean> enabled;
-    protected final Option<Integer> maxLevel;
-    protected final Option<Integer> requiredLevel;
-    protected final Option<List<String>> description;
-    protected final Option<String> displayLine;
-    protected final Option<String> permission;
+    protected transient final Random random = ThreadLocalRandom.current();
+    protected transient final Logger logger;
+    protected transient final String name;
+    protected transient ConfigHandler<? extends Augment> configHandler;
+    protected Boolean enabled;
+    protected Integer maxLevel;
+    protected Integer requiredLevel;
+    protected List<String> description;
+    protected String displayLine;
+    protected String permission;
+    protected List<String> conflictsWith; 
     protected ItemConstruct displayItem;
     protected Cost price;
     protected File file;
-    protected CommentedFileConfiguration config;
 
     /**
      * Create a new type of augment with a name and description.
@@ -65,22 +59,17 @@ public abstract class Augment extends FishEventHandler implements Configurable {
     public Augment(String name, String... description) {
         this.name = name.toLowerCase();
         this.logger = Logger.getLogger("fishing-augment:" + this.name);
-        this.enabled = new Option<>(BOOLEAN, true);
-        this.maxLevel = new Option<>(INTEGER, 5);
-        this.requiredLevel = new Option<>(INTEGER, 1);
-        this.description = new Option<>(STRING_LIST, List.of(description));
-        this.displayLine = new Option<>(STRING, "&c" + StringUtils.capitalize(name.replace("_", " ")) + " %level_roman%");
-        this.permission = new Option<>(STRING, "fishing.augment." + name);
-        this.file = new File(AUGMENTS_FOLDER, name.toLowerCase() + ".yml");
-        this.config = CommentedFileConfiguration.loadConfiguration(this.file);
-        this.options = new ArrayList<>();
-        
-        this.registerClass();
-        this.reload(this.file, this.config);
-        
-        // todo: make the below load from a config
+        this.enabled = true;
+        this.maxLevel = 5;
+        this.requiredLevel = 1;
+        this.description = List.of(description);
+        this.displayLine = "<red>" + StringUtils.capitalize(name.replace("_", " ")) + " <level_roman>";
+        this.permission = "fishing.augment." + name;
+        this.conflictsWith = new ArrayList<>();
+        this.file = new File(AUGMENTS_FOLDER, name.toLowerCase());
         this.displayItem = this.defaultItem();
         this.price = Cost.of(CurrencyRegistry.ENTROPY, 25000);
+        this.configHandler = new ConfigHandler<>(this.getClass(), this.file.toPath(), "config.yml");
     }
 
     /**
@@ -102,29 +91,19 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      * @return The default {@link ItemConstruct} for the augment
      */
     private ItemConstruct defaultItem() {
-        List<String> lore = new ArrayList<>(this.description.value());
+        List<String> lore = new ArrayList<>(this.description);
         lore.addAll(List.of(
                 "",
-                "&#4f73d6Information",
-                " &#4f73d6- &7Required Level: &f%required_level%",
-                " &#4f73d6- &7Max Level: &f%max_level%",
+                "<#4f73d6>Information",
+                " <#4f73d6>- <gray>Required Level: &f<required_level>",
+                " <#4f73d6>- <gray>Max Level: <white><max_level>",
                 ""
         ));
 
-        return ItemConstruct.of(Material.FIREWORK_STAR)
-                .name("&f[&#4f73d6&l%display_name%&f]")
-                .lore(lore)
-                .glowing(true);
-    }
-
-    /**
-     * Required list of all the config options available in the class
-     *
-     * @return The provided config options
-     */
-    @Override
-    public List<ConfigOptionType<?>> options() {
-        return this.options;
+        return new ItemConstruct(Material.FIREWORK_STAR)
+                .setName("<white>[<#4f73d6><bold><display_name></bold><white>]")
+                .setLore(lore)
+                .setGlowing(true);
     }
 
     /**
@@ -148,19 +127,29 @@ public abstract class Augment extends FishEventHandler implements Configurable {
     /**
      * All the placeholders that can be used when displaying information about the augment
      *
-     * @return The {@link StringPlaceholders} for the augment
+     * @return The {@link Placeholders} for the augment
      */
-    public final StringPlaceholders placeholders() {
-        return StringPlaceholders.builder()
+    public final Placeholders getPlaceholders() {
+        return Placeholders.builder()
                 .add("enabled", this.enabled)
                 .add("id", this.name)
                 .add("display_name", FishUtils.capitalizeFully(this.name.replace("_", " ")))
                 .add("max_level", this.maxLevel)
                 .add("required_level", this.requiredLevel)
-                .add("description", String.join("\n", this.description.value()))
+                .add("description", String.join("\n", this.description))
                 .add("display_line", this.displayLine)
                 .add("permission", this.permission)
                 .build();
+    }
+    
+    public void loadConfig() {
+        if (this.configHandler != null) {
+            this.configHandler.save();
+            this.configHandler.unload();
+        }
+
+        this.configHandler = new ConfigHandler<>(this.getClass(), this.file.toPath(), "config.yml");
+        this.configHandler.save(); // Save the config again
     }
 
     /**
@@ -171,9 +160,9 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      */
     @Override
     public <T extends Event> void callEvent(T event, int level) {
-        if (!this.enabled.value()) return;
-
-        super.callEvent(event, level);
+        if (this.enabled) {
+            super.callEvent(event, level);
+        }
     }
 
     /**
@@ -181,8 +170,8 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      *
      * @return true if the augment is enabled
      */
-    public final boolean enabled() {
-        return this.enabled.value();
+    public final boolean isEnabled() {
+        return this.enabled;
     }
 
     /**
@@ -190,8 +179,8 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      *
      * @param enabled If the augment is enabled
      */
-    public final void enabled(boolean enabled) {
-        this.enabled.value(enabled);
+    public final void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     /**
@@ -199,7 +188,7 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      *
      * @return The augment name / id
      */
-    public final String name() {
+    public final String getName() {
         return name;
     }
 
@@ -208,8 +197,8 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      *
      * @return The description of the augment
      */
-    public final List<String> description() {
-        return this.description.value();
+    public final List<String> getDescription() {
+        return this.description;
     }
 
     /**
@@ -217,8 +206,8 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      *
      * @param description The description of the augment
      */
-    public final void description(List<String> description) {
-        this.description.value(description);
+    public final void setDescription(List<String> description) {
+        this.description = description;
     }
 
     /**
@@ -226,7 +215,7 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      *
      * @return The display item of the augment
      */
-    public final ItemConstruct displayItem() {
+    public final ItemConstruct getDisplayItem() {
         return displayItem;
     }
 
@@ -235,7 +224,7 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      *
      * @param displayItem The display item of the augment
      */
-    public final void displayItem(ItemConstruct displayItem) {
+    public final void setDisplayItem(ItemConstruct displayItem) {
         this.displayItem = displayItem;
     }
 
@@ -244,8 +233,8 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      *
      * @return The max level of the augment
      */
-    public final int maxLevel() {
-        return maxLevel.value();
+    public final int getMaxLevel() {
+        return this.maxLevel;
     }
 
     /**
@@ -253,8 +242,8 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      *
      * @param maxLevel The max level of the augment
      */
-    public final void maxLevel(int maxLevel) {
-        this.maxLevel.value(maxLevel);
+    public final void setMaxLevel(int maxLevel) {
+        this.maxLevel = maxLevel;
     }
 
     /**
@@ -262,8 +251,8 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      *
      * @return The required level of the augment
      */
-    public final int requiredLevel() {
-        return requiredLevel.value();
+    public final int getRequiredLevel() {
+        return this.requiredLevel;
     }
 
     /**
@@ -271,8 +260,8 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      *
      * @param requiredLevel The required level of the augment
      */
-    public final void requiredLevel(int requiredLevel) {
-        this.requiredLevel.value(requiredLevel);
+    public final void setRequiredLevel(int requiredLevel) {
+        this.requiredLevel = requiredLevel;
     }
 
     /**
@@ -280,8 +269,8 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      *
      * @return The display line of the augment
      */
-    public final String displayLine() {
-        return displayLine.value();
+    public final String getDisplayLine() {
+        return this.displayLine;
     }
 
     /**
@@ -289,8 +278,8 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      *
      * @param displayLine The lore line of the augment
      */
-    public final void displayLine(String displayLine) {
-        this.displayLine.value(displayLine);
+    public final void setDisplayLine(String displayLine) {
+        this.displayLine = displayLine;
     }
 
     /**
@@ -298,8 +287,8 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      *
      * @return The permission required to use the augment
      */
-    public final String permission() {
-        return permission.value();
+    public final String getPermission() {
+        return this.permission;
     }
 
     /**
@@ -307,18 +296,18 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      *
      * @param permission The permission required to use the augment
      */
-    public final void permission(String permission) {
-        this.permission.value(permission);
+    public final void setPermission(String permission) {
+        this.permission = permission;
     }
 
     /**
      * The cost of the augment in the plugin
      * <p>
-     * TODO: Needs to be moved into {@link dev.oribuin.fishing.api.recipe.Recipe} class when implemented
+     * TODO: Needs to be moved into Recipe class when implemented
      *
      * @return The cost of the augment
      */
-    public final Cost price() {
+    public final Cost getPrice() {
         return price;
     }
 
@@ -327,9 +316,12 @@ public abstract class Augment extends FishEventHandler implements Configurable {
      *
      * @param price The cost of the augment
      */
-    public final void price(Cost price) {
+    public final void setPrice(Cost price) {
         this.price = price;
     }
 
+    public ConfigHandler<? extends Augment> getConfigHandler() {
+        return configHandler;
+    }
 }
 

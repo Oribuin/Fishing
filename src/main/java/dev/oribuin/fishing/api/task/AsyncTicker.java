@@ -1,11 +1,10 @@
 package dev.oribuin.fishing.api.task;
 
-import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.util.PluginTask;
-import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitTask;
+import dev.oribuin.fishing.scheduler.PluginScheduler;
+import dev.oribuin.fishing.scheduler.task.ScheduledTask;
 
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -37,10 +36,10 @@ public interface AsyncTicker {
      *
      * @return The BukkitTask instance
      */
-    default PluginTask schedule() {
+    default ScheduledTask schedule() {
         if (this.delay().toSeconds() == 0) return null; // If the delay is 0, return null
 
-        return PluginTask.scheduleRepeating(this::tickAsync, this.delay(), true);
+        return PluginScheduler.get().runTaskTimerAsync(this::tickAsync, this.delay().toSeconds(), 0, TimeUnit.SECONDS);
     }
     
 }

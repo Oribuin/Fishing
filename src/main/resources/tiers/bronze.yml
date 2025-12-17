@@ -1,100 +1,82 @@
+name: bronze # The name of the tier
 chance: 60.0 # Chance of getting this tier
-money: 3.0 # Money reward when the fish is sold
-entropy: 5 # Entropy reward when the fish is gutted
-fish-exp: 100 # Fishing experience reward when caught
-natural-exp: 10.0 # Rewards additional % experience when caught naturally
-display-item:
+catch-entropy: 45 # Entropy reward when the fish is caught
+gut-entropy: 65 # Entropy rewarded when the fish is gutted
+catch-money: 0.0 # Money reward when the fish is caught
+sell-money: 0.3 # Money reward when the fish is sold in the fish store
+catch-experience: 75 # The fishing experience rewarded when the fish is caught
+natural-experience: 5 # The natural minecraft experience rewarded when the fish is caught
+item:
   type: COD
-  name: '&#CD7F32&l%name%'
+  name: '&#CD7F32&l<name>'
   lore:
     - ''
     - '%description%'
     - ''
     - '&#CD7F32Information:'
-    - ' &#CD7F32- &7Price: &f$%price%'
-    - ' &#CD7F32- &7Entropy: &f%entropy%'
-    - ' &#CD7F32- &7Biomes: &f%biomes%'
-    - ' &#CD7F32- &7Weather: &f%weather%'
-    - ' &#CD7F32- &7Time: &f%time%'
+    - ' &#CD7F32- <gray>Price: &f$<price>'
+    - ' &#CD7F32- <gray>Entropy: &f<entropy>'
+    - ' &#CD7F32- <gray>Biomes: &f%biomes%'
+    - ' &#CD7F32- <gray>Weather: &f%weather%'
+    - ' &#CD7F32- <gray>Time: &f%time%'
     - ''
 fish:
   cod:
     display-name: 'Cod'
     description:
-      - '&7a very slippery guy'
-      - '&7a &overy very &7slippery guy'
-    biomes: []
-    worlds: []
-    time: ALL_DAY
+      - '<gray>a very slippery guy'
+      - '<gray>a &overy very <gray>slippery guy'
+
   bluegill:
     display-name: 'Bluegill'
     description:
-      - '&7a very slippery guy'
-      - '&7a &overy very &7slippery guy'
-    biomes: []
-    worlds: []
-    time: ALL_DAY
+      - '<gray>a very slippery guy'
+      - '<gray>a &overy very <gray>slippery guy'
+
   perch:
     display-name: 'Perch'
     description:
-      - '&7a very slippery guy'
-      - '&7a &overy very &7slippery guy'
-    biomes: []
-    worlds: []
-    time: ALL_DAY
+      - '<gray>a very slippery guy'
+      - '<gray>a &overy very <gray>slippery guy'
+
   bullhead:
     display-name: 'Bullhead'
     description:
-      - '&7a very slippery guy'
-      - '&7a &overy very &7slippery guy'
-    biomes: []
-    worlds: []
-    time: ALL_DAY
+      - '<gray>a very slippery guy'
+      - '<gray>a &overy very <gray>slippery guy'
+
   tilapia:
     display-name: 'Tilapia'
     description:
-      - '&7a very slippery guy'
-      - '&7a &overy very &7slippery guy'
-    biomes: []
-    worlds: []
-    time: ALL_DAY
+      - '<gray>a very slippery guy'
+      - '<gray>a &overy very <gray>slippery guy'
+
   goldfish:
     display-name: 'Goldfish'
     description:
-      - '&7a very slippery guy'
-      - '&7a &overy very &7slippery guy'
-    biomes: []
-    worlds: []
-    time: ALL_DAY
+      - '<gray>a very slippery guy'
+      - '<gray>a &overy very <gray>slippery guy'
+
   koi:
     display-name: 'Koi'
     description:
-      - '&7a very slippery guy'
-      - '&7a &overy very &7slippery guy'
-    biomes: []
-    worlds: []
-    time: ALL_DAY
+      - '<gray>a very slippery guy'
+      - '<gray>a &overy very <gray>slippery guy'
+
   guppy:
     display-name: 'Guppy'
     description:
-      - '&7a very slippery guy'
-      - '&7a &overy very &7slippery guy'
-    biomes: []
-    worlds: []
-    time: ALL_DAY
+      - '<gray>a very slippery guy'
+      - '<gray>a &overy very <gray>slippery guy'
+
   molly:
     display-name: 'Molly'
     description:
-      - '&7a very slippery guy'
-      - '&7a &overy very &7slippery guy'
-    biomes: []
-    worlds: []
-    time: ALL_DAY
+      - '<gray>a very slippery guy'
+      - '<gray>a &overy very <gray>slippery guy'
+
   platy:
     display-name: 'Platy'
     description:
-      - '&7a very slippery guy'
-      - '&7a &overy very &7slippery guy'
-    biomes: []
-    worlds: []
-    time: ALL_DAY
+      - '<gray>a very slippery guy'
+      - '<gray>a &overy very <gray>slippery guy'

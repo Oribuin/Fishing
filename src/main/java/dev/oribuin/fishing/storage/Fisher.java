@@ -1,8 +1,9 @@
 package dev.oribuin.fishing.storage;
 
-import dev.oribuin.fishing.config.Setting;
+import dev.oribuin.fishing.config.impl.Config;
+import dev.oribuin.fishing.model.condition.ConditionRegistry;
 import dev.oribuin.fishing.util.FishUtils;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import dev.oribuin.fishing.util.Placeholders;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,12 +55,12 @@ public class Fisher {
      * @return The required experience to level up
      */
     public int requiredExp() {
-        StringPlaceholders placeholders = StringPlaceholders.of("level", this.level);
-        return (int) FishUtils.evaluate(placeholders.apply(Setting.REQUIRED_XP_FORMULA.get()));
+        Placeholders placeholders = Placeholders.of("level", this.level);
+        return (int) FishUtils.evaluate(placeholders.applyString(Config.get().getExperienceFormula()));
     }
 
-    public StringPlaceholders placeholders() {
-        return StringPlaceholders.of(
+    public Placeholders placeholders() {
+        return Placeholders.of(
                 "level", this.level,
                 "experience", this.experience,
                 "skill_points", this.skillPoints,

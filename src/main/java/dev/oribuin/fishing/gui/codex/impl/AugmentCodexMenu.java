@@ -3,7 +3,7 @@ package dev.oribuin.fishing.gui.codex.impl;
 import dev.oribuin.fishing.gui.codex.BasicCodexMenu;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.augment.AugmentRegistry;
-import dev.oribuin.fishing.model.item.ItemConstruct;
+import dev.oribuin.fishing.item.ItemConstruct;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import org.bukkit.entity.Player;
@@ -36,10 +36,10 @@ public class AugmentCodexMenu extends BasicCodexMenu<Augment> {
 
         // Add all the fish to the GUI
         content.forEach(x -> {
-            ItemConstruct construct = x.displayItem();
+            ItemConstruct construct = x.getDisplayItem();
             if (construct == null) return;
 
-            ItemStack stack = construct.build(x.placeholders());
+            ItemStack stack = construct.build(x.getPlaceholders());
             gui.addItem(new GuiItem(stack));
         });
 

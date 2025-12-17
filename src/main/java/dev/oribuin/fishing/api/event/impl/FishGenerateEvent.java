@@ -85,7 +85,7 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
      * Tiers are selected from the highest rarity -> the lowest rarity based on the newChance
      */
     public void generate() {
-        TierManager tierProvider = FishingPlugin.get().getManager(TierManager.class);
+        TierManager tierProvider = FishingPlugin.get().getTierManager();
 
         // Obtain the quality of the
         double newChance = this.baseChance + this.chanceIncreases
@@ -97,7 +97,7 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
         if (quality == null) return;
 
         // Make sure the quality is not null
-        List<Fish> canCatch = quality.fish().values().stream()
+        List<Fish> canCatch = quality.getFish().values().stream()
                 .filter(x -> ConditionRegistry.check(x, player, rod, hook))
                 .toList();
 

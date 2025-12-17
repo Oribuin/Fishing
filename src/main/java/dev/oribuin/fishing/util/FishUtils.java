@@ -1,20 +1,17 @@
 package dev.oribuin.fishing.util;
 
 import dev.oribuin.fishing.FishingPlugin;
-import dev.rosewood.rosegarden.RosePlugin;
-import dev.rosewood.rosegarden.hook.PlaceholderAPIHook;
-import dev.rosewood.rosegarden.utils.HexUtils;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import io.papermc.paper.registry.RegistryAccess;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Color;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
@@ -36,6 +33,7 @@ public final class FishUtils {
     public static ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
     public static RegistryAccess REGISTRY = RegistryAccess.registryAccess();
     public static LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacyAmpersand();
+    public static MiniMessage MINIMESSAGE = MiniMessage.miniMessage();
 
     public FishUtils() {
         throw new IllegalStateException("FishUtil is a utility class and cannot be instantiated.");
@@ -49,7 +47,7 @@ public final class FishUtils {
      * @return The component
      */
     public static Component kyorify(String text) {
-        return LEGACY_SERIALIZER.deserialize(text)
+        return MINIMESSAGE.deserialize(text)
                 .decoration(TextDecoration.ITALIC, false);
     }
 
@@ -61,9 +59,8 @@ public final class FishUtils {
      *
      * @return The component
      */
-    public static Component kyorify(String text, StringPlaceholders placeholders) {
-        return LEGACY_SERIALIZER.deserialize(placeholders.apply(text))
-                .decoration(TextDecoration.ITALIC, false);
+    public static Component kyorify(String text, Placeholders placeholders) {
+        return placeholders.apply(text);
     }
 
     /**
@@ -108,34 +105,6 @@ public final class FishUtils {
         }
 
         return Color.fromRGB(awtColor.getRed(), awtColor.getGreen(), awtColor.getBlue());
-    }
-
-    /**
-     * Format a string with placeholders and color codes
-     *
-     * @param player The player to format the string for
-     * @param text   The string to format
-     *
-     * @return The formatted string
-     */
-    public static String format(Player player, String text) {
-        return format(player, text, StringPlaceholders.empty());
-    }
-
-    /**
-     * Format a string with placeholders and color codes
-     *
-     * @param player       The player to format the string for
-     * @param text         The text to format
-     * @param placeholders The placeholders to replace
-     *
-     * @return The formatted string
-     */
-    public static String format(Player player, String text, StringPlaceholders placeholders) {
-        if (text == null)
-            return null;
-
-        return HexUtils.colorify(PlaceholderAPIHook.applyPlaceholders(player, placeholders.apply(text)));
     }
 
     /**
@@ -223,15 +192,15 @@ public final class FishUtils {
     /**
      * Create a file in a folder from the plugin's resources
      *
-     * @param rosePlugin The plugin
+     * @param javaPlugin The plugin
      * @param folders    The folders
      *
      * @return The file
      */
     @NotNull
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static File createFile(@NotNull RosePlugin rosePlugin, @NotNull String... folders) {
-        File file = new File(rosePlugin.getDataFolder(), String.join("/", folders)); // Create the file
+    public static File createFile(@NotNull JavaPlugin javaPlugin, @NotNull String... folders) {
+        File file = new File(javaPlugin.getDataFolder(), String.join("/", folders)); // Create the file
         if (file.exists())
             return file;
 
@@ -240,7 +209,7 @@ public final class FishUtils {
         }
 
         String path = String.join("/", folders);
-        try (InputStream stream = rosePlugin.getResource(path)) {
+        try (InputStream stream = javaPlugin.getResource(path)) {
             if (stream == null) {
                 file.createNewFile();
                 return file;
@@ -255,8 +224,8 @@ public final class FishUtils {
     }
 
     @NotNull
-    public static File createFile(@NotNull RosePlugin rosePlugin, @NotNull File file) {
-        return createFile(rosePlugin, file.getPath());
+    public static File createFile(@NotNull JavaPlugin javaPlugin, @NotNull File file) {
+        return createFile(javaPlugin, file.getPath());
     }
 
     public static <T extends Enum<T>> T getEnum(Class<T> enumClass, String name) {

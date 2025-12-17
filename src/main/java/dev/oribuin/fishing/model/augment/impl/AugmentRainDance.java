@@ -1,27 +1,31 @@
 package dev.oribuin.fishing.model.augment.impl;
 
-import dev.oribuin.fishing.api.config.Message;
-import dev.oribuin.fishing.api.config.Option;
-import dev.oribuin.fishing.api.config.TextMessage;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
+import dev.oribuin.fishing.config.TextMessage;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.condition.Weather;
 import dev.oribuin.fishing.util.FishUtils;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import dev.oribuin.fishing.util.Placeholders;
+import org.spongepowered.configurate.objectmapping.meta.Comment;
 
-import static dev.rosewood.rosegarden.config.SettingSerializers.INTEGER;
-import static dev.rosewood.rosegarden.config.SettingSerializers.STRING;
 
 /**
  * When it is raining, there is a chance to catch multiple fish in a single catch.
  */
 public class AugmentRainDance extends Augment {
 
-    private final Option<String> FORMULA = new Option<>(STRING, "%level% * 0.05"); // 5% per level
-    private final Option<Integer> MIN_FISH = new Option<>(INTEGER, 1, "Minimum fish to be spawned");
-    private final Option<Integer> MAX_FISH = new Option<>(INTEGER, 3, "Maximum fish to be spawned");
-    private final Message CAUGHT_MORE = TextMessage.ofConfig("<#4f73d6><bold>Fish</bold> <gray>| <white>You have caught additional fish from Rain Dance.");
+    @Comment("The required formula for the augment to trigger")
+    private String formula = "%level% * 0.05"; // 5% per level
+
+    @Comment("The minimum fish to be spawned in")
+    private int minimumFish = 1;
+
+    @Comment("The maximum fish to be spawned in")
+    private int maximumFish = 3;
+
+    @Comment("The message sent when a player catches more fish")
+    private TextMessage caughtMore = new TextMessage("<#4f73d6><bold>Fish</bold> <gray>| <white>You have caught additional fish from Rain Dance");
 
     /**
      * Create a new type of augment with a name and description.
@@ -29,9 +33,9 @@ public class AugmentRainDance extends Augment {
      * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
      */
     public AugmentRainDance() {
-        super("rain_dance", "&7Increases the amount of fish", "&7caught when the weather is raining");
+        super("rain_dance", "<gray>Increases the amount of fish", "<gray>caught when the weather is raining");
 
-        this.maxLevel(15);
+        this.setMaxLevel(15);
         this.register(InitialFishCatchEvent.class, this::onInitialCatch);
     }
 
@@ -49,14 +53,14 @@ public class AugmentRainDance extends Augment {
     public void onInitialCatch(InitialFishCatchEvent event, int level) {
         if (Weather.CLEAR.isState(event.getHook().getLocation())) return;
 
-        StringPlaceholders plc = StringPlaceholders.of("level", level);
-        double chance = FishUtils.evaluate(plc.apply(FORMULA.value()));
+        Placeholders plc = Placeholders.of("level", level);
+        double chance = FishUtils.evaluate(plc.applyString(this.formula));
         if (this.random.nextDouble(100) <= chance) return;
 
-        int fishCaught = MIN_FISH.value() + (int) (Math.random() * (MAX_FISH.value() - MIN_FISH.value()));
+        int fishCaught = this.minimumFish + (int) (Math.random() * (this.maximumFish - this.minimumFish));
         event.setAmountToCatch(event.getAmountToCatch() + fishCaught);
-        
-        CAUGHT_MORE.send(event.getPlayer(), StringPlaceholders.of("additional", fishCaught));
+
+        this.caughtMore.send(event.getPlayer(), "additional", fishCaught);
     }
 
     /**
@@ -64,16 +68,16 @@ public class AugmentRainDance extends Augment {
      *
      * @return The comments for the augment
      */
-//    @Override
-//    public List<String> comments() {
-//        return List.of(
-//                "Augment [Rain Dance] - When it is raining, there is a chance to catch multiple fish",
-//                "in a single catch.",
-//                "",
-//                "chance-formula: The formula to calculate the chance this augment triggers",
-//                "min-fish: The minimum additional fish caught",
-//                "max-fish: The maximum additional fish caught"
-//        );
-//    }
+    //    @Override
+    //    public List<String> comments() {
+    //        return List.of(
+    //                "Augment [Rain Dance] - When it is raining, there is a chance to catch multiple fish",
+    //                "in a single catch.",
+    //                "",
+    //                "chance-formula: The formula to calculate the chance this augment triggers",
+    //                "min-fish: The minimum additional fish caught",
+    //                "max-fish: The maximum additional fish caught"
+    //        );
+    //    }
 
 }

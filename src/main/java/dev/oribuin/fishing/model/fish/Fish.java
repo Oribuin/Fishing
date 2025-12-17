@@ -1,106 +1,62 @@
 package dev.oribuin.fishing.model.fish;
 
 import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.model.augment.Augment;
-import dev.oribuin.fishing.config.Configurable;
-import dev.oribuin.fishing.manager.TierManager;
+import dev.oribuin.fishing.item.ItemConstruct;
 import dev.oribuin.fishing.model.condition.CatchCondition;
-import dev.oribuin.fishing.model.condition.ConditionRegistry;
 import dev.oribuin.fishing.storage.util.KeyRegistry;
-import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import dev.oribuin.fishing.util.Placeholders;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Comment;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Fish implements Configurable {
+@ConfigSerializable
+public class Fish {
 
-    private final String name; // The name of the fish
-    private final String tier; // The tier of the fish
-    private String displayName; // The display name of the fish
-    private List<String> description; // The description of the fish
-    private int modelData; // The model data of the fish
-    private ItemStack itemStack; // The item stack of the fish
-    private List<CatchCondition> conditions; // The conditions to catch the fish
+    @Comment("The name of the fish (Typically the id)")
+    private transient String name; // loaded from key in Tier because i got lazy
+    @Comment("The display name of the fish")
+    private String displayName;
+    @Comment("The lore description of the fish")
+    private List<String> description;
+    @Comment("The list of conditions for the fish")
+    private List<CatchCondition> conditions;
+    @Comment("The itemstack design for the fish")
+    private ItemConstruct construct;
+    private transient ItemStack itemStack; // used so we're not serializing the same item over and over and over again
+    private transient String tier;
+
+    public Fish() {
+        this.name = "unknown-cod";
+        this.description = List.of("Example fish style");
+        this.conditions = new ArrayList<>();
+        this.construct = null; // inherits Tier construct
+    }
 
     /**
      * Create a new name of fish with a name and quality
      *
-     * @param name The name of the fish
-     * @param tier The quality of the fish
+     * @param name        The name of the fish
+     * @param description Description about the fish
+     * @param conditions  The conditions required to be met before catching the fish
      */
-    public Fish(@NotNull String name, @NotNull String tier) {
+    public Fish(
+            @NotNull String name,
+            @NotNull List<String> description,
+            @NotNull List<CatchCondition> conditions,
+            @NotNull ItemConstruct construct
+    ) {
         this.name = name;
-        this.tier = tier;
         this.displayName = StringUtils.capitalize(name.toLowerCase().replace("_", " "));
-        this.description = new ArrayList<>();
-        this.modelData = -1;
-        this.conditions = new ArrayList<>();
-    }
-
-    /**
-     * Initialize a {@link CommentedConfigurationSection} from a configuration file to establish the settings
-     * for the configurable class, will be automatically called when the configuration file is loaded using {@link #reload()}
-     * <p>
-     * If your class inherits from another configurable class, make sure to call super.loadSettings(config)
-     * to save the settings from the parent class
-     * <p>
-     * A class must be initialized before settings are loaded, If you wish to have a configurable data class style, its best to create a
-     * static method that will create a new instance and call this method on the new instance
-     * <p>
-     * The {@link CommentedConfigurationSection} should never be null, when creating a new section,
-     * use {@link #pullSection(CommentedConfigurationSection, String)} to establish new section if it doesn't exist
-     *
-     * @param config The {@link CommentedConfigurationSection} to load the settings from, this cannot be null.
-     */
-    @Override
-    public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        this.displayName = config.getString("display-name", StringUtils.capitalize(this.name));
-        this.description = config.getStringList("description");
-        this.modelData = config.getInt("model-data", -1);
-
-        // Catch Conditions for the fish
-        this.conditions = ConditionRegistry.loadConditions(this.pullSection(config, "conditions"));
-    }
-
-    /**
-     * Serialize the settings of the configurable class into a {@link CommentedConfigurationSection} to be saved later
-     * <p>
-     * This functionality will not update the configuration file, it will only save the settings into the section to be saved later.
-     * <p>
-     * The function {@link #reload()} will save the settings on first load, please override this method if you wish to save the settings regularly
-     * New sections should be created using {@link #pullSection(CommentedConfigurationSection, String)}
-     *
-     * @param config The {@link CommentedConfigurationSection} to save the settings to, this cannot be null.
-     */
-    @Override
-    public void saveSettings(@NotNull CommentedConfigurationSection config) {
-        config.set(this.name + ".name", this.name);
-        config.set(this.name + ".display-name", this.displayName);
-        config.set(this.name + ".description", this.description);
-        config.set(this.name + ".model-data", this.modelData);
-    }
-
-    /**
-     * The file path to a {@link CommentedFileConfiguration} file, This path by default will be relative {@link #parentFolder()}.
-     * <p>
-     * This by default is only used in the {@link #reload()} method to load the configuration file
-     * <p>
-     * This an optional method and should only be used if the Configurable class is its own file (E.g. {@link Augment} class)
-     *
-     * @return The path to the configuration file
-     */
-    @Override
-    public @Nullable Path configPath() {
-        return this.tier().tierFile().toPath();
+        this.description = description;
+        this.conditions = conditions;
+        this.construct = construct;
     }
 
     /**
@@ -113,18 +69,16 @@ public class Fish implements Configurable {
             return this.itemStack.clone();
 
         // Get the tier of the fish
-        Tier fishTier = FishingPlugin.get().getManager(TierManager.class).get(this.tier);
+        Tier fishTier = FishingPlugin.get().getTierManager().get(this.tier);
         if (fishTier == null) return null;
 
         // Add all the information to the item stack
-        StringPlaceholders.Builder placeholders = StringPlaceholders.builder();
+        Placeholders.Builder placeholders = Placeholders.builder();
         placeholders.addAll(this.placeholders());
-        placeholders.addAll(this.tier().placeholders());
+        //        placeholders.addAll(this.tier().placeholders()); // TODO: Tier Placeholders
 
-        ItemStack itemStack = fishTier.baseDisplay().build(placeholders.build());
+        ItemStack itemStack = fishTier.getItem().build(placeholders.build());
         itemStack.editMeta(itemMeta -> {
-//            if (this.modelData > 0) itemMeta.setCustomModelData(this.modelData);
-
             // fish data :-)
             PersistentDataContainer container = itemMeta.getPersistentDataContainer();
             container.set(KeyRegistry.FISH_TYPE, PersistentDataType.STRING, this.name);
@@ -135,8 +89,13 @@ public class Fish implements Configurable {
         return this.itemStack.clone(); // Clone the item stack to prevent any changes
     }
 
-    public StringPlaceholders placeholders() {
-        StringPlaceholders.Builder builder = StringPlaceholders.builder()
+    @NotNull
+    public Tier getTierInstance() {
+        return FishingPlugin.get().getTierManager().get(this.tier);
+    }
+
+    public Placeholders placeholders() {
+        Placeholders.Builder builder = Placeholders.builder()
                 .add("id", this.name)
                 .add("name", this.displayName)
                 .add("tier", this.tier)
@@ -148,93 +107,72 @@ public class Fish implements Configurable {
         return builder.build();
     }
 
-    /**
-     * Obtain the tier of the fish based on the tier name
-     *
-     * @return The tier of the fish
-     */
-    public Tier tier() {
-        return FishingPlugin.get().getManager(TierManager.class).get(this.tier);
-    }
-
-    /**
-     * Returns a string representation of the object.
-     *
-     * @return a string representation of the object.
-     *
-     * @apiNote In general, the
-     * {@code toString} method returns a string that
-     * "textually represents" this object. The result should
-     * be a concise but informative representation that is easy for a
-     * person to read.
-     * It is recommended that all subclasses override this method.
-     * The string output is not necessarily stable over time or across
-     * JVM invocations.
-     * @implSpec The {@code toString} method for class {@code Object}
-     * returns a string consisting of the name of the class of which the
-     * object is an instance, the at-sign character `{@code @}', and
-     * the unsigned hexadecimal representation of the hash code of the
-     * object. In other words, this method returns a string equal to the
-     * value of:
-     * <blockquote>
-     * <pre>
-     * getClass().getName() + '@' + Integer.toHexString(hashCode())
-     * </pre></blockquote>
-     */
     @Override
     public String toString() {
-        return "Fish[" +
-               "name=" + name + "," +
-               "tier=" + tier +
-               "]";
+        return "Fish{" +
+               "name='" + name + '\'' +
+               ", displayName='" + displayName + '\'' +
+               ", description=" + description +
+               ", conditions=" + conditions +
+               ", construct=" + construct +
+               ", itemStack=" + itemStack +
+               ", tier='" + tier + '\'' +
+               '}';
     }
 
-    public String tierName() {
-        return this.tier;
-    }
-
-    public ItemStack itemStack() {
-        return this.itemStack;
-    }
-
-    public void itemStack(ItemStack itemStack) {
-        this.itemStack = itemStack;
-    }
-
-    public String name() {
+    public String getName() {
         return name;
     }
 
-    public String displayName() {
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDisplayName() {
         return displayName;
     }
 
-    public void displayName(String displayName) {
+    public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
 
-    public List<String> description() {
+    public List<String> getDescription() {
         return description;
     }
 
-    public void description(List<String> description) {
+    public void setDescription(List<String> description) {
         this.description = description;
     }
 
-    public int modelData() {
-        return modelData;
-    }
-
-    public void modelData(int modelData) {
-        this.modelData = modelData;
-    }
-
-    public List<CatchCondition> conditions() {
+    public List<CatchCondition> getConditions() {
         return conditions;
     }
 
-    public void conditions(List<CatchCondition> conditions) {
+    public void setConditions(List<CatchCondition> conditions) {
         this.conditions = conditions;
     }
 
+    public ItemConstruct getConstruct() {
+        return construct;
+    }
+
+    public void setConstruct(ItemConstruct construct) {
+        this.construct = construct;
+    }
+
+    public ItemStack getItemStack() {
+        return itemStack;
+    }
+
+    public void setItemStack(ItemStack itemStack) {
+        this.itemStack = itemStack;
+    }
+
+    public String getTier() {
+        return tier;
+    }
+
+    public void setTier(String tier) {
+        this.tier = tier;
+    }
 }

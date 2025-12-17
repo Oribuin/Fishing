@@ -1,14 +1,13 @@
 package dev.oribuin.fishing.model.condition;
 
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
-import dev.oribuin.fishing.config.Configurable;
 import dev.oribuin.fishing.model.fish.Fish;
-import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import dev.oribuin.fishing.util.Placeholders;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Comment;
 
 /**
  * A condition that is checked when a player is trying to catch a fish
@@ -18,12 +17,11 @@ import org.jetbrains.annotations.NotNull;
  *
  * @see dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
  */
-public abstract class CatchCondition implements Configurable {
+@ConfigSerializable
+public abstract class CatchCondition {
 
-    /**
-     * The default constructor for the condition, should be empty
-     */
-    public CatchCondition() {}
+    @Comment("Should this catch condition be enabled for the fish?")
+    protected boolean enabled = false;
 
     /**
      * Decides whether the condition should be checked in the first place,
@@ -34,7 +32,9 @@ public abstract class CatchCondition implements Configurable {
      *
      * @return true if the fish has the condition applied. @see {@link #check(Fish, Player, ItemStack, FishHook)} for the actual condition check
      */
-    public abstract boolean shouldRun(Fish fish);
+    public boolean shouldRun(Fish fish) {
+        return this.enabled;
+    }
 
     /**
      * Check if the player meets the condition to catch the fish or not, Requires {@link #shouldRun(Fish)} to return true before running
@@ -57,25 +57,11 @@ public abstract class CatchCondition implements Configurable {
      *
      * @return The placeholders
      */
-    public StringPlaceholders placeholders() {
-        return StringPlaceholders.empty();
+    public Placeholders placeholders() {
+        return Placeholders.empty();
     }
 
-    /**
-     * Initialize a {@link CommentedConfigurationSection} from a configuration file to establish the settings
-     * for the configurable class, will be automatically called when the configuration file is loaded using {@link #reload()}
-     * <p>
-     * If your class inherits from another configurable class, make sure to call super.loadSettings(config)
-     * to save the settings from the parent class
-     * <p>
-     * A class must be initialized before settings are loaded, If you wish to have a configurable data class style, its best to create a
-     * static method that will create a new instance and call this method on the new instance
-     * <p>
-     * The {@link CommentedConfigurationSection} should never be null, when creating a new section,
-     * use {@link #pullSection(CommentedConfigurationSection, String)} to establish new section if it doesn't exist
-     *
-     * @param config The {@link CommentedConfigurationSection} to load the settings from, this cannot be null.
-     */
-    public abstract void loadSettings(@NotNull CommentedConfigurationSection config);
-
+    public boolean isEnabled() {
+        return enabled;
+    }
 }

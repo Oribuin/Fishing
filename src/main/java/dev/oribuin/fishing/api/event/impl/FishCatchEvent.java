@@ -1,5 +1,6 @@
 package dev.oribuin.fishing.api.event.impl;
 
+import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import dev.oribuin.fishing.model.fish.Fish;
@@ -55,13 +56,13 @@ public class FishCatchEvent extends PlayerEvent implements Cancellable {
         this.cancelled = false;
 
         // Set the base values for the fish
-        Tier tier = this.fish.tier();
-        this.baseEntropy = tier.entropy();
-        this.entropy = tier.entropy();
-        this.baseFishExp = tier.fishExp();
-        this.fishExp = tier.fishExp();
-        this.baseNaturalExp = tier.naturalExp();
-        this.naturalExp = tier.naturalExp();
+        Tier tier = FishingPlugin.get().getTierManager().get(this.fish.getTier());
+        this.baseEntropy = tier.getCatchEntropy();
+        this.entropy = tier.getCatchEntropy();
+        this.baseFishExp = tier.getCatchExperience();
+        this.fishExp = tier.getCatchExperience();
+        this.baseNaturalExp = tier.getNaturalExperience();
+        this.naturalExp = tier.getNaturalExperience();
     }
 
     /**

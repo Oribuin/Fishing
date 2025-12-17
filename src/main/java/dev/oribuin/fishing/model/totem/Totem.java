@@ -7,17 +7,16 @@ import dev.oribuin.fishing.api.event.FishEventHandler;
 import dev.oribuin.fishing.api.event.impl.TotemActivateEvent;
 import dev.oribuin.fishing.api.event.impl.TotemDeactivateEvent;
 import dev.oribuin.fishing.api.task.AsyncTicker;
+import dev.oribuin.fishing.item.component.TextureConstructType;
 import dev.oribuin.fishing.manager.TotemManager;
 import dev.oribuin.fishing.model.animation.Animated;
 import dev.oribuin.fishing.model.animation.Animation;
-import dev.oribuin.fishing.model.animation.impl.particle.RingParticleAnimation;
-import dev.oribuin.fishing.model.animation.type.ParticleAnimation;
-import dev.oribuin.fishing.model.item.ItemConstruct;
-import dev.oribuin.fishing.model.item.ItemRegistry;
+import dev.oribuin.fishing.item.ItemConstruct;
+import dev.oribuin.fishing.item.ItemRegistry;
 import dev.oribuin.fishing.model.totem.upgrade.TotemUpgrade;
 import dev.oribuin.fishing.model.totem.upgrade.UpgradeRegistry;
+import dev.oribuin.fishing.util.Placeholders;
 import dev.oribuin.fishing.util.math.MathL;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import io.papermc.paper.math.Rotations;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -218,7 +217,7 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
             this.saveProperties(this.entity.getPersistentDataContainer());
         }
 
-        FishingPlugin.get().getManager(TotemManager.class).registerTotem(this);
+        FishingPlugin.get().getTotemManager().registerTotem(this);
     }
 
     /**
@@ -255,8 +254,8 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
      *
      * @return The placeholders for the totem
      */
-    public StringPlaceholders placeholders() {
-        StringPlaceholders.Builder builder = StringPlaceholders.builder();
+    public Placeholders placeholders() {
+        Placeholders.Builder builder = Placeholders.builder();
         builder.add("owner", this.getProperty(TOTEM_OWNER_NAME, "Unknown"));
         builder.add("active", this.getProperty(TOTEM_ACTIVE, false) ? "Active" : "Inactive");
 
@@ -265,11 +264,11 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
             builder.add("upgrade_" + upgrade.name(), level);
 
             // Add all the placeholders for the upgrade
-            upgrade.placeholders(this)
-                    .getPlaceholders()
-                    .forEach((key, value) ->
-                            builder.add(String.format("upgrade_%s_%s", upgrade.name(), key), value)
-                    );
+//            upgrade.placeholders(this) ?? TODO: Add totem placeholders
+//                    .getPlaceholders()
+//                    .forEach((key, value) ->
+//                            builder.add(String.format("upgrade_%s_%s", upgrade.name(), key), value)
+//                    );
         });
 
         return builder.build();
@@ -380,21 +379,20 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
     }
 
     public static ItemConstruct defaultItem() {
-        return ItemConstruct.of(Material.PLAYER_HEAD)
-                .name("&f[&#4f73d6&lFishing Totem&f]")
-                .lore(
-                        "&7Place in the world to create local",
-                        "&7booster for players within it's radius.",
+        return new ItemConstruct(Material.PLAYER_HEAD)
+                .setName("&f[&#4f73d6&lFishing Totem&f]")
+                .setLore(
+                        "<gray>Place in the world to create local",
+                        "<gray>booster for players within it's radius.",
                         "",
                         "&#4f73d6Information",
-                        " &#4f73d6- &7Owner: &f%owner%",
-                        " &#4f73d6- &7Radius: &f%upgrade_radius_value% blocks",
-                        " &#4f73d6- &7Duration: &f%upgrade_duration_value%",
-                        " &#4f73d6- &7Cooldown: &f%upgrade_cooldown_value%",
+                        " &#4f73d6- <gray>Owner: &f%owner%",
+                        " &#4f73d6- <gray>Radius: &f%upgrade_radius_value% blocks",
+                        " &#4f73d6- <gray>Duration: &f%upgrade_duration_value%",
+                        " &#4f73d6- <gray>Cooldown: &f%upgrade_cooldown_value%",
                         ""
                 )
-                .glowing(true)
-                .texture(TEXTURE);
+                .setGlowing(true);
     }
 
     public Location center() {

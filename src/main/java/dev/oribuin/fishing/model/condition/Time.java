@@ -2,26 +2,23 @@ package dev.oribuin.fishing.model.condition;
 
 import org.bukkit.World;
 
-public enum Time {
-    ANY_TIME(0, 24),
-    DAY(6, 18),
-    NIGHT(18, 6),
-    SUNSET(18, 20),
-    SUNRISE(6, 8),
-    ;
-
-    private final int lowerBound;
-    private final int upperBound;
+/**
+ * Create a new custom time parameter
+ *
+ * @param startTime  The start time for it
+ * @param finishTime The finish time for it
+ */
+public record Time(int startTime, int finishTime) {
 
     /**
-     * Create a new time with a lower and upper bound, This uses 24 hour time
-     *
-     * @param lowerBound The lower bound of the time
-     * @param upperBound The upper bound of the time
+     * Should be readable from the following
+     * 6-12
+     * 6pm-12pm
+     * 6pm-12
+     * 630-12pm
      */
-    Time(int lowerBound, int upperBound) {
-        this.lowerBound = lowerBound * 1000;
-        this.upperBound = upperBound * 1000;
+    public static Time from(String start, String finish) {
+        return new Time(0, 24);
     }
 
     /**
@@ -32,10 +29,10 @@ public enum Time {
      * @return If the time is within the bounds
      */
     public boolean matches(World world) {
-        if (this == ANY_TIME)
+        if (this.startTime == 0 && this.finishTime == 24)
             return true;
 
-        return world.getTime() >= this.lowerBound && world.getTime() <= this.upperBound;
+        return world.getTime() >= this.startTime && world.getTime() <= this.finishTime;
     }
 
     /**
@@ -46,10 +43,10 @@ public enum Time {
      * @return If the time is within the bounds
      */
     public boolean matches(int hour) {
-        if (this == ANY_TIME)
+        if (this.startTime == 0 && this.finishTime == 24)
             return true;
 
-        return hour >= this.lowerBound && hour <= this.upperBound;
+        return hour >= this.startTime && hour <= this.finishTime;
     }
-
+    
 }

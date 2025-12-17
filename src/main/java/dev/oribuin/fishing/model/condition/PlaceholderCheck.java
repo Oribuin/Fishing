@@ -1,20 +1,18 @@
 package dev.oribuin.fishing.model.condition;
 
-
-import dev.oribuin.fishing.config.Configurable;
-import dev.oribuin.fishing.util.FishUtils;
-import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.hook.PlaceholderAPIHook;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import dev.oribuin.fishing.hook.plugin.PAPIProvider;
+import dev.oribuin.fishing.util.Placeholders;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 /**
  * Create a new instance of the placeholder checking class, used to check if a placeholder based condition is met or not
  */
-public class PlaceholderCheck implements Configurable {
+@ConfigSerializable
+@SuppressWarnings("FieldMayBeFinal")
+public class PlaceholderCheck {
 
-    private CheckType type = CheckType.EQUALS;
+    private CheckType type;
     private String input;
     private String output;
     private boolean inverted;
@@ -23,12 +21,14 @@ public class PlaceholderCheck implements Configurable {
     /**
      * Create a new instance of the placeholder checking class, used to check if a placeholder based condition is met or not
      *
+     * @param type     The type of method being used to check
      * @param input    The input string to check
      * @param output   The output string to check
      * @param inverted Whether the check should be inverted
      * @param required Whether the check is required to pass to continue
      */
-    private PlaceholderCheck(String input, String output, boolean inverted, boolean required) {
+    private PlaceholderCheck(CheckType type, String input, String output, boolean inverted, boolean required) {
+        this.type = type;
         this.input = input;
         this.output = output;
         this.inverted = inverted;
@@ -38,14 +38,30 @@ public class PlaceholderCheck implements Configurable {
     /**
      * Create a new instance of the placeholder checking class, used to check if a placeholder based condition is met or not
      *
+     * @param type     The type of method being used to check
      * @param input    The input string to check
      * @param output   The output string to check
      * @param inverted Whether the check should be inverted
+     * @param required Whether the check is required to pass for the condition
+     *
+     * @return The new instance of the placeholder checking class
+     */
+    public static PlaceholderCheck create(CheckType type, String input, String output, boolean inverted, boolean required) {
+        return new PlaceholderCheck(type, input, output, inverted, required);
+    }
+
+    /**
+     * Create a new instance of the placeholder checking class, used to check if a placeholder based condition is met or not
+     *
+     * @param input    The input string to check
+     * @param output   The output string to check
+     * @param inverted Whether the check should be inverted
+     * @param required Whether the check is required to pass for the condition
      *
      * @return The new instance of the placeholder checking class
      */
     public static PlaceholderCheck create(String input, String output, boolean inverted, boolean required) {
-        return new PlaceholderCheck(input, output, inverted, required);
+        return create(CheckType.EQUALS, input, output, inverted, required);
     }
 
     /**
@@ -57,7 +73,7 @@ public class PlaceholderCheck implements Configurable {
      * @return The new instance of the placeholder checking class
      */
     public static PlaceholderCheck create(String input, String output) {
-        return new PlaceholderCheck(input, output, false, true);
+        return create(CheckType.EQUALS, input, output, false, true);
     }
 
     /**
@@ -68,63 +84,7 @@ public class PlaceholderCheck implements Configurable {
      * @return The new instance of the placeholder checking class
      */
     public static PlaceholderCheck create(String input) {
-        return new PlaceholderCheck(input, null, false, true);
-    }
-
-    /**
-     * Create a new instance of the placeholder checking class, used to check if a placeholder based condition is met or not
-     *
-     * @param config The {@link CommentedConfigurationSection} to load the settings from
-     *
-     * @return The new instance of the placeholder checking class
-     */
-    public static PlaceholderCheck create(CommentedConfigurationSection config) {
-        PlaceholderCheck check = new PlaceholderCheck(null, null, false, true);
-        check.loadSettings(config);
-        return check;
-    }
-
-    /**
-     * Initialize a {@link CommentedConfigurationSection} from a configuration file to establish the settings
-     * for the configurable class, will be automatically called when the configuration file is loaded using {@link #reload()}
-     * <p>
-     * If your class inherits from another configurable class, make sure to call super.loadSettings(config)
-     * to save the settings from the parent class
-     * <p>
-     * A class must be initialized before settings are loaded, If you wish to have a configurable data class style, its best to create a
-     * static method that will create a new instance and call this method on the new instance
-     * <p>
-     * The {@link CommentedConfigurationSection} should never be null, when creating a new section,
-     * use {@link #pullSection(CommentedConfigurationSection, String)} to establish new section if it doesn't exist
-     *
-     * @param config The {@link CommentedConfigurationSection} to load the settings from, this cannot be null.
-     */
-    @Override
-    public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        this.input = config.getString("input", null);
-        this.output = config.getString("output", null);
-        this.inverted = config.getBoolean("inverted", false);
-        this.required = config.getBoolean("required", true);
-        this.type = FishUtils.getEnum(CheckType.class, config.getString("type"), CheckType.EQUALS);
-    }
-
-    /**
-     * Serialize the settings of the configurable class into a {@link CommentedConfigurationSection} to be saved later
-     * <p>
-     * This functionality will not update the configuration file, it will only save the settings into the section to be saved later.
-     * <p>
-     * The function {@link #reload()} will save the settings on first load, please override this method if you wish to save the settings regularly
-     * New sections should be created using {@link #pullSection(CommentedConfigurationSection, String)}
-     *
-     * @param config The {@link CommentedConfigurationSection} to save the settings to, this cannot be null.
-     */
-    @Override
-    public void saveSettings(@NotNull CommentedConfigurationSection config) {
-        config.set("input", this.input);
-        config.set("output", this.output);
-        config.set("inverted", this.inverted);
-        config.set("required", this.required);
-        config.set("type", this.type.name().toLowerCase());
+        return create(CheckType.EQUALS, input, null, false, true);
     }
 
     /**
@@ -135,7 +95,7 @@ public class PlaceholderCheck implements Configurable {
      *
      * @return Results in true if the condition is met
      */
-    public boolean attempt(Player player, StringPlaceholders placeholders) {
+    public boolean attempt(Player player, Placeholders placeholders) {
         return switch (this.type) {
             case EQUALS -> this.equals(player, placeholders);
             case CONTAINS -> this.contains(player, placeholders);
@@ -153,11 +113,11 @@ public class PlaceholderCheck implements Configurable {
      *
      * @return Results in true if the condition is met
      */
-    public boolean equals(Player player, StringPlaceholders placeholders) {
+    public boolean equals(Player player, Placeholders placeholders) {
         if (input == null || output == null) return false;
 
-        String input = PlaceholderAPIHook.applyPlaceholders(player, placeholders.apply(this.input));
-        String output = PlaceholderAPIHook.applyPlaceholders(player, placeholders.apply(this.output));
+        String input = PAPIProvider.apply(player, placeholders.applyString(this.input));
+        String output = PAPIProvider.apply(player, placeholders.applyString(this.output));
 
         return input.equals(output) != this.inverted;
     }
@@ -170,11 +130,11 @@ public class PlaceholderCheck implements Configurable {
      *
      * @return Results in true if the condition is met
      */
-    public boolean contains(Player player, StringPlaceholders placeholders) {
+    public boolean contains(Player player, Placeholders placeholders) {
         if (input == null || output == null) return false;
 
-        String input = PlaceholderAPIHook.applyPlaceholders(player, placeholders.apply(this.input));
-        String output = PlaceholderAPIHook.applyPlaceholders(player, placeholders.apply(this.output));
+        String input = PAPIProvider.apply(player, placeholders.applyString(this.input));
+        String output = PAPIProvider.apply(player, placeholders.applyString(this.output));
 
         return input.contains(output) != this.inverted;
     }
@@ -187,11 +147,11 @@ public class PlaceholderCheck implements Configurable {
      *
      * @return Results in true if the condition is met
      */
-    public boolean startsWith(Player player, StringPlaceholders placeholders) {
+    public boolean startsWith(Player player, Placeholders placeholders) {
         if (input == null || output == null) return false;
 
-        String input = PlaceholderAPIHook.applyPlaceholders(player, placeholders.apply(this.input));
-        String output = PlaceholderAPIHook.applyPlaceholders(player, placeholders.apply(this.output));
+        String input = PAPIProvider.apply(player, placeholders.applyString(this.input));
+        String output = PAPIProvider.apply(player, placeholders.applyString(this.output));
 
         return input.startsWith(output) != this.inverted;
     }
@@ -204,11 +164,11 @@ public class PlaceholderCheck implements Configurable {
      *
      * @return Results in true if the condition is met
      */
-    public boolean endsWith(Player player, StringPlaceholders placeholders) {
+    public boolean endsWith(Player player, Placeholders placeholders) {
         if (input == null || output == null) return false;
 
-        String input = PlaceholderAPIHook.applyPlaceholders(player, placeholders.apply(this.input));
-        String output = PlaceholderAPIHook.applyPlaceholders(player, placeholders.apply(this.output));
+        String input = PAPIProvider.apply(player, placeholders.applyString(this.input));
+        String output = PAPIProvider.apply(player, placeholders.applyString(this.output));
 
         return input.endsWith(output) != this.inverted;
     }
@@ -221,11 +181,11 @@ public class PlaceholderCheck implements Configurable {
      *
      * @return Results in true if the condition is met
      */
-    public boolean matches(Player player, StringPlaceholders placeholders) {
+    public boolean matches(Player player, Placeholders placeholders) {
         if (input == null || output == null) return false;
 
-        String input = PlaceholderAPIHook.applyPlaceholders(player, placeholders.apply(this.input));
-        String output = PlaceholderAPIHook.applyPlaceholders(player, placeholders.apply(this.output));
+        String input = PAPIProvider.apply(player, placeholders.applyString(this.input));
+        String output = PAPIProvider.apply(player, placeholders.applyString(this.output));
 
         return input.matches(output) != this.inverted;
     }
@@ -256,9 +216,9 @@ public class PlaceholderCheck implements Configurable {
     public boolean inverted() {
         return inverted;
     }
-    
+
     public boolean required() {
         return required;
     }
-    
+
 }

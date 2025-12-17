@@ -38,7 +38,6 @@ public class UpgradeRegistry {
      */
     public static <T extends TotemUpgrade> T register(Supplier<T> supplier) {
         T upgrade = supplier.get();
-        upgrade.reload(); // Load the upgrade
         upgrades.put(upgrade.name(), upgrade);
         return upgrade;
     }
@@ -68,7 +67,7 @@ public class UpgradeRegistry {
      * Reload all the upgrades in the registry
      */
     public static void reload() {
-        upgrades.values().forEach(TotemUpgrade::reload);
+//        upgrades.values().forEach(TotemUpgrade::reload); // todo: reload tier upgrades
     }
 
     /**

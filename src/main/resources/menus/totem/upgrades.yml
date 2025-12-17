@@ -16,7 +16,7 @@ items:
       name: '&f[&#4f73d6&lNext Page&f]'
       lore:
         - ''
-        - '&7Click here to go to the next page'
+        - '<gray>Click here to go to the next page'
       additional-tooltip: false
   back:
     enabled: true
@@ -26,7 +26,7 @@ items:
       name: '&f[&#4f73d6&lPrevious Page&f]'
       lore:
         - ''
-        - '&7Click here to go to the previous page'
+        - '<gray>Click here to go to the previous page'
       additional-tooltip: false
 
 # Decorative items that do nothing
@@ -46,15 +46,15 @@ extra-items:
       type: OAK_HANGING_SIGN
       name: '&f[&#4f73d6&lTotem Details&f]'
       lore:
-        - '&7Here are the current upgrades'
-        - '&7active have for the fishing totem'
+        - '<gray>Here are the current upgrades'
+        - '<gray>active have for the fishing totem'
         - ''
         - '&#4f73d6Statistics:'
-        - ' &#4f73d6- &7Active: &f%active%'
-        - ' &#4f73d6- &7Owner: &f%owner%'
-        - ' &#4f73d6- &7Radius: &f%upgrade_radius_value% blocks'
-        - ' &#4f73d6- &7Duration: &f%upgrade_duration_value%'
-        - ' &#4f73d6- &7Cooldown: &f%upgrade_cooldown_value%'
+        - ' &#4f73d6- <gray>Active: &f%active%'
+        - ' &#4f73d6- <gray>Owner: &f%owner%'
+        - ' &#4f73d6- <gray>Radius: &f%upgrade_radius_value% blocks'
+        - ' &#4f73d6- <gray>Duration: &f%upgrade_duration_value%'
+        - ' &#4f73d6- <gray>Cooldown: &f%upgrade_cooldown_value%'
         - ''
       glowing: true
       additional-tooltip: false

@@ -5,6 +5,7 @@ import org.bukkit.World;
 
 // TODO: Add snowing condition
 public enum Weather {
+    ANY,
     CLEAR,
     RAIN,
     STORM;
@@ -29,7 +30,7 @@ public enum Weather {
      * @return The weather in the location
      */
     public static Weather test(Location location) {
-        if (location == null || location.getWorld() == null) return Weather.CLEAR;
+        if (location == null || location.getWorld() == null) return Weather.ANY;
 
         World world = location.getWorld();
         if (!world.hasStorm()) return Weather.CLEAR;

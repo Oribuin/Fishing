@@ -2,23 +2,25 @@ package dev.oribuin.fishing.model.animation.type;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import dev.oribuin.fishing.api.task.AsyncTicker;
-import dev.oribuin.fishing.config.Configurable;
 import dev.oribuin.fishing.model.animation.Animated;
 import dev.oribuin.fishing.model.animation.Animation;
-import dev.oribuin.fishing.util.PluginTask;
+import dev.oribuin.fishing.scheduler.PluginScheduler;
+import dev.oribuin.fishing.scheduler.task.ScheduledTask;
 import net.kyori.adventure.audience.Audience;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.jetbrains.annotations.Async;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-public abstract class ParticleAnimation extends Animation implements AsyncTicker, Configurable {
+public abstract class ParticleAnimation extends Animation implements AsyncTicker {
 
     protected final Animated animated; // The Animated object to display the particles
     private final Duration maxLength; // The maximum length of the animation
-    protected PluginTask task; // The task that is running the animation
+    protected ScheduledTask task; // The task that is running the animation
 
     /**
      * Create a new Particle Animation object to display particles
@@ -28,7 +30,7 @@ public abstract class ParticleAnimation extends Animation implements AsyncTicker
     public ParticleAnimation(Animated animated) {
         this.animated = animated;
         this.maxLength = Duration.ofMinutes(30);
-        this.task = PluginTask.empty();
+        this.task = null;
     }
 
     /**
@@ -54,7 +56,7 @@ public abstract class ParticleAnimation extends Animation implements AsyncTicker
         this.task = this.schedule();
 
         // Cancel the task after the designated amount of time
-        PluginTask.scheduleDelayed(() -> this.task.cancel(), this.maxLength);
+        PluginScheduler.get().runTaskLater(() -> this.task.cancel(), this.maxLength.toSeconds(), TimeUnit.SECONDS);
     }
 
     /**

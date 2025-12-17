@@ -1,5 +1,6 @@
 package dev.oribuin.fishing.manager;
 
+import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.FishEventHandler;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
@@ -7,9 +8,6 @@ import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.totem.Totem;
-import dev.rosewood.rosegarden.RosePlugin;
-import dev.rosewood.rosegarden.manager.Manager;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerFishEvent;
@@ -19,14 +17,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class FishManager extends Manager {
+public class FishManager implements Manager {
+    
+    private final FishingPlugin plugin;
 
-    public FishManager(RosePlugin rosePlugin) {
-        super(rosePlugin);
+    public FishManager(FishingPlugin plugin) {
+        this.plugin = plugin;
     }
 
+    /**
+     * The task that runs when the plugin is loaded/reloaded
+     *
+     * @param plugin The plugin reloading
+     */
     @Override
-    public void reload() {
+    public void reload(FishingPlugin plugin) {
+
+    }
+
+    /**
+     * The task that runs when the plugin is disabled, usually takes priority over {@link Manager#reload(FishingPlugin)}
+     *
+     * @param plugin The plugin being disabled
+     */
+    @Override
+    public void disable(FishingPlugin plugin) {
+
     }
 
     /**
@@ -42,7 +58,7 @@ public class FishManager extends Manager {
         List<Fish> result = new ArrayList<>();
         ItemStack rod = event.getPlayer().getInventory().getItem(event.getHand());
         Map<Augment, Integer> augments = AugmentRegistry.from(rod);
-        Totem nearest = this.rosePlugin.getManager(TotemManager.class).getClosestActive(event.getHook().getLocation());
+        Totem nearest = this.plugin.getTotemManager().getClosestActive(event.getHook().getLocation());
         if (event.isCancelled()) return result; // Cancel the event if it is cancelled
 
         InitialFishCatchEvent catchEvent = new InitialFishCatchEvent(event.getPlayer(), rod, event.getHook());
@@ -84,10 +100,5 @@ public class FishManager extends Manager {
 
         return event.fish();
     }
-
-    @Override
-    public void disable() {
-
-    }
-
+    
 }

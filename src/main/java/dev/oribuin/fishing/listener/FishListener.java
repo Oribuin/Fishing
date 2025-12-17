@@ -2,12 +2,10 @@ package dev.oribuin.fishing.listener;
 
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.FishEventHandler;
-import dev.oribuin.fishing.api.event.def.FishingEvents;
 import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
 import dev.oribuin.fishing.manager.DataManager;
 import dev.oribuin.fishing.manager.FishManager;
-import dev.oribuin.fishing.manager.LocaleManager;
 import dev.oribuin.fishing.manager.TotemManager;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.augment.AugmentRegistry;
@@ -28,11 +26,9 @@ import java.util.Map;
 public class FishListener implements Listener {
 
     private final FishingPlugin plugin;
-    private final LocaleManager locale;
 
     public FishListener(FishingPlugin plugin) {
         this.plugin = plugin;
-        this.locale = plugin.getManager(LocaleManager.class);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -55,8 +51,8 @@ public class FishListener implements Listener {
      * @param event The catching event
      */
     private void catchNewFish(PlayerFishEvent event, ItemStack rod, Map<Augment, Integer> augments) {
-        FishManager manager = this.plugin.getManager(FishManager.class);
-        TotemManager totemProvider = this.plugin.getManager(TotemManager.class);
+        FishManager manager = this.plugin.getFishManager();
+        TotemManager totemProvider = this.plugin.getTotemManager();
 
         // If caught no fish, do nothing
         List<Fish> caught = new ArrayList<>();
@@ -98,7 +94,7 @@ public class FishListener implements Listener {
             newEntropy += fishCatchEvent.entropy();
 
             // Tell the player they caught a fish
-            //            locale.sendMessage(event.getPlayer(), "fish-caught", StringPlaceholders.of("fish", fish.displayName()));
+            //            locale.sendMessage(event.getPlayer(), "fish-caught", Placeholders.of("fish", fish.displayName()));
 
             ItemStack resultItem = fish.createItemStack();
             Component message = Component.text("You have caught a ").append(resultItem.displayName()); // TODO: Replace with locale message
@@ -114,7 +110,7 @@ public class FishListener implements Listener {
             inv.addItem(resultItem);
         }
 
-        Fisher fisher = this.plugin.getManager(DataManager.class).get(event.getPlayer().getUniqueId());
+        Fisher fisher = this.plugin.getDataManager().get(event.getPlayer().getUniqueId());
         if (fisher == null) return;
 
         // Append the new exp and entropy to the player
@@ -126,7 +122,7 @@ public class FishListener implements Listener {
         if (fisher.canLevelUp()) {
             fisher.levelUp(); // Level up the player
 
-            this.plugin.getManager(DataManager.class).saveUser(fisher); // Save the player data on levelup
+            this.plugin.getDataManager().saveUser(fisher); // Save the player data on levelup
 
             // Tell the player they leveled up
             event.getPlayer().sendMessage("You leveled up! You are now level " + fisher.level() + "!"); // TODO: Replace with locale message

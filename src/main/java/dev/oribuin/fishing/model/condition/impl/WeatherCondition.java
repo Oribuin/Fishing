@@ -4,14 +4,13 @@ import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import dev.oribuin.fishing.model.condition.CatchCondition;
 import dev.oribuin.fishing.model.condition.Weather;
 import dev.oribuin.fishing.model.fish.Fish;
-import dev.oribuin.fishing.util.FishUtils;
-import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import dev.oribuin.fishing.util.Placeholders;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Comment;
 
 /**
  * A condition that is checked when a player is trying to catch a fish
@@ -21,14 +20,11 @@ import org.jetbrains.annotations.NotNull;
  *
  * @see dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
  */
+@ConfigSerializable
 public class WeatherCondition extends CatchCondition {
 
-    private Weather weather = Weather.CLEAR;
-
-    /**
-     * A condition that is checked when a player is fishing in a specific weather
-     */
-    public WeatherCondition() {}
+    @Comment("Required weather condition for the fish to be caught.")
+    private Weather requiredWeather = Weather.CLEAR;
 
     /**
      * Decides whether the condition should be checked in the first place,
@@ -41,7 +37,7 @@ public class WeatherCondition extends CatchCondition {
      */
     @Override
     public boolean shouldRun(Fish fish) {
-        return this.weather != null;
+        return this.enabled && this.requiredWeather != Weather.ANY;
     }
 
     /**
@@ -60,7 +56,7 @@ public class WeatherCondition extends CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        return Weather.test(hook.getLocation()) == this.weather;
+        return Weather.test(hook.getLocation()) == this.requiredWeather;
     }
 
     /**
@@ -69,30 +65,8 @@ public class WeatherCondition extends CatchCondition {
      * @return The placeholders
      */
     @Override
-    public StringPlaceholders placeholders() {
-        return StringPlaceholders.builder()
-                .add("weather", this.weather != null ? StringUtils.capitalize(this.weather.name().toLowerCase()) : "Any")
-                .build();
-    }
-
-    /**
-     * Initialize a {@link CommentedConfigurationSection} from a configuration file to establish the settings
-     * for the configurable class, will be automatically called when the configuration file is loaded using {@link #reload()}
-     * <p>
-     * If your class inherits from another configurable class, make sure to call super.loadSettings(config)
-     * to save the settings from the parent class
-     * <p>
-     * A class must be initialized before settings are loaded, If you wish to have a configurable data class style, its best to create a
-     * static method that will create a new instance and call this method on the new instance
-     * <p>
-     * The {@link CommentedConfigurationSection} should never be null, when creating a new section,
-     * use {@link #pullSection(CommentedConfigurationSection, String)} to establish new section if it doesn't exist
-     *
-     * @param config The {@link CommentedConfigurationSection} to load the settings from, this cannot be null.
-     */
-    @Override
-    public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        this.weather = FishUtils.getEnum(Weather.class, config.getString("weather"));
+    public Placeholders placeholders() {
+        return Placeholders.of("weather", StringUtils.capitalize(this.requiredWeather.name().toLowerCase()));
     }
 
 }

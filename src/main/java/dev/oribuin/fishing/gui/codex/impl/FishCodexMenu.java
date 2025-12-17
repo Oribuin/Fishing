@@ -1,7 +1,6 @@
 package dev.oribuin.fishing.gui.codex.impl;
 
 import dev.oribuin.fishing.gui.codex.BasicCodexMenu;
-import dev.oribuin.fishing.manager.TierManager;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.fish.Tier;
 import dev.triumphteam.gui.guis.GuiItem;
@@ -28,11 +27,11 @@ public class FishCodexMenu extends BasicCodexMenu<Fish> {
      */
     public void open(Player player, Tier tier) {
         PaginatedGui gui = this.createPaginated();
-        this.placeExtras(tier.placeholders());
+        //        this.placeExtras(tier.placeholders()); // todo: tier placeholders
         this.placeItem("forward", x -> gui.next());
         this.placeItem("back", x -> gui.previous());
 
-        List<Fish> content = this.getContent(player, fish -> fish.tierName().equalsIgnoreCase(tier.name()));
+        List<Fish> content = this.getContent(player, fish -> fish.getTier().equalsIgnoreCase(tier.getName()));
 
         // Add all the fish to the GUI
         content.forEach(fish -> gui.addItem(new GuiItem(fish.createItemStack())));
@@ -50,8 +49,7 @@ public class FishCodexMenu extends BasicCodexMenu<Fish> {
      */
     @Override
     public List<Fish> getContent(Player player, Predicate<Fish> condition) {
-        return this.plugin.getManager(TierManager.class)
-                .fish()
+        return this.plugin.getTierManager().getAllFish()
                 .stream()
                 .filter(condition)
                 .toList();

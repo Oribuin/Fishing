@@ -1,16 +1,15 @@
 package dev.oribuin.fishing.model.condition.impl;
 
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
-import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.condition.CatchCondition;
-import dev.oribuin.fishing.util.FishUtils;
-import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import dev.oribuin.fishing.model.fish.Fish;
+import dev.oribuin.fishing.util.Placeholders;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Comment;
 
 /**
  * A condition that is checked when a player is trying to catch a fish
@@ -20,15 +19,12 @@ import org.jetbrains.annotations.NotNull;
  *
  * @see dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
  */
+@ConfigSerializable
 public class HeightCondition extends CatchCondition {
 
-    private Pair<Integer, Integer> height = null;
-
-    /**
-     * A condition that is checked when a player is fishing at a specific height
-     */
-    public HeightCondition() {}
-
+    @Comment("The required world height the fishing bobber has to be in to catch a specified fish")
+    private IntPair height = new IntPair(-128, 320);
+    
     /**
      * Decides whether the condition should be checked in the first place,
      * <p>
@@ -40,7 +36,7 @@ public class HeightCondition extends CatchCondition {
      */
     @Override
     public boolean shouldRun(Fish fish) {
-        return this.height != null;
+        return this.enabled && this.height != null;
     }
 
     /**
@@ -59,8 +55,8 @@ public class HeightCondition extends CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        int minHookHeight = this.height.getLeft();
-        int maxHookHeight = this.height.getRight();
+        int minHookHeight = this.height.min();
+        int maxHookHeight = this.height.max();
         int hookHeight = hook.getLocation().getBlockY();
         return hookHeight >= minHookHeight && hookHeight <= maxHookHeight;
     }
@@ -71,31 +67,19 @@ public class HeightCondition extends CatchCondition {
      * @return The placeholders
      */
     @Override
-    public StringPlaceholders placeholders() {
-        return StringPlaceholders.builder()
-                .add("min_height", this.height != null ? this.height.getLeft() : "N/A")
-                .add("max_height", this.height != null ? this.height.getRight() : "N/A")
-                .build();
+    public Placeholders placeholders() {
+        return Placeholders.of(
+                "min_height", this.height != null ? this.height.min() : "N/A",
+                "max_height", this.height != null ? this.height.max() : "N/A"
+        );
     }
 
-    /**
-     * Initialize a {@link CommentedConfigurationSection} from a configuration file to establish the settings
-     * for the configurable class, will be automatically called when the configuration file is loaded using {@link #reload()}
-     * <p>
-     * If your class inherits from another configurable class, make sure to call super.loadSettings(config)
-     * to save the settings from the parent class
-     * <p>
-     * A class must be initialized before settings are loaded, If you wish to have a configurable data class style, its best to create a
-     * static method that will create a new instance and call this method on the new instance
-     * <p>
-     * The {@link CommentedConfigurationSection} should never be null, when creating a new section,
-     * use {@link #pullSection(CommentedConfigurationSection, String)} to establish new section if it doesn't exist
-     *
-     * @param config The {@link CommentedConfigurationSection} to load the settings from, this cannot be null.
-     */
-    @Override
-    public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        this.height = FishUtils.getHeight(config.getString("height"));
+    @ConfigSerializable
+    private record IntPair(Integer min, Integer max) {
+        public Pair<Integer, Integer> asPair() {
+            return Pair.of(min, max);
+        }
+
     }
 
 }

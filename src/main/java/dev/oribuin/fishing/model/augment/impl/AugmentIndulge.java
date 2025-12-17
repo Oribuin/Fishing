@@ -1,22 +1,29 @@
 package dev.oribuin.fishing.model.augment.impl;
 
-import dev.oribuin.fishing.api.config.Option;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
+import dev.oribuin.fishing.config.TextMessage;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.util.FishUtils;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
-
-import static dev.rosewood.rosegarden.config.SettingSerializers.FLOAT;
-import static dev.rosewood.rosegarden.config.SettingSerializers.STRING;
+import dev.oribuin.fishing.util.Placeholders;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Comment;
 
 /**
  * Increases the player's saturation level when they catch a fish.
  */
+@ConfigSerializable
 public class AugmentIndulge extends Augment {
 
-    private final Option<String> FORMULA = new Option<>(STRING, "%level% * 0.15"); // 15% per level
-    private final Option<Float> SATURATION = new Option<>(FLOAT, 5.0f);
+    @Comment("The required formula for the augment to trigger")
+    private String formula = "%level% * 0.15"; // 15% per level
+
+    @Comment("The amount of saturation that is given per fish caught")
+    private float saturation = 5.0f;
+
+    @Comment("The message sent when a player is fed by indulge")
+    private TextMessage saturated = new TextMessage("<#4f73d6><bold>Fish</bold> <gray>| <white>You have slightly indulged in the fish you caught");
+
 
     /**
      * Create a new type of augment with a name and description.
@@ -24,9 +31,9 @@ public class AugmentIndulge extends Augment {
      * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
      */
     public AugmentIndulge() {
-        super("indulge", "&7Restores a player's saturation", "&7when they catch a fish");
+        super("indulge", "<gray>Restores a player's saturation", "<gray>when they catch a fish");
 
-        this.maxLevel(3);
+        this.setMaxLevel(3);
         this.register(InitialFishCatchEvent.class, this::onInitialCatch);
     }
 
@@ -44,27 +51,12 @@ public class AugmentIndulge extends Augment {
     public void onInitialCatch(InitialFishCatchEvent event, int level) {
         if (event.getPlayer().getFoodLevel() >= 20.0) return;
 
-        StringPlaceholders plc = StringPlaceholders.of("level", level);
-        double chance = FishUtils.evaluate(plc.apply(FORMULA.value()));
+        Placeholders plc = Placeholders.of("level", level);
+        double chance = FishUtils.evaluate(plc.applyString(this.formula));
         if (this.random.nextDouble(100) <= chance) return;
 
-        event.getPlayer().setSaturation(Math.min(20f, event.getPlayer().getSaturation() + SATURATION.value()));
-        event.getPlayer().sendMessage("You have been saturated!"); // todo: use locale
+        event.getPlayer().setSaturation(Math.min(10f, event.getPlayer().getSaturation() + this.saturation));
+        this.saturated.send(event.getPlayer());
     }
-
-    /**
-     * Information about the augment which will be displayed in top of the augment configuration file
-     *
-     * @return The comments for the augment
-     */
-//    @Override
-//    public List<String> comments() {
-//        return List.of(
-//                "Augment [Indulge] - Fully saturates the player when they catch a fish",
-//                "",
-//                "chance-formula: The formula to calculate the chance of the player being fully saturated",
-//                "saturation: The saturation level to set the player to"
-//        );
-//    }
 
 }

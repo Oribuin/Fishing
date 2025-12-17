@@ -1,86 +1,99 @@
 package dev.oribuin.fishing;
 
+import dev.oribuin.fishing.config.ConfigLoader;
+import dev.oribuin.fishing.config.impl.Config;
+import dev.oribuin.fishing.config.impl.MySQLConfig;
+import dev.oribuin.fishing.config.impl.PluginMessages;
 import dev.oribuin.fishing.gui.MenuRegistry;
-import dev.oribuin.fishing.model.augment.AugmentRegistry;
-import dev.oribuin.fishing.config.Setting;
+import dev.oribuin.fishing.hook.plugin.HeadDbProvider;
 import dev.oribuin.fishing.listener.FishListener;
 import dev.oribuin.fishing.listener.PlayerListeners;
 import dev.oribuin.fishing.listener.TotemListeners;
 import dev.oribuin.fishing.manager.CommandManager;
 import dev.oribuin.fishing.manager.DataManager;
 import dev.oribuin.fishing.manager.FishManager;
-import dev.oribuin.fishing.manager.LocaleManager;
 import dev.oribuin.fishing.manager.TierManager;
 import dev.oribuin.fishing.manager.TotemManager;
-import dev.oribuin.fishing.model.item.ItemRegistry;
-import dev.oribuin.fishing.model.skill.SkillRegistry;
-import dev.oribuin.fishing.model.totem.upgrade.UpgradeRegistry;
-import dev.rosewood.rosegarden.RosePlugin;
-import dev.rosewood.rosegarden.config.RoseSetting;
-import dev.rosewood.rosegarden.config.SettingHolder;
-import dev.rosewood.rosegarden.manager.Manager;
+import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import org.bukkit.plugin.PluginManager;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.List;
-
-public class FishingPlugin extends RosePlugin {
+public class FishingPlugin extends JavaPlugin {
 
     private static FishingPlugin instance;
+    private ConfigLoader configLoader;
+    private CommandManager commandManager;
+    private DataManager dataManager;
+    private FishManager fishManager;
+    private TierManager tierManager;
+    private TotemManager totemManager;
+
+
+    @Override
+    public void onEnable() {
+        instance = this;
+
+        // Load this plugin configs
+        this.configLoader = new ConfigLoader();
+        this.configLoader.loadConfig(Config.class, "config");
+        this.configLoader.loadConfig(PluginMessages.class, "messages");
+        this.configLoader.loadConfig(MySQLConfig.class, "mysql-config");
+        
+        // Load the plugin managers
+        this.commandManager = new CommandManager(this);
+        this.dataManager = new DataManager(this);
+        this.tierManager = new TierManager(this);
+        this.fishManager = new FishManager(this);
+        this.totemManager = new TotemManager(this);
+
+        PluginManager manager = this.getServer().getPluginManager();
+        manager.registerEvents(new FishListener(this), this);
+        manager.registerEvents(new PlayerListeners(this), this);
+        manager.registerEvents(new TotemListeners(this), this);
+
+        if (HeadDbProvider.isEnabled()) {
+            manager.registerEvents(new HeadDbProvider(), this);
+        }
+    }
+
+    public void reload() {
+        this.commandManager.reload(this);
+        this.tierManager.reload(this);
+        this.fishManager.reload(this);
+        this.totemManager.reload(this);
+
+        AugmentRegistry.reload();
+        MenuRegistry.reload();
+        
+        this.dataManager.reload(this);
+    }
 
     public static FishingPlugin get() {
         return instance;
     }
 
-    public FishingPlugin() {
-        super(-1, -1,
-                DataManager.class,
-                LocaleManager.class,
-                CommandManager.class
-        );
-
-        instance = this;
+    public TotemManager getTotemManager() {
+        return totemManager;
     }
 
-    @Override
-    public void enable() {
-        PluginManager manager = this.getServer().getPluginManager();
-        manager.registerEvents(new FishListener(this), this);
-        manager.registerEvents(new PlayerListeners(this), this);
-        manager.registerEvents(new TotemListeners(this), this);
+    public TierManager getTierManager() {
+        return tierManager;
     }
 
-    @Override
-    public void reload() {
-        AugmentRegistry.reload();
-        UpgradeRegistry.reload();
-        ItemRegistry.init();
-        SkillRegistry.init();
-        MenuRegistry.reload();
-        
-        super.reload();
+    public FishManager getFishManager() {
+        return fishManager;
     }
 
-    @Override
-    public void disable() {
-
+    public CommandManager getCommandManager() {
+        return commandManager;
     }
 
-    @Override
-    protected @NotNull List<Class<? extends Manager>> getManagerLoadPriority() {
-        return List.of(
-                TierManager.class,
-                FishManager.class,
-                TotemManager.class
-        );
+    public DataManager getDataManager() {
+        return dataManager;
     }
 
-    /**
-     * @return 
-     */
-    @Override
-    protected @Nullable SettingHolder getRoseConfigSettingHolder() {
-        return super.getRoseConfigSettingHolder();
+    public ConfigLoader getConfigLoader() {
+        return configLoader;
     }
+    
 }

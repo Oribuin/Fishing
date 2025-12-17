@@ -16,7 +16,7 @@ items:
       name: '&f[&#4f73d6&lNext Page&f]'
       lore:
         - ''
-        - '&7Click here to go to the next page'
+        - '<gray>Click here to go to the next page'
       additional-tooltip: false
   back:
     enabled: true
@@ -26,7 +26,7 @@ items:
       name: '&f[&#4f73d6&lPrevious Page&f]'
       lore:
         - ''
-        - '&7Click here to go to the previous page'
+        - '<gray>Click here to go to the previous page'
       additional-tooltip: false
 
 # Decorative items that do nothing
@@ -49,6 +49,6 @@ extra-items:
       name: '&f[&#4f73d6&lAugment Codex&f]'
       lore:
         - ''
-        - '&7Here are all the augments you can use'
+        - '<gray>Here are all the augments you can use'
       glowing: true
       additional-tooltip: false

@@ -31,8 +31,8 @@ public class FishGutEvent extends PlayerEvent implements Cancellable {
     public int calculateEntropy() {
         return this.gutted.entrySet()
                 .stream()
-                .mapToInt(e -> e.getKey().tier().entropy() * e.getValue()).
-                sum();
+                .mapToInt(e -> e.getKey().getTierInstance().getGutEntropy() * e.getValue())
+                .sum();
     }
 
     public ItemStack getRod() {

@@ -4,7 +4,7 @@ import dev.oribuin.fishing.api.gui.PluginMenu;
 import dev.oribuin.fishing.gui.MenuRegistry;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.storage.util.KeyRegistry;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.guis.Gui;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -36,9 +36,9 @@ public class TotemMainMenu extends PluginMenu<Gui> {
      * @param player The player to place the items for
      */
     private void placeDynamics(Totem totem, Player player) {
-        StringPlaceholders placeholders = totem.placeholders();
+        Placeholders placeholders = totem.placeholders();
         this.placeItem("totem-stats", placeholders);
-        this.placeItem("totem-upgrade", placeholders, x-> MenuRegistry.get(TotemUpgradeMenu.class).open(totem, player));
+        this.placeItem("totem-upgrade", placeholders, x -> MenuRegistry.get(TotemUpgradeMenu.class).open(totem, player));
 
         // The totem is active, display the active totem item
         boolean active = totem.getProperty(KeyRegistry.TOTEM_ACTIVE, false);

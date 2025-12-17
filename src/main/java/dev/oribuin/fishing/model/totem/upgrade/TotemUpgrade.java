@@ -3,16 +3,15 @@ package dev.oribuin.fishing.model.totem.upgrade;
 import com.jeff_media.morepersistentdatatypes.DataType;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.FishEventHandler;
-import dev.oribuin.fishing.config.Configurable;
-import dev.oribuin.fishing.model.item.ItemConstruct;
+import dev.oribuin.fishing.item.ItemConstruct;
 import dev.oribuin.fishing.model.totem.Totem;
-import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import dev.oribuin.fishing.util.Placeholders;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -22,7 +21,9 @@ import java.util.List;
  * <p>
  * TODO: Allow support for tiered costs for upgrades
  */
-public abstract class TotemUpgrade extends FishEventHandler implements Configurable {
+@ConfigSerializable
+@SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
+public abstract class TotemUpgrade extends FishEventHandler {
 
     private final String name; // The name of the upgrade
     private List<String> description; // The description of the upgrade
@@ -93,18 +94,17 @@ public abstract class TotemUpgrade extends FishEventHandler implements Configura
      * @return The default {@link ItemConstruct} for the upgrade
      */
     public static ItemConstruct defaultItem() {
-        return ItemConstruct.of(Material.HEART_OF_THE_SEA)
-                .name("&f[&#4f73d6&l%name%&f]")
-                .lore(
-                        "&7%description%",
+        return new ItemConstruct(Material.HEART_OF_THE_SEA)
+                .setName("&f[&#4f73d6&l%name%&f]")
+                .setLore(
+                        "<gray>%description%",
                         "",
                         "&#4f73d6Information",
-                        " &#4f73d6- &7Current: &f%level%",
-                        " &#4f73d6- &7Max Level: &f%max_level%",
+                        " &#4f73d6- <gray>Current: &f%level%",
+                        " &#4f73d6- <gray>Max Level: &f%max_level%",
                         ""
                 )
-                .glowing(true)
-                .additionalTooltip(false);
+                .setGlowing(true);
     }
 
     /**
@@ -117,8 +117,8 @@ public abstract class TotemUpgrade extends FishEventHandler implements Configura
      *
      * @return The value of the upgrade
      */
-    public StringPlaceholders placeholders(Totem totem) {
-        StringPlaceholders.Builder base = StringPlaceholders.builder();
+    public Placeholders placeholders(Totem totem) {
+        Placeholders.Builder base = Placeholders.builder();
         base.add("name", StringUtils.capitalize(this.name));
         base.add("max_level", this.maxLevel);
         base.add("description", String.join("\n", this.description));
@@ -140,64 +140,7 @@ public abstract class TotemUpgrade extends FishEventHandler implements Configura
     public NamespacedKey key() {
         return new NamespacedKey(FishingPlugin.get(), "upgrade_" + this.name);
     }
-
-    /**
-     * The path to the configuration file to be loaded. All paths will be relative to the {@link #parentFolder()},
-     * If you wish to overwrite this functionality, override the {@link #parentFolder()} method
-     *
-     * @return The path
-     */
-    @Override
-    public @NotNull Path configPath() {
-        return Path.of("totem", "upgrade", this.name.toLowerCase() + ".yml");
-    }
-
-
-    /**
-     * Serialize the settings of the configurable class into a {@link CommentedConfigurationSection} to be saved later
-     * <p>
-     * This functionality will not update the configuration file, it will only save the settings into the section to be saved later.
-     * <p>
-     * The function {@link #reload()} will save the settings on first load, please override this method if you wish to save the settings regularly
-     * New sections should be created using {@link #pullSection(CommentedConfigurationSection, String)}
-     *
-     * @param config The {@link CommentedConfigurationSection} to save the settings to, this cannot be null.
-     */
-    @Override
-    public void saveSettings(@NotNull CommentedConfigurationSection config) {
-        config.addComments(this.comments().toArray(new String[0]));
-        config.set("enabled", this.enabled);
-        config.set("description", this.description);
-        config.set("max-level", this.maxLevel);
-        config.set("permission", this.permission);
-
-        this.icon.saveSettings(this.pullSection(config, "icon"));
-    }
-
-    /**
-     * Initialize a {@link CommentedConfigurationSection} from a configuration file to establish the settings
-     * for the configurable class, will be automatically called when the configuration file is loaded using {@link #reload()}
-     * <p>
-     * If your class inherits from another configurable class, make sure to call super.loadSettings(config)
-     * to save the settings from the parent class
-     * <p>
-     * A class must be initialized before settings are loaded, If you wish to have a configurable data class style, its best to create a
-     * static method that will create a new instance and call this method on the new instance
-     * <p>
-     * The {@link CommentedConfigurationSection} should never be null, when creating a new section,
-     * use {@link #pullSection(CommentedConfigurationSection, String)} to establish new section if it doesn't exist
-     *
-     * @param config The {@link CommentedConfigurationSection} to load the settings from, this cannot be null.
-     */
-    @Override
-    public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        this.enabled = config.getBoolean("enabled", this.enabled);
-        this.description = config.getStringList("description");
-        this.maxLevel = config.getInt("max-level", this.maxLevel);
-        this.permission = config.getString("permission", this.permission);
-
-        this.icon = ItemConstruct.deserialize(this.pullSection(config, "icon"));
-    }
+    
 
     /**
      * Get the name of the upgrade

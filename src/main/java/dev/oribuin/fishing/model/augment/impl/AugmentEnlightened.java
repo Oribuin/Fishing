@@ -1,29 +1,30 @@
 package dev.oribuin.fishing.model.augment.impl;
 
-import dev.oribuin.fishing.api.config.Option;
 import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.util.FishUtils;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
-
-import static dev.rosewood.rosegarden.config.SettingSerializers.STRING;
+import dev.oribuin.fishing.util.Placeholders;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Comment;
 
 /**
  * Increases the base plugin xp earned from catching fish.
  */
+@ConfigSerializable
 public class AugmentEnlightened extends Augment {
 
-    private final Option<String> FORMULA = new Option<>(STRING, "(%xp% + %level%) * 0.03");
-    
+    @Comment("The required formula for the augment to trigger")
+    private String formula = "(%xp% + %level%) * 0.03";
+
     /**
      * Create a new type of augment with a name and description.
      * <p>
      * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
      */
     public AugmentEnlightened() {
-        super("enlightened", "&7Increases the base plugin xp", "&7earned from catching fish.");
+        super("enlightened", "<gray>Increases the base plugin xp", "<gray>earned from catching fish.");
 
-        this.maxLevel(5);
+        this.setMaxLevel(5);
         this.register(FishCatchEvent.class, this::onFishCatch);
     }
 
@@ -36,8 +37,12 @@ public class AugmentEnlightened extends Augment {
      */
     @Override
     public void onFishCatch(FishCatchEvent event, int level) {
-        StringPlaceholders plc = StringPlaceholders.of("level", level, "xp", event.baseFishExp());
-        double xp = FishUtils.evaluate(plc.apply(FORMULA.value()));
+        Placeholders plc = Placeholders.of(
+                "level", level,
+                "xp", event.baseFishExp()
+        );
+
+        double xp = FishUtils.evaluate(plc.applyString(this.formula));
         event.fishExp((int) xp);
     }
 
@@ -46,13 +51,13 @@ public class AugmentEnlightened extends Augment {
      *
      * @return The comments for the augment
      */
-//    @Override
-//    public List<String> comments() {
-//        return List.of(
-//                "Augment [Enlightened] - Increases the base plugin xp earned from catching fish.",
-//                "",
-//                "formula: The formula to calculate the additional xp earned per level"
-//        );
-//    }
+    //    @Override
+    //    public List<String> comments() {
+    //        return List.of(
+    //                "Augment [Enlightened] - Increases the base plugin xp earned from catching fish.",
+    //                "",
+    //                "formula: The formula to calculate the additional xp earned per level"
+    //        );
+    //    }
 
 }

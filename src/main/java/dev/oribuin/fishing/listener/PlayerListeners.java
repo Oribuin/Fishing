@@ -26,7 +26,7 @@ public class PlayerListeners implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onJoin(PlayerJoinEvent event) {
-        DataManager manager = this.plugin.getManager(DataManager.class);
+        DataManager manager = this.plugin.getDataManager();
 
         CompletableFuture.runAsync(() -> manager.loadUser(event.getPlayer().getUniqueId()))
                 .thenRun(() -> {
@@ -46,7 +46,7 @@ public class PlayerListeners implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST)
     public void onQuit(PlayerQuitEvent event) {
-        DataManager manager = this.plugin.getManager(DataManager.class);
+        DataManager manager = this.plugin.getDataManager();
         Fisher fisher = manager.get(event.getPlayer().getUniqueId());
         if (fisher == null) return;
 

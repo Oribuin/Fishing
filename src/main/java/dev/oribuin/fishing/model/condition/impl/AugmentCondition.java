@@ -3,17 +3,18 @@ package dev.oribuin.fishing.model.condition.impl;
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.augment.AugmentRegistry;
-import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.condition.CatchCondition;
 import dev.oribuin.fishing.model.condition.ConditionRegistry;
-import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import dev.oribuin.fishing.model.fish.Fish;
+import dev.oribuin.fishing.util.Placeholders;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Comment;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,18 +25,16 @@ import java.util.Map;
  *
  * @see dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
  */
+@ConfigSerializable
 public class AugmentCondition extends CatchCondition {
 
-    private final Map<String, Integer> augments = new HashMap<>(); // List of augments to check for
+    @Comment("The required augments to catch a specified fish")
+    private Map<String, Integer> augments = new HashMap<>(Map.of("example", 1));
+    
 
     /**
-     * A condition that checks if the player is has a specific augment
-     */
-    public AugmentCondition() {}
-
-    /**
-     * Decides whether the condition should be checked in the first place,
-     * <p>R
+     * Decides whether the condition should be checked in the first place
+     * <p>
      * This is to prevent unnecessary checks on fish that don't have the condition type.
      *
      * @param fish The fish to check for
@@ -44,7 +43,7 @@ public class AugmentCondition extends CatchCondition {
      */
     @Override
     public boolean shouldRun(Fish fish) {
-        return !this.augments.isEmpty();
+        return this.enabled && !this.augments.isEmpty();
     }
 
     /**
@@ -71,36 +70,18 @@ public class AugmentCondition extends CatchCondition {
     }
 
     /**
-     * Initialize a {@link CommentedConfigurationSection} from a configuration file to establish the settings
-     * for the configurable class, will be automatically called when the configuration file is loaded using {@link #reload()}
-     * <p>
-     * If your class inherits from another configurable class, make sure to call super.loadSettings(config)
-     * to save the settings from the parent class
-     * <p>
-     * A class must be initialized before settings are loaded, If you wish to have a configurable data class style, its best to create a
-     * static method that will create a new instance and call this method on the new instance
-     * <p>
-     * The {@link CommentedConfigurationSection} should never be null, when creating a new section,
-     * use {@link #pullSection(CommentedConfigurationSection, String)} to establish new section if it doesn't exist
-     *
-     * @param config The {@link CommentedConfigurationSection} to load the settings from, this cannot be null.
-     */
-    @Override
-    public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        CommentedConfigurationSection augments = this.pullSection(config, "augments");
-        augments.getKeys(false).forEach(key -> this.augments.put(key, augments.getInt(key)));
-    }
-
-    /**
      * All the placeholders that can be used in the configuration file for this configurable class
      *
      * @return The placeholders
      */
     @Override
-    public StringPlaceholders placeholders() {
-        return StringPlaceholders.builder()
-                .add("augments", this.augments.isEmpty() ? "None" : String.join(", ", this.augments.keySet()))
-                .build();
+    public Placeholders placeholders() {
+        List<String> augments = this.augments.keySet().stream().toList();
+
+        return Placeholders.of("augments", augments.isEmpty()
+                ? "None"
+                : String.join(", ", augments)
+        );
     }
-    
+
 }

@@ -1,19 +1,20 @@
 package dev.oribuin.fishing.model.augment.impl;
 
-import dev.oribuin.fishing.api.config.Option;
 import dev.oribuin.fishing.api.event.impl.FishGutEvent;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.util.FishUtils;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
-
-import static dev.rosewood.rosegarden.config.SettingSerializers.STRING;
+import dev.oribuin.fishing.util.Placeholders;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Comment;
 
 /**
  * Increases the base plugin entropy earned from gutting fish.
  */
+@ConfigSerializable
 public class AugmentFineSlicing extends Augment {
 
-    private final Option<String> FORMULA = new Option<>(STRING, "(%entropy% + %level%) * 0.05");
+    @Comment("The required formula for the augment to trigger")
+    private String formula = "(%entropy% + %level%) * 0.05";
 
     /**
      * Create a new type of augment with a name and description.
@@ -21,9 +22,9 @@ public class AugmentFineSlicing extends Augment {
      * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
      */
     public AugmentFineSlicing() {
-        super("fine_slicing", "&7Increases the entropy ", "&7gained from gutting fish.");
+        super("fine_slicing", "<gray>Increases the entropy ", "<gray>gained from gutting fish.");
 
-        this.maxLevel(12);
+        this.setMaxLevel(12);
         this.register(FishGutEvent.class, this::onFishGut);
     }
 
@@ -35,8 +36,11 @@ public class AugmentFineSlicing extends Augment {
      */
     @Override
     public void onFishGut(FishGutEvent event, int level) {
-        StringPlaceholders plc = StringPlaceholders.of("level", level, "entropy", event.getEntropy());
-        double entropy = FishUtils.evaluate(plc.apply(FORMULA.value()));
+        Placeholders plc = Placeholders.of(
+                "level", level,
+                "entropy", event.getEntropy()
+        );
+        double entropy = FishUtils.evaluate(plc.applyString(this.formula));
         event.setEntropy((int) entropy);
     }
 
@@ -45,13 +49,13 @@ public class AugmentFineSlicing extends Augment {
      *
      * @return The comments for the augment
      */
-//    @Override
-//    public List<String> comments() {
-//        return List.of(
-//                "Augment [Fine Slicing] - Increases the entropy gained from gutting fish.",
-//                "",
-//                "formula: The formula to calculate the additional entropy earned per level"
-//        );
-//    }
+    //    @Override
+    //    public List<String> comments() {
+    //        return List.of(
+    //                "Augment [Fine Slicing] - Increases the entropy gained from gutting fish.",
+    //                "",
+    //                "formula: The formula to calculate the additional entropy earned per level"
+    //        );
+    //    }
 
 }

@@ -1,18 +1,15 @@
 package dev.oribuin.fishing.model.condition.impl;
 
-import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
-import dev.oribuin.fishing.manager.DataManager;
 import dev.oribuin.fishing.model.condition.CatchCondition;
 import dev.oribuin.fishing.model.condition.ConditionRegistry;
 import dev.oribuin.fishing.model.fish.Fish;
-import dev.oribuin.fishing.storage.Fisher;
-import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import dev.oribuin.fishing.util.Placeholders;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Comment;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,14 +22,11 @@ import java.util.Map;
  *
  * @see ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
  */
+@ConfigSerializable
 public class SkillCondition extends CatchCondition {
 
-    private final Map<String, Integer> skills = new HashMap<>(); // List of skills to check for
-
-    /**
-     * A condition that checks if the player is has a specific augment
-     */
-    public SkillCondition() {}
+    @Comment("The list of required skills and the level for this fish to be caught")
+    private Map<String, Integer> requiredSkills = new HashMap<>();
 
     /**
      * Decides whether the condition should be checked in the first place,
@@ -45,7 +39,7 @@ public class SkillCondition extends CatchCondition {
      */
     @Override
     public boolean shouldRun(Fish fish) {
-        return !this.skills.isEmpty();
+        return this.enabled && !this.requiredSkills.isEmpty();
     }
 
     /**
@@ -64,34 +58,15 @@ public class SkillCondition extends CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        Fisher fisher = FishingPlugin.get().getManager(DataManager.class).get(player.getUniqueId());
-        if (fisher == null) return false; //  get fisher from cache
-
-        return fisher.skills().entrySet().stream().allMatch(entry -> {
-            int required = this.skills.getOrDefault(entry.getKey(), 0);
-            return required > 0 && entry.getValue() >= required;
-        });
-    }
-
-    /**
-     * Initialize a {@link CommentedConfigurationSection} from a configuration file to establish the settings
-     * for the configurable class, will be automatically called when the configuration file is loaded using {@link #reload()}
-     * <p>
-     * If your class inherits from another configurable class, make sure to call super.loadSettings(config)
-     * to save the settings from the parent class
-     * <p>
-     * A class must be initialized before settings are loaded, If you wish to have a configurable data class style, its best to create a
-     * static method that will create a new instance and call this method on the new instance
-     * <p>
-     * The {@link CommentedConfigurationSection} should never be null, when creating a new section,
-     * use {@link #pullSection(CommentedConfigurationSection, String)} to establish new section if it doesn't exist
-     *
-     * @param config The {@link CommentedConfigurationSection} to load the settings from, this cannot be null.
-     */
-    @Override
-    public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        CommentedConfigurationSection augments = this.pullSection(config, "skills");
-        augments.getKeys(false).forEach(key -> this.skills.put(key, augments.getInt(key)));
+        // TODO: Add back Data Manager
+        //        Fisher fisher = FishingPlugin.get().getManager(DataManager.class).get(player.getUniqueId());
+        ////        if (fisher == null) return false; //  get fisher from cache
+        //
+        //        return fisher.skills().entrySet().stream().allMatch(entry -> {
+        //            int required = requiredSkills.value().getOrDefault(entry.getKey(), 0);
+        //            return required > 0 && entry.getValue() >= required;
+        //        });
+        return false;
     }
 
     /**
@@ -100,11 +75,11 @@ public class SkillCondition extends CatchCondition {
      * @return The placeholders
      */
     @Override
-    public StringPlaceholders placeholders() {
-        return StringPlaceholders.of("skills", 
-                this.skills.isEmpty() 
-                        ? "None" 
-                        : String.join(", ", this.skills.keySet())
+    public Placeholders placeholders() {
+        return Placeholders.of("skills",
+                this.requiredSkills.isEmpty()
+                        ? "None"
+                        : String.join(", ", this.requiredSkills.keySet())
         );
     }
 

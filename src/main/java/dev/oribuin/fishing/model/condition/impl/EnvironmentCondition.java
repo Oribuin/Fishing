@@ -1,16 +1,15 @@
 package dev.oribuin.fishing.model.condition.impl;
 
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
-import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.condition.CatchCondition;
-import dev.oribuin.fishing.util.FishUtils;
-import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
-import org.bukkit.World;
+import dev.oribuin.fishing.model.fish.Fish;
+import dev.oribuin.fishing.util.Placeholders;
+import org.bukkit.World.Environment;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Comment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,15 +22,12 @@ import java.util.List;
  *
  * @see dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
  */
+@ConfigSerializable
 public class EnvironmentCondition extends CatchCondition {
 
-    private List<World.Environment> environments = new ArrayList<>();
-
-    /**
-     * A condition that is checked when a player is fishing in a specific environment
-     */
-    public EnvironmentCondition() {}
-
+    @Comment("The required environments for a fish to be caught (Normal, Nether, The_End)")
+    private List<Environment> environments = new ArrayList<>();
+    
     /**
      * Decides whether the condition should be checked in the first place,
      * <p>
@@ -43,7 +39,7 @@ public class EnvironmentCondition extends CatchCondition {
      */
     @Override
     public boolean shouldRun(Fish fish) {
-        return !this.environments.isEmpty();
+        return this.enabled && !this.environments.isEmpty();
     }
 
     /**
@@ -71,26 +67,15 @@ public class EnvironmentCondition extends CatchCondition {
      * @return The placeholders
      */
     @Override
-    public StringPlaceholders placeholders() {
+    public Placeholders placeholders() {
         List<String> environments = this.environments.stream()
                 .map(x -> x.name().toLowerCase().replace("_", " "))
                 .toList();
 
-        return StringPlaceholders.builder()
-                .add("environments", this.environments.isEmpty() ? "All" : String.join(", ", environments))
-                .build();
-    }
-
-    /**
-     * Load the settings for the condition from a configuration section
-     *
-     * @param section The configuration section to load the settings from
-     */
-    @Override
-    public void loadSettings(@NotNull CommentedConfigurationSection section) {
-        this.environments = section.getStringList("environments").stream()
-                .map(x -> FishUtils.getEnum(World.Environment.class, x))
-                .toList();
+        return Placeholders.of(
+                "environments",
+                this.environments.isEmpty() ? "All" : String.join(", ", environments)
+        );
     }
 
 }

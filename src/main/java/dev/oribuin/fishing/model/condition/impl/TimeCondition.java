@@ -1,19 +1,14 @@
 package dev.oribuin.fishing.model.condition.impl;
 
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
-import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.condition.CatchCondition;
-import dev.oribuin.fishing.model.condition.Time;
-import dev.oribuin.fishing.util.FishUtils;
-import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
-import org.apache.commons.lang3.StringUtils;
+import dev.oribuin.fishing.model.fish.Fish;
+import dev.oribuin.fishing.util.Placeholders;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Calendar;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Comment;
 
 /**
  * A condition that is checked when a player is trying to catch a fish
@@ -23,15 +18,29 @@ import java.util.Calendar;
  *
  * @see dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
  */
+
+//             "The time range where the fish is available to catch",
+//            "ANY_TIME = Available All Day",
+//            "DAY = 6am -> 6pm",
+//            "NIGHT = 6pm -> 6am",
+//            "SUNSET = 6pm -> 8pm",
+//            "SUNRISE = 6am -> 8am"
+@ConfigSerializable
 public class TimeCondition extends CatchCondition {
 
-    private Time time = Time.ANY_TIME; // The time to check for
-    private boolean systemTime = false; // If the time is based on the system time
+    @Comment("Should the server use system time for the time condition?")
+    private boolean useSystemTime = false;
 
-    /**
-     * A condition that is checked when a player is fishing at a specific time
-     */
-    public TimeCondition() {}
+    //    @Comment("The required time ")
+    //    private final Option<DefinedTime> requiredTime = new Option<>(ofEnum(DefinedTime.class), DefinedTime.ANY_TIME,
+    //            "The time range where the fish is available to catch",
+    //            "ANY_TIME = Available All Day",
+    //            "DAY = 6am -> 6pm",
+    //            "NIGHT = 6pm -> 6am",
+    //            "SUNSET = 6pm -> 8pm",
+    //            "SUNRISE = 6am -> 8am"
+    //    );
+    //
 
     /**
      * Decides whether the condition should be checked in the first place,
@@ -44,7 +53,8 @@ public class TimeCondition extends CatchCondition {
      */
     @Override
     public boolean shouldRun(Fish fish) {
-        return this.time != Time.ANY_TIME;
+        return this.enabled;
+        //        return requiredTime.value() != DefinedTime.ANY_TIME;
     }
 
     /**
@@ -63,12 +73,14 @@ public class TimeCondition extends CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        if (!this.systemTime) {
-            return this.time.matches(player.getWorld());
-        }
-
-        // please actually use the system time
-        return this.time.matches(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
+        // TODO: Add time system
+        //        if (!useSystemTime.value()) {
+        //            return requiredTime.value().matches(player.getWorld());
+        //        }
+        //
+        //        // please actually use the system time
+        //        return requiredTime.value().matches(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
+        return true;
     }
 
     /**
@@ -77,32 +89,12 @@ public class TimeCondition extends CatchCondition {
      * @return The placeholders
      */
     @Override
-    public StringPlaceholders placeholders() {
-        return StringPlaceholders.builder()
-                .add("time", StringUtils.capitalize(this.time.name().toLowerCase().replace("_", " ")))
-                .add("use_system_time", this.systemTime)
-                .build();
-    }
-
-    /**
-     * Initialize a {@link CommentedConfigurationSection} from a configuration file to establish the settings
-     * for the configurable class, will be automatically called when the configuration file is loaded using {@link #reload()}
-     * <p>
-     * If your class inherits from another configurable class, make sure to call super.loadSettings(config)
-     * to save the settings from the parent class
-     * <p>
-     * A class must be initialized before settings are loaded, If you wish to have a configurable data class style, its best to create a
-     * static method that will create a new instance and call this method on the new instance
-     * <p>
-     * The {@link CommentedConfigurationSection} should never be null, when creating a new section,
-     * use {@link #pullSection(CommentedConfigurationSection, String)} to establish new section if it doesn't exist
-     *
-     * @param config The {@link CommentedConfigurationSection} to load the settings from, this cannot be null.
-     */
-    @Override
-    public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        this.time = FishUtils.getEnum(Time.class, config.getString("time"), Time.ANY_TIME);
-        this.systemTime = config.getBoolean("use-system-time", false);
+    public Placeholders placeholders() {
+        return Placeholders.empty();
+        //        return Placeholders.builder()
+        //                .add("time", StringUtils.capitalize(this..value().name().toLowerCase().replace("_", " ")))
+        //                .add("use_system_time", useSystemTime.value())
+        //                .build();
     }
 
 }

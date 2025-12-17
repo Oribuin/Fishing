@@ -1,18 +1,22 @@
 package dev.oribuin.fishing.model.condition.impl;
 
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
-import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.condition.CatchCondition;
-import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
-import dev.rosewood.rosegarden.utils.NMSUtil;
-import dev.rosewood.rosegarden.utils.StringPlaceholders;
-import org.bukkit.Bukkit;
+import dev.oribuin.fishing.model.fish.Fish;
+import dev.oribuin.fishing.util.Placeholders;
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
+import org.bukkit.block.Biome;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Comment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,14 +30,11 @@ import java.util.List;
  * @see dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, Player, ItemStack, FishHook)  to see how this is used
  */
 @SuppressWarnings({ "deprecation", "removal" })
+@ConfigSerializable
 public class BiomeCondition extends CatchCondition {
 
-    private List<String> biomes = new ArrayList<>(); // List of biomes to check for
-
-    /**
-     * A condition that checks if the player is fishing in a specific biome
-     */
-    public BiomeCondition() {}
+    @Comment("The required list of biomes to catch a specified fish. Add '!' in front of a biome to invert the check")
+    private List<String> biomes = new ArrayList<>();
 
     /**
      * Decides whether the condition should be checked in the first place,
@@ -46,7 +47,7 @@ public class BiomeCondition extends CatchCondition {
      */
     @Override
     public boolean shouldRun(Fish fish) {
-        return !this.biomes.isEmpty();
+        return this.enabled && !this.biomes.isEmpty();
     }
 
     /**
@@ -65,20 +66,12 @@ public class BiomeCondition extends CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        Location loc = hook.getLocation();
-
-        // 1.21.3+ Biome Check
-        String biomeKey;
-        if (NMSUtil.getVersionNumber() > 21 && NMSUtil.getMinorVersionNumber() >= 3) {
-            biomeKey = this.keyValue(loc.getBlock().getBiome().getKey());
-        } else {
-            biomeKey = this.keyValue(Bukkit.getUnsafe().getBiomeKey(loc.getWorld(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
-        }
-
-        String finalBiomeKey = biomeKey;
+        Biome current = hook.getLocation().getBlock().getBiome();
         return this.biomes.stream().anyMatch(x -> {
-            if (x.startsWith("!")) return !x.substring(1).equalsIgnoreCase(finalBiomeKey);
-            else return x.equalsIgnoreCase(finalBiomeKey);
+            Key biomeKey = this.from(x.startsWith("!") ? x.substring(1) : x);
+            
+            if (x.startsWith("!")) return !current.key().equals(biomeKey);
+            else return current.key().equals(biomeKey);
         });
     }
 
@@ -88,41 +81,21 @@ public class BiomeCondition extends CatchCondition {
      * @return The placeholders
      */
     @Override
-    public StringPlaceholders placeholders() {
-        return StringPlaceholders.of("biomes", this.biomes.isEmpty() ? "Any" : String.join(", ", this.biomes));
+    public Placeholders placeholders() {
+        return Placeholders.of("biomes",
+                this.biomes.isEmpty() ? "Any" : String.join(", ", this.biomes)
+        );
     }
 
-    /**
-     * Initialize a {@link CommentedConfigurationSection} from a configuration file to establish the settings
-     * for the configurable class, will be automatically called when the configuration file is loaded using {@link #reload()}
-     * <p>
-     * If your class inherits from another configurable class, make sure to call super.loadSettings(config)
-     * to save the settings from the parent class
-     * <p>
-     * A class must be initialized before settings are loaded, If you wish to have a configurable data class style, its best to create a
-     * static method that will create a new instance and call this method on the new instance
-     * <p>
-     * The {@link CommentedConfigurationSection} should never be null, when creating a new section,
-     * use {@link #pullSection(CommentedConfigurationSection, String)} to establish new section if it doesn't exist
-     *
-     * @param config The {@link CommentedConfigurationSection} to load the settings from, this cannot be null.
-     */
-    @Override
-    public void loadSettings(@NotNull CommentedConfigurationSection config) {
-        this.biomes = config.getStringList("biomes");
-    }
-
-    /**
-     * Get the key value of the biome
-     *
-     * @param key The key to get the value of
-     *
-     * @return The value of the key
-     */
-    private String keyValue(NamespacedKey key) {
-        if (key == null) return null;
-
-        return key.value();
+    private Key from(String name) {
+        @Subst("minecraft:plains") 
+        String[] split = name.toLowerCase().split(":");
+        if (split.length >= 2) {
+            return Key.key(split[0], split[1]);
+        }
+        
+        // Assume minecraft namespace key if none specified
+        return Key.key(Key.MINECRAFT_NAMESPACE, split[0]); 
     }
 
 }

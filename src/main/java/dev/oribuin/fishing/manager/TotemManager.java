@@ -1,53 +1,77 @@
 package dev.oribuin.fishing.manager;
 
+import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.model.totem.Totem;
+import dev.oribuin.fishing.scheduler.PluginScheduler;
+import dev.oribuin.fishing.scheduler.task.ScheduledTask;
 import dev.oribuin.fishing.storage.util.FinePosition;
 import dev.oribuin.fishing.storage.util.KeyRegistry;
-import dev.oribuin.fishing.util.PluginTask;
-import dev.rosewood.rosegarden.RosePlugin;
-import dev.rosewood.rosegarden.manager.Manager;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-public class TotemManager extends Manager {
+public class TotemManager implements Manager {
 
-    private final Map<FinePosition, Totem> totems = new HashMap<>();
-    private PluginTask asyncTicker = PluginTask.empty();
-    private long lastTick = System.currentTimeMillis();
+    private final FishingPlugin plugin;
+    private final Map<FinePosition, Totem> totems;
+    private ScheduledTask asyncTicker;
+    private long lastTick;
 
-    public TotemManager(RosePlugin rosePlugin) {
-        super(rosePlugin);
+    public TotemManager(FishingPlugin plugin) {
+        this.plugin = plugin;
+        this.totems = new ConcurrentHashMap<>();
+        this.asyncTicker = null;
+        this.lastTick = System.currentTimeMillis();
+        this.reload(this.plugin);
     }
 
+    /**
+     * The task that runs when the plugin is loaded/reloaded
+     *
+     * @param plugin The plugin reloading
+     */
     @Override
-    public void reload() {
+    public void reload(FishingPlugin plugin) {
+        this.disable(plugin);
+        
         // Define all ticking under one task to prevent 10000000 tasks running at once.
-        this.asyncTicker.cancel(); 
-        this.asyncTicker = PluginTask.scheduleRepeating(() -> this.tick(totem -> {
+        if (this.asyncTicker != null) {
+            this.asyncTicker.cancel();
+        }
+
+        this.asyncTicker = PluginScheduler.get().runTaskTimerAsync(() -> this.tick(totem -> {
             if (totem.delay() != Duration.ZERO && System.currentTimeMillis() - this.lastTick < totem.delay().toMillis()) return;
 
             this.lastTick = System.currentTimeMillis();
             totem.tickAsync();
-        }), Duration.ofSeconds(1));
+        }), 1, 1, TimeUnit.SECONDS);
     }
 
+    /**
+     * The task that runs when the plugin is disabled, usually takes priority over {@link Manager#reload(FishingPlugin)}
+     *
+     * @param plugin The plugin being disabled
+     */
     @Override
-    public void disable() {
-        this.asyncTicker.cancel();
+    public void disable(FishingPlugin plugin) {
+        if (this.asyncTicker != null) {
+            this.asyncTicker.cancel();
+            this.asyncTicker = null;
+        }
     }
-
+    
     /**
      * Tick all the totems in the totem manager.
      */
     public void tick(Consumer<Totem> action) {
+        if (this.totems.isEmpty()) return; // don't bother attempting anything if no totems loaded
+        
         new HashMap<>(this.totems).forEach((finePosition, totem) -> {
             if (!totem.center().isChunkLoaded()) return;
 
@@ -107,7 +131,7 @@ public class TotemManager extends Manager {
      */
     public Totem getClosestActive(Location location) {
         if (this.totems.isEmpty()) return null;
-        
+
         return this.totems.values().stream().filter(x -> x.getProperty(KeyRegistry.TOTEM_ACTIVE)).min((t1, t2) -> {
             double distance1 = t1.center().distance(location);
             double distance2 = t2.center().distance(location);
@@ -148,9 +172,19 @@ public class TotemManager extends Manager {
         return this.getTotem(stand.getLocation());
     }
 
-    public Map<FinePosition, Totem> totems() {
+    public Map<FinePosition, Totem> getTotems() {
         return this.totems;
     }
 
+    public FishingPlugin getPlugin() {
+        return plugin;
+    }
 
+    public ScheduledTask getAsyncTicker() {
+        return asyncTicker;
+    }
+
+    public long getLastTick() {
+        return lastTick;
+    }
 }
