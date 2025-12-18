@@ -2,7 +2,6 @@ package dev.oribuin.fishing.api.event.impl;
 
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.model.augment.Augment;
-import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.fish.Tier;
 import org.bukkit.Bukkit;
@@ -70,8 +69,8 @@ public class FishCatchEvent extends PlayerEvent implements Cancellable {
      *
      * @return The list of augments and the level of the augment
      */
-    public Map<Augment, Integer> augments() {
-        return AugmentRegistry.from(this.rod);
+    public Map<Augment, Integer> getAugments() {
+        return FishingPlugin.get().getAugmentManager().from(this.rod);
     }
 
     /**

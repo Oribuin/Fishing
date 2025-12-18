@@ -1,8 +1,8 @@
-package dev.oribuin.fishing.gui.codex.impl;
+package dev.oribuin.fishing.gui.impl.codex.impl;
 
-import dev.oribuin.fishing.gui.codex.BasicCodexMenu;
+import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.gui.impl.codex.BasicCodexMenu;
 import dev.oribuin.fishing.model.augment.Augment;
-import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import dev.oribuin.fishing.item.ItemConstruct;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
@@ -56,7 +56,7 @@ public class AugmentCodexMenu extends BasicCodexMenu<Augment> {
      */
     @Override
     public List<Augment> getContent(Player player, Predicate<Augment> condition) {
-        return AugmentRegistry.all().values().stream().toList();
+        return FishingPlugin.get().getAugmentManager().getAugments().values().stream().toList();
     }
 
 }

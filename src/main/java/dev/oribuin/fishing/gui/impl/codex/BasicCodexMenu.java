@@ -1,6 +1,6 @@
-package dev.oribuin.fishing.gui.codex;
+package dev.oribuin.fishing.gui.impl.codex;
 
-import dev.oribuin.fishing.api.gui.PluginMenu;
+import dev.oribuin.fishing.gui.PluginMenu;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import org.bukkit.entity.Player;
 

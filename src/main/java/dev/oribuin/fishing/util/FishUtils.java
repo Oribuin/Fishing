@@ -6,6 +6,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -23,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
@@ -33,6 +35,7 @@ public final class FishUtils {
     public static ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
     public static RegistryAccess REGISTRY = RegistryAccess.registryAccess();
     public static LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacyAmpersand();
+    public static PlainTextComponentSerializer PLAIN = PlainTextComponentSerializer.plainText();
     public static MiniMessage MINIMESSAGE = MiniMessage.miniMessage();
 
     public FishUtils() {
@@ -345,11 +348,16 @@ public final class FishUtils {
      *
      * @return The parsed list
      */
+    public static List<Integer> parseList(String... list) {
+        return parseList(Arrays.asList(list));
+    }
+
     public static List<Integer> parseList(List<String> list) {
         List<Integer> newList = new ArrayList<>();
         for (String s : list) {
             String[] split = s.split("-");
-            if (split.length != 2) {
+            if (split.length == 1) {
+                newList.add(Integer.parseInt(s));
                 continue;
             }
 

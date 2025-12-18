@@ -18,6 +18,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @ConfigSerializable
 @SuppressWarnings({ "UnstableApiUsage", "FieldMayBeFinal" })
@@ -38,7 +39,7 @@ public class TooltipConstructType implements ConstructComponent<TooltipDisplay> 
         Set<DataComponentType> types = new HashSet<>();
         if (this.hiddenComponents != null && !this.hiddenComponents.isEmpty()) {
             this.hiddenComponents.forEach(s -> {
-                DataComponentType type = this.from(s);
+                DataComponentType type = this.from(s.toLowerCase());
                 if (type != null) types.add(type);
                 else FishingPlugin.get().getLogger().warning("Failed to match data component type [" + s + "]");
             });
@@ -60,6 +61,7 @@ public class TooltipConstructType implements ConstructComponent<TooltipDisplay> 
         TooltipDisplay display = this.establish();
         if (display == null) return;
         
+        System.out.println("Applying: " + display);
         stack.setData(DataComponentTypes.TOOLTIP_DISPLAY, display);
     }
 
@@ -85,4 +87,21 @@ public class TooltipConstructType implements ConstructComponent<TooltipDisplay> 
         return TYPE_REGISTRY.get(Key.key(type));
     }
 
+    public Boolean getVisible() {
+        return visible;
+    }
+
+    public TooltipConstructType setVisible(Boolean visible) {
+        this.visible = visible;
+        return this;
+    }
+
+    public List<String> getHiddenComponents() {
+        return hiddenComponents;
+    }
+
+    public TooltipConstructType setHiddenComponents(List<String> hiddenComponents) {
+        this.hiddenComponents = hiddenComponents;
+        return this;
+    }
 }

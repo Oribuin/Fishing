@@ -14,17 +14,17 @@ items:
     slot: 4
     display-item:
       type: OAK_HANGING_SIGN
-      name: '<white>[&#4f73d6<bold>Totem Details<white>]'
+      name: '<white>[&#94bc80<bold>Totem Details<white>]'
       lore:
         - '<gray>Here are the current upgrades'
         - '<gray>active have for the fishing totem'
         - ''
-        - '&#4f73d6Statistics:'
-        - ' &#4f73d6- <gray>Active: <white>%active%'
-        - ' &#4f73d6- <gray>Owner: <white>%owner%'
-        - ' &#4f73d6- <gray>Radius: <white>%upgrade_radius_value% blocks'
-        - ' &#4f73d6- <gray>Duration: <white>%upgrade_duration_value%'
-        - ' &#4f73d6- <gray>Cooldown: <white>%upgrade_cooldown_value%'
+        - '&#94bc80Statistics:'
+        - ' &#94bc80- <gray>Active: <white>%active%'
+        - ' &#94bc80- <gray>Owner: <white>%owner%'
+        - ' &#94bc80- <gray>Radius: <white>%upgrade_radius_value% blocks'
+        - ' &#94bc80- <gray>Duration: <white>%upgrade_duration_value%'
+        - ' &#94bc80- <gray>Cooldown: <white>%upgrade_cooldown_value%'
         - ''
       glowing: true
       additional-tooltip: false
@@ -33,15 +33,15 @@ items:
     slot: 0
     display-item:
       type: NETHERITE_UPGRADE_SMITHING_TEMPLATE
-      name: '<white>[&#4f73d6<bold>Totem Upgrade<white>]'
+      name: '<white>[&#94bc80<bold>Totem Upgrade<white>]'
       lore:
         - '<gray>Click here to view and level'
         - '<gray>up your totem upgrades'
         - ''
-        - '&#4f73d6Levels:'
-        - ' &#4f73d6- <gray>Radius: <white>%upgrade_radius_level%'
-        - ' &#4f73d6- <gray>Duration: <white>%upgrade_duration_level%'
-        - ' &#4f73d6- <gray>Cooldown: <white>%upgrade_cooldown_level%'
+        - '&#94bc80Levels:'
+        - ' &#94bc80- <gray>Radius: <white>%upgrade_radius_level%'
+        - ' &#94bc80- <gray>Duration: <white>%upgrade_duration_level%'
+        - ' &#94bc80- <gray>Cooldown: <white>%upgrade_cooldown_level%'
         - ''
       glowing: true
       additional-tooltip: false

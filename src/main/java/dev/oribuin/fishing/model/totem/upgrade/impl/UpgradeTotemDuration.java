@@ -16,7 +16,7 @@ import static com.jeff_media.morepersistentdatatypes.DataType.INTEGER;
 @ConfigSerializable
 
 public class UpgradeTotemDuration extends TotemUpgrade {
-    private String durationFormula = "60 + (%level% * 30)"; // The formula to calculate the duration of the totem (60 seconds + 30 seconds per level)
+    private String durationFormula = "60 + (<level> * 30)"; // The formula to calculate the duration of the totem (60 seconds + 30 seconds per level)
 
     /**
      * Create a new totem upgrade with the name "radius"

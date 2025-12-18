@@ -95,13 +95,13 @@ public abstract class TotemUpgrade extends FishEventHandler {
      */
     public static ItemConstruct defaultItem() {
         return new ItemConstruct(Material.HEART_OF_THE_SEA)
-                .setName("<white>[&#4f73d6<bold>%name%<white>]")
+                .setName("<white>[&#94bc80<bold>%name%<white>]")
                 .setLore(
                         "<gray><description>",
                         "",
-                        "&#4f73d6Information",
-                        " &#4f73d6- <gray>Current: <white>%level%",
-                        " &#4f73d6- <gray>Max Level: <white>%max_level%",
+                        "&#94bc80Information",
+                        " &#94bc80- <gray>Current: <white><level>",
+                        " &#94bc80- <gray>Max Level: <white>%max_level%",
                         ""
                 )
                 .setGlowing(true);

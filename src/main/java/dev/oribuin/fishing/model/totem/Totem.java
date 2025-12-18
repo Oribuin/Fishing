@@ -264,11 +264,11 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
             builder.add("upgrade_" + upgrade.name(), level);
 
             // Add all the placeholders for the upgrade
-//            upgrade.placeholders(this) ?? TODO: Add totem placeholders
-//                    .getPlaceholders()
-//                    .forEach((key, value) ->
-//                            builder.add(String.format("upgrade_%s_%s", upgrade.name(), key), value)
-//                    );
+            upgrade.placeholders(this)
+                    .getPlaceholders()
+                    .forEach((key, value) ->
+                            builder.add(String.format("upgrade_%s_%s", upgrade.name(), key), value)
+                    );
         });
 
         return builder.build();
@@ -380,16 +380,16 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
 
     public static ItemConstruct defaultItem() {
         return new ItemConstruct(Material.PLAYER_HEAD)
-                .setName("<white>[&#4f73d6<bold>Fishing Totem<white>]")
+                .setName("<white>[&#94bc80<bold>Fishing Totem<white>]")
                 .setLore(
                         "<gray>Place in the world to create local",
                         "<gray>booster for players within it's radius.",
                         "",
-                        "&#4f73d6Information",
-                        " &#4f73d6- <gray>Owner: <white>%owner%",
-                        " &#4f73d6- <gray>Radius: <white>%upgrade_radius_value% blocks",
-                        " &#4f73d6- <gray>Duration: <white>%upgrade_duration_value%",
-                        " &#4f73d6- <gray>Cooldown: <white>%upgrade_cooldown_value%",
+                        "&#94bc80Information",
+                        " &#94bc80- <gray>Owner: <white>%owner%",
+                        " &#94bc80- <gray>Radius: <white>%upgrade_radius_value% blocks",
+                        " &#94bc80- <gray>Duration: <white>%upgrade_duration_value%",
+                        " &#94bc80- <gray>Cooldown: <white>%upgrade_cooldown_value%",
                         ""
                 )
                 .setGlowing(true);

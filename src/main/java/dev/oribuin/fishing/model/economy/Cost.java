@@ -11,7 +11,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 public class Cost {
 
     private String currencyName;
-    private Number price;
+    private double price;
     private final transient Currency<?> currency;
 
     /**
@@ -31,7 +31,7 @@ public class Cost {
      */
     public Cost(@NotNull Currency<?> currency, @NotNull Number price) {
         this.currency = currency;
-        this.price = price;
+        this.price = price.doubleValue();
     }
 
     /**
@@ -71,7 +71,7 @@ public class Cost {
      * @param price The price to add
      */
     public void price(Number price) {
-        this.price = price;
+        this.price = price.doubleValue();
     }
 
 }

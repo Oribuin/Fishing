@@ -1,13 +1,15 @@
-package dev.oribuin.fishing.api.gui;
+package dev.oribuin.fishing.gui;
 
 import dev.oribuin.fishing.item.ItemConstruct;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.BaseGui;
+import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
+import java.util.Arrays;
 import java.util.List;
 
 @ConfigSerializable
@@ -16,9 +18,27 @@ import java.util.List;
 public class GuiItem {
 
     private boolean enabled;
-    private List<Integer> slots = List.of(0);
+    private List<Integer> slots;
     private ItemConstruct item;
 
+    public GuiItem() {
+        this.enabled = true;
+        this.slots = List.of(0);
+        this.item = new ItemConstruct(Material.STONE);
+    }
+    
+    public GuiItem(ItemConstruct construct, Integer... slots) {
+        this.enabled = true;
+        this.slots = Arrays.asList(slots);
+        this.item = construct;
+    }
+    
+    public GuiItem(ItemConstruct construct, List<Integer> slots) {
+        this.enabled = true;
+        this.slots = slots;
+        this.item = construct;
+    }
+    
     /**
      * Place the item in the specified slot in the GUI
      *

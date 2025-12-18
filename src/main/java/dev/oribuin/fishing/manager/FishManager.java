@@ -5,7 +5,6 @@ import dev.oribuin.fishing.api.event.FishEventHandler;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
 import dev.oribuin.fishing.model.augment.Augment;
-import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.totem.Totem;
 import org.bukkit.entity.FishHook;
@@ -57,7 +56,7 @@ public class FishManager implements Manager {
 
         List<Fish> result = new ArrayList<>();
         ItemStack rod = event.getPlayer().getInventory().getItem(event.getHand());
-        Map<Augment, Integer> augments = AugmentRegistry.from(rod);
+        Map<Augment, Integer> augments = this.plugin.getAugmentManager().from(rod);
         Totem nearest = this.plugin.getTotemManager().getClosestActive(event.getHook().getLocation());
         if (event.isCancelled()) return result; // Cancel the event if it is cancelled
 

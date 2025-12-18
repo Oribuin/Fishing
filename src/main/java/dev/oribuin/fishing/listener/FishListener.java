@@ -7,7 +7,6 @@ import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
 import dev.oribuin.fishing.manager.FishManager;
 import dev.oribuin.fishing.manager.TotemManager;
 import dev.oribuin.fishing.model.augment.Augment;
-import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.storage.Fisher;
@@ -35,7 +34,7 @@ public class FishListener implements Listener {
         if (event.getHand() == null) return;
 
         ItemStack hand = event.getPlayer().getInventory().getItem(event.getHand()).clone();
-        Map<Augment, Integer> augments = AugmentRegistry.from(hand);
+        Map<Augment, Integer> augments = this.plugin.getAugmentManager().from(hand);
 
         switch (event.getState()) {
             case CAUGHT_FISH -> this.catchNewFish(event, hand, augments);

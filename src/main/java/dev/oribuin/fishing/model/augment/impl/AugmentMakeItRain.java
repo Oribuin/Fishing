@@ -8,7 +8,7 @@ public class AugmentMakeItRain {
     //        extends Augment {
     //
     //    @Comment("The required formula for the augment to trigger")
-    //    private String formula = "%level% * 0.5";
+    //    private String formula = "<level> * 0.5";
     //    private final Option<Integer> MIN_ATTEMPTS = new Option<>(INTEGER, 2, "Minimum fish to be spawned");
     //    private final Option<Integer> MAX_ATTEMPTS = new Option<>(INTEGER, 5, "Maximum fish to be spawned");
     //

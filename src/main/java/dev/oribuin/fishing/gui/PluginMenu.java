@@ -1,7 +1,10 @@
-package dev.oribuin.fishing.api.gui;
+package dev.oribuin.fishing.gui;
 
 import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.config.ConfigHandler;
 import dev.oribuin.fishing.item.ItemConstruct;
+import dev.oribuin.fishing.manager.MenuManager;
+import dev.oribuin.fishing.model.fish.Tier;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.BaseGui;
@@ -24,9 +27,10 @@ public abstract class PluginMenu<T extends BaseGui> {
 
     public static final ItemConstruct BORDER = new ItemConstruct(Material.BLACK_STAINED_GLASS_PANE);
 
-    protected final FishingPlugin plugin;
-    protected final GuiAction<InventoryClickEvent> EMPTY = event -> {};
-    protected final String name;
+    protected final transient FishingPlugin plugin;
+    protected final transient GuiAction<InventoryClickEvent> EMPTY = event -> {};
+    protected final transient String name;
+    protected transient ConfigHandler<PluginMenu<?>> configHandler;
     protected String title;
     protected int rows;
     protected Map<String, GuiItem> items;
@@ -34,7 +38,7 @@ public abstract class PluginMenu<T extends BaseGui> {
     protected int pageSize;
     protected int updateFrequency;
 
-    protected T gui;
+    protected transient T gui;
 
     /**
      * Creates a new plugin menu instance, with the specified name
@@ -51,7 +55,10 @@ public abstract class PluginMenu<T extends BaseGui> {
         this.pageSize = 0;
         this.updateFrequency = 60; // 3s
         this.gui = null;
+    }
 
+    public PluginMenu() {
+        this("unknown-menu");
     }
 
     /**
@@ -162,31 +169,7 @@ public abstract class PluginMenu<T extends BaseGui> {
             runnable.run();
         }, 0L, this.updateFrequency);
     }
-
-    /**
-     *
-     */
-    public void reload() {
-        FishingPlugin plugin = FishingPlugin.get();
-        Path path = this.configPath();
-        File targetFile = plugin.getDataPath().resolve(this.configPath()).toFile();
-
-        try {
-            // Create the file if it doesn't exist, set the defaults
-            if (!targetFile.exists()) {
-                plugin.saveResource(path.toString(), false);
-                plugin.getLogger().info("Created a new file at path " + this.configPath()); // TODO: Remove... perhaps
-            }
-
-            // TODO: Load config file
-            //            // Load the configuration file
-            //            CommentedFileConfiguration config = CommentedFileConfiguration.loadConfiguration(targetFile);
-            //            this.loadSettings(config);
-        } catch (Exception ex) {
-            plugin.getLogger().warning("Configurable: There was an error loading the config file at path " + this.configPath() + ": " + ex.getMessage());
-        }
-    }
-
+    
     /**
      * @return The path to the configuration file
      */
@@ -203,4 +186,24 @@ public abstract class PluginMenu<T extends BaseGui> {
         return this.name;
     }
 
+    @Override
+    public String toString() {
+        return "PluginMenu{" +
+               "updateFrequency=" + updateFrequency +
+               ", pageSize=" + pageSize +
+               ", extraItems=" + extraItems +
+               ", items=" + items +
+               ", rows=" + rows +
+               ", title='" + title + '\'' +
+               ", name='" + name + '\'' +
+               '}';
+    }
+
+    public ConfigHandler<PluginMenu<?>> getConfigHandler() {
+        return configHandler;
+    }
+
+    public void setConfigHandler(ConfigHandler<PluginMenu<?>> configHandler) {
+        this.configHandler = configHandler;
+    }
 }

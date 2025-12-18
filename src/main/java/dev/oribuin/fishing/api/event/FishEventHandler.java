@@ -15,7 +15,7 @@ import java.util.function.BiConsumer;
  */
 public abstract class FishEventHandler implements FishingEvents, TotemEvents {
 
-    private final Map<Class<? extends Event>, EventWrapper<?>> events = new HashMap<>();
+    private transient final Map<Class<? extends Event>, EventWrapper<?>> events = new HashMap<>();
 
     /**
      * Call an event from the handler's registered events, This will take priority into account.

@@ -14,7 +14,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment;
 public class AugmentFineSlicing extends Augment {
 
     @Comment("The required formula for the augment to trigger")
-    private String formula = "(%entropy% + %level%) * 0.05";
+    private String formula = "(<entropy> + <level>) * 0.05";
 
     /**
      * Create a new type of augment with a name and description.

@@ -1,6 +1,6 @@
-package dev.oribuin.fishing.gui.totem;
+package dev.oribuin.fishing.gui.impl.totem;
 
-import dev.oribuin.fishing.api.gui.PluginMenu;
+import dev.oribuin.fishing.gui.PluginMenu;
 import dev.oribuin.fishing.item.ItemConstruct;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.triumphteam.gui.guis.GuiItem;

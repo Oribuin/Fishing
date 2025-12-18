@@ -14,7 +14,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment;
 public class AugmentEnlightened extends Augment {
 
     @Comment("The required formula for the augment to trigger")
-    private String formula = "(%xp% + %level%) * 0.03";
+    private String formula = "(%xp% + <level>) * 0.03";
 
     /**
      * Create a new type of augment with a name and description.

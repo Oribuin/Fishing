@@ -54,7 +54,7 @@ public final class Placeholders {
      * @return the string with the placeholders replaced
      */
     public String applyString(String string) {
-        return FishUtils.LEGACY_SERIALIZER.serialize(FishUtils.MINIMESSAGE.deserialize(string));
+        return FishUtils.PLAIN.serialize(this.apply(string));
     }
 
     /**

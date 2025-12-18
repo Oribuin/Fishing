@@ -1,8 +1,8 @@
 package dev.oribuin.fishing.model.condition.impl;
 
+import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import dev.oribuin.fishing.model.augment.Augment;
-import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import dev.oribuin.fishing.model.condition.CatchCondition;
 import dev.oribuin.fishing.model.condition.ConditionRegistry;
 import dev.oribuin.fishing.model.fish.Fish;
@@ -62,9 +62,9 @@ public class AugmentCondition extends CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        Map<Augment, Integer> playerAugments = AugmentRegistry.from(rod);
+        Map<Augment, Integer> playerAugments = FishingPlugin.get().getAugmentManager().from(rod);
         return this.augments.entrySet().stream().allMatch(entry -> {
-            Augment augment = AugmentRegistry.from(entry.getKey());
+            Augment augment = FishingPlugin.get().getAugmentManager().from(entry.getKey());
             return playerAugments.containsKey(augment) && playerAugments.get(augment) >= entry.getValue();
         });
     }

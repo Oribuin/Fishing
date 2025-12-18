@@ -17,4 +17,5 @@ public interface Manager {
      * @param plugin The plugin being disabled
      */
     void disable(FishingPlugin plugin);
+    
 }

@@ -1,7 +1,7 @@
 package dev.oribuin.fishing.command.argument;
 
+import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.model.augment.Augment;
-import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.caption.CaptionVariable;
@@ -27,7 +27,7 @@ public class AugmentArgumentHandler implements ArgumentParser<CommandSender, Aug
             @NonNull CommandInput commandInput
     ) {
         String input = commandInput.peekString();
-        Augment augment = AugmentRegistry.from(input);
+        Augment augment = FishingPlugin.get().getAugmentManager().from(input);
         commandInput.readString();
         if (input.isEmpty() || augment == null) return ArgumentParseResult.failure(new AugmentParserException(input, commandContext));
 
@@ -37,7 +37,7 @@ public class AugmentArgumentHandler implements ArgumentParser<CommandSender, Aug
     @Override
     public @NonNull SuggestionProvider<CommandSender> suggestionProvider() {
         return SuggestionProvider.blocking((context, input) ->
-                AugmentRegistry.all().values()
+                FishingPlugin.get().getAugmentManager().getAugments().values()
                         .stream()
                         .map(x -> Suggestion.suggestion(x.getName()))
                         .toList()

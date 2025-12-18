@@ -3,7 +3,6 @@ package dev.oribuin.fishing.api.event.impl;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.manager.TierManager;
 import dev.oribuin.fishing.model.augment.Augment;
-import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import dev.oribuin.fishing.model.condition.ConditionRegistry;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.fish.Tier;
@@ -74,8 +73,8 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
      *
      * @return The list of augments used
      */
-    public Map<Augment, Integer> augments() {
-        return AugmentRegistry.from(this.rod);
+    public Map<Augment, Integer> getAugments() {
+        return FishingPlugin.get().getAugmentManager().from(this.rod);
     }
 
     /**

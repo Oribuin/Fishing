@@ -7,16 +7,18 @@ import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.condition.Weather;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Comment;
 
 
 /**
  * When it is raining, there is a chance to catch multiple fish in a single catch.
  */
+@ConfigSerializable
 public class AugmentRainDance extends Augment {
 
     @Comment("The required formula for the augment to trigger")
-    private String formula = "%level% * 0.05"; // 5% per level
+    private String formula = "<level> * 0.05"; // 5% per level
 
     @Comment("The minimum fish to be spawned in")
     private int minimumFish = 1;
@@ -25,7 +27,7 @@ public class AugmentRainDance extends Augment {
     private int maximumFish = 3;
 
     @Comment("The message sent when a player catches more fish")
-    private TextMessage caughtMore = new TextMessage("<#4f73d6><bold>Fish</bold> <gray>| <white>You have caught additional fish from Rain Dance");
+    private TextMessage caughtMore = new TextMessage("<#94bc80><bold>Fish</bold> <gray>| <white>You have caught additional fish from Rain Dance");
 
     /**
      * Create a new type of augment with a name and description.

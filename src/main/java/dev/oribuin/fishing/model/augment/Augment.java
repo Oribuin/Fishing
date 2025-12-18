@@ -4,6 +4,7 @@ import com.google.common.base.Supplier;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.FishEventHandler;
 import dev.oribuin.fishing.config.ConfigHandler;
+import dev.oribuin.fishing.manager.AugmentManager;
 import dev.oribuin.fishing.model.economy.Cost;
 import dev.oribuin.fishing.model.economy.CurrencyRegistry;
 import dev.oribuin.fishing.item.ItemConstruct;
@@ -25,18 +26,17 @@ import java.util.logging.Logger;
 /**
  * Augments are upgrades that can be crafted and applied to fishing rods to give them unique abilities to help the player produce more fish.
  * <p>
- * Use this class to create a new augment for the plugin. Any augments created should be registered using {@link AugmentRegistry#register(Supplier)}
+ * Use this class to create a new augment for the plugin. Any augments created should be registered using {@link AugmentManager#register(Supplier)}
  * <p>
  * All augment classes should be titled AugmentName and named in snake_case.
  */
 @ConfigSerializable
 public abstract class Augment extends FishEventHandler {
 
-    private static final File AUGMENTS_FOLDER = new File(FishingPlugin.get().getDataFolder(), "augments");
     protected transient final Random random = ThreadLocalRandom.current();
     protected transient final Logger logger;
     protected transient final String name;
-    protected transient ConfigHandler<? extends Augment> configHandler;
+    
     protected Boolean enabled;
     protected Integer maxLevel;
     protected Integer requiredLevel;
@@ -46,7 +46,6 @@ public abstract class Augment extends FishEventHandler {
     protected List<String> conflictsWith; 
     protected ItemConstruct displayItem;
     protected Cost price;
-    protected File file;
 
     /**
      * Create a new type of augment with a name and description.
@@ -66,10 +65,8 @@ public abstract class Augment extends FishEventHandler {
         this.displayLine = "<red>" + StringUtils.capitalize(name.replace("_", " ")) + " <level_roman>";
         this.permission = "fishing.augment." + name;
         this.conflictsWith = new ArrayList<>();
-        this.file = new File(AUGMENTS_FOLDER, name.toLowerCase());
         this.displayItem = this.defaultItem();
         this.price = Cost.of(CurrencyRegistry.ENTROPY, 25000);
-        this.configHandler = new ConfigHandler<>(this.getClass(), this.file.toPath(), "config.yml");
     }
 
     /**
@@ -81,6 +78,15 @@ public abstract class Augment extends FishEventHandler {
      */
     public Augment(String name) {
         this(name, "No Description");
+    }
+    
+    /**
+     * Create a new type of augment with a name and description.
+     * <p>
+     * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
+     */
+    public Augment() {
+        this("unknown", "No Description");
     }
 
     /**
@@ -94,14 +100,14 @@ public abstract class Augment extends FishEventHandler {
         List<String> lore = new ArrayList<>(this.description);
         lore.addAll(List.of(
                 "",
-                "<#4f73d6>Information",
-                " <#4f73d6>- <gray>Required Level: <white><required_level>",
-                " <#4f73d6>- <gray>Max Level: <white><max_level>",
+                "<#94bc80>Information",
+                " <#94bc80>- <gray>Required Level: <white><required_level>",
+                " <#94bc80>- <gray>Max Level: <white><max_level>",
                 ""
         ));
 
         return new ItemConstruct(Material.FIREWORK_STAR)
-                .setName("<white>[<#4f73d6><bold><display_name></bold><white>]")
+                .setName("<white>[<#94bc80><bold><display_name></bold><white>]")
                 .setLore(lore)
                 .setGlowing(true);
     }
@@ -140,16 +146,6 @@ public abstract class Augment extends FishEventHandler {
                 .add("display_line", this.displayLine)
                 .add("permission", this.permission)
                 .build();
-    }
-    
-    public void loadConfig() {
-        if (this.configHandler != null) {
-            this.configHandler.save();
-            this.configHandler.unload();
-        }
-
-        this.configHandler = new ConfigHandler<>(this.getClass(), this.file.toPath(), "config.yml");
-        this.configHandler.save(); // Save the config again
     }
 
     /**
@@ -320,8 +316,4 @@ public abstract class Augment extends FishEventHandler {
         this.price = price;
     }
 
-    public ConfigHandler<? extends Augment> getConfigHandler() {
-        return configHandler;
-    }
 }
-

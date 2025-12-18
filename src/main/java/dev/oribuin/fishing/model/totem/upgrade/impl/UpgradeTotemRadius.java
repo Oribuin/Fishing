@@ -12,7 +12,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 @ConfigSerializable
 public class UpgradeTotemRadius extends TotemUpgrade {
 
-    private String radiusFormula = "%level% * 5"; // The formula to calculate the radius of the totem (5 blocks per level)
+    private String radiusFormula = "<level> * 5"; // The formula to calculate the radius of the totem (5 blocks per level)
 
     /**
      * Create a new totem upgrade with the name "radius"

@@ -1,6 +1,6 @@
-package dev.oribuin.fishing.gui.codex.impl;
+package dev.oribuin.fishing.gui.impl.codex.impl;
 
-import dev.oribuin.fishing.gui.codex.BasicCodexMenu;
+import dev.oribuin.fishing.gui.impl.codex.BasicCodexMenu;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.fish.Tier;
 import dev.triumphteam.gui.guis.GuiItem;

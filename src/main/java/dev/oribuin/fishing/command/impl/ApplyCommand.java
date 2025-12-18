@@ -3,7 +3,6 @@ package dev.oribuin.fishing.command.impl;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.command.FishCommand;
 import dev.oribuin.fishing.model.augment.Augment;
-import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -48,11 +47,11 @@ public class ApplyCommand implements FishCommand {
         }
 
         // Get the augment from the argument
-        Map<Augment, Integer> augments = new HashMap<>(AugmentRegistry.from(item));
+        Map<Augment, Integer> augments = new HashMap<>(this.plugin.getAugmentManager().from(item));
         augments.put(augment, Math.min(level, augment.getMaxLevel()));
 
         // Apply the augment to the fishing rod
-        AugmentRegistry.save(item, augments);
+        this.plugin.getAugmentManager().save(item, augments);
 
         target.sendMessage("Successfully applied the augment to the fishing rod.");
     }

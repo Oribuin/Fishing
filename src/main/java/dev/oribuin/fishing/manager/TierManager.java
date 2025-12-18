@@ -64,8 +64,7 @@ public class TierManager implements Manager {
                 this.plugin.getLogger().warning("Tier file[" + file.getName() + "] does not have any fish located, This will be skipped");
                 return;
             }
-
-
+            
             // update the "tier" on all the fish & set tier name
             Map<String, Fish> current = new HashMap<>(tier.getFish());
             for (Map.Entry<String, Fish> entry : current.entrySet()) {

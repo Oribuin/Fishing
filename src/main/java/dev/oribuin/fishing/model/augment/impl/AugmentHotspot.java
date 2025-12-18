@@ -17,7 +17,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment;
 public class AugmentHotspot extends Augment {
 
     @Comment("The required formula for the augment to trigger")
-    private String formula = "%level% * 0.05"; // 5% per level
+    private String formula = "<level> * 0.05"; // 5% per level
 
     @Comment("The minimum fish to be spawned in")
     private int minimumFish = 1;
@@ -26,7 +26,7 @@ public class AugmentHotspot extends Augment {
     private int maximumFish = 3;
 
     @Comment("The message sent when a player catches more fish")
-    private TextMessage caughtMore = new TextMessage("<#4f73d6><bold>Fish</bold> <gray>| <white>You have caught additional fish from HotSpot");
+    private TextMessage caughtMore = new TextMessage("<#94bc80><bold>Fish</bold> <gray>| <white>You have caught additional fish from HotSpot");
 
     /**
      * Create a new type of augment with a name and description.

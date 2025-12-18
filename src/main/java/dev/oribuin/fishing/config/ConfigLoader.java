@@ -4,6 +4,8 @@ import dev.oribuin.fishing.FishingPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -55,7 +57,7 @@ public class ConfigLoader {
      * @param parent The parent directory for it to be placed in
      * @param name   The name of the file
      */
-    public void loadConfig(@NotNull Class<?> config, @Nullable Path parent, @Nullable String name) {
+    public <T> T loadConfig(@NotNull Class<T> config, @Nullable Path parent, @Nullable String name) {
 
         Path path = parent != null ? this.directory.resolve(parent) : this.directory;
         String[] split = (name != null ? name : config.getName()).toLowerCase().split("\\.");
@@ -63,7 +65,29 @@ public class ConfigLoader {
         // Make all parent directories 
         if (!path.toFile().exists()) path.toFile().mkdirs();
 
-        configs.put(config, new ConfigHandler<>(config, path, split[0] + ".yml"));
+        ConfigHandler<T> configHandler = new ConfigHandler<>(config, path, split[0] + ".yml");
+        configs.put(config, configHandler);
+        return configHandler.getConfig();
+    }
+
+    /**
+     * Initialize a config class into the plugin
+     *
+     * @param config The config to load
+     * @param parent The parent directory for it to be placed in
+     * @param name   The name of the file
+     */
+    public ConfigHandler<?> loadConfig(@NotNull Class<?> config, @Nullable File file) {
+        try {
+            // Make all parent directories 
+            if (!file.exists()) file.createNewFile();
+
+            ConfigHandler<?> configHandler = new ConfigHandler<>(config, file);
+            configs.put(config, configHandler);
+            return configHandler;
+        } catch (IOException ex) {
+            return null;
+        }
     }
 
     /**
@@ -72,8 +96,8 @@ public class ConfigLoader {
      * @param config The config to load
      * @param name   The name of the file
      */
-    public void loadConfig(Class<?> config, String name) {
-        this.loadConfig(config, null, name);
+    public <T> T loadConfig(Class<T> config, String name) {
+        return this.loadConfig(config, null, name);
     }
 
     /**

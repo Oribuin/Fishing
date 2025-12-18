@@ -4,17 +4,18 @@ import dev.oribuin.fishing.config.ConfigLoader;
 import dev.oribuin.fishing.config.impl.Config;
 import dev.oribuin.fishing.config.impl.MySQLConfig;
 import dev.oribuin.fishing.config.impl.PluginMessages;
-import dev.oribuin.fishing.gui.MenuRegistry;
+import dev.oribuin.fishing.gui.impl.totem.TotemMainMenu;
 import dev.oribuin.fishing.hook.plugin.HeadDbProvider;
 import dev.oribuin.fishing.listener.FishListener;
 import dev.oribuin.fishing.listener.PlayerListeners;
 import dev.oribuin.fishing.listener.TotemListeners;
+import dev.oribuin.fishing.manager.AugmentManager;
 import dev.oribuin.fishing.manager.CommandManager;
 import dev.oribuin.fishing.manager.DataManager;
 import dev.oribuin.fishing.manager.FishManager;
+import dev.oribuin.fishing.manager.MenuManager;
 import dev.oribuin.fishing.manager.TierManager;
 import dev.oribuin.fishing.manager.TotemManager;
-import dev.oribuin.fishing.model.augment.AugmentRegistry;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -22,9 +23,11 @@ public class FishingPlugin extends JavaPlugin {
 
     private static FishingPlugin instance;
     private ConfigLoader configLoader;
+    private AugmentManager augmentManager;
     private CommandManager commandManager;
     private DataManager dataManager;
     private FishManager fishManager;
+    private MenuManager menuManager;
     private TierManager tierManager;
     private TotemManager totemManager;
 
@@ -44,7 +47,9 @@ public class FishingPlugin extends JavaPlugin {
         this.dataManager = new DataManager(this);
         this.tierManager = new TierManager(this);
         this.fishManager = new FishManager(this);
+        this.augmentManager = new AugmentManager(this);
         this.totemManager = new TotemManager(this);
+        this.menuManager = new MenuManager(this);
 
         PluginManager manager = this.getServer().getPluginManager();
         manager.registerEvents(new FishListener(this), this);
@@ -60,11 +65,9 @@ public class FishingPlugin extends JavaPlugin {
         this.commandManager.reload(this);
         this.tierManager.reload(this);
         this.fishManager.reload(this);
+        this.augmentManager.reload(this); 
         this.totemManager.reload(this);
-
-        AugmentRegistry.reload();
-        MenuRegistry.reload();
-        
+        this.menuManager.reload(this);
         this.dataManager.reload(this);
     }
 
@@ -90,6 +93,14 @@ public class FishingPlugin extends JavaPlugin {
 
     public DataManager getDataManager() {
         return dataManager;
+    }
+
+    public AugmentManager getAugmentManager() {
+        return augmentManager;
+    }
+
+    public MenuManager getMenuManager() {
+        return menuManager;
     }
 
     public ConfigLoader getConfigLoader() {

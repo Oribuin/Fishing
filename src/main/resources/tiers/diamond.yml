@@ -8,17 +8,17 @@ catch-experience: 700 # The fishing experience rewarded when the fish is caught
 natural-experience: 5 # The natural minecraft experience rewarded when the fish is caught
 item:
   type: COD
-  name: '&#B9F2FF&l<name>'
+  name: '<#B9F2FF><bold><name>'
   lore:
     - ''
-    - '<gray>%description%'
+    - '<gray><description>'
     - ''
-    - '&#B9F2FFInformation:'
-    - ' &#B9F2FF- <gray>Price: &f$<price>'
-    - ' &#B9F2FF- <gray>Entropy: &f<entropy>'
-    - ' &#B9F2FF- <gray>Biomes: &f%biomes%'
-    - ' &#B9F2FF- <gray>Weather: &f%weather%'
-    - ' &#B9F2FF- <gray>Time: &f%time%'
+    - '<#B9F2FF>Information:'
+    - ' <#B9F2FF>- <gray>Price: <white>$<price>'
+    - ' <#B9F2FF>- <gray>Entropy: <white><entropy>'
+    - ' <#B9F2FF>- <gray>Biomes: <white><biomes>'
+    - ' <#B9F2FF>- <gray>Weather: <white><weather>'
+    - ' <#B9F2FF>- <gray>Time: <white><time>'
     - ''
 fish:
   steelhead_trout:
