@@ -34,7 +34,7 @@ public class FishCodexMenu extends BasicCodexMenu<Fish> {
         List<Fish> content = this.getContent(player, fish -> fish.getTier().equalsIgnoreCase(tier.getName()));
 
         // Add all the fish to the GUI
-        content.forEach(fish -> gui.addItem(new GuiItem(fish.createItemStack())));
+        content.forEach(fish -> gui.addItem(new GuiItem(fish.buildItem())));
 
         gui.open(player);
     }

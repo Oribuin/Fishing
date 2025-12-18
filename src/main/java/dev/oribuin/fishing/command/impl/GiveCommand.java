@@ -41,7 +41,7 @@ public class GiveCommand implements FishCommand {
     public void giveFish(CommandSender sender, Player target, Fish fish, Integer amount) {
         if (amount == null || amount < 0) amount = 1;
 
-        ItemStack item = fish.createItemStack();
+        ItemStack item = fish.buildItem();
         if (item == null) {
             sender.sendMessage("An error occurred while creating the fish item."); // TODO: Plugin Message
             return;

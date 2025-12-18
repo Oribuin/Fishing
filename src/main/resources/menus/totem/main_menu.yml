@@ -14,17 +14,17 @@ items:
     slot: 4
     display-item:
       type: OAK_HANGING_SIGN
-      name: '&f[&#4f73d6&lTotem Details&f]'
+      name: '<white>[&#4f73d6<bold>Totem Details<white>]'
       lore:
         - '<gray>Here are the current upgrades'
         - '<gray>active have for the fishing totem'
         - ''
         - '&#4f73d6Statistics:'
-        - ' &#4f73d6- <gray>Active: &f%active%'
-        - ' &#4f73d6- <gray>Owner: &f%owner%'
-        - ' &#4f73d6- <gray>Radius: &f%upgrade_radius_value% blocks'
-        - ' &#4f73d6- <gray>Duration: &f%upgrade_duration_value%'
-        - ' &#4f73d6- <gray>Cooldown: &f%upgrade_cooldown_value%'
+        - ' &#4f73d6- <gray>Active: <white>%active%'
+        - ' &#4f73d6- <gray>Owner: <white>%owner%'
+        - ' &#4f73d6- <gray>Radius: <white>%upgrade_radius_value% blocks'
+        - ' &#4f73d6- <gray>Duration: <white>%upgrade_duration_value%'
+        - ' &#4f73d6- <gray>Cooldown: <white>%upgrade_cooldown_value%'
         - ''
       glowing: true
       additional-tooltip: false
@@ -33,15 +33,15 @@ items:
     slot: 0
     display-item:
       type: NETHERITE_UPGRADE_SMITHING_TEMPLATE
-      name: '&f[&#4f73d6&lTotem Upgrade&f]'
+      name: '<white>[&#4f73d6<bold>Totem Upgrade<white>]'
       lore:
         - '<gray>Click here to view and level'
         - '<gray>up your totem upgrades'
         - ''
         - '&#4f73d6Levels:'
-        - ' &#4f73d6- <gray>Radius: &f%upgrade_radius_level%'
-        - ' &#4f73d6- <gray>Duration: &f%upgrade_duration_level%'
-        - ' &#4f73d6- <gray>Cooldown: &f%upgrade_cooldown_level%'
+        - ' &#4f73d6- <gray>Radius: <white>%upgrade_radius_level%'
+        - ' &#4f73d6- <gray>Duration: <white>%upgrade_duration_level%'
+        - ' &#4f73d6- <gray>Cooldown: <white>%upgrade_cooldown_level%'
         - ''
       glowing: true
       additional-tooltip: false
@@ -51,13 +51,13 @@ items:
     slot: 13
     display-item:
       type: LIME_DYE
-      name: '&f[&#05e653&lActivate Totem&f]'
+      name: '<white>[&#05e653<bold>Activate Totem<white>]'
       lore:
         - '<gray>Click here to activate the totem'
         - ''
         - '&#05e653Details:'
-        - ' &#05e653- <gray>Duration: &f%upgrade_duration_value%'
-        - ' &#05e653- <gray>Cooldown: &f%upgrade_cooldown_value%'
+        - ' &#05e653- <gray>Duration: <white>%upgrade_duration_value%'
+        - ' &#05e653- <gray>Cooldown: <white>%upgrade_cooldown_value%'
         - ''
       additional-tooltip: false
   # Tells the player that the totem is on cooldown and displays the remaining time
@@ -66,11 +66,11 @@ items:
     slot: 13
     display-item:
       type: RED_DYE
-      name: '&f[&#e60505&lCooldown&f]'
+      name: '<white>[&#e60505<bold>Cooldown<white>]'
       lore:
         - '<gray>Your totem is currently on cooldown'
         - ''
-        - '&#e60505- <gray>Available In: &f%upgrade_cooldown_timer%'
+        - '&#e60505- <gray>Available In: <white>%upgrade_cooldown_timer%'
         - ''
       additional-tooltip: false
     # Tells the player the totem is active and displays the remaining time 
@@ -79,11 +79,11 @@ items:
     slot: 13
     display-item:
       type: ORANGE_DYE
-      name: '&f[&#e65f05&lActive&f]'
+      name: '<white>[&#e65f05<bold>Active<white>]'
       lore:
         - '<gray>Your totem is currently active'
         - ''
-        - '&#e65f05- <gray>Time Remaining: &f%upgrade_duration_timer%'
+        - '&#e65f05- <gray>Time Remaining: <white>%upgrade_duration_timer%'
         - ''
       additional-tooltip: false
 

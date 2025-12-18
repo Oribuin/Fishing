@@ -8,17 +8,17 @@ catch-experience: 300 # The fishing experience rewarded when the fish is caught
 natural-experience: 5 # The natural minecraft experience rewarded when the fish is caught
 item:
   type: COD
-  name: '&#FFD700&l<name>'
+  name: '<#FFD700><bold><name>'
   lore:
     - ''
-    - '<gray>%description%'
+    - '<gray><description>'
     - ''
-    - '&#FFD700Information:'
-    - ' &#FFD700- <gray>Price: &f$<price>'
-    - ' &#FFD700- <gray>Entropy: &f<entropy>'
-    - ' &#FFD700- <gray>Biomes: &f%biomes%'
-    - ' &#FFD700- <gray>Weather: &f%weather%'
-    - ' &#FFD700- <gray>Time: &f%time%'
+    - '<#FFD700>Information:'
+    - ' <#FFD700>- <gray>Price: <white>$<price>'
+    - ' <#FFD700>- <gray>Entropy: <white><entropy>'
+    - ' <#FFD700>- <gray>Biomes: <white><biomes>'
+    - ' <#FFD700>- <gray>Weather: <white><weather>'
+    - ' <#FFD700>- <gray>Time: <white><time>'
     - ''
 fish:
   king_salmon:

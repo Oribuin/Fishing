@@ -4,7 +4,6 @@ import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.FishEventHandler;
 import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
-import dev.oribuin.fishing.manager.DataManager;
 import dev.oribuin.fishing.manager.FishManager;
 import dev.oribuin.fishing.manager.TotemManager;
 import dev.oribuin.fishing.model.augment.Augment;
@@ -96,7 +95,7 @@ public class FishListener implements Listener {
             // Tell the player they caught a fish
             //            locale.sendMessage(event.getPlayer(), "fish-caught", Placeholders.of("fish", fish.displayName()));
 
-            ItemStack resultItem = fish.createItemStack();
+            ItemStack resultItem = fish.buildItem();
             Component message = Component.text("You have caught a ").append(resultItem.displayName()); // TODO: Replace with locale message
             event.getPlayer().sendMessage(message);
 

@@ -380,16 +380,16 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
 
     public static ItemConstruct defaultItem() {
         return new ItemConstruct(Material.PLAYER_HEAD)
-                .setName("&f[&#4f73d6&lFishing Totem&f]")
+                .setName("<white>[&#4f73d6<bold>Fishing Totem<white>]")
                 .setLore(
                         "<gray>Place in the world to create local",
                         "<gray>booster for players within it's radius.",
                         "",
                         "&#4f73d6Information",
-                        " &#4f73d6- <gray>Owner: &f%owner%",
-                        " &#4f73d6- <gray>Radius: &f%upgrade_radius_value% blocks",
-                        " &#4f73d6- <gray>Duration: &f%upgrade_duration_value%",
-                        " &#4f73d6- <gray>Cooldown: &f%upgrade_cooldown_value%",
+                        " &#4f73d6- <gray>Owner: <white>%owner%",
+                        " &#4f73d6- <gray>Radius: <white>%upgrade_radius_value% blocks",
+                        " &#4f73d6- <gray>Duration: <white>%upgrade_duration_value%",
+                        " &#4f73d6- <gray>Cooldown: <white>%upgrade_cooldown_value%",
                         ""
                 )
                 .setGlowing(true);

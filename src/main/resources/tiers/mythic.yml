@@ -8,17 +8,17 @@ catch-experience: 6000 # The fishing experience rewarded when the fish is caught
 natural-experience: 5 # The natural minecraft experience rewarded when the fish is caught
 item:
   type: COD
-  name: '&#FF4500&l<name>'
+  name: '<#FF4500><bold><name>'
   lore:
     - ''
-    - '<gray>%description%'
+    - '<gray><description>'
     - ''
-    - '&#FF4500Information:'
-    - ' &#FF4500- <gray>Price: &f$<price>'
-    - ' &#FF4500- <gray>Entropy: &f<entropy>'
-    - ' &#FF4500- <gray>Biomes: &f%biomes%'
-    - ' &#FF4500- <gray>Weather: &f%weather%'
-    - ' &#FF4500- <gray>Time: &f%time%'
+    - '<#FF4500>Information:'
+    - ' <#FF4500>- <gray>Price: <white>$<price>'
+    - ' <#FF4500>- <gray>Entropy: <white><entropy>'
+    - ' <#FF4500>- <gray>Biomes: <white><biomes>'
+    - ' <#FF4500>- <gray>Weather: <white><weather>'
+    - ' <#FF4500>- <gray>Time: <white><time>'
     - ''
 fish:
   alligator_gar:

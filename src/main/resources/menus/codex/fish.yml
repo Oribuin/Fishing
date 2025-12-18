@@ -13,7 +13,7 @@ items:
     slot: 5
     display-item:
       type: ARROW
-      name: '&f[&#4f73d6&lNext Page&f]'
+      name: '<white>[&#4f73d6<bold>Next Page<white>]'
       lore:
         - ''
         - '<gray>Click here to go to the next page'
@@ -23,7 +23,7 @@ items:
     slot: 3
     display-item:
       type: ARROW
-      name: '&f[&#4f73d6&lPrevious Page&f]'
+      name: '<white>[&#4f73d6<bold>Previous Page<white>]'
       lore:
         - ''
         - '<gray>Click here to go to the previous page'
@@ -46,7 +46,7 @@ extra-items:
     slot: 4
     display-item:
       type: OAK_HANGING_SIGN
-      name: '&f[&#4f73d6&lFish Codex&f]'
+      name: '<white>[&#4f73d6<bold>Fish Codex<white>]'
       lore:
         - ''
         - '<gray>Here are all the fish you can catch'

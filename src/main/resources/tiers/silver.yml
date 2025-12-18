@@ -8,17 +8,17 @@ catch-experience: 150 # The fishing experience rewarded when the fish is caught
 natural-experience: 5 # The natural minecraft experience rewarded when the fish is caught
 item:
   type: COD
-  name: '&#C0C0C0&l<name>'
+  name: '<#C0C0C0><bold><name>'
   lore:
     - ''
-    - '<gray>%description%'
+    - '<gray><description>'
     - ''
-    - '&#C0C0C0Information:'
-    - ' &#C0C0C0- <gray>Price: &f$<price>'
-    - ' &#C0C0C0- <gray>Entropy: &f<entropy>'
-    - ' &#C0C0C0- <gray>Biomes: &f%biomes%'
-    - ' &#C0C0C0- <gray>Weather: &f%weather%'
-    - ' &#C0C0C0- <gray>Time: &f%time%'
+    - '<#C0C0C0>Information:'
+    - ' <#C0C0C0>- <gray>Price: <white>$<price>'
+    - ' <#C0C0C0>- <gray>Entropy: <white><entropy>'
+    - ' <#C0C0C0>- <gray>Biomes: <white><biomes>'
+    - ' <#C0C0C0>- <gray>Weather: <white><weather>'
+    - ' <#C0C0C0>- <gray>Time: <white><time>'
     - ''
 fish:
   bull_trout:

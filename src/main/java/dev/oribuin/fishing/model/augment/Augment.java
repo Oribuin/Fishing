@@ -95,7 +95,7 @@ public abstract class Augment extends FishEventHandler {
         lore.addAll(List.of(
                 "",
                 "<#4f73d6>Information",
-                " <#4f73d6>- <gray>Required Level: &f<required_level>",
+                " <#4f73d6>- <gray>Required Level: <white><required_level>",
                 " <#4f73d6>- <gray>Max Level: <white><max_level>",
                 ""
         ));

@@ -30,6 +30,8 @@ public final class TextureConstructType implements ConstructComponent<Resolvable
      */
     @Override
     public @Nullable ResolvableProfile establish() {
+        if (this.texture == null) return null;
+        
         String[] type = this.texture.split("-");
         if (type.length == 1) return null;
         // todo: serialize player-<name>

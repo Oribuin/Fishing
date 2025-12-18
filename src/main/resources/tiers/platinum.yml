@@ -8,17 +8,17 @@ catch-experience: 1600 # The fishing experience rewarded when the fish is caught
 natural-experience: 5 # The natural minecraft experience rewarded when the fish is caught
 item:
   type: COD
-  name: '&#E5E4E2&l<name>'
+  name: '<#E5E4E2><bold><name>'
   lore:
     - ''
-    - '<gray>%description%'
+    - '<gray><description>'
     - ''
-    - '&#E5E4E2Information:'
-    - ' &#E5E4E2- <gray>Price: &f$<price>'
-    - ' &#E5E4E2- <gray>Entropy: &f<entropy>'
-    - ' &#E5E4E2- <gray>Biomes: &f%biomes%'
-    - ' &#E5E4E2- <gray>Weather: &f%weather%'
-    - ' &#E5E4E2- <gray>Time: &f%time%'
+    - '<#E5E4E2>Information:'
+    - ' <#E5E4E2>- <gray>Price: <white>$<price>'
+    - ' <#E5E4E2>- <gray>Entropy: <white><entropy>'
+    - ' <#E5E4E2>- <gray>Biomes: <white><biomes>'
+    - ' <#E5E4E2>- <gray>Weather: <white><weather>'
+    - ' <#E5E4E2>- <gray>Time: <white><time>'
     - ''
 fish:
   chinook_salmon:

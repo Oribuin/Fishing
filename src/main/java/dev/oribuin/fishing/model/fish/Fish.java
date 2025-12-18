@@ -64,7 +64,7 @@ public class Fish {
      *
      * @return The item stack of the fish
      */
-    public ItemStack createItemStack() {
+    public ItemStack buildItem() {
         if (this.itemStack != null)
             return this.itemStack.clone();
 
@@ -77,6 +77,8 @@ public class Fish {
         placeholders.addAll(this.placeholders());
         //        placeholders.addAll(this.tier().placeholders()); // TODO: Tier Placeholders
 
+        ItemConstruct tierConstruct = fishTier.getItem(); // todo: merge Fish#getConstruct() -> Tier#getConstruct()
+//        if (this.construct.getName() != null)  tierConstruct.set
         ItemStack itemStack = fishTier.getItem().build(placeholders.build());
         itemStack.editMeta(itemMeta -> {
             // fish data :-)

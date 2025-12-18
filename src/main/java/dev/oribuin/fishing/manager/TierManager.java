@@ -77,6 +77,8 @@ public class TierManager implements Manager {
             this.tiers.put(tier.getName().toLowerCase(), tier);
         }
         
+        this.plugin.getLogger().info("Loaded a total of [" + this.tiers.size() + "] tiers with [" + this.getAllFish().size() + "] fish");
+        
     }
 
     /**
