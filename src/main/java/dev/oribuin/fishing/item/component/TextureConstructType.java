@@ -1,6 +1,7 @@
 package dev.oribuin.fishing.item.component;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
+import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.hook.plugin.HeadDbProvider;
 import dev.oribuin.fishing.item.ConstructComponent;
 import io.papermc.paper.datacomponent.DataComponentTypes;
@@ -14,6 +15,8 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.DigestException;
+import java.sql.SQLSyntaxErrorException;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -21,7 +24,15 @@ import java.util.UUID;
 @SuppressWarnings({ "UnstableApiUsage", "FieldMayBeFinal" })
 public final class TextureConstructType implements ConstructComponent<ResolvableProfile> {
 
-    private String texture = null;
+    private String texture;
+    
+    public TextureConstructType() {
+        this.texture = null;
+    }
+    
+    public TextureConstructType(String texture) {
+        this.texture = texture;
+    }
 
     /**
      * Create a new item component type from the plugin
@@ -31,15 +42,15 @@ public final class TextureConstructType implements ConstructComponent<Resolvable
     @Override
     public @Nullable ResolvableProfile establish() {
         if (this.texture == null) return null;
-        
+
         String[] type = this.texture.split("-");
         if (type.length == 1) return null;
         // todo: serialize player-<name>
-        switch (type[0].toLowerCase()) {
+        return switch (type[0].toLowerCase()) {
             case "base64" -> this.fromBase64(type[1]);
             case "hdb" -> this.fromHdb(type[1]);
-        }
-        return this.fromBase64(this.texture);
+            default -> null;
+        };
     }
 
     /**
@@ -51,7 +62,7 @@ public final class TextureConstructType implements ConstructComponent<Resolvable
     public void apply(@NotNull ItemStack stack) {
         ResolvableProfile profile = this.establish();
         if (profile != null) {
-            stack.setData(DataComponentTypes.PROFILE, this.establish());
+            stack.setData(DataComponentTypes.PROFILE, profile);
         }
     }
 
@@ -72,21 +83,20 @@ public final class TextureConstructType implements ConstructComponent<Resolvable
      *
      * @return The {@link ResolvableProfile} if available, empty otherwise
      */
-    private ResolvableProfile fromBase64(String base64) {
-        String texture = base64.substring(7); // remove base64-, should probably do this through split
-
+    private ResolvableProfile fromBase64(String provided) {
         try {
-            PlayerProfile playerProfile = Bukkit.createProfile(UUID.nameUUIDFromBytes(texture.getBytes()), "");
+            PlayerProfile playerProfile = Bukkit.createProfile(UUID.nameUUIDFromBytes(provided.getBytes()), "");
             PlayerTextures playerTextures = playerProfile.getTextures();
 
-            String decodedTextureJson = new String(Base64.getDecoder().decode(texture));
+            String decodedTextureJson = new String(Base64.getDecoder().decode(provided));
             String decodedTextureUrl = decodedTextureJson.substring(28, decodedTextureJson.length() - 4);
 
             playerTextures.setSkin(new URL(decodedTextureUrl));
             playerProfile.setTextures(playerTextures);
 
             return ResolvableProfile.resolvableProfile(playerProfile);
-        } catch (MalformedURLException | NullPointerException ex) {
+        } catch (MalformedURLException | NullPointerException | IllegalArgumentException ex) {
+            FishingPlugin.get().getLogger().warning("Failed to establish resolvable profile from [" + provided + "] due to: " + ex.getMessage());
             return ResolvableProfile.resolvableProfile().build();
         }
     }
@@ -100,10 +110,9 @@ public final class TextureConstructType implements ConstructComponent<Resolvable
      * @return The {@link ResolvableProfile} if available, empty otherwise
      */
     private ResolvableProfile fromHdb(String headId) {
-        String id = headId.substring(4); // remove hdb-, should probably do this through split
-        String texture = HeadDbProvider.getApi().getBase64(id);
+        String texture = HeadDbProvider.getApi().getBase64(headId);
         if (texture != null) return this.fromBase64(headId);
         return null;
     }
-    
+
 }

@@ -2,10 +2,10 @@ package dev.oribuin.fishing.listener;
 
 import com.jeff_media.morepersistentdatatypes.DataType;
 import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.config.impl.TotemConfig;
 import dev.oribuin.fishing.gui.impl.totem.TotemMainMenu;
 import dev.oribuin.fishing.manager.MenuManager;
 import dev.oribuin.fishing.manager.TotemManager;
-import dev.oribuin.fishing.item.ItemRegistry;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.storage.util.KeyRegistry;
 import io.papermc.paper.event.packet.PlayerChunkLoadEvent;
@@ -52,7 +52,7 @@ public class TotemListeners implements Listener {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;
         if (!meta.getPersistentDataContainer().has(KeyRegistry.TOTEM_ACTIVE, DataType.BOOLEAN)) return;
-        
+
         event.setCancelled(true);
         event.setUseItemInHand(Event.Result.DENY);
         event.setUseInteractedBlock(Event.Result.DENY);
@@ -112,7 +112,7 @@ public class TotemListeners implements Listener {
         manager.unregisterTotem(totem); // Unregister the totem
         event.getPlayer().sendMessage("Totem removed."); // Send the player a message
 
-        ItemStack itemStack = ItemRegistry.FISHING_TOTEM.build(totem.placeholders());
+        ItemStack itemStack = TotemConfig.get().getTotemItem().build(totem.placeholders());
         totem.saveTo(itemStack);
 
         event.getPlayer().getInventory().addItem(itemStack);

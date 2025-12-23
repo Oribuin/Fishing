@@ -4,7 +4,6 @@ import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
-import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.serialize.ScalarSerializer;

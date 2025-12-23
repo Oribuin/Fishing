@@ -1,7 +1,6 @@
 package dev.oribuin.fishing.scheduler.task;
 
 import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.FishingPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 

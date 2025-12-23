@@ -10,12 +10,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class MaterialCurrency implements Currency<Material> {
-    
+
     /**
      * Get the amount of currency the player has
      *
-     * @param player  The player to check
-     * @param item The currency type to check
+     * @param player The player to check
+     * @param item   The currency type to check
      *
      * @return The amount of currency the player has
      */
@@ -67,7 +67,7 @@ public class MaterialCurrency implements Currency<Material> {
         PlayerInventory inventory = this.getInventory(player);
         ItemStack stack = new ItemStack(item); // use blank material itemstack
         if (inventory == null) return;
-        
+
         int remaining = stack.getAmount();
         for (ItemStack itemStack : inventory.getContents()) {
             if (itemStack == null || !itemStack.isSimilar(stack)) continue;

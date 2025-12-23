@@ -14,7 +14,7 @@ import java.util.function.BiConsumer;
  * @param <T>      The event type to be registered with the function
  */
 public record EventWrapper<T extends Event>(Class<T> event, BiConsumer<T, Integer> function, EventPriority order) {
-    
+
     /**
      * Call the function that was registered with the event, This will cast the event to the correct type
      *

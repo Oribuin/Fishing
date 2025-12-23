@@ -8,7 +8,7 @@ public interface ConstructComponent<T> {
 
     /**
      * Create a new item component type from the plugin
-     * 
+     *
      * @return item component type
      */
     @Nullable

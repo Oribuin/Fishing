@@ -40,7 +40,7 @@ public class SkillpointCurrency implements Currency<Integer> {
     public boolean has(@NotNull OfflinePlayer player, @NotNull Integer content) {
         return this.amount(player, content).intValue() >= content;
     }
-    
+
     /**
      * Give the player an amount of currency
      *

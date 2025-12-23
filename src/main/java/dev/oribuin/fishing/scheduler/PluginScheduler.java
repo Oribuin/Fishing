@@ -32,7 +32,7 @@ public class PluginScheduler implements SchedulerWrapper {
             this.scheduler = new BukkitSchedulerWrapper(javaPlugin);
         }
     }
-    
+
     @Override
     public boolean isEntityThread(Entity entity) {
         return this.scheduler.isEntityThread(entity);
@@ -162,7 +162,7 @@ public class PluginScheduler implements SchedulerWrapper {
             }
         };
     }
-    
+
     public static PluginScheduler get() {
         if (instance == null) {
             instance = new PluginScheduler(FishingPlugin.get());

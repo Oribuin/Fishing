@@ -9,7 +9,6 @@ import dev.oribuin.fishing.scheduler.task.ScheduledTask;
 import net.kyori.adventure.audience.Audience;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.jetbrains.annotations.Async;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;

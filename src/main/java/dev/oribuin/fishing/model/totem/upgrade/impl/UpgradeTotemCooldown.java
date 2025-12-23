@@ -14,7 +14,7 @@ import java.time.Duration;
 @ConfigSerializable
 public class UpgradeTotemCooldown extends TotemUpgrade {
 
-    private String cooldownFormula = "(60 * 60) - (<level> * 120)"; // The formula to calculate the cooldown of the totem (1 hour - 2 minute per level)
+    private final String cooldownFormula = "(60 * 60) - (<level> * 120)"; // The formula to calculate the cooldown of the totem (1 hour - 2 minute per level)
 
     /**
      * Create a new totem upgrade with the name "radius"

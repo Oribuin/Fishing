@@ -24,7 +24,7 @@ public class HeightCondition extends CatchCondition {
 
     @Comment("The required world height the fishing bobber has to be in to catch a specified fish")
     private IntPair height = new IntPair(-128, 320);
-    
+
     /**
      * Decides whether the condition should be checked in the first place,
      * <p>

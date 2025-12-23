@@ -1,7 +1,6 @@
 package dev.oribuin.fishing.database.connector;
 
 import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.FishingPlugin;
 
 import java.io.File;
 import java.sql.Connection;
@@ -19,7 +18,7 @@ public class SQLiteConnector implements DatabaseConnector {
     private final Object lock;
 
     public SQLiteConnector(FishingPlugin javaPlugin) {
-        this(javaPlugin, javaPlugin.get().getName().toLowerCase());
+        this(javaPlugin, FishingPlugin.get().getName().toLowerCase());
     }
 
     public SQLiteConnector(FishingPlugin javaPlugin, String dbName) {
@@ -31,13 +30,13 @@ public class SQLiteConnector implements DatabaseConnector {
         try {
             Class.forName("org.sqlite.JDBC"); // Make sure the driver is actually loaded
 
-//            // We often find that the /var/tmp directory is set to noexec which breaks our plugins.
-//            // This moves the temp directory to somewhere we know will absolutely have exec permissions.
-//            // If this gets overridden by another plugin or something else, that's also fine.
-//            File tmpdir = new File(this.javaPlugin.getDataFolder(), "tmp");
-//            if (!tmpdir.exists())
-//                tmpdir.mkdirs();
-//            System.setProperty("org.sqlite.tmpdir", tmpdir.getAbsolutePath());
+            //            // We often find that the /var/tmp directory is set to noexec which breaks our plugins.
+            //            // This moves the temp directory to somewhere we know will absolutely have exec permissions.
+            //            // If this gets overridden by another plugin or something else, that's also fine.
+            //            File tmpdir = new File(this.javaPlugin.getDataFolder(), "tmp");
+            //            if (!tmpdir.exists())
+            //                tmpdir.mkdirs();
+            //            System.setProperty("org.sqlite.tmpdir", tmpdir.getAbsolutePath());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

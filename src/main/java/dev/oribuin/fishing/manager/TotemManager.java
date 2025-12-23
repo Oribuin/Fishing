@@ -39,7 +39,7 @@ public class TotemManager implements Manager {
     @Override
     public void reload(FishingPlugin plugin) {
         this.disable(plugin);
-        
+
         // Define all ticking under one task to prevent 10000000 tasks running at once.
         if (this.asyncTicker != null) {
             this.asyncTicker.cancel();
@@ -65,13 +65,13 @@ public class TotemManager implements Manager {
             this.asyncTicker = null;
         }
     }
-    
+
     /**
      * Tick all the totems in the totem manager.
      */
     public void tick(Consumer<Totem> action) {
         if (this.totems.isEmpty()) return; // don't bother attempting anything if no totems loaded
-        
+
         new HashMap<>(this.totems).forEach((finePosition, totem) -> {
             if (!totem.center().isChunkLoaded()) return;
 

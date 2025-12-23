@@ -21,9 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -72,12 +70,12 @@ public class ConditionRegistry {
      *
      * @param name The name of the condition
      *
-     * @return The condition supplier if available 
+     * @return The condition supplier if available
      */
     public static CatchCondition from(String name) {
         Supplier<CatchCondition> supplier = conditions.get(name.toLowerCase());
         if (supplier == null) return null;
-        
+
         return supplier.get();
     }
 

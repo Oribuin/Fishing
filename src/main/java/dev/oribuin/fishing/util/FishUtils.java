@@ -5,6 +5,8 @@ import io.papermc.paper.registry.RegistryAccess;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.objecthunter.exp4j.ExpressionBuilder;
@@ -38,6 +40,22 @@ public final class FishUtils {
     public static PlainTextComponentSerializer PLAIN = PlainTextComponentSerializer.plainText();
     public static MiniMessage MINIMESSAGE = MiniMessage.miniMessage();
 
+    public static TagResolver RESOLVER = TagResolver.builder()
+            .resolvers(
+                    StandardTags.color(),
+                    StandardTags.gradient(),
+                    StandardTags.decorations(),
+                    StandardTags.clickEvent(),
+                    StandardTags.hoverEvent(),
+                    StandardTags.shadowColor(),
+                    StandardTags.reset(),
+                    StandardTags.font(),
+                    StandardTags.rainbow(),
+                    StandardTags.nbt(),
+                    StandardTags.pride()
+            )
+            .build();
+
     public FishUtils() {
         throw new IllegalStateException("FishUtil is a utility class and cannot be instantiated.");
     }
@@ -50,7 +68,7 @@ public final class FishUtils {
      * @return The component
      */
     public static Component kyorify(String text) {
-        return MINIMESSAGE.deserialize(text)
+        return MINIMESSAGE.deserialize(text, RESOLVER)
                 .decoration(TextDecoration.ITALIC, false);
     }
 

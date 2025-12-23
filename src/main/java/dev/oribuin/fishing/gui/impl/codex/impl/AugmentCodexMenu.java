@@ -2,8 +2,8 @@ package dev.oribuin.fishing.gui.impl.codex.impl;
 
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.gui.impl.codex.BasicCodexMenu;
-import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.item.ItemConstruct;
+import dev.oribuin.fishing.model.augment.Augment;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import org.bukkit.entity.Player;

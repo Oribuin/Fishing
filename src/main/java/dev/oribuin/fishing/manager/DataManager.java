@@ -2,7 +2,6 @@ package dev.oribuin.fishing.manager;
 
 import com.google.gson.Gson;
 import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.config.ConfigHandler;
 import dev.oribuin.fishing.config.impl.MySQLConfig;
 import dev.oribuin.fishing.database.connector.DatabaseConnector;
 import dev.oribuin.fishing.database.connector.MySQLConnector;
@@ -12,6 +11,7 @@ import dev.oribuin.fishing.storage.Fisher;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import javax.xml.crypto.dsig.keyinfo.X509Data;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,7 +29,7 @@ public class DataManager implements Manager {
     private final FishingPlugin plugin;
     private final Map<UUID, Fisher> userData;
     private DatabaseConnector connector;
-    
+
     public DataManager(FishingPlugin plugin) {
         this.plugin = plugin;
         this.userData = new HashMap<>();
@@ -43,8 +43,8 @@ public class DataManager implements Manager {
      */
     public void reload(FishingPlugin plugin) {
         this.disable(plugin);
-        
-        
+
+
         MySQLConfig sqlConfig = MySQLConfig.get();
         if (sqlConfig.isEnabled()) {
             String hostname = sqlConfig.getHostname();
@@ -62,7 +62,7 @@ public class DataManager implements Manager {
             this.connector.cleanup();
             this.plugin.getLogger().info("Data manager connected using SQLite.");
         }
-        
+
         // Create the initial table for the plugin
         this.connector.connect(connection -> {
             try (PreparedStatement statement = connection.prepareStatement(CREATE_TABLE)) {
@@ -113,7 +113,7 @@ public class DataManager implements Manager {
     public Fisher get(UUID uuid) {
         return this.userData.get(uuid);
     }
-
+    
     /**
      * Save a user's data to the database and cache
      *
@@ -248,13 +248,13 @@ public class DataManager implements Manager {
 
     // SQL Queries
     private final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS `fishingplugin_users` (" +
-                   "`uuid` VARCHAR(36) NOT NULL PRIMARY KEY," +
-                   "`entropy` INT NOT NULL," +
-                   "`level` INT NOT NULL," +
-                   "`experience` INT NOT NULL," +
-                   "`skill_points` INT NOT NULL," +
-                   "`skills` TEXT NOT NULL" +
-                   ");";
+                                        "`uuid` VARCHAR(36) NOT NULL PRIMARY KEY," +
+                                        "`entropy` INT NOT NULL," +
+                                        "`level` INT NOT NULL," +
+                                        "`experience` INT NOT NULL," +
+                                        "`skill_points` INT NOT NULL," +
+                                        "`skills` TEXT NOT NULL" +
+                                        ");";
     private final String SAVE_USER = "REPLACE INTO `fishingplugin_users` " +
                                      "(`uuid`, `entropy`, `level`, `experience`, `skill_points`, `skills`) " +
                                      "VALUES(?, ?, ?, ?, ?, ?)";

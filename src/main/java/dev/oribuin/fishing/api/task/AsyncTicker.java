@@ -41,5 +41,5 @@ public interface AsyncTicker {
 
         return PluginScheduler.get().runTaskTimerAsync(this::tickAsync, this.delay().toSeconds(), 0, TimeUnit.SECONDS);
     }
-    
+
 }

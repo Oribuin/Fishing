@@ -43,7 +43,7 @@ public class FishArgumentHandler implements ArgumentParser<CommandSender, Fish> 
                         .toList()
         );
     }
-    
+
     public static final class FishParserException extends ParserException {
 
         private final String input;

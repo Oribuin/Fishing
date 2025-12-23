@@ -2,6 +2,7 @@ package dev.oribuin.fishing.config.impl;
 
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.TextMessage;
+import net.kyori.adventure.sound.Sound;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Comment;
 
@@ -26,9 +27,17 @@ public class PluginMessages {
 
     @Comment("The target has a full inventory")
     private TextMessage fullInventory = new TextMessage(PREFIX + "The target you have provided has a full inventory.");
-    
+
     @Comment("The target has been given a specified item")
     private TextMessage givenItem = new TextMessage(PREFIX + "You have provided the <#94bc80><target><white> with [<#94bc80>x<amount><white>] <#94bc80><name> <white> of type [<#94bc80><type><white>]");
+
+    @Comment("The player has caught a specific fish")
+    private TextMessage caughtFish = new TextMessage(PREFIX + "You have caught a <#94bc80><item><white>!");
+    
+    @Comment("The player has levelled up in their fishing stats")
+    private TextMessage levelUp = new TextMessage(PREFIX + "You have levelled up to level <#94bc80><level>")
+            .sound("entity_player_levelup")
+            .source(Sound.Source.PLAYER);
     
     public TextMessage getNoPermission() {
         return noPermission;
@@ -48,5 +57,13 @@ public class PluginMessages {
 
     public TextMessage getGivenItem() {
         return givenItem;
+    }
+
+    public TextMessage getCaughtFish() {
+        return caughtFish;
+    }
+
+    public TextMessage getLevelUp() {
+        return levelUp;
     }
 }

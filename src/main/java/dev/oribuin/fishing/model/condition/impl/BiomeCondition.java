@@ -4,17 +4,12 @@ import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import dev.oribuin.fishing.model.condition.CatchCondition;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.util.Placeholders;
-import io.papermc.paper.registry.RegistryAccess;
-import io.papermc.paper.registry.RegistryKey;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Location;
-import org.bukkit.Registry;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.intellij.lang.annotations.Subst;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Comment;
 
@@ -69,7 +64,7 @@ public class BiomeCondition extends CatchCondition {
         Biome current = hook.getLocation().getBlock().getBiome();
         return this.biomes.stream().anyMatch(x -> {
             Key biomeKey = this.from(x.startsWith("!") ? x.substring(1) : x);
-            
+
             if (x.startsWith("!")) return !current.key().equals(biomeKey);
             else return current.key().equals(biomeKey);
         });
@@ -88,14 +83,14 @@ public class BiomeCondition extends CatchCondition {
     }
 
     private Key from(String name) {
-        @Subst("minecraft:plains") 
+        @Subst("minecraft:plains")
         String[] split = name.toLowerCase().split(":");
         if (split.length >= 2) {
             return Key.key(split[0], split[1]);
         }
-        
+
         // Assume minecraft namespace key if none specified
-        return Key.key(Key.MINECRAFT_NAMESPACE, split[0]); 
+        return Key.key(Key.MINECRAFT_NAMESPACE, split[0]);
     }
 
 }

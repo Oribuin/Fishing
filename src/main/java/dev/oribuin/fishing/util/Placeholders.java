@@ -23,7 +23,7 @@ public final class Placeholders {
 
     private Placeholders(Map<String, Component> placeholders) {
         this.placeholders = Collections.unmodifiableMap(placeholders);
-        this.resolvers = TagResolver.standard();
+        this.resolvers = FishUtils.RESOLVER;
     }
 
     /**

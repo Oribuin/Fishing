@@ -80,9 +80,10 @@ public interface FishingEvents {
 
     /**
      * The functionality provided when a fish bites the rod before it is caught
-     * @param event The fishing event 
+     *
+     * @param event The fishing event
      * @param level The level of the ability that was used, if applicable (0 if not)
      */
     default void onBite(PlayerFishEvent event, int level) {}
-    
+
 }

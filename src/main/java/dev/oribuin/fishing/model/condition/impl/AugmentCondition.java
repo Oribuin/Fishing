@@ -30,7 +30,7 @@ public class AugmentCondition extends CatchCondition {
 
     @Comment("The required augments to catch a specified fish")
     private Map<String, Integer> augments = new HashMap<>(Map.of("example", 1));
-    
+
 
     /**
      * Decides whether the condition should be checked in the first place

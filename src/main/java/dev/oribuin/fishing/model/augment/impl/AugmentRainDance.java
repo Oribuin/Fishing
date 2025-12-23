@@ -1,5 +1,8 @@
 package dev.oribuin.fishing.model.augment.impl;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
 import dev.oribuin.fishing.config.TextMessage;
@@ -9,6 +12,9 @@ import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Comment;
+
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -25,9 +31,6 @@ public class AugmentRainDance extends Augment {
 
     @Comment("The maximum fish to be spawned in")
     private int maximumFish = 3;
-
-    @Comment("The message sent when a player catches more fish")
-    private TextMessage caughtMore = new TextMessage("<#94bc80><bold>Fish</bold> <gray>| <white>You have caught additional fish from Rain Dance");
 
     /**
      * Create a new type of augment with a name and description.
@@ -61,8 +64,6 @@ public class AugmentRainDance extends Augment {
 
         int fishCaught = this.minimumFish + (int) (Math.random() * (this.maximumFish - this.minimumFish));
         event.setAmountToCatch(event.getAmountToCatch() + fishCaught);
-
-        this.caughtMore.send(event.getPlayer(), "additional", fishCaught);
     }
 
     /**

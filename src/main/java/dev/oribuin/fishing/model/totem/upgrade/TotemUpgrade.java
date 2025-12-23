@@ -7,13 +7,10 @@ import dev.oribuin.fishing.item.ItemConstruct;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.util.Placeholders;
 import org.apache.commons.lang3.StringUtils;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
-import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -33,6 +30,10 @@ public abstract class TotemUpgrade extends FishEventHandler {
     private int maxLevel; // The maximum level of the upgrade
     private String permission; // The permission required to purchase the upgrade
 
+    public TotemUpgrade() {
+        this("unknown-upgrade", "No Upgrade Description");
+    }
+
     /**
      * Create a new totem upgrade
      *
@@ -43,7 +44,6 @@ public abstract class TotemUpgrade extends FishEventHandler {
         this.name = name.toLowerCase();
         this.description = List.of(description);
         this.enabled = true;
-        this.icon = defaultItem();
         this.defaultLevel = 0;
         this.maxLevel = 1;
         this.permission = "fishing.upgrade." + this.name;
@@ -89,25 +89,6 @@ public abstract class TotemUpgrade extends FishEventHandler {
     }
 
     /**
-     * The default {@link ItemConstruct} for the upgrade when displayed in a GUI
-     *
-     * @return The default {@link ItemConstruct} for the upgrade
-     */
-    public static ItemConstruct defaultItem() {
-        return new ItemConstruct(Material.HEART_OF_THE_SEA)
-                .setName("<white>[&#94bc80<bold>%name%<white>]")
-                .setLore(
-                        "<gray><description>",
-                        "",
-                        "&#94bc80Information",
-                        " &#94bc80- <gray>Current: <white><level>",
-                        " &#94bc80- <gray>Max Level: <white>%max_level%",
-                        ""
-                )
-                .setGlowing(true);
-    }
-
-    /**
      * The totem upgrade placeholders for the upgrade.
      * All upgrades are added to the totems placeholders as "upgrade_<name>_<placeholder>"
      * <p>
@@ -140,7 +121,7 @@ public abstract class TotemUpgrade extends FishEventHandler {
     public NamespacedKey key() {
         return new NamespacedKey(FishingPlugin.get(), "upgrade_" + this.name);
     }
-    
+
 
     /**
      * Get the name of the upgrade

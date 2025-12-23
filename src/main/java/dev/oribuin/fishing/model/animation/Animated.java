@@ -23,5 +23,5 @@ public interface Animated {
      */
     @NotNull
     Supplier<Location> getSource();
-    
+
 }

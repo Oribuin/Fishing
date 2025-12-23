@@ -3,7 +3,6 @@ package dev.oribuin.fishing.config.impl;
 import dev.oribuin.fishing.FishingPlugin;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Comment;
-import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 @ConfigSerializable
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
@@ -12,11 +11,11 @@ public class MySQLConfig {
     public static MySQLConfig get() {
         return FishingPlugin.get().getConfigLoader().get(MySQLConfig.class);
     }
-    
+
     @Comment("Should MySQL be enabled for database storage?")
     private boolean enabled = false;
 
-    
+
     @Comment("The MySQL Host Name")
     private String hostname = "127.0.0.1";
 

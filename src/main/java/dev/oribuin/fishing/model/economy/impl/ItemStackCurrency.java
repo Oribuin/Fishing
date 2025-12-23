@@ -9,12 +9,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ItemStackCurrency implements Currency<ItemStack> {
-    
+
     /**
      * Get the amount of currency the player has
      *
-     * @param player  The player to check
-     * @param item The currency type to check
+     * @param player The player to check
+     * @param item   The currency type to check
      *
      * @return The amount of currency the player has
      */

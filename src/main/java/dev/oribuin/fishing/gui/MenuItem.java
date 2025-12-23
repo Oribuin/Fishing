@@ -15,30 +15,30 @@ import java.util.List;
 @ConfigSerializable
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
 
-public class GuiItem {
+public class MenuItem {
 
     private boolean enabled;
     private List<Integer> slots;
     private ItemConstruct item;
 
-    public GuiItem() {
+    public MenuItem() {
         this.enabled = true;
         this.slots = List.of(0);
         this.item = new ItemConstruct(Material.STONE);
     }
-    
-    public GuiItem(ItemConstruct construct, Integer... slots) {
+
+    public MenuItem(ItemConstruct construct, Integer... slots) {
         this.enabled = true;
         this.slots = Arrays.asList(slots);
         this.item = construct;
     }
-    
-    public GuiItem(ItemConstruct construct, List<Integer> slots) {
+
+    public MenuItem(ItemConstruct construct, List<Integer> slots) {
         this.enabled = true;
         this.slots = slots;
         this.item = construct;
     }
-    
+
     /**
      * Place the item in the specified slot in the GUI
      *
@@ -75,7 +75,7 @@ public class GuiItem {
         return enabled;
     }
 
-    public GuiItem setEnabled(boolean enabled) {
+    public MenuItem setEnabled(boolean enabled) {
         this.enabled = enabled;
         return this;
     }
@@ -84,7 +84,7 @@ public class GuiItem {
         return slots;
     }
 
-    public GuiItem setSlots(List<Integer> slots) {
+    public MenuItem setSlots(List<Integer> slots) {
         this.slots = slots;
         return this;
     }
@@ -93,7 +93,7 @@ public class GuiItem {
         return item;
     }
 
-    public GuiItem setItem(ItemConstruct item) {
+    public MenuItem setItem(ItemConstruct item) {
         this.item = item;
         return this;
     }

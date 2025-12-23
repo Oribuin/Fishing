@@ -13,9 +13,9 @@ import java.util.Map;
  * Especially when another plugin wants to establish their own keys
  */
 public class KeyRegistry {
-    
+
     private static final Map<String, NamespacedKey> keys = new HashMap<>();
-    
+
     public static NamespacedKey FISH_TYPE = register("fish_type");
     public static final NamespacedKey AUGMENT_TYPE = register("augment_type");
     public static final NamespacedKey TOTEM_OWNER = register("totem_owner");

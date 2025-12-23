@@ -4,8 +4,9 @@ import dev.oribuin.fishing.config.ConfigLoader;
 import dev.oribuin.fishing.config.impl.Config;
 import dev.oribuin.fishing.config.impl.MySQLConfig;
 import dev.oribuin.fishing.config.impl.PluginMessages;
-import dev.oribuin.fishing.gui.impl.totem.TotemMainMenu;
+import dev.oribuin.fishing.config.impl.TotemConfig;
 import dev.oribuin.fishing.hook.plugin.HeadDbProvider;
+import dev.oribuin.fishing.hook.plugin.PAPIProvider;
 import dev.oribuin.fishing.listener.FishListener;
 import dev.oribuin.fishing.listener.PlayerListeners;
 import dev.oribuin.fishing.listener.TotemListeners;
@@ -38,10 +39,11 @@ public class FishingPlugin extends JavaPlugin {
 
         // Load this plugin configs
         this.configLoader = new ConfigLoader();
-        this.configLoader.loadConfig(Config.class, "config");
+        this.configLoader.loadConfig(Config.class, "settings");
         this.configLoader.loadConfig(PluginMessages.class, "messages");
-        this.configLoader.loadConfig(MySQLConfig.class, "mysql-config");
-        
+        this.configLoader.loadConfig(MySQLConfig.class, "database-settings");
+        this.configLoader.loadConfig(TotemConfig.class, "totem-settings");
+
         // Load the plugin managers
         this.commandManager = new CommandManager(this);
         this.dataManager = new DataManager(this);
@@ -55,17 +57,17 @@ public class FishingPlugin extends JavaPlugin {
         manager.registerEvents(new FishListener(this), this);
         manager.registerEvents(new PlayerListeners(this), this);
         manager.registerEvents(new TotemListeners(this), this);
-
-        if (HeadDbProvider.isEnabled()) {
-            manager.registerEvents(new HeadDbProvider(), this);
-        }
+        
+        // register plugin hooks
+        if (HeadDbProvider.isEnabled()) manager.registerEvents(new HeadDbProvider(), this);
+        if (PAPIProvider.isEnabled()) new PAPIProvider(this).register();
     }
 
     public void reload() {
         this.commandManager.reload(this);
         this.tierManager.reload(this);
         this.fishManager.reload(this);
-        this.augmentManager.reload(this); 
+        this.augmentManager.reload(this);
         this.totemManager.reload(this);
         this.menuManager.reload(this);
         this.dataManager.reload(this);
@@ -106,5 +108,5 @@ public class FishingPlugin extends JavaPlugin {
     public ConfigLoader getConfigLoader() {
         return configLoader;
     }
-    
+
 }

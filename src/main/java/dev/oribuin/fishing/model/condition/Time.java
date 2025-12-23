@@ -48,5 +48,5 @@ public record Time(int startTime, int finishTime) {
 
         return hour >= this.startTime && hour <= this.finishTime;
     }
-    
+
 }

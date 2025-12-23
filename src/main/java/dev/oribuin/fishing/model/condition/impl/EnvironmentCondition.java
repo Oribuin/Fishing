@@ -27,7 +27,7 @@ public class EnvironmentCondition extends CatchCondition {
 
     @Comment("The required environments for a fish to be caught (Normal, Nether, The_End)")
     private List<Environment> environments = new ArrayList<>();
-    
+
     /**
      * Decides whether the condition should be checked in the first place,
      * <p>

@@ -51,7 +51,7 @@ public abstract class Propertied {
      */
     public final <T> T applyProperty(PersistentDataType<?, T> type, NamespacedKey key, T value) {
         this.properties.put(key, type);
-        
+
         if (value != null) {
             this.container.put(key, value);
         }

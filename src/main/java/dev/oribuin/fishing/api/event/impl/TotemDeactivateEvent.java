@@ -2,11 +2,9 @@ package dev.oribuin.fishing.api.event.impl;
 
 import dev.oribuin.fishing.model.totem.Totem;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -21,7 +19,7 @@ public class TotemDeactivateEvent extends Event implements Cancellable {
     /**
      * Define a new Totem Deactivate Event, This is called when a totem deactivates by running out of time.
      *
-     * @param totem     The {@link Totem} that is being deactivated
+     * @param totem The {@link Totem} that is being deactivated
      */
     public TotemDeactivateEvent(@NotNull Totem totem) {
         super(!Bukkit.isPrimaryThread());
@@ -37,7 +35,7 @@ public class TotemDeactivateEvent extends Event implements Cancellable {
     public @NotNull Totem totem() {
         return this.totem;
     }
-    
+
     /**
      * Get the handlers for this event class
      *

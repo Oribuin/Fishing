@@ -14,7 +14,7 @@ public class FishExpCurrency implements Currency<Integer> {
     public String name() {
         return "fish_exp";
     }
-    
+
     /**
      * Get the amount of currency the player has
      *
@@ -40,7 +40,7 @@ public class FishExpCurrency implements Currency<Integer> {
     public boolean has(@NotNull OfflinePlayer player, @NotNull Integer content) {
         return this.amount(player, content).intValue() >= content;
     }
-    
+
     /**
      * Give the player an amount of currency
      *

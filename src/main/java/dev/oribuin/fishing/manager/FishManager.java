@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 public class FishManager implements Manager {
-    
+
     private final FishingPlugin plugin;
 
     public FishManager(FishingPlugin plugin) {
@@ -99,5 +99,5 @@ public class FishManager implements Manager {
 
         return event.fish();
     }
-    
+
 }

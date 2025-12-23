@@ -3,11 +3,10 @@ package dev.oribuin.fishing.model.augment;
 import com.google.common.base.Supplier;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.FishEventHandler;
-import dev.oribuin.fishing.config.ConfigHandler;
+import dev.oribuin.fishing.item.ItemConstruct;
 import dev.oribuin.fishing.manager.AugmentManager;
 import dev.oribuin.fishing.model.economy.Cost;
 import dev.oribuin.fishing.model.economy.CurrencyRegistry;
-import dev.oribuin.fishing.item.ItemConstruct;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +15,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.event.Event;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -36,14 +34,14 @@ public abstract class Augment extends FishEventHandler {
     protected transient final Random random = ThreadLocalRandom.current();
     protected transient final Logger logger;
     protected transient final String name;
-    
+
     protected Boolean enabled;
     protected Integer maxLevel;
     protected Integer requiredLevel;
     protected List<String> description;
     protected String displayLine;
     protected String permission;
-    protected List<String> conflictsWith; 
+    protected List<String> conflictsWith;
     protected ItemConstruct displayItem;
     protected Cost price;
 
@@ -79,7 +77,7 @@ public abstract class Augment extends FishEventHandler {
     public Augment(String name) {
         this(name, "No Description");
     }
-    
+
     /**
      * Create a new type of augment with a name and description.
      * <p>

@@ -10,9 +10,11 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
  * A totem upgrade that increases the effective range of the totem
  */
 @ConfigSerializable
+@SuppressWarnings({ "UnstableApiUsage", "FieldMayBeFinal" })
 public class UpgradeTotemRadius extends TotemUpgrade {
 
-    private String radiusFormula = "<level> * 5"; // The formula to calculate the radius of the totem (5 blocks per level)
+    private int baseRadius = 5;
+    private String radiusFormula = "<base_radius> + (<level> * 5)"; // The formula to calculate the radius of the totem (5 blocks per level)
 
     /**
      * Create a new totem upgrade with the name "radius"
@@ -53,7 +55,7 @@ public class UpgradeTotemRadius extends TotemUpgrade {
      */
     public int calculateRadius(Totem totem) {
         Integer level = totem.getProperty(this.key(), this.defaultLevel());
-        Placeholders plc = Placeholders.of("level", level);
+        Placeholders plc = Placeholders.of("level", level, "base_radius", this.baseRadius);
         return (int) FishUtils.evaluate(plc.applyString(this.radiusFormula)) / 2;
     }
 

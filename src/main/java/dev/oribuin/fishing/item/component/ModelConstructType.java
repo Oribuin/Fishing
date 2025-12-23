@@ -2,7 +2,6 @@ package dev.oribuin.fishing.item.component;
 
 import dev.oribuin.fishing.item.ConstructComponent;
 import io.papermc.paper.datacomponent.DataComponentTypes;
-import io.papermc.paper.datacomponent.item.FoodProperties;
 import net.kyori.adventure.key.Key;
 import org.bukkit.inventory.ItemStack;
 import org.intellij.lang.annotations.Subst;
@@ -37,7 +36,7 @@ public final class ModelConstructType implements ConstructComponent<Key> {
     public void apply(@NotNull ItemStack stack) {
         Key key = this.establish();
         if (key == null) return;
-        
+
         stack.setData(DataComponentTypes.ITEM_MODEL, key);
     }
 
@@ -50,5 +49,5 @@ public final class ModelConstructType implements ConstructComponent<Key> {
     public void clear(@NotNull ItemStack stack) {
         stack.unsetData(DataComponentTypes.ITEM_MODEL);
     }
-    
+
 }

@@ -1,6 +1,6 @@
 package dev.oribuin.fishing.gui.impl.totem;
 
-import dev.oribuin.fishing.gui.GuiItem;
+import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
 import dev.oribuin.fishing.item.ItemConstruct;
 import dev.oribuin.fishing.item.component.TooltipConstructType;
@@ -25,12 +25,12 @@ public class TotemMainMenu extends PluginMenu<Gui> {
 
         this.title = "Fishing Totem";
         this.rows = 3;
-        this.items.put("totem-stats", new GuiItem(TOTEM_STATS, 4));
-        this.items.put("totem-upgrade", new GuiItem(TOTEM_UPGRADE, 3));
-        this.items.put("totem-activate", new GuiItem(TOTEM_ACTIVATE, 13));
-        this.items.put("totem-cooldown", new GuiItem(TOTEM_COOLDOWN, 13));
-        this.items.put("totem-active", new GuiItem(TOTEM_ACTIVE));
-        this.extraItems.put("border", new GuiItem(BORDER, FishUtils.parseList("0-8", "18-26", "9", "17")));
+        this.items.put("totem-upgrade", new MenuItem(TOTEM_UPGRADE, 3));
+        this.items.put("totem-activate", new MenuItem(TOTEM_ACTIVATE, 13));
+        this.items.put("totem-cooldown", new MenuItem(TOTEM_COOLDOWN, 13));
+        this.items.put("totem-active", new MenuItem(TOTEM_ACTIVE, 13));
+        this.extraItems.put("totem-stats", new MenuItem(TOTEM_STATS, 4));
+        this.extraItems.put("border", new MenuItem(BORDER, FishUtils.parseList("0-8", "18-26", "9", "17")));
     }
 
     /**
@@ -55,7 +55,6 @@ public class TotemMainMenu extends PluginMenu<Gui> {
      */
     private void placeDynamics(Totem totem, Player player) {
         Placeholders placeholders = totem.placeholders();
-        this.placeItem("totem-stats", placeholders);
         this.placeItem("totem-upgrade", placeholders, x -> MenuManager.get(TotemUpgradeMenu.class).open(totem, player));
 
         // The totem is active, display the active totem item

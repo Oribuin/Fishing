@@ -18,7 +18,6 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @ConfigSerializable
 @SuppressWarnings({ "UnstableApiUsage", "FieldMayBeFinal" })
@@ -60,8 +59,7 @@ public class TooltipConstructType implements ConstructComponent<TooltipDisplay> 
     public void apply(@NotNull ItemStack stack) {
         TooltipDisplay display = this.establish();
         if (display == null) return;
-        
-        System.out.println("Applying: " + display);
+
         stack.setData(DataComponentTypes.TOOLTIP_DISPLAY, display);
     }
 

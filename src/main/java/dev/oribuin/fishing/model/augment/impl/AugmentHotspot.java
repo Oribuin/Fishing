@@ -25,9 +25,6 @@ public class AugmentHotspot extends Augment {
     @Comment("The maximum fish to be spawned in")
     private int maximumFish = 3;
 
-    @Comment("The message sent when a player catches more fish")
-    private TextMessage caughtMore = new TextMessage("<#94bc80><bold>Fish</bold> <gray>| <white>You have caught additional fish from HotSpot");
-
     /**
      * Create a new type of augment with a name and description.
      * <p>
@@ -60,8 +57,6 @@ public class AugmentHotspot extends Augment {
 
         int fishCaught = this.minimumFish + (int) (Math.random() * (this.maximumFish - this.minimumFish));
         event.setAmountToCatch(event.getAmountToCatch() + fishCaught);
-
-        this.caughtMore.send(event.getPlayer(), "additional", fishCaught);
     }
 
     /**

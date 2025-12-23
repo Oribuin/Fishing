@@ -2,12 +2,12 @@ package dev.oribuin.fishing.model.fish;
 
 import dev.oribuin.fishing.config.ConfigHandler;
 import dev.oribuin.fishing.item.ItemConstruct;
+import dev.oribuin.fishing.util.Placeholders;
 import org.bukkit.Material;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Comment;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -35,7 +35,7 @@ public class Tier {
     @Comment("The list of fish that are available in this tier")
     private Map<String, Fish> fish;
     private transient ConfigHandler<Tier> configHandler;
-    
+
     /**
      * Create a new tier config file from the plugin
      */
@@ -59,6 +59,20 @@ public class Tier {
     public Tier(File config) {
         this();
         this.configHandler = new ConfigHandler<>(Tier.class, config);
+    }
+    
+    public Placeholders placeholders() {
+        return Placeholders.builder()
+                .add("tier", this.name)
+                .add("chance", this.chance)
+                .add("catch_entropy", this.catchEntropy)
+                .add("catch_exp", this.catchExperience)
+                .add("catch_money", this.catchMoney)
+                .add("gut_entropy", this.gutEntropy)
+                .add("sell_money", this.sellMoney)
+                .add("natural_exp", this.naturalExperience)
+                .add("fish_count", this.fish.size())
+                .build();
     }
 
     @Override
@@ -157,7 +171,7 @@ public class Tier {
         this.fish = fish;
         return this;
     }
-    
+
     public ConfigHandler<Tier> getConfigHandler() {
         return configHandler;
     }

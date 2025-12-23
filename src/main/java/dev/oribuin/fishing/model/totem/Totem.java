@@ -7,12 +7,9 @@ import dev.oribuin.fishing.api.event.FishEventHandler;
 import dev.oribuin.fishing.api.event.impl.TotemActivateEvent;
 import dev.oribuin.fishing.api.event.impl.TotemDeactivateEvent;
 import dev.oribuin.fishing.api.task.AsyncTicker;
-import dev.oribuin.fishing.item.component.TextureConstructType;
-import dev.oribuin.fishing.manager.TotemManager;
+import dev.oribuin.fishing.config.impl.TotemConfig;
 import dev.oribuin.fishing.model.animation.Animated;
 import dev.oribuin.fishing.model.animation.Animation;
-import dev.oribuin.fishing.item.ItemConstruct;
-import dev.oribuin.fishing.item.ItemRegistry;
 import dev.oribuin.fishing.model.totem.upgrade.TotemUpgrade;
 import dev.oribuin.fishing.model.totem.upgrade.UpgradeRegistry;
 import dev.oribuin.fishing.util.Placeholders;
@@ -22,7 +19,6 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -44,7 +40,6 @@ import static dev.oribuin.fishing.storage.util.KeyRegistry.*;
 public class Totem extends Propertied implements AsyncTicker, Animated {
 
     private static final Duration PARTICLE_DELAY = Duration.ofSeconds(1);
-    private static final String TEXTURE = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmY2MjRhNDRlNzdiOTVkYmUxY2M3MzU1MzY5NTNlODQwYmE2YzE5YjAxNTdjNTQ5ZDliODI1MzQ2NDhjOGNlNCJ9fX0=";
     private Location center; // The center of the totem
     private Map<TotemUpgrade, Integer> upgrades; // The upgrades of the totem
 
@@ -174,7 +169,7 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
             result.setCustomNameVisible(true);
             result.setPersistent(true);
             result.customName(Component.text(this.getProperty(TOTEM_OWNER_NAME) + "'s Totem")); // TODO: Allow configurable name
-            result.setItem(EquipmentSlot.HEAD, ItemRegistry.FISHING_TOTEM.build());
+            result.setItem(EquipmentSlot.HEAD, TotemConfig.get().getTotemItem().build(this.placeholders()));
 
             // Lock all the slots
             for (EquipmentSlot slot : EquipmentSlot.values()) {
@@ -378,23 +373,6 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
         return results;
     }
 
-    public static ItemConstruct defaultItem() {
-        return new ItemConstruct(Material.PLAYER_HEAD)
-                .setName("<white>[&#94bc80<bold>Fishing Totem<white>]")
-                .setLore(
-                        "<gray>Place in the world to create local",
-                        "<gray>booster for players within it's radius.",
-                        "",
-                        "&#94bc80Information",
-                        " &#94bc80- <gray>Owner: <white>%owner%",
-                        " &#94bc80- <gray>Radius: <white>%upgrade_radius_value% blocks",
-                        " &#94bc80- <gray>Duration: <white>%upgrade_duration_value%",
-                        " &#94bc80- <gray>Cooldown: <white>%upgrade_cooldown_value%",
-                        ""
-                )
-                .setGlowing(true);
-    }
-
     public Location center() {
         return center;
     }
@@ -442,7 +420,7 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
      */
     @Override
     public Duration delay() {
-        return Duration.ZERO;
+        return Duration.ofMillis(500);
     }
 
     /**

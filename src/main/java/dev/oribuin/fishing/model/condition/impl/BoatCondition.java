@@ -9,7 +9,6 @@ import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
-import org.spongepowered.configurate.objectmapping.meta.Comment;
 
 /**
  * A condition that is checked when a player is trying to catch a fish
@@ -21,7 +20,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment;
  */
 @ConfigSerializable
 public class BoatCondition extends CatchCondition {
-    
+
     /**
      * Decides whether the condition should be checked in the first place,
      * <p>

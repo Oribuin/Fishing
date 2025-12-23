@@ -3,8 +3,6 @@ package dev.oribuin.fishing.gui;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.ConfigHandler;
 import dev.oribuin.fishing.item.ItemConstruct;
-import dev.oribuin.fishing.manager.MenuManager;
-import dev.oribuin.fishing.model.fish.Tier;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.BaseGui;
@@ -16,7 +14,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,8 +30,8 @@ public abstract class PluginMenu<T extends BaseGui> {
     protected transient ConfigHandler<PluginMenu<?>> configHandler;
     protected String title;
     protected int rows;
-    protected Map<String, GuiItem> items;
-    protected Map<String, GuiItem> extraItems;
+    protected Map<String, MenuItem> items;
+    protected Map<String, MenuItem> extraItems;
     protected int pageSize;
     protected int updateFrequency;
 
@@ -137,7 +134,7 @@ public abstract class PluginMenu<T extends BaseGui> {
      * @param function     The function to run when the item is clicked
      */
     public void placeItem(String key, Placeholders placeholders, GuiAction<InventoryClickEvent> function) {
-        GuiItem item = this.items.get(key.toLowerCase());
+        MenuItem item = this.items.get(key.toLowerCase());
         if (item == null) {
             FishingPlugin.get().getLogger().warning("Failed to place item with key: " + key + " in menu: " + this.name + ". Item not found.");
             return;
@@ -169,7 +166,7 @@ public abstract class PluginMenu<T extends BaseGui> {
             runnable.run();
         }, 0L, this.updateFrequency);
     }
-    
+
     /**
      * @return The path to the configuration file
      */

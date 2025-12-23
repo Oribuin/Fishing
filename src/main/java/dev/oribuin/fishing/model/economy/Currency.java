@@ -1,7 +1,6 @@
 package dev.oribuin.fishing.model.economy;
 
 import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.manager.DataManager;
 import dev.oribuin.fishing.storage.Fisher;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +55,7 @@ public interface Currency<T> {
      * @param content The amount to take
      */
     void take(@NotNull OfflinePlayer player, @NotNull T content);
-    
+
     /**
      * Get the Fisher object for the player
      *

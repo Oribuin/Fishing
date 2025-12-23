@@ -20,12 +20,12 @@ public interface TotemEvents {
      * @param event The event that was called when a player activates a totem
      */
     default void onActivate(TotemActivateEvent event) {}
-    
+
     /**
      * The functionality provided when the fishing totem deactivates
      *
      * @param event The event that was called when the totem deactivates
      */
     default void onDeactivate(TotemActivateEvent event) {}
-    
+
 }

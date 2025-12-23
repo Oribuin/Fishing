@@ -27,13 +27,12 @@ public class ItemConstruct {
     private String name;
     private List<String> lore;
     private EnchantConstructType enchantments;
-    private EnchantConstructType storedEnchantments;
     private TextureConstructType texture;
     private EdibleConstructType edible;
     private TooltipConstructType tooltip;
     private ModelConstructType model;
     private Boolean glowing;
-    
+
     public ItemConstruct() {
         this(Material.STONE);
     }
@@ -44,7 +43,6 @@ public class ItemConstruct {
         this.name = null;
         this.lore = new ArrayList<>();
         this.enchantments = null;
-        this.storedEnchantments = null;
         this.texture = null;
         this.edible = null;
         this.tooltip = null;
@@ -66,8 +64,10 @@ public class ItemConstruct {
         if (this.lore != null) {
             List<Component> lines = new ArrayList<>();
             for (String line : this.lore) {
-                String[] newLine = line.split("\n");
-                for (String s : newLine) lines.add(FishUtils.kyorify(s, placeholders));
+                Component text = FishUtils.kyorify(line, placeholders);
+                String content = FishUtils.MINIMESSAGE.serialize(text);
+                String[] newLine = content.split("(<newline>|<br>)");
+                for (String s : newLine) lines.add(FishUtils.kyorify(s));
             }
 
             stack.setData(DataComponentTypes.LORE, ItemLore.lore(lines));
@@ -79,7 +79,6 @@ public class ItemConstruct {
         if (this.edible != null) this.edible.apply(stack);
         if (this.texture != null) this.texture.apply(stack);
         if (this.enchantments != null) this.enchantments.apply(stack);
-        if (this.storedEnchantments != null) this.storedEnchantments.asStored().apply(stack);
         if (this.model != null) this.model.apply(stack);
         return stack;
     }
@@ -134,16 +133,7 @@ public class ItemConstruct {
         this.enchantments = enchantments;
         return this;
     }
-
-    public EnchantConstructType getStoredEnchantments() {
-        return storedEnchantments;
-    }
-
-    public ItemConstruct setStoredEnchantments(EnchantConstructType storedEnchantments) {
-        this.storedEnchantments = storedEnchantments;
-        return this;
-    }
-
+    
     public TextureConstructType getTexture() {
         return texture;
     }

@@ -5,13 +5,12 @@ import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.ConfigLoader;
 import dev.oribuin.fishing.gui.PluginMenu;
 import dev.oribuin.fishing.gui.impl.totem.TotemMainMenu;
+import dev.oribuin.fishing.gui.impl.totem.TotemUpgradeMenu;
 import dev.oribuin.fishing.model.augment.Augment;
 
-import javax.swing.plaf.MenuBarUI;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class MenuManager implements Manager {
 
@@ -38,7 +37,7 @@ public class MenuManager implements Manager {
 
         // Totem Menus
         register(TotemMainMenu::new);
-        //        register(TotemUpgradeMenu::new);
+        register(TotemUpgradeMenu::new);
 
         this.plugin.getLogger().info("Loaded a total of [" + menus.size() + "] menus into the plugin");
     }

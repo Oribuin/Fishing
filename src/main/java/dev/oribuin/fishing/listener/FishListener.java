@@ -4,6 +4,7 @@ import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.FishEventHandler;
 import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
+import dev.oribuin.fishing.config.impl.PluginMessages;
 import dev.oribuin.fishing.manager.FishManager;
 import dev.oribuin.fishing.manager.TotemManager;
 import dev.oribuin.fishing.model.augment.Augment;
@@ -11,6 +12,7 @@ import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.storage.Fisher;
 import net.kyori.adventure.text.Component;
+import org.apache.logging.log4j.message.Message;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
@@ -44,7 +46,7 @@ public class FishListener implements Listener {
     }
 
     /**
-     * Catch a new type of fish 
+     * Catch a new type of fish
      *
      * @param event The catching event
      */
@@ -71,6 +73,7 @@ public class FishListener implements Listener {
         for (int i = 0; i < catchEvent.getAmountToCatch(); i++) {
             caught.add(manager.generateFish(augments, event.getPlayer().getPlayer(), rod, event.getHook()));
         }
+        
         // Add the fish into the player inventory
         float naturalExp = event.getExpToDrop();
         int newFishExp = 0;
@@ -92,11 +95,9 @@ public class FishListener implements Listener {
             newEntropy += fishCatchEvent.entropy();
 
             // Tell the player they caught a fish
-            //            locale.sendMessage(event.getPlayer(), "fish-caught", Placeholders.of("fish", fish.displayName()));
 
             ItemStack resultItem = fish.buildItem();
-            Component message = Component.text("You have caught a ").append(resultItem.displayName()); // TODO: Replace with locale message
-            event.getPlayer().sendMessage(message);
+            PluginMessages.get().getCaughtFish().send(event.getPlayer(), "item", resultItem.displayName());
 
             // Give the fish to the player
             PlayerInventory inv = event.getPlayer().getInventory();
@@ -121,9 +122,7 @@ public class FishListener implements Listener {
             fisher.levelUp(); // Level up the player
 
             this.plugin.getDataManager().saveUser(fisher); // Save the player data on levelup
-
-            // Tell the player they leveled up
-            event.getPlayer().sendMessage("You leveled up! You are now level " + fisher.level() + "!"); // TODO: Replace with locale message
+            PluginMessages.get().getLevelUp().send(fisher, "level", fisher.level()); // Tell the player they leveled up
         }
     }
 

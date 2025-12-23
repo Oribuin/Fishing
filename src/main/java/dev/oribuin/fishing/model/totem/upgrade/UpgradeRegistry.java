@@ -1,11 +1,9 @@
 package dev.oribuin.fishing.model.totem.upgrade;
 
-import com.jeff_media.morepersistentdatatypes.DataType;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.model.totem.upgrade.impl.UpgradeTotemCooldown;
 import dev.oribuin.fishing.model.totem.upgrade.impl.UpgradeTotemDuration;
 import dev.oribuin.fishing.model.totem.upgrade.impl.UpgradeTotemRadius;
-import org.bukkit.persistence.PersistentDataContainer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +12,7 @@ import java.util.function.Supplier;
 public class UpgradeRegistry {
 
     private static final Map<String, TotemUpgrade> upgrades = new HashMap<>();
-    
+
     public static final UpgradeTotemCooldown COOLDOWN_UPGRADE = register(UpgradeTotemCooldown::new);
     public static final UpgradeTotemDuration DURATION_UPGRADE = register(UpgradeTotemDuration::new);
     public static final UpgradeTotemRadius RADIUS_UPGRADE = register(UpgradeTotemRadius::new);
@@ -41,7 +39,7 @@ public class UpgradeRegistry {
         upgrades.put(upgrade.name(), upgrade);
         return upgrade;
     }
-    
+
     /**
      * Load all the upgrades from a {@link Totem} and initialize them to the totem
      * <p>
@@ -62,14 +60,7 @@ public class UpgradeRegistry {
 
         return result;
     }
-
-    /**
-     * Reload all the upgrades in the registry
-     */
-    public static void reload() {
-//        upgrades.values().forEach(TotemUpgrade::reload); // todo: reload tier upgrades
-    }
-
+    
     /**
      * Get an upgrade from the registry
      *

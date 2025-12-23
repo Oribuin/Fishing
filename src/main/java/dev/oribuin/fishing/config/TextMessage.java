@@ -1,10 +1,9 @@
 package dev.oribuin.fishing.config;
 
-import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.hook.plugin.PAPIProvider;
 import dev.oribuin.fishing.scheduler.PluginScheduler;
-import dev.oribuin.fishing.util.Placeholders;
 import dev.oribuin.fishing.util.FishUtils;
+import dev.oribuin.fishing.util.Placeholders;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
@@ -131,7 +130,7 @@ public class TextMessage {
             if (placeholders[i] instanceof String placeholder) {
                 Object value = placeholders[i + 1];
                 if (value == null) value = "null";
-                
+
                 builder.add(placeholder, value);
             }
         }
@@ -180,7 +179,7 @@ public class TextMessage {
      */
     public Component parse(String message, Player target, Placeholders Placeholders) {
         if (message == null) return Component.empty();
-        if (Placeholders == null) Placeholders = Placeholders.empty();
+        if (Placeholders == null) Placeholders = dev.oribuin.fishing.util.Placeholders.empty();
 
         boolean usePapi = this.placeholderapi != null ? this.placeholderapi : false;
 

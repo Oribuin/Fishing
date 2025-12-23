@@ -1,15 +1,19 @@
 package dev.oribuin.fishing.storage;
 
 import dev.oribuin.fishing.config.impl.Config;
-import dev.oribuin.fishing.model.condition.ConditionRegistry;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.audience.ForwardingAudience;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class Fisher {
+public class Fisher implements ForwardingAudience.Single {
 
     private final UUID uuid;
     private int entropy;
@@ -38,6 +42,13 @@ public class Fisher {
         this.level++;
         this.skillPoints++;
         return true;
+    }
+    
+    @Override
+    public @NotNull Audience audience() {
+        Player player = Bukkit.getPlayer(this.uuid);
+        if (player != null) return  player;
+        return Audience.empty();
     }
 
     /**

@@ -4,7 +4,10 @@ import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.item.ItemConstruct;
 import dev.oribuin.fishing.model.condition.CatchCondition;
 import dev.oribuin.fishing.storage.util.KeyRegistry;
+import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -75,10 +78,10 @@ public class Fish {
         // Add all the information to the item stack
         Placeholders.Builder placeholders = Placeholders.builder();
         placeholders.addAll(this.placeholders());
-        //        placeholders.addAll(this.tier().placeholders()); // TODO: Tier Placeholders
+        placeholders.addAll(this.getTierInstance().placeholders()); // TODO: Tier Placeholders
 
         ItemConstruct tierConstruct = fishTier.getItem(); // todo: merge Fish#getConstruct() -> Tier#getConstruct()
-//        if (this.construct.getName() != null)  tierConstruct.set
+        //        if (this.construct.getName() != null)  tierConstruct.set
         ItemStack itemStack = fishTier.getItem().build(placeholders.build());
         itemStack.editMeta(itemMeta -> {
             // fish data :-)
@@ -101,7 +104,7 @@ public class Fish {
                 .add("id", this.name)
                 .add("name", this.displayName)
                 .add("tier", this.tier)
-                .add("description", String.join("\n", this.description));
+                .add("description", FishUtils.kyorify(String.join("<br>", this.description)));
 
         // Add all the placeholders from the conditions
         this.conditions.forEach(condition -> builder.addAll(condition.placeholders()));

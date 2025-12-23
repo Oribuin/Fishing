@@ -26,7 +26,7 @@ public class FishCatchEvent extends PlayerEvent implements Cancellable {
     private final ItemStack rod;
     private final FishHook hook;
     private Fish fish;
-    
+
     private final int baseEntropy;
     private final int baseFishExp;
     private final float baseNaturalExp;
@@ -75,7 +75,8 @@ public class FishCatchEvent extends PlayerEvent implements Cancellable {
 
     /**
      * The fishing rod the player is using to catch the fish
-     *-
+     * -
+     *
      * @return The fishing rod {@link ItemStack}
      */
     public @NotNull ItemStack rod() {
@@ -108,7 +109,7 @@ public class FishCatchEvent extends PlayerEvent implements Cancellable {
     public void fish(@Nullable Fish fish) {
         this.fish = fish;
     }
-    
+
     /**
      * The base amount of entropy the fish gives
      *
@@ -135,7 +136,7 @@ public class FishCatchEvent extends PlayerEvent implements Cancellable {
     public void entropy(int entropy) {
         this.entropy = entropy;
     }
-    
+
     /**
      * The base amount of plugin experience the fish gives
      *
@@ -162,7 +163,7 @@ public class FishCatchEvent extends PlayerEvent implements Cancellable {
     public void fishExp(int fishExp) {
         this.fishExp = fishExp;
     }
-    
+
     /**
      * The base minecraft experience the fish gives
      *

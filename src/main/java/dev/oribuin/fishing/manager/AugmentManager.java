@@ -56,7 +56,7 @@ public class AugmentManager implements Manager {
         register(AugmentIntuition::new);
         //        register(AugmentMakeItRain::new); // TODO: Redo
         register(AugmentRainDance::new);
-        
+
         this.plugin.getLogger().info("Loaded a total of [" + augments.size() + "] augments into the plugin");
     }
 
@@ -130,7 +130,7 @@ public class AugmentManager implements Manager {
             if (itemLore != null) {
                 lore.addAll(itemLore);
             }
-            
+
             Component text = FishUtils.kyorify(augment.getDisplayLine(), placeholders);
             Integer currentIndex = container.get(augment.loreKey(), PersistentDataType.INTEGER);
             if (currentIndex != null) {
@@ -161,7 +161,7 @@ public class AugmentManager implements Manager {
 
         // Load the augments from the item meta
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        this.augments.forEach((name, augment) -> {
+        augments.forEach((name, augment) -> {
             Integer level = container.get(augment.key(), PersistentDataType.INTEGER);
             if (level == null || level <= 0) return;
 

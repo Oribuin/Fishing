@@ -26,7 +26,7 @@ public final class NumberUtil {
     public static String rounded(Double value) {
         return rounded(value, 2);
     }
-    
+
     /**
      * Convert a Double into a String with maximum 2 decimal places
      *

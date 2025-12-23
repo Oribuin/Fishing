@@ -58,5 +58,5 @@ public final class EdibleConstructType implements ConstructComponent<FoodPropert
     public void clear(@NotNull ItemStack stack) {
         stack.unsetData(DataComponentTypes.FOOD);
     }
-    
+
 }

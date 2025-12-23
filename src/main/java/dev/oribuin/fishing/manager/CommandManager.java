@@ -1,8 +1,6 @@
 package dev.oribuin.fishing.manager;
 
 import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.api.event.MutableEventWrapper;
-import dev.oribuin.fishing.command.FishCommand;
 import dev.oribuin.fishing.command.argument.AugmentArgumentHandler;
 import dev.oribuin.fishing.command.argument.FishArgumentHandler;
 import dev.oribuin.fishing.command.argument.TierArgumentHandler;
@@ -30,22 +28,22 @@ import org.incendo.cloud.setting.ManagerSetting;
 import javax.naming.NoPermissionException;
 import java.util.function.Supplier;
 
-public class CommandManager extends LegacyPaperCommandManager<CommandSender> implements Manager  {
+public class CommandManager extends LegacyPaperCommandManager<CommandSender> implements Manager {
 
     private final FishingPlugin plugin;
     private AnnotationParser<CommandSender> parser;
 
     public CommandManager(@NonNull FishingPlugin owningPlugin) {
         super(
-                owningPlugin, 
-                ExecutionCoordinator.asyncCoordinator(), 
+                owningPlugin,
+                ExecutionCoordinator.asyncCoordinator(),
                 SenderMapper.identity()
         );
-        
+
         this.plugin = owningPlugin;
         this.reload(this.plugin);
     }
-    
+
     /**
      * The task that runs when the plugin is loaded/reloaded
      *
@@ -87,7 +85,7 @@ public class CommandManager extends LegacyPaperCommandManager<CommandSender> imp
 
         // Register all the plugin commands
         this.parser.parse(
-                new ApplyCommand(this.plugin), 
+                new ApplyCommand(this.plugin),
                 new GiveCommand(this.plugin),
                 new ListCommand(this.plugin)
         );
@@ -118,7 +116,7 @@ public class CommandManager extends LegacyPaperCommandManager<CommandSender> imp
     public FishingPlugin getPlugin() {
         return plugin;
     }
-    
+
     public AnnotationParser<CommandSender> getParser() {
         return parser;
     }

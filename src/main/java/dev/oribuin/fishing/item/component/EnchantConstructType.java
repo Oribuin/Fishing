@@ -1,7 +1,6 @@
 package dev.oribuin.fishing.item.component;
 
 import dev.oribuin.fishing.item.ConstructComponent;
-import io.papermc.paper.datacomponent.DataComponentType;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemEnchantments;
 import org.bukkit.enchantments.Enchantment;
@@ -9,15 +8,14 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @ConfigSerializable
 @SuppressWarnings({ "UnstableApiUsage", "FieldMayBeFinal" })
 public final class EnchantConstructType implements ConstructComponent<ItemEnchantments> {
 
-    private final Map<Enchantment, Integer> enchantments = null;
-    private transient Boolean stored = false;
+    private final Map<Enchantment, Integer> equipped = null;
+    private final Map<Enchantment, Integer> stored = null;
 
     /**
      * Create a new item component type from the plugin
@@ -26,11 +24,7 @@ public final class EnchantConstructType implements ConstructComponent<ItemEnchan
      */
     @Override
     public @NotNull ItemEnchantments establish() {
-        return ItemEnchantments.itemEnchantments(
-                this.enchantments != null // intellij knows no better, configurate makes this not null
-                        ? this.enchantments
-                        : new HashMap<>()
-        );
+        return ItemEnchantments.itemEnchantments().build();
     }
 
     /**
@@ -40,13 +34,13 @@ public final class EnchantConstructType implements ConstructComponent<ItemEnchan
      */
     @Override
     public void apply(@NotNull ItemStack stack) {
-        if (this.enchantments == null || this.enchantments.isEmpty()) return;
+        if (this.equipped != null && !this.equipped.isEmpty()) {
+            stack.setData(DataComponentTypes.ENCHANTMENTS, ItemEnchantments.itemEnchantments(this.equipped));
+        }
 
-        ItemEnchantments itemEnchantments = this.establish();
-        DataComponentType.Valued<ItemEnchantments> type = this.stored == null || !this.stored
-                ? DataComponentTypes.ENCHANTMENTS
-                : DataComponentTypes.STORED_ENCHANTMENTS;
-        stack.setData(type, itemEnchantments);
+        if (this.stored != null && !this.stored.isEmpty()) {
+            stack.setData(DataComponentTypes.STORED_ENCHANTMENTS, ItemEnchantments.itemEnchantments(this.equipped));
+        }
     }
 
     /**
@@ -57,11 +51,7 @@ public final class EnchantConstructType implements ConstructComponent<ItemEnchan
     @Override
     public void clear(@NotNull ItemStack stack) {
         stack.unsetData(DataComponentTypes.ENCHANTMENTS);
-    }
-
-    public EnchantConstructType asStored() {
-        this.stored = true;
-        return this;
+        stack.unsetData(DataComponentTypes.STORED_ENCHANTMENTS);
     }
 
 }

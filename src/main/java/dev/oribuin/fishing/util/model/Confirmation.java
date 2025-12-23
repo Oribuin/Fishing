@@ -1,6 +1,5 @@
 package dev.oribuin.fishing.util.model;
 
-import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.scheduler.PluginScheduler;
 import dev.oribuin.fishing.scheduler.task.ScheduledTask;
 

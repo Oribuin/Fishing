@@ -24,7 +24,7 @@ public class IceFishingCondition extends CatchCondition {
 
     private static final int MIN_RADIUS = 2;
     private static final int MAX_RADIUS = 3;
-    
+
     /**
      * Decides whether the condition should be checked in the first place,
      * <p>

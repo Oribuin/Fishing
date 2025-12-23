@@ -8,7 +8,6 @@ import dev.oribuin.fishing.util.FishUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.nio.charset.CoderMalfunctionError;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -64,20 +63,20 @@ public class TierManager implements Manager {
                 this.plugin.getLogger().warning("Tier file[" + file.getName() + "] does not have any fish located, This will be skipped");
                 return;
             }
-            
+
             // update the "tier" on all the fish & set tier name
             Map<String, Fish> current = new HashMap<>(tier.getFish());
             for (Map.Entry<String, Fish> entry : current.entrySet()) {
                 entry.getValue().setName(entry.getKey().toLowerCase());
                 entry.getValue().setTier(tier.getName().toLowerCase());
             }
-            
+
             tier.setFish(current);
             this.tiers.put(tier.getName().toLowerCase(), tier);
         }
-        
+
         this.plugin.getLogger().info("Loaded a total of [" + this.tiers.size() + "] tiers with [" + this.getAllFish().size() + "] fish");
-        
+
     }
 
     /**
@@ -90,10 +89,10 @@ public class TierManager implements Manager {
         for (Tier tier : new HashMap<>(this.tiers).values()) {
             tier.getConfigHandler().unload();
         }
-        
+
         this.tiers.clear();
     }
-    
+
 
     /**
      * Selects a tier based on the chance number provided by the player, this will return the tier

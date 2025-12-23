@@ -32,7 +32,7 @@ public class VaultCurrency implements Currency<Double> {
     public @NotNull Number amount(@NotNull OfflinePlayer player, @NotNull Double content) {
         return API != null ? API.getBalance(player) : 0.0;
     }
-    
+
     /**
      * Check if the player has enough currency to purchase an item
      *
@@ -45,7 +45,7 @@ public class VaultCurrency implements Currency<Double> {
     public boolean has(@NotNull OfflinePlayer player, @NotNull Double content) {
         return this.amount(player, content).intValue() >= content;
     }
-    
+
     /**
      * Give the player an amount of currency
      *
