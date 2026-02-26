@@ -100,14 +100,11 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
                 .filter(x -> ConditionRegistry.check(x, player, rod, hook))
                 .toList();
 
-        System.out.println("Total fish that can be caught: " + canCatch.size());
         if (canCatch.isEmpty()) return;
 
         // Pick a random fish from the list
         int index = FishUtils.RANDOM.nextInt(canCatch.size());
-        System.out.println("Chosen Index: " + index);
         this.fish = canCatch.get(index);
-        System.out.println("Chosen Fish: " + this.fish);
     }
 
     /**

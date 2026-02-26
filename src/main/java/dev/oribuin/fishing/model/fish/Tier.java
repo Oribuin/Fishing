@@ -30,6 +30,8 @@ public class Tier {
     private int catchExperience;
     @Comment("The minecraft experienced gained from catching this tier of fish")
     private float naturalExperience;
+    @Comment("The base itemstack model to showcase the fish tier")
+    private ItemConstruct tierDisplay;
     @Comment("The base itemstack model for this tier of fish")
     private ItemConstruct item;
     @Comment("The list of fish that are available in this tier")
@@ -48,6 +50,7 @@ public class Tier {
         this.sellMoney = 25;
         this.catchExperience = 100;
         this.naturalExperience = 10;
+        this.tierDisplay = new ItemConstruct(Material.COPPER_INGOT);
         this.item = new ItemConstruct(Material.COD);
     }
 
@@ -153,6 +156,14 @@ public class Tier {
 
     public void setNaturalExperience(float naturalExperience) {
         this.naturalExperience = naturalExperience;
+    }
+
+    public ItemConstruct getTierDisplay() {
+        return tierDisplay;
+    }
+
+    public void setTierDisplay(ItemConstruct tierDisplay) {
+        this.tierDisplay = tierDisplay;
     }
 
     public ItemConstruct getItem() {

@@ -27,7 +27,6 @@ public class TierManager implements Manager {
     public TierManager(FishingPlugin plugin) {
         this.plugin = plugin;
         this.tiers = new HashMap<>();
-        this.reload(this.plugin);
     }
 
     /**

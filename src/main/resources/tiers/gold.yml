@@ -6,6 +6,12 @@ catch-money: 0.0 # Money reward when the fish is caught
 sell-money: 50.0 # Money reward when the fish is sold in the fish store
 catch-experience: 300 # The fishing experience rewarded when the fish is caught
 natural-experience: 5 # The natural minecraft experience rewarded when the fish is caught
+tier-display:
+  type: GOLD_INGOT
+  name: '<white>[<#FFD700><bold>Gold</bold><white>]'
+  lore:
+    - '<gray>A rare quality of fish, these fish'
+    - '<gray>are moderately difficult to catch'
 item:
   type: COD
   name: '<#FFD700><bold><name>'

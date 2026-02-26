@@ -3,6 +3,7 @@ package dev.oribuin.fishing.gui.impl.totem;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
 import dev.oribuin.fishing.item.ItemConstruct;
+import dev.oribuin.fishing.item.component.ModelConstructType;
 import dev.oribuin.fishing.item.component.TooltipConstructType;
 import dev.oribuin.fishing.manager.MenuManager;
 import dev.oribuin.fishing.model.totem.Totem;
@@ -43,7 +44,6 @@ public class TotemMainMenu extends PluginMenu<Gui> {
         Gui gui = this.createRegular();
         this.placeExtras(totem.placeholders());
         this.updateTask(() -> this.placeDynamics(totem, player));
-
         gui.open(player);
     }
 
@@ -100,8 +100,8 @@ public class TotemMainMenu extends PluginMenu<Gui> {
             )
             .setGlowing(true);
 
-    private static final ItemConstruct TOTEM_UPGRADE = new ItemConstruct(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
-            .setName("<white>[<#94bc80>Totem Upgrades<white>")
+    private static final ItemConstruct TOTEM_UPGRADE = new ItemConstruct(Material.PAPER)
+            .setName("<white>[<#94bc80>Totem Upgrades<white>]")
             .setLore(
                     "<gray>Click here to view and level",
                     "<gray>up this fishing totem",
@@ -112,10 +112,11 @@ public class TotemMainMenu extends PluginMenu<Gui> {
                     " <#94bc80>- <white>Cooldown: <#94bc80><upgrade_cooldown_value>"
             )
             .setGlowing(true)
-            .setTooltip(new TooltipConstructType().setHiddenComponents(List.of("TRIM_MATERIAL")));
+            .setModel(new ModelConstructType("minecraft:netherite_upgrade_smithing_template"));
+//            .setTooltip(new TooltipConstructType().setHiddenComponents(List.of("minecraft:trim")));
 
     private static final ItemConstruct TOTEM_ACTIVATE = new ItemConstruct(Material.LIME_DYE)
-            .setName("<white>[<#05e653>Activate Totem<white>")
+            .setName("<white>[<#05e653>Activate Totem<white>]")
             .setLore(
                     "<gray>Click here to active this totem",
                     "",
@@ -127,7 +128,7 @@ public class TotemMainMenu extends PluginMenu<Gui> {
             .setGlowing(true);
 
     private static final ItemConstruct TOTEM_COOLDOWN = new ItemConstruct(Material.RED_DYE)
-            .setName("<white>[<#e60505>On Cooldown<white>")
+            .setName("<white>[<#e60505>On Cooldown<white>]")
             .setLore(
                     "<gray>This totem is currently on cooldown",
                     "",
@@ -139,7 +140,7 @@ public class TotemMainMenu extends PluginMenu<Gui> {
             .setGlowing(true);
 
     private static final ItemConstruct TOTEM_ACTIVE = new ItemConstruct(Material.LIME_DYE)
-            .setName("<white>[<#e65f05>Currently Active<white>")
+            .setName("<white>[<#e65f05>Currently Active<white>]")
             .setLore(
                     "<gray>Your totem is currently active",
                     "",

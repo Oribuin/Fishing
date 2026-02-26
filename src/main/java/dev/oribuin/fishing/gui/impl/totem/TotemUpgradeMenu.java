@@ -85,11 +85,11 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui> {
             .setGlowing(true);
 
     private static final ItemConstruct PAGE_FORWARD = new ItemConstruct(Material.ARROW)
-            .setName("<white>[<#94bc80>Next Page<white>")
+            .setName("<white>[<#94bc80>Next Page<white>]")
             .setLore("<gray>Click here to go to the next page");
 
     private static final ItemConstruct PAGE_BACKWARD = new ItemConstruct(Material.ARROW)
-            .setName("<white>[<#94bc80>Previous Page<white>")
+            .setName("<white>[<#94bc80>Previous Page<white>]")
             .setLore("<gray>Click here to go to the previous page");
 
     private static final ItemConstruct UPGRADE_STYLE = new ItemConstruct(Material.HEART_OF_THE_SEA) // Upgrades will choose their own item, idgaf

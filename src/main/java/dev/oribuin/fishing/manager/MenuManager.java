@@ -4,6 +4,9 @@ import com.google.common.base.Supplier;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.ConfigLoader;
 import dev.oribuin.fishing.gui.PluginMenu;
+import dev.oribuin.fishing.gui.impl.codex.impl.AugmentCodexMenu;
+import dev.oribuin.fishing.gui.impl.codex.impl.FishCodexMenu;
+import dev.oribuin.fishing.gui.impl.codex.impl.TierCodexMenu;
 import dev.oribuin.fishing.gui.impl.totem.TotemMainMenu;
 import dev.oribuin.fishing.gui.impl.totem.TotemUpgradeMenu;
 import dev.oribuin.fishing.model.augment.Augment;
@@ -21,7 +24,6 @@ public class MenuManager implements Manager {
 
     public MenuManager(FishingPlugin plugin) {
         this.plugin = plugin;
-        this.reload(this.plugin);
     }
 
     /**
@@ -32,8 +34,9 @@ public class MenuManager implements Manager {
     @Override
     public void reload(FishingPlugin plugin) {
         // Codex menus
-        //        register(AugmentCodexMenu::new);
-        //        register(FishCodexMenu::new);
+        register(TierCodexMenu::new);
+        register(AugmentCodexMenu::new);
+        register(FishCodexMenu::new);
 
         // Totem Menus
         register(TotemMainMenu::new);

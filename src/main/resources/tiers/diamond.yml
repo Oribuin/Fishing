@@ -6,6 +6,12 @@ catch-money: 0.0 # Money reward when the fish is caught
 sell-money: 125 # Money reward when the fish is sold in the fish store
 catch-experience: 700 # The fishing experience rewarded when the fish is caught
 natural-experience: 5 # The natural minecraft experience rewarded when the fish is caught
+tier-display:
+  type: DIAMOND
+  name: '<white>[<#B9F2FF><bold>Diamond</bold><white>]'
+  lore:
+    - '<gray>A very rare quality of fish, these fish'
+    - '<gray>are not a common find until late game'
 item:
   type: COD
   name: '<#B9F2FF><bold><name>'

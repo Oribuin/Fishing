@@ -6,6 +6,12 @@ catch-money: 0.0 # Money reward when the fish is caught
 sell-money: 7 # Money reward when the fish is sold in the fish store
 catch-experience: 150 # The fishing experience rewarded when the fish is caught
 natural-experience: 5 # The natural minecraft experience rewarded when the fish is caught
+tier-display:
+  type: IRON_INGOT
+  name: '<white>[<#C0C0C0><bold>Silver</bold><white>]'
+  lore:
+    - '<gray>An uncommon tier of fish,'
+    - '<gray>these fish are slightly harder to find'
 item:
   type: COD
   name: '<#C0C0C0><bold><name>'

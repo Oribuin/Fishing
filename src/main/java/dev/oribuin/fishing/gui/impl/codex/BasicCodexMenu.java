@@ -1,7 +1,9 @@
 package dev.oribuin.fishing.gui.impl.codex;
 
 import dev.oribuin.fishing.gui.PluginMenu;
+import dev.oribuin.fishing.item.ItemConstruct;
 import dev.triumphteam.gui.guis.PaginatedGui;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -28,4 +30,20 @@ public abstract class BasicCodexMenu<T> extends PluginMenu<PaginatedGui> {
      */
     public abstract List<T> getContent(Player player, Predicate<T> condition);
 
+    protected final ItemConstruct PAGE_FORWARD = new ItemConstruct(Material.ARROW)
+            .setName("<white>[<#94bc80>Next Page<white>]")
+            .setLore("<gray>Click here to go to the next page");
+    
+    protected final ItemConstruct CODEX_MAIN_MENU = new ItemConstruct(Material.KNOWLEDGE_BOOK)
+            .setName("<white>[<#94bc80>Codex Menu<white>]")
+            .setLore(
+                    "<gray>Click here to go to the index page", 
+                    "<gray>with all the different types of information", 
+                    "<gray>available in the codex"
+            );
+
+    protected final ItemConstruct PAGE_BACKWARD = new ItemConstruct(Material.ARROW)
+            .setName("<white>[<#94bc80>Previous Page<white>]")
+            .setLore("<gray>Click here to go to the previous page");
+    
 }

@@ -40,7 +40,7 @@ public class TooltipConstructType implements ConstructComponent<TooltipDisplay> 
             this.hiddenComponents.forEach(s -> {
                 DataComponentType type = this.from(s.toLowerCase());
                 if (type != null) types.add(type);
-                else FishingPlugin.get().getLogger().warning("Failed to match data component type [" + s + "]");
+//                else FishingPlugin.get().getLogger().warning("Failed to match data component type [" + s + "]");
             });
         }
 

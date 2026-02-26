@@ -16,6 +16,13 @@ public final class ModelConstructType implements ConstructComponent<Key> {
     @Subst("minecraft:cod")
     private String model = null;
 
+    public ModelConstructType() {
+    }
+
+    public ModelConstructType(String model) {
+        this.model = model;
+    }
+
     /**
      * Create a new item component type from the plugin
      *

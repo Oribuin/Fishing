@@ -52,6 +52,7 @@ public class FishingPlugin extends JavaPlugin {
         this.augmentManager = new AugmentManager(this);
         this.totemManager = new TotemManager(this);
         this.menuManager = new MenuManager(this);
+        this.reload();
 
         PluginManager manager = this.getServer().getPluginManager();
         manager.registerEvents(new FishListener(this), this);

@@ -6,6 +6,12 @@ catch-money: 0.0 # Money reward when the fish is caught
 sell-money: 0.3 # Money reward when the fish is sold in the fish store
 catch-experience: 75 # The fishing experience rewarded when the fish is caught
 natural-experience: 5 # The natural minecraft experience rewarded when the fish is caught
+tier-display:
+  type: COPPER_INGOT
+  name: '<white>[<#CD7F32><bold>Bronze</bold><white>]'
+  lore:
+    - '<gray>The most common tier of fish,'
+    - '<gray>most can be found almost anywhere'
 item:
   type: COD
   name: '<#CD7F32><bold><name>'

@@ -1,10 +1,9 @@
 package dev.oribuin.fishing.gui.impl.codex.impl;
 
-import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.impl.codex.BasicCodexMenu;
-import dev.oribuin.fishing.item.ItemConstruct;
-import dev.oribuin.fishing.model.augment.Augment;
+import dev.oribuin.fishing.manager.MenuManager;
+import dev.oribuin.fishing.model.fish.Tier;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.guis.GuiItem;
@@ -13,26 +12,28 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
 @ConfigSerializable
-public class AugmentCodexMenu extends BasicCodexMenu<Augment> {
+public class TierCodexMenu extends BasicCodexMenu<Tier> {
 
     /**
      * Creates a new plugin menu instance, with the specified name
      */
-    public AugmentCodexMenu() {
-        super("codex/augment");
-        
-        this.title = "Fishing Codex | Augment";
-        this.rows = 6;
+    public TierCodexMenu() {
+        super("codex/tier");
+
+        this.title = "Fishing Codex | Tiers";
+        this.rows = 3;
         this.items.put("page-backward", new MenuItem(PAGE_BACKWARD, 3));
         this.items.put("codex-main-menu", new MenuItem(CODEX_MAIN_MENU, 4));
         this.items.put("page-forward", new MenuItem(PAGE_FORWARD, 5));
-        this.extraItems.put("border", new MenuItem(BORDER, FishUtils.parseList("0-8", "45-53")));
+        this.extraItems.put("border", new MenuItem(BORDER, FishUtils.parseList("0-8", "18-26", "9", "17")));
     }
-
 
     /**
      * Open the GUI for the specified player
@@ -45,15 +46,16 @@ public class AugmentCodexMenu extends BasicCodexMenu<Augment> {
         this.placeItem("page-forward", x -> gui.next());
         this.placeItem("page-backward", x -> gui.previous());
 
-        List<Augment> content = this.getContent(player, x -> true);
+        List<Tier> content = new ArrayList<>(this.getContent(player, tier -> true));
+        content.sort(Comparator.comparingDouble(Tier::getChance));
+        Collections.reverse(content);
 
         // Add all the fish to the GUI
-        content.forEach(x -> {
-            ItemConstruct construct = x.getDisplayItem();
-            if (construct == null) return;
-
-            ItemStack stack = construct.build(x.getPlaceholders());
-            gui.addItem(new GuiItem(stack));
+        content.forEach(tier -> {
+            ItemStack stack = tier.getTierDisplay().build();
+            GuiItem guiItem = new GuiItem(stack, action -> MenuManager.get(FishCodexMenu.class)
+                    .open((Player) action.getWhoClicked(), tier));
+            gui.addItem(guiItem);
         });
 
         gui.open(player);
@@ -68,8 +70,8 @@ public class AugmentCodexMenu extends BasicCodexMenu<Augment> {
      * @return The content to display in the menu
      */
     @Override
-    public List<Augment> getContent(Player player, Predicate<Augment> condition) {
-        return FishingPlugin.get().getAugmentManager().getAugments().values().stream().toList();
+    public List<Tier> getContent(Player player, Predicate<Tier> condition) {
+        return this.plugin.getTierManager().getTiers().values().stream().toList();
     }
 
 }

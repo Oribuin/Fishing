@@ -28,7 +28,6 @@ public class TotemManager implements Manager {
         this.totems = new ConcurrentHashMap<>();
         this.asyncTicker = null;
         this.lastTick = System.currentTimeMillis();
-        this.reload(this.plugin);
     }
 
     /**

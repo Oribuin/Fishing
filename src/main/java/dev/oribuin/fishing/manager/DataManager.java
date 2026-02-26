@@ -33,7 +33,6 @@ public class DataManager implements Manager {
     public DataManager(FishingPlugin plugin) {
         this.plugin = plugin;
         this.userData = new HashMap<>();
-        this.reload(plugin);
     }
 
     /**
@@ -43,8 +42,7 @@ public class DataManager implements Manager {
      */
     public void reload(FishingPlugin plugin) {
         this.disable(plugin);
-
-
+        
         MySQLConfig sqlConfig = MySQLConfig.get();
         if (sqlConfig.isEnabled()) {
             String hostname = sqlConfig.getHostname();

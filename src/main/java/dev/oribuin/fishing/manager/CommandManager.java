@@ -5,6 +5,7 @@ import dev.oribuin.fishing.command.argument.AugmentArgumentHandler;
 import dev.oribuin.fishing.command.argument.FishArgumentHandler;
 import dev.oribuin.fishing.command.argument.TierArgumentHandler;
 import dev.oribuin.fishing.command.impl.ApplyCommand;
+import dev.oribuin.fishing.command.impl.CodexCommand;
 import dev.oribuin.fishing.command.impl.GiveCommand;
 import dev.oribuin.fishing.command.impl.ListCommand;
 import dev.oribuin.fishing.config.impl.PluginMessages;
@@ -41,7 +42,6 @@ public class CommandManager extends LegacyPaperCommandManager<CommandSender> imp
         );
 
         this.plugin = owningPlugin;
-        this.reload(this.plugin);
     }
 
     /**
@@ -86,6 +86,7 @@ public class CommandManager extends LegacyPaperCommandManager<CommandSender> imp
         // Register all the plugin commands
         this.parser.parse(
                 new ApplyCommand(this.plugin),
+                new CodexCommand(this.plugin),
                 new GiveCommand(this.plugin),
                 new ListCommand(this.plugin)
         );

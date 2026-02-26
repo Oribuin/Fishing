@@ -1,24 +1,30 @@
 name: platinum # The name of the tier
-chance: 10.0 # Chance of getting this tier
+chance: 0.01 # Chance of getting this tier
 catch-entropy: 1250 # Entropy reward when the fish is caught
 gut-entropy: 2000 # Entropy rewarded when the fish is gutted
 catch-money: 0.0 # Money reward when the fish is caught
 sell-money: 750 # Money reward when the fish is sold in the fish store
 catch-experience: 1600 # The fishing experience rewarded when the fish is caught
 natural-experience: 5 # The natural minecraft experience rewarded when the fish is caught
+tier-display:
+  type: AMETHYST_SHARD
+  name: '<white>[<#c28df7><bold>Platinum</bold><white>]'
+  lore:
+    - '<gray>A ultra rare quality of fish, these fish'
+    - '<gray>should be keep closely as they are very valuable'
 item:
   type: COD
-  name: '<#E5E4E2><bold><name>'
+  name: '<#c28df7><bold><name>'
   lore:
     - ''
     - '<gray><description>'
     - ''
-    - '<#E5E4E2>Information:'
-    - ' <#E5E4E2>- <gray>Price: <white>$<price>'
-    - ' <#E5E4E2>- <gray>Entropy: <white><entropy>'
-    - ' <#E5E4E2>- <gray>Biomes: <white><biomes>'
-    - ' <#E5E4E2>- <gray>Weather: <white><weather>'
-    - ' <#E5E4E2>- <gray>Time: <white><time>'
+    - '<#c28df7>Information:'
+    - ' <#c28df7>- <gray>Price: <white>$<price>'
+    - ' <#c28df7>- <gray>Entropy: <white><entropy>'
+    - ' <#c28df7>- <gray>Biomes: <white><biomes>'
+    - ' <#c28df7>- <gray>Weather: <white><weather>'
+    - ' <#c28df7>- <gray>Time: <white><time>'
     - ''
 fish:
   chinook_salmon:

@@ -37,7 +37,6 @@ public class AugmentManager implements Manager {
 
     public AugmentManager(FishingPlugin plugin) {
         this.plugin = plugin;
-        this.reload(this.plugin);
     }
 
     /**

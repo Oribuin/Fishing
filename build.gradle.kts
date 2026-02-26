@@ -4,7 +4,7 @@ plugins {
     `java-library`
     `maven-publish`
     id("com.gradleup.shadow") version "8.3.5"
-    id("de.eldoria.plugin-yml.bukkit") version "0.7.1"
+    id("de.eldoria.plugin-yml.bukkit") version "0.8.0"
 }
 
 group = "dev.oribuin"
@@ -102,7 +102,7 @@ tasks {
         this.author = "Oribuin"
         this.description = "hello"
         this.apiVersion = "1.21"
-        this.softDepend = listOf("Vault")
+        this.softDepend = listOf("Vault", "HeadDatabase", "PlaceholderAPI", "PlayerPoints")
     }
     
     javadoc {

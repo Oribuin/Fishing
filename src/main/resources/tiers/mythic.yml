@@ -6,19 +6,26 @@ catch-money: 0.0 # Money reward when the fish is caught
 sell-money: 15000 # Money reward when the fish is sold in the fish store
 catch-experience: 6000 # The fishing experience rewarded when the fish is caught
 natural-experience: 5 # The natural minecraft experience rewarded when the fish is caught
+tier-display:
+  type: NETHERITE_INGOT
+  name: '<white>[<#db4675><bold>Mythic</bold><white>]'
+  lore:
+    - '<gray>The rarest of all fish, these fish'
+    - '<gray>provide exceptional value.'
+  glowing: true
 item:
   type: COD
-  name: '<#FF4500><bold><name>'
+  name: '<#db4675><bold><name>'
   lore:
     - ''
     - '<gray><description>'
     - ''
-    - '<#FF4500>Information:'
-    - ' <#FF4500>- <gray>Price: <white>$<price>'
-    - ' <#FF4500>- <gray>Entropy: <white><entropy>'
-    - ' <#FF4500>- <gray>Biomes: <white><biomes>'
-    - ' <#FF4500>- <gray>Weather: <white><weather>'
-    - ' <#FF4500>- <gray>Time: <white><time>'
+    - '<#db4675>Information:'
+    - ' <#db4675>- <gray>Price: <white>$<price>'
+    - ' <#db4675>- <gray>Entropy: <white><entropy>'
+    - ' <#db4675>- <gray>Biomes: <white><biomes>'
+    - ' <#db4675>- <gray>Weather: <white><weather>'
+    - ' <#db4675>- <gray>Time: <white><time>'
     - ''
 fish:
   alligator_gar:
