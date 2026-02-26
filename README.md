@@ -8,10 +8,4 @@ i have created this plugin as a challenge to create a more extensive version of 
 this is supposed to place the power in the user to add whatever augment, skill, totem upgrade or anything they desire for their project and to make it as complex as they desire.
 
 ### plugin requirements
-This plugin will always be compiled against the latest Paper API Versions (as of writing, its 1.21.3) with no goal in supporting anything lower than latest. this is because i want to be stubborn and defiant, and because their api changes go hard.
-
-### what does copilot think?
-lol! I'm not a fisherman, but I like to fish. I'm not a professional fisherman, but I like to fish. I'm not a professional fisherman, but I like to fish. I'm not a professional fisherman, but I like to fish. I'm not a professional fisherman, but I like to fish. I'm not a professional fisherman, but I like to fish. I'm not a professional fisherman, but I like to fish. I'm not a professional fisherman, but I like to fish. I'm not a professional fisherman, but I like to fish. I'm not a professional fisherman, but I like to fish. I'm not a professional fisherman, but I like to fish. I'm not a professional fisherman, but I like to fish. I'm not a professional fisherman, but I like to fish. I'm not a professional fisherman, but I like to fish. I'm not a professional fisherman, but I like to fish. I'm not a professional fisherman, but I like to fish. I'm not a professional fisherman, but I like to fish. I'm not a professional fisherman, but I like to fish. I'm not a professional fisherman,
-but I like to fish. I'm not a professional fisherman, but I like to fish. I'm not a professional fisherman, but I like to fish. I'm not a professional fisherman, but I like to fish. I'm not a professional fisherman, but I like to fish. I'm not a professional fisherman, but I like
-
-thank you copilot for this wonderful sentiment, enjoy the plugin
+This plugin will always be compiled against the latest Paper API Versions (as of writing, its 1.21.11) with no goal in supporting anything lower than latest. this is because i want to be stubborn and defiant, and because their api changes go hard.
