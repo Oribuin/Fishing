@@ -2,6 +2,7 @@ package dev.oribuin.fishing.command.impl;
 
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.command.FishCommand;
+import dev.oribuin.fishing.gui.impl.user.FishGutMenu;
 import dev.oribuin.fishing.gui.impl.user.FishMainMenu;
 import dev.oribuin.fishing.manager.MenuManager;
 import dev.oribuin.fishing.scheduler.PluginScheduler;
@@ -56,6 +57,23 @@ public class MenuCommand implements FishCommand {
 
         Player finalTarget = target;
         //        PluginScheduler.get().runTask(() -> MenuManager.get(FishMainMenu.class).open(finalTarget));
+    }
+
+    /**
+     * Open the fishing stats menu for the player
+     *
+     * @param sender The sender running the command
+     * @param target The target that might open the menu
+     */
+    @Command("fishing|fish gut [target]")
+    @Permission("fishing.gut")
+    @CommandDescription("Opens the gutting menu for the player or target")
+    public void executeGuttingMenu(CommandSender sender, Player target) {
+        if (target == null && sender instanceof Player player) target = player;
+        if (target == null) return;
+
+        Player finalTarget = target;
+        PluginScheduler.get().runTask(() -> MenuManager.get(FishGutMenu.class).open(finalTarget));
     }
 
 }

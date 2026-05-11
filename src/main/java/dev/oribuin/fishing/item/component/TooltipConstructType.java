@@ -40,6 +40,14 @@ public class TooltipConstructType implements ConstructComponent<TooltipDisplay> 
         this.hiddenComponents = hiddenComponents;
     }
 
+    public static TooltipConstructType of(Boolean visible, List<DataComponentType> hiddenComponents) {
+        return new TooltipConstructType(visible,
+                hiddenComponents.stream()
+                        .map(dataComponentType -> dataComponentType.key().asString())
+                        .toList()
+        );
+    }
+
     /**
      * Create a new item component type from the plugin
      *

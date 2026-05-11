@@ -3,6 +3,7 @@ package dev.oribuin.fishing.model.fish;
 import dev.oribuin.fishing.config.ConfigHandler;
 import dev.oribuin.fishing.item.ItemConstruct;
 import dev.oribuin.fishing.util.Placeholders;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Comment;
@@ -66,16 +67,20 @@ public class Tier {
 
     public Placeholders placeholders() {
         return Placeholders.builder()
-                .add("tier", this.name)
+                .add("tier", StringUtils.capitalize(this.name))
                 .add("chance", this.chance)
-                .add("catch_entropy", this.catchEntropy)
-                .add("catch_exp", this.catchExperience)
-                .add("catch_money", this.catchMoney)
-                .add("gut_entropy", this.gutEntropy)
-                .add("sell_money", this.sellMoney)
-                .add("natural_exp", this.naturalExperience)
+                .add("catch_entropy", this.intOrNa(this.catchEntropy))
+                .add("catch_exp", this.intOrNa(this.catchExperience))
+                .add("catch_money", this.intOrNa(this.catchMoney))
+                .add("gut_entropy", this.intOrNa(this.gutEntropy))
+                .add("sell_money", this.intOrNa(this.sellMoney))
+                .add("natural_exp", this.intOrNa(this.naturalExperience))
                 .add("fish_count", this.fish.size())
                 .build();
+    }
+
+    private String intOrNa(Number value) {
+        return value.intValue() <= 0 ? "N/A" : String.valueOf(value);
     }
 
     @Override

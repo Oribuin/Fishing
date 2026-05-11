@@ -43,7 +43,7 @@ public class PluginMessages {
             .source(Sound.Source.PLAYER);
 
     @Comment("Player has gutted fish for entropy")
-    private TextMessage guttedFish = new TextMessage(PREFIX + "You have gutted <#93bc80><total> <white>fish for <#93bc8><entropy> <white>entropy!");
+    private TextMessage guttedFish = new TextMessage(PREFIX + "You have gutted <#93bc80><total> <white>fish for <#93bc80><entropy> <white>entropy!");
 
     @Comment("Player has not got any fish to gut")
     private TextMessage noGuttedFish = new TextMessage(PREFIX + "There are no fish that could be gutted");

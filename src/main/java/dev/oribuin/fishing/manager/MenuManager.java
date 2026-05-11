@@ -9,6 +9,7 @@ import dev.oribuin.fishing.gui.impl.codex.impl.FishCodexMenu;
 import dev.oribuin.fishing.gui.impl.codex.impl.TierCodexMenu;
 import dev.oribuin.fishing.gui.impl.totem.TotemMainMenu;
 import dev.oribuin.fishing.gui.impl.totem.TotemUpgradeMenu;
+import dev.oribuin.fishing.gui.impl.user.FishGutMenu;
 import dev.oribuin.fishing.gui.impl.user.FishMainMenu;
 import dev.oribuin.fishing.model.augment.Augment;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
@@ -46,6 +47,7 @@ public class MenuManager implements Manager {
 
         // User Menus
         register(FishMainMenu::new);
+        register(FishGutMenu::new);
 
         this.plugin.getLogger().info("Loaded a total of [" + menus.size() + "] menus into the plugin");
     }

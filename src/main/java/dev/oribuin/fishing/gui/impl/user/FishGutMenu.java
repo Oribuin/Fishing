@@ -14,6 +14,7 @@ import dev.triumphteam.gui.guis.Gui;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -25,7 +26,7 @@ import java.util.function.Supplier;
 @ConfigSerializable
 public class FishGutMenu extends PluginMenu<Gui> {
 
-    private final List<Integer> gutSlots = FishUtils.parseList("9-35");
+    private final List<Integer> gutSlots;
 
     public FishGutMenu() {
         super("fish_gut_menu");
@@ -33,8 +34,9 @@ public class FishGutMenu extends PluginMenu<Gui> {
         this.title = "Gutting Station";
         this.rows = 5;
         this.items.put("gut-fish", new MenuItem(GUT_FISH, 40));
-        this.items.put("main-menu ", new MenuItem(MAIN_MENU, 36));
+        this.items.put("main-menu", new MenuItem(MAIN_MENU, 36));
         this.extraItems.put("border", new MenuItem(BORDER, FishUtils.parseList("0-8", "36-44")));
+        this.gutSlots = FishUtils.parseList("9-35");
     }
 
     /**
@@ -76,10 +78,11 @@ public class FishGutMenu extends PluginMenu<Gui> {
                 if (tier.getGutEntropy() <= 0) continue;
 
                 entropy += (tier.getGutEntropy() * stack.getAmount());
-                totalFish++;
+                totalFish += stack.getAmount();
                 stack.setAmount(0);
             }
 
+            event.getWhoClicked().closeInventory(InventoryCloseEvent.Reason.PLUGIN);
             if (entropy <= 0 || totalFish <= 0) {
                 PluginMessages.get().getNoGuttedFish().send(player);
                 return;

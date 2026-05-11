@@ -11,7 +11,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 public class TotemConfig {
 
     private ItemConstruct totemItem = new ItemConstruct(Material.PLAYER_HEAD)
-            .setName("<white>[<#94bc80><bold>Fishing Totem<white>]")
+            .setName("<white>[<#94bc80><bold>Fishing Totem</bold><white>]")
             .setLore(
                     "<gray>Place in the world to create local",
                     "<gray>booster for players within it's radius.",
@@ -23,7 +23,7 @@ public class TotemConfig {
                     " <#94bc80>- <gray>Cooldown: <#94bc80><upgrade_cooldown_value>",
                     ""
             )
-            .setTexture(new TextureConstructType("base64-eyJ0ZhX0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2ZhMTVlNDJjNGJjNTI3N2EzMTc5OTYzMjAxMjZjNzY2N2Y4ZTcxNTdmYzc3ZTE3ZDViMzQ1OGE3M2ExNWE0NCJ9fX0="))
+            .setTexture("base64-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmRkMDdkYzE0MTBiMzQzODg0MTQ0NmNkY2UyYmFmYmE0ZmM2MTk5NTQ0NWZlMzA4NGY1YjA3NWY5MjZlYmNhMSJ9fX0=")
             .setGlowing(true);
 
     public static TotemConfig get() {

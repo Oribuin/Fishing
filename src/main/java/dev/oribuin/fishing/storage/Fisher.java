@@ -72,6 +72,7 @@ public class Fisher implements ForwardingAudience.Single {
 
     public Placeholders getPlaceholders() {
         return Placeholders.of(
+                "entropy", this.entropy,
                 "level", this.level,
                 "experience", this.experience,
                 "skill_points", this.skillPoints,
