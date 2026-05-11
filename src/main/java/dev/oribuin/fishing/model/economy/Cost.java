@@ -52,7 +52,7 @@ public class Cost {
      *
      * @return The currency of the cost
      */
-    public Currency<?> currency() {
+    public Currency<?> getCurrency() {
         return currency;
     }
 
@@ -61,7 +61,7 @@ public class Cost {
      *
      * @return The price of the item
      */
-    public Number price() {
+    public Number getPrice() {
         return this.price;
     }
 
@@ -70,7 +70,7 @@ public class Cost {
      *
      * @param price The price to add
      */
-    public void price(Number price) {
+    public void setPrice(Number price) {
         this.price = price.doubleValue();
     }
 

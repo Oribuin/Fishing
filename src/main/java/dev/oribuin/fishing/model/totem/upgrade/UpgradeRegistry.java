@@ -36,7 +36,7 @@ public class UpgradeRegistry {
      */
     public static <T extends TotemUpgrade> T register(Supplier<T> supplier) {
         T upgrade = supplier.get();
-        upgrades.put(upgrade.name(), upgrade);
+        upgrades.put(upgrade.getName(), upgrade);
         return upgrade;
     }
 
@@ -53,14 +53,14 @@ public class UpgradeRegistry {
         Map<TotemUpgrade, Integer> result = new HashMap<>();
 
         upgrades.values().forEach(upgrade -> {
-            int level = totem.getProperty(upgrade.key(), upgrade.defaultLevel());
+            int level = totem.getProperty(upgrade.getKey(), upgrade.getDefaultLevel());
             upgrade.initialize(totem, level);
             result.put(upgrade, level);
         });
 
         return result;
     }
-    
+
     /**
      * Get an upgrade from the registry
      *

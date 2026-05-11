@@ -58,7 +58,7 @@ public class FishingPlugin extends JavaPlugin {
         manager.registerEvents(new FishListener(this), this);
         manager.registerEvents(new PlayerListeners(this), this);
         manager.registerEvents(new TotemListeners(this), this);
-        
+
         // register plugin hooks
         if (HeadDbProvider.isEnabled()) manager.registerEvents(new HeadDbProvider(), this);
         if (PAPIProvider.isEnabled()) new PAPIProvider(this).register();

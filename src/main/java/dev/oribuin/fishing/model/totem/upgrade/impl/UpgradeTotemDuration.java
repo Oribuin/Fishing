@@ -24,8 +24,8 @@ public class UpgradeTotemDuration extends TotemUpgrade {
     public UpgradeTotemDuration() {
         super("duration", "Increases the duration of the totem when activated");
 
-        this.defaultLevel(0);
-        this.maxLevel(10);
+        this.setDefaultLevel(0);
+        this.setMaxLevel(10);
     }
 
     /**
@@ -36,7 +36,7 @@ public class UpgradeTotemDuration extends TotemUpgrade {
      */
     @Override
     public void initialize(Totem totem, int level) {
-        totem.applyProperty(INTEGER, this.key(), level);
+        totem.applyProperty(INTEGER, this.getKey(), level);
     }
 
     /**
@@ -47,7 +47,7 @@ public class UpgradeTotemDuration extends TotemUpgrade {
      * @return The radius of the totem
      */
     public Duration calculateDuration(Totem totem) {
-        Integer level = totem.getProperty(this.key(), this.defaultLevel());
+        Integer level = totem.getProperty(this.getKey(), this.getDefaultLevel());
         Placeholders plc = Placeholders.of("level", level);
         return Duration.ofMillis((long) FishUtils.evaluate(plc.applyString(this.durationFormula)) * 1000);
     }
@@ -63,9 +63,9 @@ public class UpgradeTotemDuration extends TotemUpgrade {
      * @return The value of the upgrade
      */
     @Override
-    public Placeholders placeholders(Totem totem) {
+    public Placeholders getPlaceholders(Totem totem) {
         return Placeholders.builder()
-                .addAll(super.placeholders(totem))
+                .addAll(super.getPlaceholders(totem))
                 .add("value", FishUtils.formatTime(this.calculateDuration(totem).toMillis()))
                 .add("timer", FishUtils.formatTime(totem.getCurrentDuration()))
                 .build();

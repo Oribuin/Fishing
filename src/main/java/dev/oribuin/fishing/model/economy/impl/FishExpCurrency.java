@@ -25,7 +25,7 @@ public class FishExpCurrency implements Currency<Integer> {
      */
     @Override
     public @NotNull Number amount(@NotNull OfflinePlayer player, @NotNull Integer content) {
-        return this.fisher(player).experience();
+        return this.fisher(player).getExperience();
     }
 
     /**
@@ -50,7 +50,7 @@ public class FishExpCurrency implements Currency<Integer> {
     @Override
     public void give(@NotNull OfflinePlayer player, @NotNull Integer amount) {
         Fisher fisher = this.fisher(player);
-        fisher.experience(fisher.experience() + amount);
+        fisher.setExperience(fisher.getExperience() + amount);
     }
 
     /**
@@ -62,7 +62,7 @@ public class FishExpCurrency implements Currency<Integer> {
     @Override
     public void take(@NotNull OfflinePlayer player, @NotNull Integer amount) {
         Fisher fisher = this.fisher(player);
-        fisher.experience(fisher.experience() - amount);
+        fisher.setExperience(fisher.getExperience() - amount);
     }
 
 }

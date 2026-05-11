@@ -7,7 +7,6 @@ import dev.oribuin.fishing.model.fish.Tier;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.guis.GuiItem;
-import dev.triumphteam.gui.guis.PaginatedGui;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
@@ -40,8 +39,9 @@ public class TierCodexMenu extends BasicCodexMenu<Tier> {
      *
      * @param player The player to open the GUI for
      */
+    @Override
     public void open(Player player) {
-        PaginatedGui gui = this.createPaginated();
+        this.gui = this.createMenu().get();
         this.placeExtras(Placeholders.empty());
         this.placeItem("page-forward", x -> gui.next());
         this.placeItem("page-backward", x -> gui.previous());
@@ -58,7 +58,7 @@ public class TierCodexMenu extends BasicCodexMenu<Tier> {
             gui.addItem(guiItem);
         });
 
-        gui.open(player);
+        super.open(player);
     }
 
     /**

@@ -11,8 +11,6 @@ import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.storage.Fisher;
-import net.kyori.adventure.text.Component;
-import org.apache.logging.log4j.message.Message;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
@@ -64,7 +62,7 @@ public class FishListener implements Listener {
 
         // Run Totem Stuff
         if (nearest != null) {
-            FishEventHandler.callEvents(nearest.upgrades(), catchEvent);
+            FishEventHandler.callEvents(nearest.getUpgrades(), catchEvent);
         }
 
         // Cancel the event if it is cancelled
@@ -73,7 +71,7 @@ public class FishListener implements Listener {
         for (int i = 0; i < catchEvent.getAmountToCatch(); i++) {
             caught.add(manager.generateFish(augments, event.getPlayer().getPlayer(), rod, event.getHook()));
         }
-        
+
         // Add the fish into the player inventory
         float naturalExp = event.getExpToDrop();
         int newFishExp = 0;
@@ -114,15 +112,15 @@ public class FishListener implements Listener {
 
         // Append the new exp and entropy to the player
         event.setExpToDrop((int) naturalExp);
-        fisher.experience(fisher.experience() + newFishExp);
-        fisher.entropy(fisher.entropy() + newEntropy);
+        fisher.setExperience(fisher.getExperience() + newFishExp);
+        fisher.setEntropy(fisher.getEntropy() + newEntropy);
 
         // Level up the player if they have enough experience
         if (fisher.canLevelUp()) {
             fisher.levelUp(); // Level up the player
 
             this.plugin.getDataManager().saveUser(fisher); // Save the player data on levelup
-            PluginMessages.get().getLevelUp().send(fisher, "level", fisher.level()); // Tell the player they leveled up
+            PluginMessages.get().getLevelUp().send(fisher, "level", fisher.getLevel()); // Tell the player they leveled up
         }
     }
 

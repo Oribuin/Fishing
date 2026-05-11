@@ -25,7 +25,7 @@ public class EntropyCurrency implements Currency<Integer> {
      */
     @Override
     public @NotNull Number amount(@NotNull OfflinePlayer player, @NotNull Integer content) {
-        return this.fisher(player).entropy();
+        return this.fisher(player).getEntropy();
     }
 
     /**
@@ -50,7 +50,7 @@ public class EntropyCurrency implements Currency<Integer> {
     @Override
     public void give(@NotNull OfflinePlayer player, @NotNull Integer amount) {
         Fisher fisher = this.fisher(player);
-        fisher.entropy(fisher.entropy() + amount);
+        fisher.setEntropy(fisher.getEntropy() + amount);
     }
 
     /**
@@ -62,7 +62,7 @@ public class EntropyCurrency implements Currency<Integer> {
     @Override
     public void take(@NotNull OfflinePlayer player, @NotNull Integer amount) {
         Fisher fisher = this.fisher(player);
-        fisher.entropy(fisher.entropy() - amount);
+        fisher.setEntropy(fisher.getEntropy() - amount);
     }
 
 }

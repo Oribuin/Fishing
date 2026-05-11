@@ -25,6 +25,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,7 +68,7 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
         // Load the center location
         if (center != null) {
             this.center = center.toBlockLocation().add(0.5, -0.3, 0.5);
-            this.bounds = this.bounds();
+            this.bounds = this.getBounds();
         }
     }
 
@@ -100,8 +101,8 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
 
             // Spawn additional particles around the totem bounds while active
             if (active) {
-                ParticleBuilder dust = this.dust(Color.LIME);
-                this.bounds = this.bounds(); // regularly update the bounds of the totem
+                ParticleBuilder dust = this.getDust(Color.LIME);
+                this.bounds = this.getBounds(); // regularly update the bounds of the totem
                 this.bounds.forEach(x -> dust.clone().location(x.clone().add(0, 1.5, 0)).spawn());
             }
 
@@ -144,7 +145,7 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
             return;
         }
 
-        this.bounds = this.bounds(); // Update the bounds of the totem
+        this.bounds = this.getBounds(); // Update the bounds of the totem
         this.setProperty(TOTEM_ACTIVE, true);
         this.setProperty(TOTEM_LAST_ACTIVE, System.currentTimeMillis());
         this.update();
@@ -160,7 +161,7 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
      */
     public void spawn(Location location) {
         this.center = location.toBlockLocation().add(0.5, -0.3, 0.5);
-        this.bounds = this.bounds();
+        this.bounds = this.getBounds();
         this.entity = this.center.getWorld().spawn(this.center, ArmorStand.class, CreatureSpawnEvent.SpawnReason.CUSTOM, result -> {
             result.setInvisible(false);
             result.setCanTick(false);
@@ -200,7 +201,7 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
 
             // Spawn dust particles to display the totem radius
             // TODO: RadiusParticleAnimation 
-            this.bounds.forEach(x -> this.dust(Color.LIME).location(x.clone().add(0, 0.5, 0)).spawn());
+            this.bounds.forEach(x -> this.getDust(Color.LIME).location(x.clone().add(0, 0.5, 0)).spawn());
         }, 0L, 5L);
     }
 
@@ -236,12 +237,15 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
      *
      * @return The totem object
      */
-    public static Totem fromEntity(ArmorStand stand) {
-        Totem totem = new Totem(stand.getLocation().toCenterLocation(), null);
-        totem.loadProperties(stand.getPersistentDataContainer());
-        totem.entity(stand);
-        return totem;
+    @Nullable
+    public static Totem fromEntity(@NotNull ArmorStand stand) {
+        PersistentDataContainer container = stand.getPersistentDataContainer();
+        if (!container.has(TOTEM_ACTIVE)) return null;
 
+        Totem totem = new Totem(stand.getLocation().toCenterLocation(), null);
+        totem.loadProperties(container);
+        totem.setEntity(stand);
+        return totem;
     }
 
     /**
@@ -256,13 +260,13 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
 
         // Add the upgrade placeholders
         this.upgrades.forEach((upgrade, level) -> {
-            builder.add("upgrade_" + upgrade.name(), level);
+            builder.add("upgrade_" + upgrade.getName(), level);
 
             // Add all the placeholders for the upgrade
-            upgrade.placeholders(this)
+            upgrade.getPlaceholders(this)
                     .getPlaceholders()
                     .forEach((key, value) ->
-                            builder.add(String.format("upgrade_%s_%s", upgrade.name(), key), value)
+                            builder.add(String.format("upgrade_%s_%s", upgrade.getName(), key), value)
                     );
         });
 
@@ -276,7 +280,7 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
      *
      * @return The particle builder
      */
-    private ParticleBuilder dust(Color color) {
+    private ParticleBuilder getDust(Color color) {
         return new ParticleBuilder(Particle.DUST)
                 .count(1)
                 .extra(0)
@@ -344,7 +348,7 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
      *
      * @return If the location is within the radius of the totem
      */
-    public boolean withinRadius(Location location) {
+    public boolean isWithinRadius(Location location) {
         // Radius will be in a circle around the center
         if (location.getWorld() != this.center.getWorld()) return false;
 
@@ -356,7 +360,7 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
      *
      * @return The outer bounds of the totem
      */
-    public List<Location> bounds() {
+    public List<Location> getBounds() {
         if (this.center == null) return new ArrayList<>();
 
         int radius = UpgradeRegistry.RADIUS_UPGRADE.calculateRadius(this);
@@ -373,25 +377,23 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
         return results;
     }
 
-    public Location center() {
+    public Location getCenter() {
         return center;
     }
 
-    public void center(Location center) {
+    public void setCenter(Location center) {
         this.center = center;
-        this.bounds = this.bounds();
+        this.bounds = this.getBounds();
     }
 
-    public ArmorStand entity() {
+    public ArmorStand getEntity() {
         return this.entity;
     }
 
-    public void entity(ArmorStand entity) {
+    public void setEntity(ArmorStand entity) {
         this.entity = entity;
-
         if (entity != null) {
-            this.center = entity.getLocation();
-            this.bounds = this.bounds();
+            this.setCenter(entity.getLocation());
         }
     }
 
@@ -400,7 +402,7 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
      *
      * @return The upgrades of the totem
      */
-    public Map<TotemUpgrade, Integer> upgrades() {
+    public Map<TotemUpgrade, Integer> getUpgrades() {
         return upgrades;
     }
 
@@ -409,7 +411,7 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
      *
      * @param upgrades The upgrades of the totem
      */
-    public void upgrades(Map<TotemUpgrade, Integer> upgrades) {
+    public void setUpgrades(Map<TotemUpgrade, Integer> upgrades) {
         this.upgrades = upgrades;
     }
 
@@ -418,8 +420,7 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
      *
      * @return The delay between each tick
      */
-    @Override
-    public Duration delay() {
+    public Duration getDelay() {
         return Duration.ofMillis(500);
     }
 
@@ -440,6 +441,7 @@ public class Totem extends Propertied implements AsyncTicker, Animated {
      */
     @Override
     public @NotNull Supplier<Location> getSource() {
-        return null;
+        return this::getCenter;
     }
+
 }

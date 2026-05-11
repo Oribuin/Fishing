@@ -6,12 +6,16 @@ import dev.oribuin.fishing.item.ItemConstruct;
 import dev.oribuin.fishing.item.component.TooltipConstructType;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.util.FishUtils;
+import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+
+import java.util.function.Supplier;
 
 @ConfigSerializable
 public class TotemUpgradeMenu extends PluginMenu<PaginatedGui> {
@@ -25,7 +29,6 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui> {
         this.items.put("page-backward", new MenuItem(PAGE_BACKWARD, 3));
         this.extraItems.put("totem-stats", new MenuItem(TOTEM_STATS, 4));
         this.extraItems.put("border", new MenuItem(BORDER, FishUtils.parseList("0-8", "18-26", "9", "17")));
-
     }
 
     /**
@@ -35,7 +38,7 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui> {
      * @param player The player to open the GUI for
      */
     public void open(Totem totem, Player player) {
-        PaginatedGui gui = this.createPaginated();
+        this.gui = this.createMenu().get();
         this.placeExtras(totem.placeholders());
         this.placeItem("page-forward", x -> gui.next());
         this.placeItem("page-backward", x -> gui.previous());
@@ -52,11 +55,11 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui> {
      */
     private void placeUpgrades(PaginatedGui gui, Totem totem, Player player) {
         gui.clearPageItems();
-        totem.upgrades().forEach((upgrade, level) -> {
-            ItemStack item = UPGRADE_STYLE.build(upgrade.placeholders(totem));
+        totem.getUpgrades().forEach((upgrade, level) -> {
+            ItemStack item = UPGRADE_STYLE.build(upgrade.getPlaceholders(totem));
             // todo: make less ugly
             gui.addItem(new GuiItem(item, x -> {
-                if (upgrade.levelup(player, totem)) {
+                if (upgrade.increaseLevel(player, totem)) {
                     this.placeUpgrades(gui, totem, player);
                 }
             }));
@@ -65,9 +68,23 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui> {
         gui.update();
     }
 
+    /**
+     * Creates the menu for the plugin
+     *
+     * @return the resulting menu
+     */
+    @Override
+    public Supplier<PaginatedGui> createMenu() {
+        return () -> Gui.paginated()
+                .title(Component.text(this.title))
+                .rows(this.rows)
+                .disableAllInteractions()
+                .create();
+    }
+
     // region Items
     private static final ItemConstruct BORDER = new ItemConstruct(Material.BLACK_STAINED_GLASS_PANE)
-            .setTooltip(new TooltipConstructType().setVisible(false));
+            .setTooltip(new TooltipConstructType(false));
 
     private static final ItemConstruct TOTEM_STATS = new ItemConstruct(Material.OAK_HANGING_SIGN)
             .setName("<white>[<#94bc80>Totem Details<white>]")

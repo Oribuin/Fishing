@@ -22,8 +22,8 @@ public class UpgradeTotemRadius extends TotemUpgrade {
     public UpgradeTotemRadius() {
         super("radius", "Increases the effective range of the totem");
 
-        this.defaultLevel(1);
-        this.maxLevel(5);
+        this.setDefaultLevel(1);
+        this.setMaxLevel(5);
     }
 
     /**
@@ -37,9 +37,9 @@ public class UpgradeTotemRadius extends TotemUpgrade {
      * @return The value of the upgrade
      */
     @Override
-    public Placeholders placeholders(Totem totem) {
+    public Placeholders getPlaceholders(Totem totem) {
         return Placeholders.builder()
-                .addAll(super.placeholders(totem))
+                .addAll(super.getPlaceholders(totem))
                 .add("value", this.calculateRadius(totem))
                 .build();
     }
@@ -54,7 +54,7 @@ public class UpgradeTotemRadius extends TotemUpgrade {
      * @return The radius of the totem
      */
     public int calculateRadius(Totem totem) {
-        Integer level = totem.getProperty(this.key(), this.defaultLevel());
+        Integer level = totem.getProperty(this.getKey(), this.getDefaultLevel());
         Placeholders plc = Placeholders.of("level", level, "base_radius", this.baseRadius);
         return (int) FishUtils.evaluate(plc.applyString(this.radiusFormula)) / 2;
     }

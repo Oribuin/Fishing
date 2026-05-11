@@ -76,7 +76,7 @@ public class BiomeCondition extends CatchCondition {
      * @return The placeholders
      */
     @Override
-    public Placeholders placeholders() {
+    public Placeholders getPlaceholders() {
         return Placeholders.of("biomes",
                 this.biomes.isEmpty() ? "Any" : String.join(", ", this.biomes)
         );

@@ -63,7 +63,7 @@ public class Tier {
         this();
         this.configHandler = new ConfigHandler<>(Tier.class, config);
     }
-    
+
     public Placeholders placeholders() {
         return Placeholders.builder()
                 .add("tier", this.name)

@@ -75,7 +75,7 @@ public class AugmentCondition extends CatchCondition {
      * @return The placeholders
      */
     @Override
-    public Placeholders placeholders() {
+    public Placeholders getPlaceholders() {
         List<String> augments = this.augments.keySet().stream().toList();
 
         return Placeholders.of("augments", augments.isEmpty()

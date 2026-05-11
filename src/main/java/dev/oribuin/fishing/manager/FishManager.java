@@ -67,7 +67,7 @@ public class FishManager implements Manager {
 
         // Run Totem Stuff
         if (nearest != null) {
-            FishEventHandler.callEvents(nearest.upgrades(), catchEvent);
+            FishEventHandler.callEvents(nearest.getUpgrades(), catchEvent);
         }
 
         // Cancel the event if it is cancelled

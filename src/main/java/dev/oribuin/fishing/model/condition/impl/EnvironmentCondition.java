@@ -67,7 +67,7 @@ public class EnvironmentCondition extends CatchCondition {
      * @return The placeholders
      */
     @Override
-    public Placeholders placeholders() {
+    public Placeholders getPlaceholders() {
         List<String> environments = this.environments.stream()
                 .map(x -> x.name().toLowerCase().replace("_", " "))
                 .toList();

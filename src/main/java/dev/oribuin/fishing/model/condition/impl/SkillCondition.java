@@ -75,7 +75,7 @@ public class SkillCondition extends CatchCondition {
      * @return The placeholders
      */
     @Override
-    public Placeholders placeholders() {
+    public Placeholders getPlaceholders() {
         return Placeholders.of("skills",
                 this.requiredSkills.isEmpty()
                         ? "None"

@@ -65,7 +65,7 @@ public class WeatherCondition extends CatchCondition {
      * @return The placeholders
      */
     @Override
-    public Placeholders placeholders() {
+    public Placeholders getPlaceholders() {
         return Placeholders.of("weather", StringUtils.capitalize(this.requiredWeather.name().toLowerCase()));
     }
 

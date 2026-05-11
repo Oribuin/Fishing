@@ -37,17 +37,17 @@ public class Fisher implements ForwardingAudience.Single {
      * @return If the player leveled up
      */
     public boolean levelUp() {
-        int requiredExp = this.requiredExp(); // Get the required experience to level up
+        int requiredExp = this.getRequiredExp(); // Get the required experience to level up
         this.experience -= requiredExp; // Remove the required experience from the player
         this.level++;
         this.skillPoints++;
         return true;
     }
-    
+
     @Override
     public @NotNull Audience audience() {
         Player player = Bukkit.getPlayer(this.uuid);
-        if (player != null) return  player;
+        if (player != null) return player;
         return Audience.empty();
     }
 
@@ -57,7 +57,7 @@ public class Fisher implements ForwardingAudience.Single {
      * @return If the player can level up
      */
     public boolean canLevelUp() {
-        return this.experience >= this.requiredExp();
+        return this.experience >= this.getRequiredExp();
     }
 
     /**
@@ -65,61 +65,61 @@ public class Fisher implements ForwardingAudience.Single {
      *
      * @return The required experience to level up
      */
-    public int requiredExp() {
+    public int getRequiredExp() {
         Placeholders placeholders = Placeholders.of("level", this.level);
         return (int) FishUtils.evaluate(placeholders.applyString(Config.get().getExperienceFormula()));
     }
 
-    public Placeholders placeholders() {
+    public Placeholders getPlaceholders() {
         return Placeholders.of(
                 "level", this.level,
                 "experience", this.experience,
                 "skill_points", this.skillPoints,
-                "required_exp", this.requiredExp()
+                "required_exp", this.getRequiredExp()
         );
     }
 
-    public UUID uuid() {
+    public UUID getUUID() {
         return this.uuid;
     }
 
-    public int entropy() {
+    public int getEntropy() {
         return this.entropy;
     }
 
-    public void entropy(int entropy) {
+    public void setEntropy(int entropy) {
         this.entropy = entropy;
     }
 
-    public int level() {
+    public int getLevel() {
         return this.level;
     }
 
-    public void level(int level) {
+    public void setLevel(int level) {
         this.level = level;
     }
 
-    public int experience() {
+    public int getExperience() {
         return this.experience;
     }
 
-    public void experience(int experience) {
+    public void setExperience(int experience) {
         this.experience = experience;
     }
 
-    public int points() {
+    public int getSkillPoints() {
         return this.skillPoints;
     }
 
-    public void points(int skillPoints) {
+    public void setSkillPoints(int skillPoints) {
         this.skillPoints = skillPoints;
     }
 
-    public Map<String, Integer> skills() {
+    public Map<String, Integer> getSkills() {
         return this.skills;
     }
 
-    public void skills(Map<String, Integer> skills) {
+    public void setSkills(Map<String, Integer> skills) {
         this.skills = skills;
     }
 

@@ -201,23 +201,23 @@ public class PlaceholderCheck {
         MATCHES
     }
 
-    public CheckType type() {
+    public CheckType getType() {
         return type;
     }
 
-    public String input() {
+    public String getInput() {
         return input;
     }
 
-    public String output() {
+    public String getOutput() {
         return output;
     }
 
-    public boolean inverted() {
+    public boolean isInverted() {
         return inverted;
     }
 
-    public boolean required() {
+    public boolean isRequired() {
         return required;
     }
 

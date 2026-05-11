@@ -20,69 +20,68 @@ item:
     - '<description>'
     - ''
     - '<#CD7F32>Information:'
-    - ' <#CD7F32>- <gray>Price: <white>$<price>'
-    - ' <#CD7F32>- <gray>Entropy: <white><entropy>'
-    - ' <#CD7F32>- <gray>Biomes: <white><biomes>'
-    - ' <#CD7F32>- <gray>Weather: <white><weather>'
-    - ' <#CD7F32>- <gray>Time: <white><time>'
+    - ' <#CD7F32>- <gray>Tier: <white><tier>'
+    - ' <#CD7F32>- <gray>Entropy: <white><gut_entropy>'
+    - ' <#CD7F32>- <gray>Price: <white><sell_money>'
+    - ' <#CD7F32>- <gray>Experience: <white><catch_exp>'
     - ''
 fish:
   cod:
     display-name: 'Cod'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
 
   bluegill:
     display-name: 'Bluegill'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
 
   perch:
     display-name: 'Perch'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
 
   bullhead:
     display-name: 'Bullhead'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
 
   tilapia:
     display-name: 'Tilapia'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
 
   goldfish:
     display-name: 'Goldfish'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
 
   koi:
     display-name: 'Koi'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
 
   guppy:
     display-name: 'Guppy'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
 
   molly:
     display-name: 'Molly'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
 
   platy:
     display-name: 'Platy'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'

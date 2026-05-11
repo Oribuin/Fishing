@@ -3,13 +3,15 @@ package dev.oribuin.fishing.gui;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.ConfigHandler;
 import dev.oribuin.fishing.item.ItemConstruct;
+import dev.oribuin.fishing.scheduler.PluginScheduler;
+import dev.oribuin.fishing.scheduler.task.ScheduledTask;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.BaseGui;
-import dev.triumphteam.gui.guis.Gui;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
@@ -17,15 +19,23 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 @ConfigSerializable
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
 public abstract class PluginMenu<T extends BaseGui> {
 
-    public static final ItemConstruct BORDER = new ItemConstruct(Material.BLACK_STAINED_GLASS_PANE);
+    public static final ItemConstruct BORDER = new ItemConstruct(Material.BLACK_STAINED_GLASS_PANE)
+            .setTooltip(false);
 
     protected final transient FishingPlugin plugin;
     protected final transient GuiAction<InventoryClickEvent> EMPTY = event -> {};
+    protected final transient GuiAction<InventoryClickEvent> CANCELLED = event -> {
+        event.setCancelled(true);
+        event.setResult(Event.Result.DENY);
+    };
+
     protected final transient String name;
     protected transient ConfigHandler<PluginMenu<?>> configHandler;
     protected String title;
@@ -34,6 +44,8 @@ public abstract class PluginMenu<T extends BaseGui> {
     protected Map<String, MenuItem> extraItems;
     protected int pageSize;
     protected int updateFrequency;
+    protected transient boolean viewed;
+    private transient ScheduledTask task;
 
     protected transient T gui;
 
@@ -52,6 +64,7 @@ public abstract class PluginMenu<T extends BaseGui> {
         this.pageSize = 0;
         this.updateFrequency = 60; // 3s
         this.gui = null;
+        this.viewed = false;
     }
 
     public PluginMenu() {
@@ -59,30 +72,44 @@ public abstract class PluginMenu<T extends BaseGui> {
     }
 
     /**
-     * Create the menu for the GUI with the specified settings
+     * Creates the menu for the plugin
      *
-     * @return The created GUI
+     * @return the resulting menu
      */
-    @SuppressWarnings("unchecked")
-    public T createRegular() {
-        return this.gui = (T) Gui.gui()
-                .title(Component.text(this.title))
-                .rows(this.rows)
-                .disableAllInteractions()
-                .create();
-    }
+    public abstract Supplier<T> createMenu();
 
     /**
-     * Create the menu for the GUI with the specified settings
+     * Open the menu for the player synchronously and mark the menu as being viewed
      *
-     * @return The created GUI
+     * @param player The player opening the menu
      */
-    @SuppressWarnings("unchecked")
-    public T createPaginated() {
-        return this.gui = (T) Gui.paginated().disableAllInteractions()
-                .title(Component.text(this.title))
-                .rows(this.rows)
-                .create();
+    public void open(Player player) {
+        if (this.gui == null) return;
+
+        this.viewed = true;
+        PluginScheduler.get().runTask(() -> this.gui.open(player));
+
+        // If the gui is tickable, tick the gui
+        if (this instanceof GuiTickable tickable) {
+            long delay = tickable.getTickDelay().toSeconds() * 20L;
+            if (this.task != null) this.task.cancel();
+
+            this.task = PluginScheduler.get().runTaskTimerAsync(() -> {
+                // Gui doesn't exist, don't tick & cancel
+                if (this.gui == null) {
+                    this.task.cancel();
+                    return;
+                }
+
+                // GUI is viewed but no longer has viewers, cancel
+                if (this.viewed && this.gui.getInventory().getViewers().isEmpty()) {
+                    this.task.cancel();
+                    return;
+                }
+
+                tickable.tick();
+            }, delay, delay, TimeUnit.SECONDS);
+        }
     }
 
     /**

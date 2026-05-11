@@ -1,11 +1,10 @@
 package dev.oribuin.fishing.item.component;
 
-import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.item.ConstructComponent;
-import dev.oribuin.fishing.util.FishUtils;
 import io.papermc.paper.datacomponent.DataComponentType;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.TooltipDisplay;
+import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Registry;
@@ -23,10 +22,23 @@ import java.util.Set;
 @SuppressWarnings({ "UnstableApiUsage", "FieldMayBeFinal" })
 public class TooltipConstructType implements ConstructComponent<TooltipDisplay> {
 
-    public static Registry<@NotNull DataComponentType> TYPE_REGISTRY = FishUtils.REGISTRY.getRegistry(RegistryKey.DATA_COMPONENT_TYPE);
+    public static Registry<@NotNull DataComponentType> TYPE_REGISTRY = RegistryAccess.registryAccess().getRegistry(RegistryKey.DATA_COMPONENT_TYPE);
 
-    private Boolean visible = null;
-    private List<String> hiddenComponents = null;
+    private Boolean visible;
+    private List<String> hiddenComponents;
+
+    public TooltipConstructType() {
+        this(null, null);
+    }
+
+    public TooltipConstructType(Boolean visible) {
+        this(visible, null);
+    }
+
+    public TooltipConstructType(Boolean visible, List<String> hiddenComponents) {
+        this.visible = visible;
+        this.hiddenComponents = hiddenComponents;
+    }
 
     /**
      * Create a new item component type from the plugin
@@ -40,7 +52,6 @@ public class TooltipConstructType implements ConstructComponent<TooltipDisplay> 
             this.hiddenComponents.forEach(s -> {
                 DataComponentType type = this.from(s.toLowerCase());
                 if (type != null) types.add(type);
-//                else FishingPlugin.get().getLogger().warning("Failed to match data component type [" + s + "]");
             });
         }
 

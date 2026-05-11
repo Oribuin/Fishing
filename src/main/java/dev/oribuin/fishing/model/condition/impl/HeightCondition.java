@@ -67,7 +67,7 @@ public class HeightCondition extends CatchCondition {
      * @return The placeholders
      */
     @Override
-    public Placeholders placeholders() {
+    public Placeholders getPlaceholders() {
         return Placeholders.of(
                 "min_height", this.height != null ? this.height.min() : "N/A",
                 "max_height", this.height != null ? this.height.max() : "N/A"

@@ -3,7 +3,10 @@ package dev.oribuin.fishing.item;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
+@ConfigSerializable
+@SuppressWarnings({ "unused", "FieldMayBeFinal" })
 public interface ConstructComponent<T> {
 
     /**

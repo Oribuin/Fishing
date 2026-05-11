@@ -4,7 +4,12 @@ import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.fish.Tier;
+import dev.oribuin.fishing.storage.util.KeyRegistry;
 import dev.oribuin.fishing.util.FishUtils;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -145,6 +150,28 @@ public class TierManager implements Manager {
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(null);
+    }
+
+    /**
+     * Get a fish from an itemstack
+     *
+     * @param stack The stack
+     *
+     * @return The resulting fish if available
+     */
+    @Nullable
+    public Fish getFish(@NotNull ItemStack stack) {
+        if (!stack.hasItemMeta()) return null;
+
+        PersistentDataContainer container = stack.getItemMeta().getPersistentDataContainer();
+        String name = container.get(KeyRegistry.FISH_NAME, PersistentDataType.STRING);
+        String tierName = container.get(KeyRegistry.FISH_TYPE, PersistentDataType.STRING);
+        if (name == null || tierName == null) return null;
+
+        Tier tier = this.get(tierName);
+        if (tier == null) return null;
+
+        return tier.getFish().get(name);
     }
 
     /**

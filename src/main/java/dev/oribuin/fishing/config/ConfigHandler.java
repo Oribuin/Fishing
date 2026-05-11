@@ -1,12 +1,14 @@
 package dev.oribuin.fishing.config;
 
 import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.config.serializer.AttributeSerializer;
 import dev.oribuin.fishing.config.serializer.ComponentSerializer;
 import dev.oribuin.fishing.config.serializer.DurationSerializer;
 import dev.oribuin.fishing.config.serializer.EnchantSerializer;
 import dev.oribuin.fishing.config.serializer.SoundSerializer;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.CommentedConfigurationNode;
@@ -51,6 +53,7 @@ public class ConfigHandler<T> {
             this.base = ConfigurationReference.fixed(YamlConfigurationLoader.builder()
                     .defaultOptions(options -> options
                             .serializers(builder -> builder
+                                    .register(Attribute.class, AttributeSerializer.getInstance())
                                     .register(Component.class, ComponentSerializer.getInstance())
                                     .register(Sound.class, SoundSerializer.getInstance())
                                     .register(Enchantment.class, EnchantSerializer.getInstance())

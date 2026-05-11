@@ -3,7 +3,7 @@ import java.io.ByteArrayOutputStream
 plugins {
     `java-library`
     `maven-publish`
-    id("com.gradleup.shadow") version "8.3.5"
+    id("com.gradleup.shadow") version "9.4.1"
     id("de.eldoria.plugin-yml.bukkit") version "0.8.0"
 }
 
@@ -11,12 +11,12 @@ group = "dev.oribuin"
 version = "1.0"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 
     disableAutoTargetJvm()
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+        languageVersion.set(JavaLanguageVersion.of(25))
     }
 }
 
@@ -41,7 +41,7 @@ dependencies {
     api("org.incendo:cloud-paper:2.0.0-beta.10")
     api("org.spongepowered:configurate-yaml:4.2.0")
     api("com.zaxxer:HikariCP:4.0.3")
-    api("dev.triumphteam:triumph-gui:3.1.11") {  // https://mf.mattstudios.me/triumph-gui/introduction
+    api("dev.triumphteam:triumph-gui:3.1.13") {  // https://triumphteam.dev/docs/triumph-gui/
         exclude(group = "com.google.code.gson", module = "gson") // Remove GSON, Already included in spigot api
         exclude(group = "net.kyori", module = "*") // Remove kyori
     }
@@ -51,7 +51,7 @@ dependencies {
     api("com.jeff-media:MorePersistentDataTypes:2.4.0")
 
     // Spigot
-    compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:26.1.2.build.+")
     compileOnly("org.jetbrains:annotations:23.0.0")
 
     // External Plugins

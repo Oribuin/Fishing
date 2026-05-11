@@ -6,12 +6,15 @@ import dev.oribuin.fishing.scheduler.PluginScheduler;
 import dev.oribuin.fishing.scheduler.task.ScheduledTask;
 import dev.oribuin.fishing.storage.util.FinePosition;
 import dev.oribuin.fishing.storage.util.KeyRegistry;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -28,6 +31,16 @@ public class TotemManager implements Manager {
         this.totems = new ConcurrentHashMap<>();
         this.asyncTicker = null;
         this.lastTick = System.currentTimeMillis();
+
+        // Check active chunks
+        CompletableFuture.runAsync(() -> Bukkit.getWorlds().forEach(world ->
+                Arrays.stream(world.getLoadedChunks()).forEach(chunk ->
+                        Arrays.stream(chunk.getEntities()).forEach(entity -> {
+                            if (!(entity instanceof ArmorStand stand)) return;
+
+                            Totem totem = Totem.fromEntity(stand);
+                            if (totem != null) this.registerTotem(totem);
+                        }))));
     }
 
     /**
@@ -45,7 +58,7 @@ public class TotemManager implements Manager {
         }
 
         this.asyncTicker = PluginScheduler.get().runTaskTimerAsync(() -> this.tick(totem -> {
-            if (totem.delay() != Duration.ZERO && System.currentTimeMillis() - this.lastTick < totem.delay().toMillis()) return;
+            if (totem.getDelay() != Duration.ZERO && System.currentTimeMillis() - this.lastTick < totem.getDelay().toMillis()) return;
 
             this.lastTick = System.currentTimeMillis();
             totem.tickAsync();
@@ -72,9 +85,9 @@ public class TotemManager implements Manager {
         if (this.totems.isEmpty()) return; // don't bother attempting anything if no totems loaded
 
         new HashMap<>(this.totems).forEach((finePosition, totem) -> {
-            if (!totem.center().isChunkLoaded()) return;
+            if (!totem.getCenter().isChunkLoaded()) return;
 
-            if (totem.entity() == null || totem.entity().isDead()) {
+            if (totem.getEntity() == null || totem.getEntity().isDead()) {
                 this.unregisterTotem(totem);
                 return;
             }
@@ -89,9 +102,9 @@ public class TotemManager implements Manager {
      * @param totem The totem to register.
      */
     public void registerTotem(Totem totem) {
-        FinePosition position = FinePosition.from(totem.center());
+        FinePosition position = FinePosition.from(totem.getCenter());
 
-        if (!totem.center().isChunkLoaded()) return;
+        if (!totem.getCenter().isChunkLoaded()) return;
 
         this.totems.put(position, totem);
     }
@@ -102,7 +115,7 @@ public class TotemManager implements Manager {
      * @param totem The totem to unregister.
      */
     public void unregisterTotem(Totem totem) {
-        FinePosition position = FinePosition.from(totem.center());
+        FinePosition position = FinePosition.from(totem.getCenter());
 
         this.totems.remove(position);
     }
@@ -117,7 +130,7 @@ public class TotemManager implements Manager {
     public boolean isRegistered(Totem totem) {
         if (totem == null) return false;
 
-        FinePosition position = FinePosition.from(totem.center());
+        FinePosition position = FinePosition.from(totem.getCenter());
         return this.totems.containsKey(position);
     }
 
@@ -132,8 +145,8 @@ public class TotemManager implements Manager {
         if (this.totems.isEmpty()) return null;
 
         return this.totems.values().stream().filter(x -> x.getProperty(KeyRegistry.TOTEM_ACTIVE)).min((t1, t2) -> {
-            double distance1 = t1.center().distance(location);
-            double distance2 = t2.center().distance(location);
+            double distance1 = t1.getCenter().distance(location);
+            double distance2 = t2.getCenter().distance(location);
             return Double.compare(distance1, distance2);
         }).orElse(null);
     }
@@ -168,7 +181,8 @@ public class TotemManager implements Manager {
      * @return The totem.
      */
     public Totem getTotem(ArmorStand stand) {
-        return this.getTotem(stand.getLocation());
+        FinePosition position = FinePosition.from(stand.getLocation());
+        return this.totems.computeIfAbsent(position, x -> Totem.fromEntity(stand));
     }
 
     public Map<FinePosition, Totem> getTotems() {

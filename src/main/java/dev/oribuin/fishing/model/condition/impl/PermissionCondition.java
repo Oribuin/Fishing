@@ -89,7 +89,7 @@ public class PermissionCondition extends CatchCondition {
      * @return The placeholders
      */
     @Override
-    public Placeholders placeholders() {
+    public Placeholders getPlaceholders() {
         return Placeholders.of(
                 "permissions", String.join(", ", this.permissions),
                 "minimum_required", this.minimumPermissions

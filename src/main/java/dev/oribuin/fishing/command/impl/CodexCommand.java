@@ -24,7 +24,7 @@ public class CodexCommand implements FishCommand {
     public CodexCommand(FishingPlugin plugin) {
         this.plugin = plugin;
     }
-    
+
     /**
      * Open the fish codex for a player
      *
@@ -56,6 +56,5 @@ public class CodexCommand implements FishCommand {
         //        TOTEM_UPGRADE, 
         // general info
 
-        ;
     }
 }

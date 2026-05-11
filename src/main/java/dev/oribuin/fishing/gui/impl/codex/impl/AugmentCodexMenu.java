@@ -8,11 +8,11 @@ import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.guis.GuiItem;
-import dev.triumphteam.gui.guis.PaginatedGui;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -24,24 +24,25 @@ public class AugmentCodexMenu extends BasicCodexMenu<Augment> {
      */
     public AugmentCodexMenu() {
         super("codex/augment");
-        
+
         this.title = "Fishing Codex | Augment";
-        this.rows = 6;
+        this.rows = 4;
         this.items.put("page-backward", new MenuItem(PAGE_BACKWARD, 3));
         this.items.put("codex-main-menu", new MenuItem(CODEX_MAIN_MENU, 4));
         this.items.put("page-forward", new MenuItem(PAGE_FORWARD, 5));
-        this.extraItems.put("border", new MenuItem(BORDER, FishUtils.parseList("0-8", "45-53")));
+        this.extraItems.put("border", new MenuItem(BORDER, FishUtils.parseList("0-8", "27-35")));
     }
-
 
     /**
      * Open the GUI for the specified player
      *
      * @param player The player to open the GUI for
      */
+    @Override
     public void open(Player player) {
-        PaginatedGui gui = this.createPaginated();
+        this.gui = this.createMenu().get();
         this.placeExtras(Placeholders.empty());
+        this.placeItem("codex-main-menu");
         this.placeItem("page-forward", x -> gui.next());
         this.placeItem("page-backward", x -> gui.previous());
 
@@ -56,7 +57,7 @@ public class AugmentCodexMenu extends BasicCodexMenu<Augment> {
             gui.addItem(new GuiItem(stack));
         });
 
-        gui.open(player);
+        super.open(player);
     }
 
     /**
@@ -69,7 +70,13 @@ public class AugmentCodexMenu extends BasicCodexMenu<Augment> {
      */
     @Override
     public List<Augment> getContent(Player player, Predicate<Augment> condition) {
-        return FishingPlugin.get().getAugmentManager().getAugments().values().stream().toList();
+        return FishingPlugin.get().getAugmentManager().getAugments().values()
+                .stream()
+                .sorted(
+                        Comparator.comparing(Augment::getName)
+                                .thenComparing(Augment::getRequiredLevel)
+                )
+                .toList();
     }
 
 }

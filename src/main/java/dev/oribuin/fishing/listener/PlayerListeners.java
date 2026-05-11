@@ -53,5 +53,4 @@ public class PlayerListeners implements Listener {
         manager.saveUser(fisher); // Clear the user's data.
         manager.all().remove(event.getPlayer().getUniqueId()); // Remove the player from the cache
     }
-
 }

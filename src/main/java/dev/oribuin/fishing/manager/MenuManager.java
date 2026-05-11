@@ -9,7 +9,9 @@ import dev.oribuin.fishing.gui.impl.codex.impl.FishCodexMenu;
 import dev.oribuin.fishing.gui.impl.codex.impl.TierCodexMenu;
 import dev.oribuin.fishing.gui.impl.totem.TotemMainMenu;
 import dev.oribuin.fishing.gui.impl.totem.TotemUpgradeMenu;
+import dev.oribuin.fishing.gui.impl.user.FishMainMenu;
 import dev.oribuin.fishing.model.augment.Augment;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.io.File;
 import java.util.HashMap;
@@ -42,6 +44,9 @@ public class MenuManager implements Manager {
         register(TotemMainMenu::new);
         register(TotemUpgradeMenu::new);
 
+        // User Menus
+        register(FishMainMenu::new);
+
         this.plugin.getLogger().info("Loaded a total of [" + menus.size() + "] menus into the plugin");
     }
 
@@ -64,6 +69,11 @@ public class MenuManager implements Manager {
     @SuppressWarnings("unchecked")
     public static <T extends PluginMenu<?>> void register(Supplier<T> supplier) {
         T menu = supplier.get();
+
+        if (!menu.getClass().isAnnotationPresent(ConfigSerializable.class)) {
+            FishingPlugin.get().getLogger().warning("Menu[" + menu.name() + "] in class[" + menu.getClass().getSimpleName() + "] does not have ConfigSerializible annotation");
+            return;
+        }
         menu = (T) loader.loadConfig(menu.getClass(), menu.name());
         menus.put(menu.getClass(), menu);
     }

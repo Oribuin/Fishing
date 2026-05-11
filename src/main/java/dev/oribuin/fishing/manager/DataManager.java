@@ -11,7 +11,6 @@ import dev.oribuin.fishing.storage.Fisher;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import javax.xml.crypto.dsig.keyinfo.X509Data;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -42,7 +41,7 @@ public class DataManager implements Manager {
      */
     public void reload(FishingPlugin plugin) {
         this.disable(plugin);
-        
+
         MySQLConfig sqlConfig = MySQLConfig.get();
         if (sqlConfig.isEnabled()) {
             String hostname = sqlConfig.getHostname();
@@ -111,14 +110,14 @@ public class DataManager implements Manager {
     public Fisher get(UUID uuid) {
         return this.userData.get(uuid);
     }
-    
+
     /**
      * Save a user's data to the database and cache
      *
      * @param fisher The user to save
      */
     public void saveUser(Fisher fisher) {
-        this.userData.put(fisher.uuid(), fisher);
+        this.userData.put(fisher.getUUID(), fisher);
 
         this.async(() -> this.connector.connect(connection -> {
             try (PreparedStatement statement = connection.prepareStatement(SAVE_USER)) {
@@ -142,7 +141,7 @@ public class DataManager implements Manager {
      * @param fishers The users to save
      */
     public void saveBatch(Collection<Fisher> fishers) {
-        fishers.forEach(x -> this.userData.put(x.uuid(), x));
+        fishers.forEach(x -> this.userData.put(x.getUUID(), x));
 
         this.async(() -> this.connector.connect(connection -> {
             try (PreparedStatement statement = connection.prepareStatement(SAVE_USER)) {
@@ -181,12 +180,12 @@ public class DataManager implements Manager {
      * @throws SQLException The exception which is going to be caught by the DatabaseConnector
      */
     private void saveUser(Fisher fisher, PreparedStatement statement) throws SQLException {
-        statement.setString(1, fisher.uuid().toString());
-        statement.setInt(2, fisher.entropy());
-        statement.setInt(3, fisher.level());
-        statement.setInt(4, fisher.experience());
-        statement.setInt(5, fisher.points());
-        statement.setString(6, GSON.toJson(new PlayerSkills(fisher.skills())));
+        statement.setString(1, fisher.getUUID().toString());
+        statement.setInt(2, fisher.getEntropy());
+        statement.setInt(3, fisher.getLevel());
+        statement.setInt(4, fisher.getExperience());
+        statement.setInt(5, fisher.getSkillPoints());
+        statement.setString(6, GSON.toJson(new PlayerSkills(fisher.getSkills())));
         statement.executeUpdate();
     }
 
@@ -206,11 +205,11 @@ public class DataManager implements Manager {
             statement.setString(1, uuid.toString());
             ResultSet result = statement.executeQuery();
             if (result.next()) {
-                fisher.entropy(result.getInt("entropy"));
-                fisher.level(result.getInt("level"));
-                fisher.experience(result.getInt("experience"));
-                fisher.points(result.getInt("skill_points"));
-                fisher.skills(GSON.fromJson(result.getString("skills"), PlayerSkills.class).skills());
+                fisher.setEntropy(result.getInt("entropy"));
+                fisher.setLevel(result.getInt("level"));
+                fisher.setExperience(result.getInt("experience"));
+                fisher.setSkillPoints(result.getInt("skill_points"));
+                fisher.setSkills(GSON.fromJson(result.getString("skills"), PlayerSkills.class).skills());
             }
 
             this.userData.put(uuid, fisher);

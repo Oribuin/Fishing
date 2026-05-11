@@ -22,8 +22,8 @@ public class UpgradeTotemCooldown extends TotemUpgrade {
     public UpgradeTotemCooldown() {
         super("cooldown", "Decreases the cooldown of the totem once deactivated");
 
-        this.defaultLevel(0);
-        this.maxLevel(15);
+        this.setDefaultLevel(0);
+        this.setMaxLevel(15);
     }
 
     /**
@@ -34,7 +34,7 @@ public class UpgradeTotemCooldown extends TotemUpgrade {
      * @return The radius of the totem
      */
     public Duration calculateCooldown(Totem totem) {
-        Integer level = totem.getProperty(this.key(), this.defaultLevel());
+        Integer level = totem.getProperty(this.getKey(), this.getDefaultLevel());
         Placeholders plc = Placeholders.of("level", level);
         return Duration.ofMillis((long) FishUtils.evaluate(plc.applyString(this.cooldownFormula)) * 1000);
     }
@@ -50,9 +50,9 @@ public class UpgradeTotemCooldown extends TotemUpgrade {
      * @return The value of the upgrade
      */
     @Override
-    public Placeholders placeholders(Totem totem) {
+    public Placeholders getPlaceholders(Totem totem) {
         return Placeholders.builder()
-                .addAll(super.placeholders(totem))
+                .addAll(super.getPlaceholders(totem))
                 .add("value", FishUtils.formatTime(this.calculateCooldown(totem).toMillis()))
                 .add("timer", FishUtils.formatTime(totem.getCurrentCooldown()))
                 .build();

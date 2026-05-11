@@ -4,19 +4,19 @@ import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
 import dev.oribuin.fishing.item.ItemConstruct;
 import dev.oribuin.fishing.item.component.ModelConstructType;
-import dev.oribuin.fishing.item.component.TooltipConstructType;
 import dev.oribuin.fishing.manager.MenuManager;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.storage.util.KeyRegistry;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.guis.Gui;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
-import java.util.List;
+import java.util.function.Supplier;
 
 @ConfigSerializable
 public class TotemMainMenu extends PluginMenu<Gui> {
@@ -41,10 +41,10 @@ public class TotemMainMenu extends PluginMenu<Gui> {
      * @param player The player to open the GUI for
      */
     public void open(Totem totem, Player player) {
-        Gui gui = this.createRegular();
+        this.gui = this.createMenu().get();
         this.placeExtras(totem.placeholders());
         this.updateTask(() -> this.placeDynamics(totem, player));
-        gui.open(player);
+        super.open(player);
     }
 
     /**
@@ -81,9 +81,23 @@ public class TotemMainMenu extends PluginMenu<Gui> {
         gui.update();
     }
 
+    /**
+     * Creates the menu for the plugin
+     *
+     * @return the resulting menu
+     */
+    @Override
+    public Supplier<Gui> createMenu() {
+        return () -> Gui.gui()
+                .title(Component.text(this.title))
+                .rows(this.rows)
+                .disableAllInteractions()
+                .create();
+    }
+
     // region Items
     private static final ItemConstruct BORDER = new ItemConstruct(Material.BLACK_STAINED_GLASS_PANE)
-            .setTooltip(new TooltipConstructType().setVisible(false));
+            .setTooltip(false);
 
     private static final ItemConstruct TOTEM_STATS = new ItemConstruct(Material.OAK_HANGING_SIGN)
             .setName("<white>[<#94bc80>Totem Details<white>]")
@@ -113,7 +127,7 @@ public class TotemMainMenu extends PluginMenu<Gui> {
             )
             .setGlowing(true)
             .setModel(new ModelConstructType("minecraft:netherite_upgrade_smithing_template"));
-//            .setTooltip(new TooltipConstructType().setHiddenComponents(List.of("minecraft:trim")));
+    //            .setTooltip(new TooltipConstructType().setHiddenComponents(List.of("minecraft:trim")));
 
     private static final ItemConstruct TOTEM_ACTIVATE = new ItemConstruct(Material.LIME_DYE)
             .setName("<white>[<#05e653>Activate Totem<white>]")

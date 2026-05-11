@@ -16,7 +16,8 @@ public class KeyRegistry {
 
     private static final Map<String, NamespacedKey> keys = new HashMap<>();
 
-    public static NamespacedKey FISH_TYPE = register("fish_type");
+    public static final NamespacedKey FISH_TYPE = register("fish_type");
+    public static final NamespacedKey FISH_NAME = register("fish_name");
     public static final NamespacedKey AUGMENT_TYPE = register("augment_type");
     public static final NamespacedKey TOTEM_OWNER = register("totem_owner");
     public static final NamespacedKey TOTEM_OWNER_NAME = register("totem_owner_name");

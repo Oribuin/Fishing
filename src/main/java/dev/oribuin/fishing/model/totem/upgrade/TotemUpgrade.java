@@ -56,7 +56,7 @@ public abstract class TotemUpgrade extends FishEventHandler {
      * @param level The level of the upgrade
      */
     public void initialize(Totem totem, int level) {
-        totem.applyProperty(DataType.INTEGER, this.key(), level);
+        totem.applyProperty(DataType.INTEGER, this.getKey(), level);
     }
 
     /**
@@ -67,8 +67,8 @@ public abstract class TotemUpgrade extends FishEventHandler {
      *
      * @return If the upgrade was successful
      */
-    public boolean levelup(Player player, Totem totem) {
-        int level = totem.getProperty(this.key(), this.defaultLevel);
+    public boolean increaseLevel(Player player, Totem totem) {
+        int level = totem.getProperty(this.getKey(), this.defaultLevel);
         if (level >= this.maxLevel) {
             player.sendMessage("You have reached the maximum level for this upgrade.");
             return false;
@@ -82,7 +82,7 @@ public abstract class TotemUpgrade extends FishEventHandler {
         // TODO: Cost check here
 
         level++;
-        totem.applyProperty(DataType.INTEGER, this.key(), level); // Apply the upgrade to the totem
+        totem.applyProperty(DataType.INTEGER, this.getKey(), level); // Apply the upgrade to the totem
         totem.update(); // Update the totem to apply the changes 
         player.sendMessage("You have successfully upgraded your totem.");
         return true;
@@ -98,15 +98,15 @@ public abstract class TotemUpgrade extends FishEventHandler {
      *
      * @return The value of the upgrade
      */
-    public Placeholders placeholders(Totem totem) {
+    public Placeholders getPlaceholders(Totem totem) {
         Placeholders.Builder base = Placeholders.builder();
         base.add("name", StringUtils.capitalize(this.name));
         base.add("max_level", this.maxLevel);
         base.add("description", String.join("\n", this.description));
 
         if (totem != null) {
-            base.add("level", totem.getProperty(this.key(), this.defaultLevel));
-            base.add("next_level", Math.min(totem.getProperty(this.key(), this.defaultLevel) + 1, this.maxLevel));
+            base.add("level", totem.getProperty(this.getKey(), this.defaultLevel));
+            base.add("next_level", Math.min(totem.getProperty(this.getKey(), this.defaultLevel) + 1, this.maxLevel));
             // todo: base.add("cost" , cost);
         }
 
@@ -118,17 +118,16 @@ public abstract class TotemUpgrade extends FishEventHandler {
      *
      * @return The namespace key of the upgrade
      */
-    public NamespacedKey key() {
+    public NamespacedKey getKey() {
         return new NamespacedKey(FishingPlugin.get(), "upgrade_" + this.name);
     }
-
 
     /**
      * Get the name of the upgrade
      *
      * @return The name of the upgrade
      */
-    public String name() {
+    public String getName() {
         return this.name;
     }
 
@@ -137,7 +136,7 @@ public abstract class TotemUpgrade extends FishEventHandler {
      *
      * @return The description of the upgrade
      */
-    public List<String> description() {
+    public List<String> getDescription() {
         return this.description;
     }
 
@@ -146,7 +145,7 @@ public abstract class TotemUpgrade extends FishEventHandler {
      *
      * @param description The description of the upgrade
      */
-    public void description(List<String> description) {
+    public void setDescription(List<String> description) {
         this.description = description;
     }
 
@@ -155,7 +154,7 @@ public abstract class TotemUpgrade extends FishEventHandler {
      *
      * @return If the upgrade is enabled
      */
-    public boolean enabled() {
+    public boolean isEnabled() {
         return this.enabled;
     }
 
@@ -164,7 +163,7 @@ public abstract class TotemUpgrade extends FishEventHandler {
      *
      * @param enabled If the upgrade is enabled
      */
-    public void enabled(boolean enabled) {
+    public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
@@ -173,7 +172,7 @@ public abstract class TotemUpgrade extends FishEventHandler {
      *
      * @return The icon of the upgrade
      */
-    public ItemConstruct icon() {
+    public ItemConstruct getIcon() {
         return this.icon;
     }
 
@@ -182,7 +181,7 @@ public abstract class TotemUpgrade extends FishEventHandler {
      *
      * @param icon The icon of the upgrade
      */
-    public void icon(ItemConstruct icon) {
+    public void setIcon(ItemConstruct icon) {
         this.icon = icon;
     }
 
@@ -191,7 +190,7 @@ public abstract class TotemUpgrade extends FishEventHandler {
      *
      * @return The level of the upgrade
      */
-    public int defaultLevel() {
+    public int getDefaultLevel() {
         return this.defaultLevel;
     }
 
@@ -200,7 +199,7 @@ public abstract class TotemUpgrade extends FishEventHandler {
      *
      * @param defaultLevel The default level of the upgrade
      */
-    public void defaultLevel(int defaultLevel) {
+    public void setDefaultLevel(int defaultLevel) {
         this.defaultLevel = defaultLevel;
     }
 
@@ -209,7 +208,7 @@ public abstract class TotemUpgrade extends FishEventHandler {
      *
      * @return The maximum level of the upgrade
      */
-    public int maxLevel() {
+    public int getMaxLevel() {
         return this.maxLevel;
     }
 
@@ -218,7 +217,7 @@ public abstract class TotemUpgrade extends FishEventHandler {
      *
      * @param maxLevel The maximum level of the upgrade
      */
-    public void maxLevel(int maxLevel) {
+    public void setMaxLevel(int maxLevel) {
         this.maxLevel = maxLevel;
     }
 
@@ -227,7 +226,7 @@ public abstract class TotemUpgrade extends FishEventHandler {
      *
      * @return The permission required to purchase the upgrade
      */
-    public String permission() {
+    public String getPermission() {
         return this.permission;
     }
 
@@ -236,7 +235,7 @@ public abstract class TotemUpgrade extends FishEventHandler {
      *
      * @param permission The permission required to purchase the upgrade
      */
-    public void permission(String permission) {
+    public void setPermission(String permission) {
         this.permission = permission;
     }
 

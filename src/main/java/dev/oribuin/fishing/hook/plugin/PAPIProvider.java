@@ -2,7 +2,6 @@ package dev.oribuin.fishing.hook.plugin;
 
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.storage.Fisher;
-import jdk.jfr.Event;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
@@ -47,13 +46,13 @@ public class PAPIProvider extends PlaceholderExpansion {
     public @Nullable String onRequest(OfflinePlayer player, @NotNull String params) {
         Fisher fisher = this.plugin.getDataManager().get(player.getUniqueId());
         if (fisher == null) return "N/A";
-        
+
         return switch (params.toLowerCase()) {
-            case "entropy" -> String.valueOf(fisher.entropy());
-            case "level" -> String.valueOf(fisher.level());
-            case "exp" -> String.valueOf(fisher.experience());
-            case "required_exp" -> String.valueOf(fisher.requiredExp());
-            case "progress" -> String.valueOf(fisher.experience() / fisher.requiredExp());
+            case "entropy" -> String.valueOf(fisher.getEntropy());
+            case "level" -> String.valueOf(fisher.getLevel());
+            case "exp" -> String.valueOf(fisher.getExperience());
+            case "required_exp" -> String.valueOf(fisher.getRequiredExp());
+            case "progress" -> String.valueOf(fisher.getExperience() / fisher.getRequiredExp());
             default -> null;
         };
     }

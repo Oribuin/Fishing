@@ -72,7 +72,7 @@ public class DepthCondition extends CatchCondition {
      * @return The placeholders
      */
     @Override
-    public Placeholders placeholders() {
+    public Placeholders getPlaceholders() {
         return Placeholders.of("water_depth", this.waterDepth);
     }
 

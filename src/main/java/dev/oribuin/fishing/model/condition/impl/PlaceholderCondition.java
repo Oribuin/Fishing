@@ -74,7 +74,7 @@ public class PlaceholderCondition extends CatchCondition {
         int required = minimum <= 0 ? checks.size() : minimum;
         for (PlaceholderCheck check : checks) {
             boolean result = check.attempt(player, built);
-            if (!result && check.required()) return false; // check is required to pass for everything else to go through
+            if (!result && check.isRequired()) return false; // check is required to pass for everything else to go through
             if (result) success++;
 
             // Stop checking if the required amount of checks has passed

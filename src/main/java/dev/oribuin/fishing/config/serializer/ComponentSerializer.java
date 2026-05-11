@@ -30,4 +30,5 @@ public class ComponentSerializer extends ScalarSerializer<Component> {
         return INSTANCE;
     }
 
+
 }

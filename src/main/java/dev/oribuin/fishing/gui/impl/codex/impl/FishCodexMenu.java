@@ -6,10 +6,10 @@ import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.fish.Tier;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.triumphteam.gui.guis.GuiItem;
-import dev.triumphteam.gui.guis.PaginatedGui;
 import org.bukkit.entity.Player;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -23,11 +23,11 @@ public class FishCodexMenu extends BasicCodexMenu<Fish> {
         super("codex/fish");
 
         this.title = "Fishing Codex | Fish";
-        this.rows = 6;
+        this.rows = 5;
         this.items.put("page-backward", new MenuItem(PAGE_BACKWARD, 3));
         this.items.put("codex-main-menu", new MenuItem(CODEX_MAIN_MENU, 4));
         this.items.put("page-forward", new MenuItem(PAGE_FORWARD, 5));
-        this.extraItems.put("border", new MenuItem(BORDER, FishUtils.parseList("0-8", "45-53")));
+        this.extraItems.put("border", new MenuItem(BORDER, FishUtils.parseList("0-8", "36-44")));
     }
 
     /**
@@ -37,7 +37,7 @@ public class FishCodexMenu extends BasicCodexMenu<Fish> {
      * @param tier   The tier to open the GUI for
      */
     public void open(Player player, Tier tier) {
-        PaginatedGui gui = this.createPaginated();
+        this.gui = this.createMenu().get();
         this.placeExtras(tier.placeholders());
         this.placeItem("page-forward", x -> gui.next());
         this.placeItem("page-backward", x -> gui.previous());
@@ -47,7 +47,7 @@ public class FishCodexMenu extends BasicCodexMenu<Fish> {
         // Add all the fish to the GUI
         content.forEach(fish -> gui.addItem(new GuiItem(fish.buildItem())));
 
-        gui.open(player);
+        super.open(player);
     }
 
     /**
@@ -63,6 +63,7 @@ public class FishCodexMenu extends BasicCodexMenu<Fish> {
         return this.plugin.getTierManager().getAllFish()
                 .stream()
                 .filter(condition)
+                .sorted(Comparator.comparing(Fish::getName))
                 .toList();
     }
 

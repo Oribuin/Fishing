@@ -8,6 +8,8 @@ import dev.oribuin.fishing.command.impl.ApplyCommand;
 import dev.oribuin.fishing.command.impl.CodexCommand;
 import dev.oribuin.fishing.command.impl.GiveCommand;
 import dev.oribuin.fishing.command.impl.ListCommand;
+import dev.oribuin.fishing.command.impl.MenuCommand;
+import dev.oribuin.fishing.command.impl.ReloadCommand;
 import dev.oribuin.fishing.config.impl.PluginMessages;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.fish.Fish;
@@ -32,7 +34,7 @@ import java.util.function.Supplier;
 public class CommandManager extends LegacyPaperCommandManager<CommandSender> implements Manager {
 
     private final FishingPlugin plugin;
-    private AnnotationParser<CommandSender> parser;
+    private final AnnotationParser<CommandSender> parser;
 
     public CommandManager(@NonNull FishingPlugin owningPlugin) {
         super(
@@ -42,17 +44,7 @@ public class CommandManager extends LegacyPaperCommandManager<CommandSender> imp
         );
 
         this.plugin = owningPlugin;
-    }
-
-    /**
-     * The task that runs when the plugin is loaded/reloaded
-     *
-     * @param plugin The plugin reloading
-     */
-    @Override
-    public void reload(FishingPlugin plugin) {
         // Register the command manager
-
         Configurable<ManagerSetting> commandSettings = this.settings();
         commandSettings.set(ManagerSetting.ALLOW_UNSAFE_REGISTRATION, true);
         commandSettings.set(ManagerSetting.OVERRIDE_EXISTING_COMMANDS, true);
@@ -88,9 +80,19 @@ public class CommandManager extends LegacyPaperCommandManager<CommandSender> imp
                 new ApplyCommand(this.plugin),
                 new CodexCommand(this.plugin),
                 new GiveCommand(this.plugin),
-                new ListCommand(this.plugin)
+                new ListCommand(this.plugin),
+                new MenuCommand(this.plugin),
+                new ReloadCommand(this.plugin)
         );
+    }
 
+    /**
+     * The task that runs when the plugin is loaded/reloaded
+     *
+     * @param plugin The plugin reloading
+     */
+    @Override
+    public void reload(FishingPlugin plugin) {
     }
 
     /**

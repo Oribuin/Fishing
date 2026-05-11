@@ -71,7 +71,7 @@ public class WorldCondition extends CatchCondition {
      * @return The placeholders
      */
     @Override
-    public Placeholders placeholders() {
+    public Placeholders getPlaceholders() {
         return Placeholders.of("worlds", this.requiredWorlds.isEmpty()
                 ? "None"
                 : String.join(", ", this.requiredWorlds)

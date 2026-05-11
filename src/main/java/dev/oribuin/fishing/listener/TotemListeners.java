@@ -107,8 +107,8 @@ public class TotemListeners implements Listener {
             return;
         }
 
-        totem.entity().remove(); // Remove the totem entity
-        totem.entity(null); // Set the totem entity to null
+        totem.getEntity().remove(); // Remove the totem entity
+        totem.setEntity(null); // Set the totem entity to null
         manager.unregisterTotem(totem); // Unregister the totem
         event.getPlayer().sendMessage("Totem removed."); // Send the player a message
 
@@ -129,10 +129,7 @@ public class TotemListeners implements Listener {
         CompletableFuture.runAsync(() -> Arrays.stream(event.getChunk().getEntities()).forEach(entity -> {
             if (!(entity instanceof ArmorStand stand)) return;
 
-            Totem totem = Totem.fromEntity(stand);
-            if (totem == null) return;
-
-            totemManager.registerTotem(totem);
+            totemManager.getTotem(stand); // Loads & Registers Totem
         }));
     }
 
@@ -145,10 +142,10 @@ public class TotemListeners implements Listener {
     public void onChunkUnload(ChunkUnloadEvent event) {
         TotemManager totemManager = this.plugin.getTotemManager();
         new ArrayList<>(totemManager.getTotems().values()).forEach(totem -> {
-            if (!totem.center().getWorld().getName().equalsIgnoreCase(event.getWorld().getName())) return;
+            if (!totem.getCenter().getWorld().getName().equalsIgnoreCase(event.getWorld().getName())) return;
 
-            int chunkX = totem.center().getBlockX() >> 4;
-            int chunkZ = totem.center().getBlockZ() >> 4;
+            int chunkX = totem.getCenter().getBlockX() >> 4;
+            int chunkZ = totem.getCenter().getBlockZ() >> 4;
 
             if (chunkX != event.getChunk().getX() || chunkZ != event.getChunk().getZ()) return;
 

@@ -57,7 +57,7 @@ public abstract class CatchCondition {
      *
      * @return The placeholders
      */
-    public Placeholders placeholders() {
+    public Placeholders getPlaceholders() {
         return Placeholders.empty();
     }
 

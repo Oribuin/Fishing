@@ -4,9 +4,11 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.hook.plugin.HeadDbProvider;
 import dev.oribuin.fishing.item.ConstructComponent;
+import dev.oribuin.fishing.util.Placeholders;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ResolvableProfile;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.profile.PlayerTextures;
 import org.jetbrains.annotations.NotNull;
@@ -15,8 +17,6 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.DigestException;
-import java.sql.SQLSyntaxErrorException;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -24,14 +24,20 @@ import java.util.UUID;
 @SuppressWarnings({ "UnstableApiUsage", "FieldMayBeFinal" })
 public final class TextureConstructType implements ConstructComponent<ResolvableProfile> {
 
-    private String texture;
-    
+    private transient Placeholders placeholders;
+    private String value;
+
     public TextureConstructType() {
-        this.texture = null;
+        this(null, Placeholders.empty());
     }
-    
-    public TextureConstructType(String texture) {
-        this.texture = texture;
+
+    public TextureConstructType(String value) {
+        this(value, Placeholders.empty());
+    }
+
+    public TextureConstructType(String value, Placeholders placeholders) {
+        this.value = value;
+        this.placeholders = placeholders;
     }
 
     /**
@@ -41,14 +47,14 @@ public final class TextureConstructType implements ConstructComponent<Resolvable
      */
     @Override
     public @Nullable ResolvableProfile establish() {
-        if (this.texture == null) return null;
+        if (this.value == null) return null;
 
-        String[] type = this.texture.split("-");
+        String[] type = placeholders.applyString(this.value).split("-");
         if (type.length == 1) return null;
-        // todo: serialize player-<name>
         return switch (type[0].toLowerCase()) {
             case "base64" -> this.fromBase64(type[1]);
             case "hdb" -> this.fromHdb(type[1]);
+            case "player" -> this.fromPlayer(type[1]);
             default -> null;
         };
     }
@@ -79,7 +85,7 @@ public final class TextureConstructType implements ConstructComponent<Resolvable
     /**
      * Create a {@link ResolvableProfile} from a base64 texture
      *
-     * @param base64 The base64 texture link
+     * @param provided The base64 texture link
      *
      * @return The {@link ResolvableProfile} if available, empty otherwise
      */
@@ -101,7 +107,6 @@ public final class TextureConstructType implements ConstructComponent<Resolvable
         }
     }
 
-
     /**
      * Create a {@link ResolvableProfile} from a head database id
      *
@@ -115,4 +120,14 @@ public final class TextureConstructType implements ConstructComponent<Resolvable
         return null;
     }
 
+    private ResolvableProfile fromPlayer(String playerName) {
+        Player player = Bukkit.getPlayer(playerName);
+        if (player == null) return ResolvableProfile.resolvableProfile().build();
+
+        return ResolvableProfile.resolvableProfile(player.getPlayerProfile());
+    }
+
+    public void setPlaceholders(Placeholders placeholders) {
+        this.placeholders = placeholders;
+    }
 }

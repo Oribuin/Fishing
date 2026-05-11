@@ -25,7 +25,7 @@ public class SkillpointCurrency implements Currency<Integer> {
      */
     @Override
     public @NotNull Number amount(@NotNull OfflinePlayer player, @NotNull Integer content) {
-        return this.fisher(player).points();
+        return this.fisher(player).getSkillPoints();
     }
 
     /**
@@ -50,7 +50,7 @@ public class SkillpointCurrency implements Currency<Integer> {
     @Override
     public void give(@NotNull OfflinePlayer player, @NotNull Integer amount) {
         Fisher fisher = this.fisher(player);
-        fisher.points(fisher.points() + amount);
+        fisher.setSkillPoints(fisher.getSkillPoints() + amount);
     }
 
     /**
@@ -62,7 +62,7 @@ public class SkillpointCurrency implements Currency<Integer> {
     @Override
     public void take(@NotNull OfflinePlayer player, @NotNull Integer amount) {
         Fisher fisher = this.fisher(player);
-        fisher.points(fisher.points() - amount);
+        fisher.setSkillPoints(fisher.getSkillPoints() - amount);
     }
 
 }

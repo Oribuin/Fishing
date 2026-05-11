@@ -20,18 +20,17 @@ item:
     - '<gray><description>'
     - ''
     - '<#FFD700>Information:'
-    - ' <#FFD700>- <gray>Price: <white>$<price>'
-    - ' <#FFD700>- <gray>Entropy: <white><entropy>'
-    - ' <#FFD700>- <gray>Biomes: <white><biomes>'
-    - ' <#FFD700>- <gray>Weather: <white><weather>'
-    - ' <#FFD700>- <gray>Time: <white><time>'
+    - ' <#FFD700>- <gray>Tier: <white><tier>'
+    - ' <#FFD700>- <gray>Entropy: <white><gut_entropy>'
+    - ' <#FFD700>- <gray>Price: <white><sell_money>'
+    - ' <#FFD700>- <gray>Experience: <white><catch_exp>'
     - ''
 fish:
   king_salmon:
     display-name: 'King Salmon'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
@@ -39,7 +38,7 @@ fish:
     display-name: 'Sockeye Salmon'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
@@ -47,7 +46,7 @@ fish:
     display-name: 'Largemouth Bass'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
@@ -55,7 +54,7 @@ fish:
     display-name: 'Brown Trout'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
@@ -63,7 +62,7 @@ fish:
     display-name: 'Arctic Char'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
@@ -71,7 +70,7 @@ fish:
     display-name: 'Northern Pike'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
@@ -79,7 +78,7 @@ fish:
     display-name: 'Scorpionfish'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
@@ -87,7 +86,7 @@ fish:
     display-name: 'Red Snapper'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
@@ -95,7 +94,7 @@ fish:
     display-name: 'Barracuda'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY
@@ -103,7 +102,7 @@ fish:
     display-name: 'Mackerel'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
     biomes: []
     worlds: []
     time: ALL_DAY

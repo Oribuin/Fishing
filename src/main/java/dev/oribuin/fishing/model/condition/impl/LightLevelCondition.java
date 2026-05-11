@@ -64,7 +64,7 @@ public class LightLevelCondition extends CatchCondition {
      * @return The placeholders
      */
     @Override
-    public Placeholders placeholders() {
+    public Placeholders getPlaceholders() {
         return Placeholders.of("light_level", this.requiredLevel);
     }
 

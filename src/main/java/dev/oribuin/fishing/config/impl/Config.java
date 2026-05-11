@@ -6,6 +6,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 @ConfigSerializable
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
 public class Config {
+
     private String experienceFormula = "<level> * 625";
 
     public static Config get() {

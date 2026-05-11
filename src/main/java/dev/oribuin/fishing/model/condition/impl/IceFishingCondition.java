@@ -79,7 +79,7 @@ public class IceFishingCondition extends CatchCondition {
      * @return The placeholders
      */
     @Override
-    public Placeholders placeholders() {
+    public Placeholders getPlaceholders() {
         return Placeholders.of(
                 "ice_min_radius", MIN_RADIUS,
                 "ice_max_radius", MAX_RADIUS

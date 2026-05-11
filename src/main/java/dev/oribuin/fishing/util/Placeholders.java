@@ -513,6 +513,9 @@ public final class Placeholders {
             return new Placeholders(this.placeholders);
         }
 
+        public Map<String, Component> getPlaceholders() {
+            return placeholders;
+        }
     }
 
 }

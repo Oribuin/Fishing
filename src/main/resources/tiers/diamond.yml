@@ -20,69 +20,68 @@ item:
     - '<gray><description>'
     - ''
     - '<#B9F2FF>Information:'
-    - ' <#B9F2FF>- <gray>Price: <white>$<price>'
-    - ' <#B9F2FF>- <gray>Entropy: <white><entropy>'
-    - ' <#B9F2FF>- <gray>Biomes: <white><biomes>'
-    - ' <#B9F2FF>- <gray>Weather: <white><weather>'
-    - ' <#B9F2FF>- <gray>Time: <white><time>'
+    - ' <#B9F2FF>- <gray>Tier: <white><tier>'
+    - ' <#B9F2FF>- <gray>Entropy: <white><gut_entropy>'
+    - ' <#B9F2FF>- <gray>Price: <white><sell_money>'
+    - ' <#B9F2FF>- <gray>Experience: <white><catch_exp>'
     - ''
 fish:
   steelhead_trout:
     display-name: 'Steelhead Trout'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
 
   atlantic_salmon:
     display-name: 'Atlantic Salmon'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
 
   muskie:
     display-name: 'Muskie'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
 
   paddlefish:
     display-name: 'Paddlefish'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
 
   lionfish:
     display-name: 'Lionfish'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
 
   tarpon:
     display-name: 'Tarpon'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
 
   bonefish:
     display-name: 'Bonefish'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
 
   permit:
     display-name: 'Permit'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
 
   yellowfin_tuna:
     display-name: 'Yellowfin Tuna'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'
 
   bluefin_tuna:
     display-name: 'Bluefin Tuna'
     description:
       - '<gray>a very slippery guy'
-      - '<gray>a &overy very <gray>slippery guy'
+      - '<gray>a <italic>very</italic> very <gray>slippery guy'

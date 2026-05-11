@@ -16,6 +16,9 @@ public class PluginMessages {
         return FishingPlugin.get().getConfigLoader().get(PluginMessages.class);
     }
 
+    @Comment("The message sent when a user reloads the plugin")
+    private TextMessage reload = new TextMessage(PREFIX + "You have reloaded the plugin in <#93bc80><time><white>ms");
+
     @Comment("The message sent when a player does not have permission to do something.")
     private TextMessage noPermission = new TextMessage(PREFIX + "You do not have permission to do this");
 
@@ -33,12 +36,22 @@ public class PluginMessages {
 
     @Comment("The player has caught a specific fish")
     private TextMessage caughtFish = new TextMessage(PREFIX + "You have caught a <#94bc80><item><white>!");
-    
+
     @Comment("The player has levelled up in their fishing stats")
     private TextMessage levelUp = new TextMessage(PREFIX + "You have levelled up to level <#94bc80><level>")
             .sound("entity_player_levelup")
             .source(Sound.Source.PLAYER);
-    
+
+    @Comment("Player has gutted fish for entropy")
+    private TextMessage guttedFish = new TextMessage(PREFIX + "You have gutted <#93bc80><total> <white>fish for <#93bc8><entropy> <white>entropy!");
+
+    @Comment("Player has not got any fish to gut")
+    private TextMessage noGuttedFish = new TextMessage(PREFIX + "There are no fish that could be gutted");
+
+    public TextMessage getReload() {
+        return reload;
+    }
+
     public TextMessage getNoPermission() {
         return noPermission;
     }
@@ -65,5 +78,13 @@ public class PluginMessages {
 
     public TextMessage getLevelUp() {
         return levelUp;
+    }
+
+    public TextMessage getGuttedFish() {
+        return guttedFish;
+    }
+
+    public TextMessage getNoGuttedFish() {
+        return noGuttedFish;
     }
 }
