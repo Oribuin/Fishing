@@ -4,6 +4,7 @@ import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.command.FishCommand;
 import dev.oribuin.fishing.gui.impl.user.FishGutMenu;
 import dev.oribuin.fishing.gui.impl.user.FishMainMenu;
+import dev.oribuin.fishing.gui.impl.user.FishSellMenu;
 import dev.oribuin.fishing.manager.MenuManager;
 import dev.oribuin.fishing.scheduler.PluginScheduler;
 import org.bukkit.command.CommandSender;
@@ -60,7 +61,7 @@ public class MenuCommand implements FishCommand {
     }
 
     /**
-     * Open the fishing stats menu for the player
+     * Open the fish gutting menu for the player
      *
      * @param sender The sender running the command
      * @param target The target that might open the menu
@@ -74,6 +75,24 @@ public class MenuCommand implements FishCommand {
 
         Player finalTarget = target;
         PluginScheduler.get().runTask(() -> MenuManager.get(FishGutMenu.class).open(finalTarget));
+    }
+    
+    
+    /**
+     * Open the fish selling menu for the player
+     *
+     * @param sender The sender running the command
+     * @param target The target that might open the menu
+     */
+    @Command("fishing|fish sell [target]")
+    @Permission("fishing.sell")
+    @CommandDescription("Opens the selling menu for the player or target")
+    public void executeSellingMenu(CommandSender sender, Player target) {
+        if (target == null && sender instanceof Player player) target = player;
+        if (target == null) return;
+
+        Player finalTarget = target;
+        PluginScheduler.get().runTask(() -> MenuManager.get(FishSellMenu.class).open(finalTarget));
     }
 
 }

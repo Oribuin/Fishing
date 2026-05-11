@@ -47,6 +47,13 @@ public class PluginMessages {
 
     @Comment("Player has not got any fish to gut")
     private TextMessage noGuttedFish = new TextMessage(PREFIX + "There are no fish that could be gutted");
+    
+    
+    @Comment("Player has sold a fish for money")
+    private TextMessage soldFish = new TextMessage(PREFIX + "You have sold <#93bc80><total> <white>fish for <#93bc80>$<money><white>!");
+
+    @Comment("Player has not got any fish to sell")
+    private TextMessage noSoldFish = new TextMessage(PREFIX + "There are no fish that could be sold");
 
     public TextMessage getReload() {
         return reload;
@@ -86,5 +93,13 @@ public class PluginMessages {
 
     public TextMessage getNoGuttedFish() {
         return noGuttedFish;
+    }
+
+    public TextMessage getNoSoldFish() {
+        return noSoldFish;
+    }
+
+    public TextMessage getSoldFish() {
+        return soldFish;
     }
 }

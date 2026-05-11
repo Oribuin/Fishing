@@ -1,5 +1,6 @@
 package dev.oribuin.fishing.model.economy.impl;
 
+import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.model.economy.Currency;
 import dev.oribuin.fishing.storage.Fisher;
 import org.bukkit.OfflinePlayer;
@@ -25,7 +26,7 @@ public class EntropyCurrency implements Currency<Integer> {
      */
     @Override
     public @NotNull Number amount(@NotNull OfflinePlayer player, @NotNull Integer content) {
-        return this.fisher(player).getEntropy();
+        return this.getFisher(player).getEntropy();
     }
 
     /**
@@ -49,8 +50,9 @@ public class EntropyCurrency implements Currency<Integer> {
      */
     @Override
     public void give(@NotNull OfflinePlayer player, @NotNull Integer amount) {
-        Fisher fisher = this.fisher(player);
+        Fisher fisher = this.getFisher(player);
         fisher.setEntropy(fisher.getEntropy() + amount);
+        this.saveUser(fisher);
     }
 
     /**
@@ -61,8 +63,18 @@ public class EntropyCurrency implements Currency<Integer> {
      */
     @Override
     public void take(@NotNull OfflinePlayer player, @NotNull Integer amount) {
-        Fisher fisher = this.fisher(player);
+        Fisher fisher = this.getFisher(player);
         fisher.setEntropy(fisher.getEntropy() - amount);
+        this.saveUser(fisher);
     }
 
+    /**
+     * Save a user's fisher data to the plugin
+     * 
+     * @param fisher The fisher to save
+     */
+    private void saveUser(Fisher fisher) {
+        FishingPlugin.get().getDataManager().saveUser(fisher);
+    }
+    
 }

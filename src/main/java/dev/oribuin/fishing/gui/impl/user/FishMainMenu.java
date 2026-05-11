@@ -31,6 +31,7 @@ public class FishMainMenu extends PluginMenu<Gui> {
         this.rows = 5;
         this.items.put("user-stats", new MenuItem(USER_STATS, 4));
         this.items.put("gutting-station", new MenuItem(GUTTING_STATION, 19));
+        this.items.put("selling-station", new MenuItem(SELLING_STATION, 20));
         this.items.put("codex-menu", new MenuItem(CODEX_MENU, 21));
         this.extraItems.put("border", new MenuItem(BORDER, FishUtils.parseList("0-8", "36-44")));
 
@@ -54,6 +55,7 @@ public class FishMainMenu extends PluginMenu<Gui> {
         this.placeExtras(placeholders);
         this.placeItem("user-stats", placeholders); // TODO: Open stats menu
         this.placeItem("gutting-station", placeholders, event -> MenuManager.get(FishGutMenu.class).open((Player) event.getWhoClicked()));
+        this.placeItem("selling-station", placeholders, event -> MenuManager.get(FishSellMenu.class).open((Player) event.getWhoClicked()));
         this.placeItem("codex-menu", placeholders); // TODO: Open codex main menu
         super.open(player);
     }
@@ -107,6 +109,14 @@ public class FishMainMenu extends PluginMenu<Gui> {
             .setTooltip(TooltipConstructType.of(true, List.of(
                     DataComponentTypes.ATTRIBUTE_MODIFIERS
             )));
+    
+    private static final ItemConstruct SELLING_STATION = new ItemConstruct(Material.EMERALD)
+            .setName("<white>[<#94bc80>Selling Station<white>]")
+            .setLore(
+                    "<gray>Sell your fish to exchange them",
+                    "<gray>for money"
+            );
+    
     // endregion
 
 }

@@ -4,15 +4,14 @@ import dev.oribuin.fishing.config.impl.PluginMessages;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
 import dev.oribuin.fishing.item.ItemConstruct;
-import dev.oribuin.fishing.item.component.TooltipConstructType;
 import dev.oribuin.fishing.manager.MenuManager;
+import dev.oribuin.fishing.model.economy.CurrencyRegistry;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.fish.Tier;
 import dev.oribuin.fishing.storage.Fisher;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.guis.Gui;
-import io.papermc.paper.datacomponent.DataComponentTypes;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -26,20 +25,19 @@ import java.util.List;
 import java.util.function.Supplier;
 
 @ConfigSerializable
-@SuppressWarnings("UnstableApiUsage")
-public class FishGutMenu extends PluginMenu<Gui> {
+public class FishSellMenu extends PluginMenu<Gui> {
 
-    private final List<Integer> gutSlots;
+    private final List<Integer> sellSlots;
 
-    public FishGutMenu() {
-        super("fish_gut_menu");
+    public FishSellMenu() {
+        super("fish_sell_menu");
 
-        this.title = "Gutting Station";
+        this.title = "Selling Station";
         this.rows = 5;
-        this.items.put("gut-fish", new MenuItem(GUT_FISH, 40));
+        this.items.put("sell-fish", new MenuItem(SELL_FISH, 40));
         this.items.put("main-menu", new MenuItem(MAIN_MENU, 36));
         this.extraItems.put("border", new MenuItem(BORDER, FishUtils.parseList("0-8", "36-44")));
-        this.gutSlots = FishUtils.parseList("9-35");
+        this.sellSlots = FishUtils.parseList("9-35");
     }
 
     /**
@@ -64,12 +62,12 @@ public class FishGutMenu extends PluginMenu<Gui> {
             MenuManager.get(FishMainMenu.class).open((Player) event.getWhoClicked());
         });
 
-        this.placeItem("gut-fish", placeholders, event -> {
+        this.placeItem("sell-fish", placeholders, event -> {
             CANCELLED.execute(event);
 
             Inventory inventory = this.gui.getInventory();
 
-            int entropy = 0;
+            double money = 0;
             int totalFish = 0;
             for (ItemStack stack : inventory.getStorageContents()) {
                 if (stack == null || stack.getType().isAir()) continue;
@@ -78,22 +76,21 @@ public class FishGutMenu extends PluginMenu<Gui> {
                 if (fish == null) continue;
 
                 Tier tier = fish.getTierInstance();
-                if (tier.getGutEntropy() <= 0) continue;
+                if (tier.getSellMoney() <= 0) continue;
 
-                entropy += (tier.getGutEntropy() * stack.getAmount());
+                money += (tier.getSellMoney() * stack.getAmount());
                 totalFish += stack.getAmount();
                 stack.setAmount(0);
             }
 
             event.getWhoClicked().closeInventory(InventoryCloseEvent.Reason.PLUGIN);
-            if (entropy <= 0 || totalFish <= 0) {
-                PluginMessages.get().getNoGuttedFish().send(player);
+            if (money <= 0 || totalFish <= 0) {
+                PluginMessages.get().getNoSoldFish().send(player);
                 return;
             }
 
-            PluginMessages.get().getGuttedFish().send(player, "total", totalFish, "entropy", entropy);
-            fisher.setEntropy(fisher.getEntropy() + entropy);
-            this.plugin.getDataManager().saveUser(fisher);
+            PluginMessages.get().getSoldFish().send(player, "total", totalFish, "money", money);
+            CurrencyRegistry.VAULT.give(player, money);
         });
 
         super.open(player);
@@ -111,9 +108,9 @@ public class FishGutMenu extends PluginMenu<Gui> {
                 .rows(this.rows)
                 .apply(x -> {
 
-                    // region Stop the user from clicking non gut slots
+                    // region Stop the user from clicking non sell slots
                     x.setDefaultTopClickAction(event -> {
-                        if (!this.gutSlots.contains(event.getSlot())) {
+                        if (!this.sellSlots.contains(event.getSlot())) {
                             CANCELLED.execute(event);
                         }
                     });
@@ -134,14 +131,14 @@ public class FishGutMenu extends PluginMenu<Gui> {
                         }
 
                         Tier tier = fish.getTierInstance();
-                        if (tier.getGutEntropy() <= 0) CANCELLED.execute(event);
+                        if (tier.getSellMoney() <= 0) CANCELLED.execute(event);
                     });
                     // endregion 
 
                     // region Give any non fish items back to the player
                     x.setCloseGuiAction(event -> {
                         Inventory inventory = event.getInventory();
-                        for (int slot : this.gutSlots) {
+                        for (int slot : this.sellSlots) {
                             ItemStack stack = inventory.getItem(slot);
                             if (stack == null || stack.getType().isAir()) continue;
 
@@ -170,16 +167,13 @@ public class FishGutMenu extends PluginMenu<Gui> {
     private static final ItemConstruct BORDER = new ItemConstruct(Material.BLACK_STAINED_GLASS_PANE)
             .setTooltip(false);
 
-    private static final ItemConstruct GUT_FISH = new ItemConstruct(Material.NETHERITE_SWORD)
-            .setName("<white>[<#94bc80>Gut Fish<white>]")
+    private static final ItemConstruct SELL_FISH = new ItemConstruct(Material.EMERALD)
+            .setName("<white>[<#94bc80>Sell Fish<white>]")
             .setLore(
-                    "<gray>Gut all the fish that you have",
-                    "<gray>placed inside the menu for entropy"
+                    "<gray>Sell all the fish that you have",
+                    "<gray>placed inside the menu for money"
             )
-            .setGlowing(true)
-            .setTooltip(TooltipConstructType.of(true, List.of(
-                    DataComponentTypes.ATTRIBUTE_MODIFIERS
-            )));
+            .setGlowing(true);
 
     private static final ItemConstruct MAIN_MENU = new ItemConstruct(Material.ARROW)
             .setName("<white>[<#94bc80>Main Menu<white>]")

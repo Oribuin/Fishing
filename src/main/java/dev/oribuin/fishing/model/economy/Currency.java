@@ -63,7 +63,7 @@ public interface Currency<T> {
      *
      * @return The Fisher object for the player
      */
-    default Fisher fisher(@NotNull OfflinePlayer player) {
+    default Fisher getFisher(@NotNull OfflinePlayer player) {
         return FishingPlugin.get().getDataManager().get(player.getUniqueId());
     }
 
