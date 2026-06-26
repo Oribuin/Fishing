@@ -48,7 +48,6 @@ public class PluginMessages {
     @Comment("Player has not got any fish to gut")
     private TextMessage noGuttedFish = new TextMessage(PREFIX + "There are no fish that could be gutted");
     
-    
     @Comment("Player has sold a fish for money")
     private TextMessage soldFish = new TextMessage(PREFIX + "You have sold <#93bc80><total> <white>fish for <#93bc80>$<money><white>!");
 

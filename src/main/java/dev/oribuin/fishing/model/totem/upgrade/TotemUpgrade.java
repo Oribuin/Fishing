@@ -5,10 +5,13 @@ import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.FishEventHandler;
 import dev.oribuin.fishing.item.ItemConstruct;
 import dev.oribuin.fishing.model.totem.Totem;
+import dev.oribuin.fishing.storage.persistent.FishValue;
 import dev.oribuin.fishing.util.Placeholders;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.checkerframework.checker.interning.qual.UnknownInterned;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.List;
@@ -21,8 +24,8 @@ import java.util.List;
 @ConfigSerializable
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
 public abstract class TotemUpgrade extends FishEventHandler {
-
-    private final String name; // The name of the upgrade
+    
+    private String name; // The name of the upgrade
     private List<String> description; // The description of the upgrade
     private boolean enabled; // If the upgrade is enabled
     private ItemConstruct icon; // The icon of the upgrade
@@ -50,15 +53,12 @@ public abstract class TotemUpgrade extends FishEventHandler {
     }
 
     /**
-     * Apply the upgrade to the totem at the specified level
+     * Serialize an upgrade into a data container
      *
-     * @param totem The totem to apply the upgrade to
-     * @param level The level of the upgrade
+     * @param container The container to save into
      */
-    public void initialize(Totem totem, int level) {
-        totem.applyProperty(DataType.INTEGER, this.getKey(), level);
-    }
-
+    public abstract void serialize(PersistentDataContainer container);
+    
     /**
      * Upgrade the totem to the specified level of the upgrade
      *
@@ -67,7 +67,7 @@ public abstract class TotemUpgrade extends FishEventHandler {
      *
      * @return If the upgrade was successful
      */
-    public boolean increaseLevel(Player player, Totem totem) {
+    public boolean upgrade(Player player, Totem totem) {
         int level = totem.getProperty(this.getKey(), this.defaultLevel);
         if (level >= this.maxLevel) {
             player.sendMessage("You have reached the maximum level for this upgrade.");

@@ -4,13 +4,14 @@ import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.model.totem.upgrade.TotemUpgrade;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 /**
  * A totem upgrade that increases the effective range of the totem
  */
 @ConfigSerializable
-@SuppressWarnings({ "UnstableApiUsage", "FieldMayBeFinal" })
+@SuppressWarnings({ "FieldMayBeFinal" })
 public class UpgradeTotemRadius extends TotemUpgrade {
 
     private int baseRadius = 5;
@@ -27,6 +28,20 @@ public class UpgradeTotemRadius extends TotemUpgrade {
     }
 
     /**
+     * Serialize an upgrade into a data container
+     *
+     * @param container The container to save into
+     */
+    @Override
+    public void serialize(PersistentDataContainer container) {
+        
+    }
+    
+    public static UpgradeTotemRadius deserialize(PersistentDataContainer container) {
+        return new UpgradeTotemRadius();
+    }
+
+    /**
      * The totem upgrade placeholders for the upgrade.
      * All upgrades are added to the totems placeholders as "upgrade_<name>_<placeholder>"
      * <p>
@@ -40,7 +55,7 @@ public class UpgradeTotemRadius extends TotemUpgrade {
     public Placeholders getPlaceholders(Totem totem) {
         return Placeholders.builder()
                 .addAll(super.getPlaceholders(totem))
-                .add("value", this.calculateRadius(totem))
+                .add("value", this.getRadius(totem))
                 .build();
     }
 
@@ -53,7 +68,7 @@ public class UpgradeTotemRadius extends TotemUpgrade {
      *
      * @return The radius of the totem
      */
-    public int calculateRadius(Totem totem) {
+    public int getRadius(Totem totem) {
         Integer level = totem.getProperty(this.getKey(), this.getDefaultLevel());
         Placeholders plc = Placeholders.of("level", level, "base_radius", this.baseRadius);
         return (int) FishUtils.evaluate(plc.applyString(this.radiusFormula)) / 2;

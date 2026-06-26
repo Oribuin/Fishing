@@ -31,8 +31,8 @@ import java.util.Map;
 public class AugmentManager implements Manager {
 
     private static final File AUGMENTS_FOLDER = new File(FishingPlugin.get().getDataFolder(), "augments");
-    private static final Map<String, Augment> augments = new HashMap<>();
     private static final ConfigLoader loader = new ConfigLoader(AUGMENTS_FOLDER.toPath());
+    private static final Map<String, Augment> augments = new HashMap<>();
     private final FishingPlugin plugin;
 
     public AugmentManager(FishingPlugin plugin) {

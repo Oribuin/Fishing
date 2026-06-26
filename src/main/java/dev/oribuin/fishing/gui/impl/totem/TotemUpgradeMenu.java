@@ -27,8 +27,10 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui> {
         this.rows = 3;
         this.items.put("page-forward", new MenuItem(PAGE_FORWARD, 5));
         this.items.put("page-backward", new MenuItem(PAGE_BACKWARD, 3));
+        this.items.put("totem-name", new MenuItem(TOTEM_NAME, 16));
+        this.items.put("totem-privacy", new MenuItem(TOTEM_PRIVACY, 25));
         this.extraItems.put("totem-stats", new MenuItem(TOTEM_STATS, 4));
-        this.extraItems.put("border", new MenuItem(BORDER, FishUtils.parseList("0-8", "18-26", "9", "17")));
+        this.extraItems.put("border", new MenuItem(BORDER, FishUtils.parseList("0-9", "26-39","17-18")));
     }
 
     /**
@@ -42,6 +44,8 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui> {
         this.placeExtras(totem.placeholders());
         this.placeItem("page-forward", x -> gui.next());
         this.placeItem("page-backward", x -> gui.previous());
+        this.placeItem("totem-name", );
+        
         this.placeUpgrades(gui, totem, player);
 
         gui.open(player);
@@ -118,6 +122,26 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui> {
                     " <#94bc80>- <gray>Current: <white><level>",
                     " <#94bc80>- <gray>Max Level: <white><max_level>",
                     ""
+            )
+            .setGlowing(true);
+
+    private static final ItemConstruct TOTEM_NAME = new ItemConstruct(Material.NAME_TAG)
+            .setName("<white>[<#94bc80>Totem Name<white>]")
+            .setLore(
+                    "<gray>Change the display name for this",
+                    "<gray>fishing totem"
+
+            )
+            .setGlowing(true);
+
+    private static final ItemConstruct TOTEM_PRIVACY = new ItemConstruct(Material.TRIAL_KEY)
+            .setName("<white>[<#94bc80>Totem Privacy<white>]")
+            .setLore(
+                    "<gray>Change the level of access that others",
+                    "<gray>have to this fishing totem",
+                    "",
+                    " <#94bc80>- <white>Status: <#94bc80><privacy>"
+
             )
             .setGlowing(true);
 

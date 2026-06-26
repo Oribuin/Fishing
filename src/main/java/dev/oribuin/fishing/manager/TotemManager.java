@@ -1,6 +1,7 @@
 package dev.oribuin.fishing.manager;
 
 import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.config.ConfigLoader;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.scheduler.PluginScheduler;
 import dev.oribuin.fishing.scheduler.task.ScheduledTask;
@@ -10,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 
+import java.io.File;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,6 +23,8 @@ import java.util.function.Consumer;
 
 public class TotemManager implements Manager {
 
+    private static final File UPGRADES_FOLDER = new File(FishingPlugin.get().getDataFolder(), "totem");
+    private static final ConfigLoader loader = new ConfigLoader(UPGRADES_FOLDER.toPath());
     private final FishingPlugin plugin;
     private final Map<FinePosition, Totem> totems;
     private ScheduledTask asyncTicker;
@@ -199,5 +203,9 @@ public class TotemManager implements Manager {
 
     public long getLastTick() {
         return lastTick;
+    }
+    
+    public static ConfigLoader getLoader() {
+        return loader;
     }
 }
