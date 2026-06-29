@@ -38,7 +38,7 @@ dependencies {
     // Commands, Configs & Database
     api("org.incendo:cloud-core:2.0.0")
     api("org.incendo:cloud-annotations:2.0.0")
-    api("org.incendo:cloud-paper:2.0.0-beta.10")
+    api("org.incendo:cloud-paper:2.0.0-SNAPSHOT")
     api("org.spongepowered:configurate-yaml:4.2.0")
     api("com.zaxxer:HikariCP:4.0.3")
     api("dev.triumphteam:triumph-gui:3.1.13") {  // https://triumphteam.dev/docs/triumph-gui/

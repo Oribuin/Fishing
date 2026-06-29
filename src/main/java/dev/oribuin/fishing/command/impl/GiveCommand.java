@@ -8,6 +8,7 @@ import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.totem.Totem;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.incendo.cloud.annotations.Command;
@@ -108,7 +109,7 @@ public class GiveCommand implements FishCommand {
     public void giveTotem(CommandSender sender, Player target, Integer amount) {
         if (amount == null || amount < 0) amount = 1;
 
-        Totem totem = new Totem(null);
+        Totem totem = new Totem(null, null, target.getUniqueId());
         ItemStack itemStack = TotemConfig.get().getTotemItem().build(totem.getPlaceholders());
         totem.saveTo(itemStack);
 

@@ -430,16 +430,18 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
      */
     @Override
     public void writeContainer(PersistentDataContainer container) {
+        if (container == null) return;
+        
         container.set(TOTEM_OWNER.key(), TOTEM_OWNER, this.owner);
         container.set(TOTEM_ACTIVE.key(), TOTEM_ACTIVE, this.active);
         container.set(TOTEM_LAST_ACTIVE.key(), TOTEM_LAST_ACTIVE, this.lastActive);
         container.set(TOTEM_LEVEL.key(), TOTEM_LEVEL, this.level);
         container.set(TOTEM_PRIVACY.key(), TOTEM_PRIVACY, this.privacy);
-        container.set(TOTEM_SKIN.key(), TOTEM_SKIN, this.skin.id());
         container.set(TOTEM_USERS.key(), TOTEM_USERS, this.users);
         container.set(TOTEM_BAG.key(), TOTEM_BAG, this.bag);
         container.set(TOTEM_OWNER_NAME.key(), TOTEM_OWNER_NAME, this.ownerName);
         container.set(TOTEM_DISPLAY_NAME.key(), TOTEM_DISPLAY_NAME, this.displayName);
+        if (this.skin != null) container.set(TOTEM_SKIN.key(), TOTEM_SKIN, this.skin.id());
 
         // Write the upgrade containers
         PersistentDataAdapterContext context = container.getAdapterContext();
@@ -475,6 +477,8 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
      */
     @Override
     public void readContainer(PersistentDataContainer container) {
+        if (container == null) return;
+        
         this.owner = container.get(TOTEM_OWNER.key(), TOTEM_OWNER);
         this.active = container.getOrDefault(TOTEM_ACTIVE.key(), TOTEM_ACTIVE, false);
         this.lastActive = container.getOrDefault(TOTEM_LAST_ACTIVE.key(), TOTEM_LAST_ACTIVE, 0L);
