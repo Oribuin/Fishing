@@ -37,7 +37,7 @@ public class MutableEventWrapper<T extends FishEventHandler> {
      * @return The comparison of the two events
      */
     public int compare(MutableEventWrapper<T> other) {
-        return Integer.compare(this.wrapper.order().getSlot(), other.wrapper().order().getSlot());
+        return Integer.compare(this.wrapper.order().getSlot(), other.getWrapper().order().getSlot());
     }
 
     /**
@@ -45,7 +45,7 @@ public class MutableEventWrapper<T extends FishEventHandler> {
      *
      * @return The {@link Augment} that was registered
      */
-    public T type() {
+    public T getType() {
         return type;
     }
 
@@ -54,7 +54,7 @@ public class MutableEventWrapper<T extends FishEventHandler> {
      *
      * @return The level of the augment that was registered
      */
-    public Integer level() {
+    public Integer getLevel() {
         return level;
     }
 
@@ -63,7 +63,7 @@ public class MutableEventWrapper<T extends FishEventHandler> {
      *
      * @return The event wrapper that was registered
      */
-    public EventWrapper<?> wrapper() {
+    public EventWrapper<?> getWrapper() {
         return wrapper;
     }
 

@@ -108,8 +108,8 @@ public class GiveCommand implements FishCommand {
     public void giveTotem(CommandSender sender, Player target, Integer amount) {
         if (amount == null || amount < 0) amount = 1;
 
-        Totem totem = new Totem(null, target);
-        ItemStack itemStack = TotemConfig.get().getTotemItem().build(totem.placeholders());
+        Totem totem = new Totem(null);
+        ItemStack itemStack = TotemConfig.get().getTotemItem().build(totem.getPlaceholders());
         totem.saveTo(itemStack);
 
         if (itemStack == null) {

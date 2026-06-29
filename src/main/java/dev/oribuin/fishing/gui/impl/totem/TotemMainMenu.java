@@ -6,7 +6,6 @@ import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
 import dev.oribuin.fishing.manager.MenuManager;
 import dev.oribuin.fishing.model.totem.Totem;
-import dev.oribuin.fishing.storage.util.KeyRegistry;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.guis.Gui;
@@ -42,7 +41,7 @@ public class TotemMainMenu extends PluginMenu<Gui> {
      */
     public void open(Totem totem, Player player) {
         this.gui = this.createMenu().get();
-        this.placeExtras(totem.placeholders());
+        this.placeExtras(totem.getPlaceholders());
         this.updateTask(() -> this.placeDynamics(totem, player));
         super.open(player);
     }
@@ -54,22 +53,21 @@ public class TotemMainMenu extends PluginMenu<Gui> {
      * @param player The player to place the items for
      */
     private void placeDynamics(Totem totem, Player player) {
-        Placeholders placeholders = totem.placeholders();
+        Placeholders placeholders = totem.getPlaceholders();
         this.placeItem("totem-upgrade", placeholders, x -> MenuManager.get(TotemUpgradeMenu.class).open(totem, player));
 
         // The totem is active, display the active totem item
-        boolean active = totem.getProperty(KeyRegistry.TOTEM_ACTIVE, false);
-        if (active) {
+        if (totem.isActive()) {
             this.placeItem("totem-active", placeholders);
         }
 
         // The totem is not active and is on cooldown, display the cooldown item
-        if (!active && totem.onCooldown()) {
+        if (!totem.isActive() && totem.onCooldown()) {
             this.placeItem("totem-cooldown", placeholders);
         }
 
         // The totem is not active and is not on cooldown, display the button to activate the totem
-        if (!active && !totem.onCooldown()) {
+        if (!totem.isActive() && !totem.onCooldown()) {
             this.placeItem("totem-activate", placeholders, x -> {
                 totem.activate(player); // Activate the totem
                 player.sendMessage("§aYou have activated the totem!");

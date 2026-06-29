@@ -15,6 +15,7 @@ import dev.oribuin.fishing.model.totem.upgrade.impl.TotemUpgradeDuration;
 import dev.oribuin.fishing.model.totem.upgrade.impl.TotemUpgradeRadius;
 import dev.oribuin.fishing.storage.persistent.PDCSerializable;
 import dev.oribuin.fishing.util.FishUtils;
+import dev.oribuin.fishing.util.Placeholders;
 import dev.oribuin.fishing.util.math.MathL;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -194,14 +195,15 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
                     .spawn();
 
             // Spawn additional particles around the totem bounds while active
-            if (active) {
-                ParticleBuilder dust = this.getDust(Color.LIME);
-                this.bounds = this.getBounds(); // regularly update the bounds of the totem
-                this.bounds.forEach(x -> dust.clone().location(x.clone().add(0, 1.5, 0)).spawn());
-            }
-
-
-            this.lastTick = System.currentTimeMillis();
+            // TODO: Active particle builder
+//            if (active) {
+//                ParticleBuilder dust = this.getDust(Color.LIME);
+//                this.bounds = this.getBounds(); // regularly update the bounds of the totem
+//                this.bounds.forEach(x -> dust.clone().location(x.clone().add(0, 1.5, 0)).spawn());
+//            }
+//
+//
+//            this.lastTick = System.currentTimeMillis();
         }
 
         // Make the totem rotate it's head
@@ -498,6 +500,31 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
                 if (totemUpgrade != null) totemUpgrade.readContainer(upgrade);
             }
         }
+    }
+
+    /**
+     * Get all the placeholders for the totem
+     *
+     * @return The placeholders for the totem
+     */
+    public Placeholders getPlaceholders() {
+        Placeholders.Builder builder = Placeholders.builder();
+        builder.add("owner", this.ownerName);
+        builder.add("active", this.active ? "Active" : "Inactive");
+
+        // Add the upgrade placeholders
+        this.upgrades.forEach((upgradeId, upgrade) -> {
+            builder.add("upgrade_" + upgradeId, upgrade.getLevel());
+
+            // Add all the placeholders for the upgrade
+            upgrade.getPlaceholders(this)
+                    .getPlaceholders()
+                    .forEach((key, value) ->
+                            builder.add(String.format("upgrade_%s_%s", upgrade.getName(), key), value)
+                    );
+        });
+
+        return builder.build();
     }
 
     public Location getPosition() {

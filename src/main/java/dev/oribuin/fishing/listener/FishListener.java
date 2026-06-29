@@ -62,7 +62,7 @@ public class FishListener implements Listener {
 
         // Run Totem Stuff
         if (nearest != null) {
-            FishEventHandler.callEvents(nearest.getUpgrades(), catchEvent);
+            FishEventHandler.callEvents(nearest.getUpgradeLevelMapping(), catchEvent);
         }
 
         // Cancel the event if it is cancelled

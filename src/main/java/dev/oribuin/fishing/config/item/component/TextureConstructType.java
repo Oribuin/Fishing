@@ -89,6 +89,7 @@ public final class TextureConstructType implements ConstructComponent<Resolvable
      *
      * @return The {@link ResolvableProfile} if available, empty otherwise
      */
+    @SuppressWarnings("deprecation")
     private ResolvableProfile fromBase64(String provided) {
         try {
             PlayerProfile playerProfile = Bukkit.createProfile(UUID.nameUUIDFromBytes(provided.getBytes()), "");

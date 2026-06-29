@@ -16,7 +16,7 @@ import java.util.jar.JarFile;
 
 public final class ClassUtils {
 
-    public static final Map<Class<?>, Class<?>> PRIMITIVE_TO_BOXED = new HashMap<Class<?>, Class<?>>() {{
+    public static final Map<Class<?>, Class<?>> PRIMITIVE_TO_BOXED = new HashMap<>() {{
         this.put(byte.class, Byte.class);
         this.put(short.class, Short.class);
         this.put(int.class, Integer.class);

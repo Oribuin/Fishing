@@ -41,7 +41,7 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui> {
      */
     public void open(Totem totem, Player player) {
         this.gui = this.createMenu().get();
-        this.placeExtras(totem.placeholders());
+        this.placeExtras(totem.getPlaceholders());
         this.placeItem("page-forward", x -> gui.next());
         this.placeItem("page-backward", x -> gui.previous());
         //        this.placeItem("totem-name", );
@@ -59,7 +59,7 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui> {
      */
     private void placeUpgrades(PaginatedGui gui, Totem totem, Player player) {
         gui.clearPageItems();
-        totem.getUpgrades().forEach((upgrade, level) -> {
+        totem.getUpgrades().forEach((upgradeId, upgrade) -> {
             ItemStack item = UPGRADE_STYLE.build(upgrade.getPlaceholders(totem));
             // todo: make less ugly
             gui.addItem(new GuiItem(item, x -> {

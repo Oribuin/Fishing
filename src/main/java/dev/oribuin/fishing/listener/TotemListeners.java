@@ -1,6 +1,5 @@
 package dev.oribuin.fishing.listener;
 
-import com.jeff_media.morepersistentdatatypes.DataType;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.impl.TotemConfig;
 import dev.oribuin.fishing.gui.impl.totem.TotemMainMenu;
@@ -51,7 +50,7 @@ public class TotemListeners implements Listener {
         ItemStack item = event.getItem();
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;
-        if (!meta.getPersistentDataContainer().has(KeyRegistry.TOTEM_ACTIVE, DataType.BOOLEAN)) return;
+        if (!meta.getPersistentDataContainer().has(KeyRegistry.TOTEM_ACTIVE.key(), KeyRegistry.TOTEM_ACTIVE)) return;
 
         event.setCancelled(true);
         event.setUseItemInHand(Event.Result.DENY);
@@ -66,8 +65,7 @@ public class TotemListeners implements Listener {
         }
 
         Location center = relative.getLocation().toCenterLocation();
-        Totem totem = new Totem(center, null);
-        totem.loadProperties(meta.getPersistentDataContainer());
+        Totem totem = new Totem(center, meta.getPersistentDataContainer());
         totem.spawn(center);
 
         event.getItem().setAmount(event.getItem().getAmount() - 1);
@@ -96,7 +94,7 @@ public class TotemListeners implements Listener {
         }
 
         // Remove the totem if the player is the owner
-        UUID owner = totem.getProperty(KeyRegistry.TOTEM_OWNER);
+        UUID owner = totem.getOwner();
         if (owner != null && !event.getPlayer().getUniqueId().equals(owner)) {
             event.getPlayer().sendMessage("You cannot remove your own totem.");
             return;
@@ -107,12 +105,12 @@ public class TotemListeners implements Listener {
             return;
         }
 
-        totem.getEntity().remove(); // Remove the totem entity
-        totem.setEntity(null); // Set the totem entity to null
+        totem.getDisplay().remove(); // Remove the totem entity
+        totem.setDisplay(null); // Set the totem entity to null
         manager.unregisterTotem(totem); // Unregister the totem
         event.getPlayer().sendMessage("Totem removed."); // Send the player a message
 
-        ItemStack itemStack = TotemConfig.get().getTotemItem().build(totem.placeholders());
+        ItemStack itemStack = TotemConfig.get().getTotemItem().build(totem.getPlaceholders());
         totem.saveTo(itemStack);
 
         event.getPlayer().getInventory().addItem(itemStack);

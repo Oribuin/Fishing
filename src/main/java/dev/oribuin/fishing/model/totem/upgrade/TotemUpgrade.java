@@ -5,9 +5,11 @@ import dev.oribuin.fishing.config.impl.PluginMessages;
 import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.storage.persistent.PDCSerializable;
+import dev.oribuin.fishing.util.Placeholders;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +51,7 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
      *
      * @return If the upgrade was successful
      */
-    public boolean upgrade(Player player, Totem totem) {
+    public boolean increaseLevel(Player player, Totem totem) {
         ArmorStand display = totem.getDisplay();
         if (display == null) {
             player.sendMessage("no totem display to upgrade todo add message for this");
@@ -79,6 +81,10 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
                 "upgrade", this.name
         );
         return true;
+    }
+    
+    public @NotNull Placeholders getPlaceholders(@NotNull Totem totem) {
+        return Placeholders.empty();
     }
 
     /**

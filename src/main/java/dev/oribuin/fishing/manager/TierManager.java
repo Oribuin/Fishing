@@ -164,8 +164,8 @@ public class TierManager implements Manager {
         if (!stack.hasItemMeta()) return null;
 
         PersistentDataContainer container = stack.getItemMeta().getPersistentDataContainer();
-        String name = container.get(KeyRegistry.FISH_NAME, PersistentDataType.STRING);
-        String tierName = container.get(KeyRegistry.FISH_TYPE, PersistentDataType.STRING);
+        String name = container.get(KeyRegistry.FISH_NAME.key(), KeyRegistry.FISH_NAME);
+        String tierName = container.get(KeyRegistry.FISH_TYPE.key(), KeyRegistry.FISH_TYPE);
         if (name == null || tierName == null) return null;
 
         Tier tier = this.get(tierName);
