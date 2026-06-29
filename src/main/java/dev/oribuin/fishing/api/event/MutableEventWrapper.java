@@ -30,18 +30,6 @@ public class MutableEventWrapper<T extends FishEventHandler> {
     }
 
     /**
-     * Wrapper for a fish event handler to be registered with a function in an event, Used to make the stream less annoying
-     *
-     * @param entry The entry to be registered
-     * @param event The event to be registered
-     *
-     * @see FishEventHandler#callEvents(Map, Event) Where this is used
-     */
-    public MutableEventWrapper(Map.Entry<T, Integer> entry, Event event) {
-        this(entry.getKey(), entry.getValue(), event);
-    }
-
-    /**
      * Compare the priority of two events to determine which one should be called first
      *
      * @param other The other event to compare

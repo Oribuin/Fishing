@@ -1,9 +1,9 @@
 package dev.oribuin.fishing.gui.impl.totem;
 
+import dev.oribuin.fishing.config.item.ItemConstruct;
+import dev.oribuin.fishing.config.item.component.TooltipConstructType;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
-import dev.oribuin.fishing.item.ItemConstruct;
-import dev.oribuin.fishing.item.component.TooltipConstructType;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.triumphteam.gui.guis.Gui;
@@ -30,7 +30,7 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui> {
         this.items.put("totem-name", new MenuItem(TOTEM_NAME, 16));
         this.items.put("totem-privacy", new MenuItem(TOTEM_PRIVACY, 25));
         this.extraItems.put("totem-stats", new MenuItem(TOTEM_STATS, 4));
-        this.extraItems.put("border", new MenuItem(BORDER, FishUtils.parseList("0-9", "26-39","17-18")));
+        this.extraItems.put("border", new MenuItem(BORDER, FishUtils.parseList("0-9", "26-39", "17-18")));
     }
 
     /**
@@ -44,8 +44,8 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui> {
         this.placeExtras(totem.placeholders());
         this.placeItem("page-forward", x -> gui.next());
         this.placeItem("page-backward", x -> gui.previous());
-        this.placeItem("totem-name", );
-        
+        //        this.placeItem("totem-name", );
+
         this.placeUpgrades(gui, totem, player);
 
         gui.open(player);

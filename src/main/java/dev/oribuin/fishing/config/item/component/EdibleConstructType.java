@@ -1,6 +1,6 @@
-package dev.oribuin.fishing.item.component;
+package dev.oribuin.fishing.config.item.component;
 
-import dev.oribuin.fishing.item.ConstructComponent;
+import dev.oribuin.fishing.config.item.ConstructComponent;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.FoodProperties;
 import org.bukkit.inventory.ItemStack;

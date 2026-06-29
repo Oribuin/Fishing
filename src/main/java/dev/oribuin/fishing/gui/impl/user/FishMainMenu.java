@@ -1,11 +1,10 @@
 package dev.oribuin.fishing.gui.impl.user;
 
+import dev.oribuin.fishing.config.item.ItemConstruct;
+import dev.oribuin.fishing.config.item.component.TextureConstructType;
+import dev.oribuin.fishing.config.item.component.TooltipConstructType;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
-import dev.oribuin.fishing.item.ItemConstruct;
-import dev.oribuin.fishing.item.component.AttributeConstructType;
-import dev.oribuin.fishing.item.component.TextureConstructType;
-import dev.oribuin.fishing.item.component.TooltipConstructType;
 import dev.oribuin.fishing.manager.MenuManager;
 import dev.oribuin.fishing.storage.Fisher;
 import dev.oribuin.fishing.util.FishUtils;
@@ -99,7 +98,7 @@ public class FishMainMenu extends PluginMenu<Gui> {
                     "<gray>Click to view information about",
                     "<gray>varies things within the plugin"
             );
-    
+
     private static final ItemConstruct GUTTING_STATION = new ItemConstruct(Material.NETHERITE_SWORD)
             .setName("<white>[<#94bc80>Gutting Station<white>]")
             .setLore(
@@ -109,14 +108,14 @@ public class FishMainMenu extends PluginMenu<Gui> {
             .setTooltip(TooltipConstructType.of(true, List.of(
                     DataComponentTypes.ATTRIBUTE_MODIFIERS
             )));
-    
+
     private static final ItemConstruct SELLING_STATION = new ItemConstruct(Material.EMERALD)
             .setName("<white>[<#94bc80>Selling Station<white>]")
             .setLore(
                     "<gray>Sell your fish to exchange them",
                     "<gray>for money"
             );
-    
+
     // endregion
 
 }

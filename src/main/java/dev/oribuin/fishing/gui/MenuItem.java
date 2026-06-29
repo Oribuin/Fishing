@@ -1,6 +1,6 @@
 package dev.oribuin.fishing.gui;
 
-import dev.oribuin.fishing.item.ItemConstruct;
+import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.BaseGui;

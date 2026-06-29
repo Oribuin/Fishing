@@ -3,7 +3,7 @@ package dev.oribuin.fishing.model.augment;
 import com.google.common.base.Supplier;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.FishEventHandler;
-import dev.oribuin.fishing.item.ItemConstruct;
+import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.manager.AugmentManager;
 import dev.oribuin.fishing.model.economy.Cost;
 import dev.oribuin.fishing.model.economy.CurrencyRegistry;

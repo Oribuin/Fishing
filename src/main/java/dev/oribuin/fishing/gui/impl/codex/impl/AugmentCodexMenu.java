@@ -1,9 +1,9 @@
 package dev.oribuin.fishing.gui.impl.codex.impl;
 
 import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.impl.codex.BasicCodexMenu;
-import dev.oribuin.fishing.item.ItemConstruct;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;

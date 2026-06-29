@@ -1,9 +1,9 @@
 package dev.oribuin.fishing.gui.impl.user;
 
 import dev.oribuin.fishing.config.impl.PluginMessages;
+import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
-import dev.oribuin.fishing.item.ItemConstruct;
 import dev.oribuin.fishing.manager.MenuManager;
 import dev.oribuin.fishing.model.economy.CurrencyRegistry;
 import dev.oribuin.fishing.model.fish.Fish;

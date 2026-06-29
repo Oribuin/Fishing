@@ -13,7 +13,6 @@ import dev.oribuin.fishing.gui.impl.user.FishGutMenu;
 import dev.oribuin.fishing.gui.impl.user.FishMainMenu;
 import dev.oribuin.fishing.gui.impl.user.FishSellMenu;
 import dev.oribuin.fishing.model.augment.Augment;
-import io.papermc.paper.registry.RegistryBuilder;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.io.File;

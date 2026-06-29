@@ -2,7 +2,7 @@ package dev.oribuin.fishing.gui;
 
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.ConfigHandler;
-import dev.oribuin.fishing.item.ItemConstruct;
+import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.scheduler.PluginScheduler;
 import dev.oribuin.fishing.scheduler.task.ScheduledTask;
 import dev.oribuin.fishing.util.Placeholders;

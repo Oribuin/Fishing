@@ -3,6 +3,7 @@ package dev.oribuin.fishing.manager;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.ConfigLoader;
 import dev.oribuin.fishing.model.totem.Totem;
+import dev.oribuin.fishing.model.totem.upgrade.UpgradeRegistry;
 import dev.oribuin.fishing.scheduler.PluginScheduler;
 import dev.oribuin.fishing.scheduler.task.ScheduledTask;
 import dev.oribuin.fishing.storage.util.FinePosition;
@@ -10,6 +11,7 @@ import dev.oribuin.fishing.storage.util.KeyRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.persistence.PersistentDataContainer;
 
 import java.io.File;
 import java.time.Duration;
@@ -36,14 +38,17 @@ public class TotemManager implements Manager {
         this.asyncTicker = null;
         this.lastTick = System.currentTimeMillis();
 
+        UpgradeRegistry.register();
         // Check active chunks
         CompletableFuture.runAsync(() -> Bukkit.getWorlds().forEach(world ->
                 Arrays.stream(world.getLoadedChunks()).forEach(chunk ->
                         Arrays.stream(chunk.getEntities()).forEach(entity -> {
                             if (!(entity instanceof ArmorStand stand)) return;
 
-                            Totem totem = Totem.fromEntity(stand);
-                            if (totem != null) this.registerTotem(totem);
+                            PersistentDataContainer container = stand.getPersistentDataContainer();
+                            if (!container.has(KeyRegistry.TOTEM_OWNER.key(), KeyRegistry.TOTEM_OWNER)) return;
+
+                            this.registerTotem(new Totem(stand));
                         }))));
     }
 
@@ -62,7 +67,8 @@ public class TotemManager implements Manager {
         }
 
         this.asyncTicker = PluginScheduler.get().runTaskTimerAsync(() -> this.tick(totem -> {
-            if (totem.getDelay() != Duration.ZERO && System.currentTimeMillis() - this.lastTick < totem.getDelay().toMillis()) return;
+            Duration cooldown = totem.getCooldown();
+            if (cooldown != Duration.ZERO && System.currentTimeMillis() - this.lastTick < cooldown.toMillis()) return;
 
             this.lastTick = System.currentTimeMillis();
             totem.tickAsync();
@@ -89,9 +95,9 @@ public class TotemManager implements Manager {
         if (this.totems.isEmpty()) return; // don't bother attempting anything if no totems loaded
 
         new HashMap<>(this.totems).forEach((finePosition, totem) -> {
-            if (!totem.getCenter().isChunkLoaded()) return;
+            if (!totem.getPosition().isChunkLoaded()) return;
 
-            if (totem.getEntity() == null || totem.getEntity().isDead()) {
+            if (totem.getDisplay() == null || totem.getDisplay().isDead()) {
                 this.unregisterTotem(totem);
                 return;
             }
@@ -106,9 +112,9 @@ public class TotemManager implements Manager {
      * @param totem The totem to register.
      */
     public void registerTotem(Totem totem) {
-        FinePosition position = FinePosition.from(totem.getCenter());
+        FinePosition position = FinePosition.from(totem.getPosition());
 
-        if (!totem.getCenter().isChunkLoaded()) return;
+        if (!totem.getPosition().isChunkLoaded()) return;
 
         this.totems.put(position, totem);
     }
@@ -119,7 +125,7 @@ public class TotemManager implements Manager {
      * @param totem The totem to unregister.
      */
     public void unregisterTotem(Totem totem) {
-        FinePosition position = FinePosition.from(totem.getCenter());
+        FinePosition position = FinePosition.from(totem.getPosition());
 
         this.totems.remove(position);
     }
@@ -134,7 +140,7 @@ public class TotemManager implements Manager {
     public boolean isRegistered(Totem totem) {
         if (totem == null) return false;
 
-        FinePosition position = FinePosition.from(totem.getCenter());
+        FinePosition position = FinePosition.from(totem.getPosition());
         return this.totems.containsKey(position);
     }
 
@@ -148,9 +154,9 @@ public class TotemManager implements Manager {
     public Totem getClosestActive(Location location) {
         if (this.totems.isEmpty()) return null;
 
-        return this.totems.values().stream().filter(x -> x.getProperty(KeyRegistry.TOTEM_ACTIVE)).min((t1, t2) -> {
-            double distance1 = t1.getCenter().distance(location);
-            double distance2 = t2.getCenter().distance(location);
+        return this.totems.values().stream().filter(Totem::isActive).min((t1, t2) -> {
+            double distance1 = t1.getPosition().distance(location);
+            double distance2 = t2.getPosition().distance(location);
             return Double.compare(distance1, distance2);
         }).orElse(null);
     }
@@ -186,7 +192,7 @@ public class TotemManager implements Manager {
      */
     public Totem getTotem(ArmorStand stand) {
         FinePosition position = FinePosition.from(stand.getLocation());
-        return this.totems.computeIfAbsent(position, x -> Totem.fromEntity(stand));
+        return this.totems.computeIfAbsent(position, x -> new Totem(stand));
     }
 
     public Map<FinePosition, Totem> getTotems() {
@@ -204,7 +210,7 @@ public class TotemManager implements Manager {
     public long getLastTick() {
         return lastTick;
     }
-    
+
     public static ConfigLoader getLoader() {
         return loader;
     }

@@ -142,10 +142,10 @@ public class TotemListeners implements Listener {
     public void onChunkUnload(ChunkUnloadEvent event) {
         TotemManager totemManager = this.plugin.getTotemManager();
         new ArrayList<>(totemManager.getTotems().values()).forEach(totem -> {
-            if (!totem.getCenter().getWorld().getName().equalsIgnoreCase(event.getWorld().getName())) return;
+            if (!totem.getPosition().getWorld().getName().equalsIgnoreCase(event.getWorld().getName())) return;
 
-            int chunkX = totem.getCenter().getBlockX() >> 4;
-            int chunkZ = totem.getCenter().getBlockZ() >> 4;
+            int chunkX = totem.getPosition().getBlockX() >> 4;
+            int chunkZ = totem.getPosition().getBlockZ() >> 4;
 
             if (chunkX != event.getChunk().getX() || chunkZ != event.getChunk().getZ()) return;
 

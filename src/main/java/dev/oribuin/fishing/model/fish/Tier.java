@@ -1,7 +1,7 @@
 package dev.oribuin.fishing.model.fish;
 
 import dev.oribuin.fishing.config.ConfigHandler;
-import dev.oribuin.fishing.item.ItemConstruct;
+import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.util.Placeholders;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;

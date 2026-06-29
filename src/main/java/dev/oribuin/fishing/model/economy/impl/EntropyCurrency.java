@@ -70,11 +70,11 @@ public class EntropyCurrency implements Currency<Integer> {
 
     /**
      * Save a user's fisher data to the plugin
-     * 
+     *
      * @param fisher The fisher to save
      */
     private void saveUser(Fisher fisher) {
         FishingPlugin.get().getDataManager().saveUser(fisher);
     }
-    
+
 }

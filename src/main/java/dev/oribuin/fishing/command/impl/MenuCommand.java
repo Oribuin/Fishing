@@ -76,8 +76,8 @@ public class MenuCommand implements FishCommand {
         Player finalTarget = target;
         PluginScheduler.get().runTask(() -> MenuManager.get(FishGutMenu.class).open(finalTarget));
     }
-    
-    
+
+
     /**
      * Open the fish selling menu for the player
      *

@@ -1,12 +1,12 @@
-package dev.oribuin.fishing.item;
+package dev.oribuin.fishing.config.item;
 
-import dev.oribuin.fishing.item.component.AttributeConstructType;
-import dev.oribuin.fishing.item.component.DyedConstructType;
-import dev.oribuin.fishing.item.component.EdibleConstructType;
-import dev.oribuin.fishing.item.component.EnchantConstructType;
-import dev.oribuin.fishing.item.component.ModelConstructType;
-import dev.oribuin.fishing.item.component.TextureConstructType;
-import dev.oribuin.fishing.item.component.TooltipConstructType;
+import dev.oribuin.fishing.config.item.component.AttributeConstructType;
+import dev.oribuin.fishing.config.item.component.DyedConstructType;
+import dev.oribuin.fishing.config.item.component.EdibleConstructType;
+import dev.oribuin.fishing.config.item.component.EnchantConstructType;
+import dev.oribuin.fishing.config.item.component.ModelConstructType;
+import dev.oribuin.fishing.config.item.component.TextureConstructType;
+import dev.oribuin.fishing.config.item.component.TooltipConstructType;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import io.papermc.paper.datacomponent.DataComponentTypes;

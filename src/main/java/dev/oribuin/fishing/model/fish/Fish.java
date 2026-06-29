@@ -1,7 +1,7 @@
 package dev.oribuin.fishing.model.fish;
 
 import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.item.ItemConstruct;
+import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.model.condition.CatchCondition;
 import dev.oribuin.fishing.storage.util.KeyRegistry;
 import dev.oribuin.fishing.util.FishUtils;
@@ -9,7 +9,6 @@ import dev.oribuin.fishing.util.Placeholders;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Comment;
@@ -83,8 +82,8 @@ public class Fish {
         itemStack.editMeta(itemMeta -> {
             // fish data :-)
             PersistentDataContainer container = itemMeta.getPersistentDataContainer();
-            container.set(KeyRegistry.FISH_NAME, PersistentDataType.STRING, this.name);
-            container.set(KeyRegistry.FISH_TYPE, PersistentDataType.STRING, this.tier);
+            container.set(KeyRegistry.FISH_NAME.key(), KeyRegistry.FISH_TYPE, this.name);
+            container.set(KeyRegistry.FISH_TYPE.key(), KeyRegistry.FISH_NAME, this.tier);
         });
 
         this.itemStack = itemStack;

@@ -1,49 +1,608 @@
 package dev.oribuin.fishing.model.totem;
 
-import dev.oribuin.fishing.api.Propertied;
-import dev.oribuin.fishing.storage.persistent.FishDataType;
+import com.destroystokyo.paper.ParticleBuilder;
+import com.jeff_media.morepersistentdatatypes.DataType;
+import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.api.event.FishEventHandler;
+import dev.oribuin.fishing.api.event.impl.TotemActivateEvent;
+import dev.oribuin.fishing.api.event.impl.TotemDeactivateEvent;
+import dev.oribuin.fishing.api.task.AsyncTicker;
+import dev.oribuin.fishing.config.impl.TotemConfig;
+import dev.oribuin.fishing.model.totem.upgrade.TotemUpgrade;
+import dev.oribuin.fishing.model.totem.upgrade.UpgradeRegistry;
+import dev.oribuin.fishing.model.totem.upgrade.impl.TotemUpgradeCooldown;
+import dev.oribuin.fishing.model.totem.upgrade.impl.TotemUpgradeDuration;
+import dev.oribuin.fishing.model.totem.upgrade.impl.TotemUpgradeRadius;
+import dev.oribuin.fishing.storage.persistent.PDCSerializable;
+import dev.oribuin.fishing.util.FishUtils;
+import dev.oribuin.fishing.util.math.MathL;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static dev.oribuin.fishing.storage.util.KeyRegistry.*;
 
-public class Totem extends Propertied { // extends Propertied implements AsyncTicker, Animated
+public class Totem implements PDCSerializable, AsyncTicker { // extends Propertied implements AsyncTicker, Animated
 
     private Location position;
+    private UUID owner;
+    private boolean active;
+    private long lastActive;
+    private int level;
+    private TotemPrivacy privacy;
+    private TotemSkin skin;
+    private String ownerName;
+    private String displayName;
+    private Map<Integer, ItemStack> bag;
+    private Set<UUID> users;
+    private Map<String, TotemUpgrade> upgrades;
+    private ArmorStand display;
 
-    public Totem(Location position, UUID owner) {
-        super();
-        this.position = position;
-        this.registerType(TOTEM_OWNER, owner);
-        this.registerType(TOTEM_ACTIVE, false);
-        this.registerType(TOTEM_LAST_ACTIVE, 0L);
-        this.registerType(TOTEM_SKIN, "default");
-        this.registerType(TOTEM_LEVEL, 1);
-        this.registerType(TOTEM_PRIVACY, TotemPrivacy.PUBLIC);
-        this.registerType(TOTEM_UPGRADES, new HashMap<>());
-        this.registerType(TOTEM_USERS, new HashSet<>());
+    /**
+     * Create a new totem from an armor stand with a container
+     *
+     * @param display The armor stand that is a totem
+     */
+    public Totem(ArmorStand display) {
+        this(display, display.getPersistentDataContainer());
+        this.display = display;
     }
 
     /**
-     * Store a {@link FishDataType} into a {@link PersistentDataContainer}
+     * Create a new totem from an armor stand with a container
      *
-     * @param container The container to store the serializer in
+     * @param display   The armor stand that is a totem
+     * @param container The container with the data from the totem
+     */
+    public Totem(ArmorStand display, PersistentDataContainer container) {
+        this(display.getLocation().toCenterLocation(), container);
+        this.display = display;
+    }
+
+    /**
+     * Create a new totem at a specified position with a container
+     *
+     * @param position  The position to spawn the totem at
+     * @param container The container with the data from the totem
+     * @param owner     The new owner of the container
+     */
+    public Totem(Location position, PersistentDataContainer container, UUID owner) {
+        this(position, container);
+        this.owner = owner;
+        if (this.owner != null) {
+            this.ownerName = Optional.ofNullable(Bukkit.getPlayer(this.owner)).map(Player::getName).orElse("N/A");
+        } else {
+            this.ownerName = "N/A";
+        }
+        this.writeContainer(container);
+        this.readContainer(container);
+    }
+
+    /**
+     * Create a new totem at a specified position with a container
+     *
+     * @param position  The position to spawn the totem at
+     * @param container The container with the data from the totem
+     */
+    public Totem(Location position, PersistentDataContainer container) {
+        this.position = position;
+        this.active = false;
+        this.lastActive = 0L;
+        this.level = 1;
+        this.privacy = TotemPrivacy.FRIENDS_ONLY;
+        this.ownerName = "N/A";
+        this.displayName = this.ownerName + "'s Totem";
+        this.bag = new HashMap<>();
+        this.users = new HashSet<>();
+        this.upgrades = new LinkedHashMap<>(UpgradeRegistry.getDefault());
+        this.readContainer(container);
+    }
+
+    /**
+     * Get the effective radius of the totem
+     *
+     * @return The totem radius
+     */
+    public double getRadius() {
+        TotemUpgradeRadius upgrade = this.getUpgrade(TotemUpgradeRadius.class);
+        return upgrade != null ? upgrade.getRadius() : 2.5;
+    }
+
+    /**
+     * Get the duration of the totem
+     *
+     * @return The duration of the totem
+     */
+    public Duration getDuration() {
+        TotemUpgradeDuration upgrade = this.getUpgrade(TotemUpgradeDuration.class);
+        return upgrade != null ? upgrade.getDuration() : Duration.ofMinutes(5);
+    }
+
+    /**
+     * Get the cooldown of the totem
+     *
+     * @return The duration of the totem
+     */
+    public Duration getCooldown() {
+        TotemUpgradeCooldown upgrade = this.getUpgrade(TotemUpgradeCooldown.class);
+        return upgrade != null ? upgrade.getCooldown() : Duration.ofHours(1);
+    }
+
+    /**
+     * Get an upgrade for the totem
+     *
+     * @param upgradeClass The class for the upgrade
+     * @param <T>          The totem upgrade type
+     *
+     * @return The upgrade if available
+     */
+    @SuppressWarnings("unchecked")
+    @Nullable
+    public <T extends TotemUpgrade> T getUpgrade(@NotNull Class<T> upgradeClass) {
+        String id = UpgradeRegistry.getUpgradeId(upgradeClass);
+        if (id == null) return null;
+
+        TotemUpgrade upgrade = this.upgrades.get(id);
+        return upgrade != null ? (T) upgrade : null;
+    }
+
+    /**
+     * The method that should run everytime the task is ticked,
+     * this method will be run asynchronously
      */
     @Override
-    public <T extends PersistentDataContainer> void serialize(T container) {
-        super.serialize(container);
+    public void tickAsync() {
+        if (this.display == null || this.display.isDead() || this.position.isChunkLoaded()) return;
 
-        Map<String, Integer> upgrades = this.getValue(container, TOTEM_UPGRADES);
-        if (upgrades != null && !upgrades.isEmpty()) {
-            // TODO: Serialize each upgrade
+        // Spawn particles around the totem 
+        // TODO: Move this to an animation API
+        if (System.currentTimeMillis() - this.lastActive > Duration.ofSeconds(1).toMillis()) {
+
+            Color color = Color.RED;
+            if (active) color = Color.LIME;
+            if (!active && this.onCooldown()) color = Color.YELLOW;
+
+            new ParticleBuilder(Particle.DUST)
+                    .location(this.display.getEyeLocation().toCenterLocation())
+                    .offset(0.5, 0.5, 0.5)
+                    .count(10)
+                    .extra(0)
+                    .color(color)
+                    .spawn();
+
+            // Spawn additional particles around the totem bounds while active
+            if (active) {
+                ParticleBuilder dust = this.getDust(Color.LIME);
+                this.bounds = this.getBounds(); // regularly update the bounds of the totem
+                this.bounds.forEach(x -> dust.clone().location(x.clone().add(0, 1.5, 0)).spawn());
+            }
+
+
+            this.lastTick = System.currentTimeMillis();
+        }
+
+        // Make the totem rotate it's head
+        // todo: rotation, make skin animation
+        //        if (active && this.entity != null) {
+        //            if (this.rotation >= 360) this.rotation = -1;
+        //            this.rotation += 2;
+        //
+        //            this.entity.setHeadRotations(Rotations.ofDegrees(0, this.rotation, 0));
+        //        }
+
+        // Check if the totem should be disabled
+        // TODO: Move this to a disabled state
+        long duration = this.getDuration().toMillis();
+        if (active && System.currentTimeMillis() - lastActive > duration) {
+            this.active = false;
+            this.lastActive = System.currentTimeMillis();
+            this.writeContainer(this.display.getPersistentDataContainer());// Update the totem
+
+            // Call the totem activate event on upgrades
+            FishEventHandler.callEvents(this.getUpgradeLevelMapping(), new TotemDeactivateEvent(this));
         }
     }
 
+    /**
+     * Activate the totem for the player to use
+     *
+     * @param player The activating player
+     */
+    public void activate(Player player) {
+        if (this.display == null || this.display.isDead()) return;
+        if (this.onCooldown()) {
+            FishingPlugin.get().getLogger().warning("Failed to activate totem, The totem is on cooldown.");
+            return;
+        }
+
+        this.active = true;
+        this.lastActive = System.currentTimeMillis();
+        this.writeContainer(this.display.getPersistentDataContainer());
+
+        // Call the totem activate event on upgrades
+        FishEventHandler.callEvents(this.getUpgradeLevelMapping(), new TotemActivateEvent(this, player));
+    }
+
+    /**
+     * Spawn in the totem in the world at a location
+     *
+     * @param location The block location to spawn the totem
+     */
+    public void spawn(Location location) {
+        this.position = location.toBlockLocation().add(0.5, -0.3, 0.5);
+        this.display = this.position.getWorld().spawn(this.position, ArmorStand.class, CreatureSpawnEvent.SpawnReason.CUSTOM, result -> {
+            result.setInvisible(false);
+            result.setCanTick(false);
+            result.setGravity(false);
+            result.setVisible(false);
+            result.setCustomNameVisible(true);
+            result.setPersistent(true);
+            result.customName(FishUtils.kyorify(this.ownerName));
+            result.setItem(EquipmentSlot.HEAD, TotemConfig.get().getTotemItem().build());
+
+            // Lock all the slots
+            for (EquipmentSlot slot : EquipmentSlot.values()) {
+                result.addEquipmentLock(slot, ArmorStand.LockType.ADDING_OR_CHANGING);
+                result.addEquipmentLock(slot, ArmorStand.LockType.REMOVING_OR_CHANGING);
+            }
+
+            // Save the properties to the entity
+            this.writeContainer(result.getPersistentDataContainer());
+        });
+
+        // Create spawning particles around the totem
+        long startTime = System.currentTimeMillis();
+        // TODO: Spawn particles in a better way than a task
+        List<Location> bounds = this.getBounds();
+        Bukkit.getScheduler().runTaskTimerAsynchronously(FishingPlugin.get(), task -> {
+
+            // Remove the task if the entity or center is null
+            if (this.display == null || this.display.isDead() || this.position == null) {
+                task.cancel();
+                return;
+            }
+
+            // if longer than 3 seconds cancel
+            if (System.currentTimeMillis() - startTime > Duration.ofSeconds(5).toMillis()) {
+                task.cancel();
+                return;
+            }
+
+            // Spawn dust particles to display the totem radius
+            // TODO: RadiusParticleAnimation 
+            bounds.forEach(x -> this.getDust(Color.LIME).location(x.clone().add(0, 0.5, 0)).spawn());
+        }, 0L, 5L);
+    }
+
+    /**
+     * Save the totem values to the itemstack
+     *
+     * @param itemStack The itemstack to save the values to
+     */
+    public void saveTo(ItemStack itemStack) {
+        if (itemStack == null || itemStack.getItemMeta() == null) {
+            FishingPlugin.get().getLogger().severe("ItemStack is null, could not save totem by owner: " + this.ownerName);
+            return;
+        }
+
+        itemStack.editMeta(itemMeta -> this.writeContainer(itemMeta.getPersistentDataContainer()));
+    }
+
+    /**
+     * Create a new particle builder with the dust particle
+     *
+     * @param color The color of the dust
+     *
+     * @return The particle builder
+     */
+    private ParticleBuilder getDust(Color color) {
+        return new ParticleBuilder(Particle.DUST)
+                .count(1)
+                .extra(0)
+                .offset(0, 0, 0.)
+                .color(color)
+                .clone();
+    }
+
+    /**
+     * Check if the totem is currently on cooldown
+     *
+     * @return If the totem is on cooldown
+     *
+     * @see TotemUpgradeCooldown Calculate the cooldown from the upgrade
+     * @see #getCurrentCooldown() Get the current cooldown of the totem
+     */
+    public boolean onCooldown() {
+        if (this.lastActive <= 0) return false;
+
+        return System.currentTimeMillis() - lastActive < this.getCooldown().toMillis();
+    }
+
+    /**
+     * Get the current cooldown timer of the totem in milliseconds
+     * <p>
+     *
+     * @return The cooldown of the totem
+     *
+     * @see TotemUpgradeCooldown Calculate the cooldown from the upgrade
+     * @see #onCooldown() Check if the totem is on cooldown
+     */
+    public long getCurrentCooldown() {
+        if (this.lastActive <= 0) return 0;
+
+        return this.getCooldown().toMillis() - (System.currentTimeMillis() - lastActive);
+    }
+
+    /**
+     * Get the current duration of the totem in milliseconds
+     *
+     * @return The duration of the totem
+     *
+     * @see TotemUpgradeDuration Calculate the duration from the upgrade
+     * @see #getCurrentDuration() Get the duration of the totem
+     * @see #onCooldown() Check if the totem is on cooldown
+     */
+    public long getCurrentDuration() {
+        if (!this.active || this.lastActive <= 0) return 0;
+
+        return this.getDuration().toMillis() - (System.currentTimeMillis() - lastActive);
+    }
+
+    /**
+     * Test if the location is within the radius of the totem
+     *
+     * @param location The location to test
+     *
+     * @return If the location is within the radius of the totem
+     */
+    public boolean isWithinRadius(Location location) {
+        // Radius will be in a circle around the center
+        if (location.getWorld() != this.position.getWorld()) return false;
+
+        return location.distance(this.position) <= this.getRadius();
+    }
+
+    /**
+     * Get the outer bounds of the totem in a circle
+     *
+     * @return The outer bounds of the totem
+     */
+    public List<Location> getBounds() {
+        if (this.position == null) return new ArrayList<>();
+
+        List<Location> results = new ArrayList<>();
+        double radius = this.getRadius();
+        int numSteps = 120;
+        for (int i = 0; i < numSteps; i++) {
+            double dx = MathL.cos(Math.PI * 2 * ((double) i / numSteps)) * radius;
+            double dz = MathL.sin(Math.PI * 2 * ((double) i / numSteps)) * radius;
+
+            results.add(this.position.clone().add(dx, 0, dz));
+        }
+
+        return results;
+    }
+
+    public Map<TotemUpgrade, Integer> getUpgradeLevelMapping() {
+        return this.upgrades.values().stream().collect(
+                Collectors.toMap(x -> x, TotemUpgrade::getLevel)
+        );
+    }
+
+    /**
+     * Write data into a data container using the armour stand display
+     */
+    public void writeContainer() {
+        if (this.display == null) return;
+
+        this.writeContainer(this.display.getPersistentDataContainer());
+    }
+
+    /**
+     * Write data into a data container
+     *
+     * @param container The container to write into
+     */
+    @Override
+    public void writeContainer(PersistentDataContainer container) {
+        container.set(TOTEM_OWNER.key(), TOTEM_OWNER, this.owner);
+        container.set(TOTEM_ACTIVE.key(), TOTEM_ACTIVE, this.active);
+        container.set(TOTEM_LAST_ACTIVE.key(), TOTEM_LAST_ACTIVE, this.lastActive);
+        container.set(TOTEM_LEVEL.key(), TOTEM_LEVEL, this.level);
+        container.set(TOTEM_PRIVACY.key(), TOTEM_PRIVACY, this.privacy);
+        container.set(TOTEM_SKIN.key(), TOTEM_SKIN, this.skin.id());
+        container.set(TOTEM_USERS.key(), TOTEM_USERS, this.users);
+        container.set(TOTEM_BAG.key(), TOTEM_BAG, this.bag);
+        container.set(TOTEM_OWNER_NAME.key(), TOTEM_OWNER_NAME, this.ownerName);
+        container.set(TOTEM_DISPLAY_NAME.key(), TOTEM_DISPLAY_NAME, this.displayName);
+
+        // Write the upgrade containers
+        PersistentDataAdapterContext context = container.getAdapterContext();
+        PersistentDataContainer upgradesContainer = context.newPersistentDataContainer();
+        for (TotemUpgrade totemUpgrade : this.upgrades.values()) {
+            PersistentDataContainer upgradeContainer = context.newPersistentDataContainer();
+            totemUpgrade.writeContainer(upgradeContainer);
+            if (!upgradesContainer.getKeys().isEmpty()) {
+                String identifier = totemUpgrade.getIdentifier().get();
+                NamespacedKey key = NamespacedKey.fromString("upgrade_" + identifier, FishingPlugin.get());
+                if (identifier == null || key == null) {
+                    FishingPlugin.get().getLogger().warning("Totem Upgrade[" + totemUpgrade.getClass().getSimpleName() + "] does not have an identifier");
+                    return;
+                }
+
+                upgradesContainer.set(key, TOTEM_UPGRADES, upgradesContainer);
+            }
+        }
+
+        if (!upgradesContainer.isEmpty()) {
+            container.set(TOTEM_UPGRADES.key(), TOTEM_UPGRADES, upgradesContainer);
+        }
+
+        if (this.display != null) {
+            FishingPlugin.get().getTotemManager().registerTotem(this);
+        }
+    }
+
+    /**
+     * Load and deserialize data from a data container
+     *
+     * @param container The container to read from
+     */
+    @Override
+    public void readContainer(PersistentDataContainer container) {
+        this.owner = container.get(TOTEM_OWNER.key(), TOTEM_OWNER);
+        this.active = container.getOrDefault(TOTEM_ACTIVE.key(), TOTEM_ACTIVE, false);
+        this.lastActive = container.getOrDefault(TOTEM_LAST_ACTIVE.key(), TOTEM_LAST_ACTIVE, 0L);
+        this.level = container.getOrDefault(TOTEM_LEVEL.key(), TOTEM_LEVEL, 1);
+        this.privacy = container.get(TOTEM_PRIVACY.key(), TOTEM_PRIVACY);
+        this.users = container.get(TOTEM_USERS.key(), TOTEM_USERS);
+        this.bag = container.get(TOTEM_BAG.key(), TOTEM_BAG);
+        this.ownerName = container.get(TOTEM_OWNER_NAME.key(), TOTEM_OWNER_NAME);
+        this.displayName = container.get(TOTEM_DISPLAY_NAME.key(), TOTEM_DISPLAY_NAME);
+
+        // TODO: Load skin individually
+        // this.skin = container.get(TOTEM_SKIN.key(), TOTEM_SKIN);
+
+        // Load all the totem upgrades from the container
+        PersistentDataContainer upgradeContainer = container.get(TOTEM_UPGRADES.key(), TOTEM_UPGRADES);
+        if (upgradeContainer != null) {
+            for (NamespacedKey key : upgradeContainer.getKeys()) {
+                String name = key.getKey();
+                PersistentDataContainer upgrade = upgradeContainer.get(key, DataType.TAG_CONTAINER);
+                if (upgrade == null) continue;
+
+                TotemUpgrade totemUpgrade = this.upgrades.get(name);
+                if (totemUpgrade != null) totemUpgrade.readContainer(upgrade);
+            }
+        }
+    }
+
+    public Location getPosition() {
+        return position;
+    }
+
+    public void setPosition(Location position) {
+        this.position = position;
+    }
+
+    public UUID getOwner() {
+        return owner;
+    }
+
+    public void setOwner(UUID owner) {
+        this.owner = owner;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public long getLastActive() {
+        return lastActive;
+    }
+
+    public void setLastActive(long lastActive) {
+        this.lastActive = lastActive;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public TotemPrivacy getPrivacy() {
+        return privacy;
+    }
+
+    public void setPrivacy(TotemPrivacy privacy) {
+        this.privacy = privacy;
+    }
+
+    public TotemSkin getSkin() {
+        return skin;
+    }
+
+    public void setSkin(TotemSkin skin) {
+        this.skin = skin;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public Map<Integer, ItemStack> getBag() {
+        return bag;
+    }
+
+    public void setBag(Map<Integer, ItemStack> bag) {
+        this.bag = bag;
+    }
+
+    public Set<UUID> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<UUID> users) {
+        this.users = users;
+    }
+
+    public Map<String, TotemUpgrade> getUpgrades() {
+        return upgrades;
+    }
+
+    public void setUpgrades(Map<String, TotemUpgrade> upgrades) {
+        this.upgrades = upgrades;
+    }
+
+    public ArmorStand getDisplay() {
+        return display;
+    }
+
+    public void setDisplay(ArmorStand display) {
+        this.display = display;
+    }
 
     //
     //    private static final Duration PARTICLE_DELAY = Duration.ofSeconds(1);
@@ -141,101 +700,6 @@ public class Totem extends Propertied { // extends Propertied implements AsyncTi
     //        }
     //    }
     //
-    //    /**
-    //     * Activate the totem for the player to use
-    //     *
-    //     * @param player The activating player
-    //     */
-    //    public void activate(Player player) {
-    //        if (this.onCooldown()) {
-    //            FishingPlugin.get().getLogger().warning("Failed to activate totem, The totem is on cooldown.");
-    //            return;
-    //        }
-    //
-    //        this.bounds = this.getBounds(); // Update the bounds of the totem
-    //        this.setProperty(TOTEM_ACTIVE, true);
-    //        this.setProperty(TOTEM_LAST_ACTIVE, System.currentTimeMillis());
-    //        this.update();
-    //
-    //        // Call the totem activate event on upgrades
-    //        FishEventHandler.callEvents(this.upgrades, new TotemActivateEvent(this, player));
-    //    }
-    //
-    //    /**
-    //     * Spawn in the totem in the world at a location
-    //     *
-    //     * @param location The block location to spawn the totem
-    //     */
-    //    public void spawn(Location location) {
-    //        this.center = location.toBlockLocation().add(0.5, -0.3, 0.5);
-    //        this.bounds = this.getBounds();
-    //        this.entity = this.center.getWorld().spawn(this.center, ArmorStand.class, CreatureSpawnEvent.SpawnReason.CUSTOM, result -> {
-    //            result.setInvisible(false);
-    //            result.setCanTick(false);
-    //            result.setGravity(false);
-    //            result.setVisible(false);
-    //            result.setCustomNameVisible(true);
-    //            result.setPersistent(true);
-    //            result.customName(Component.text(this.getProperty(TOTEM_OWNER_NAME) + "'s Totem")); // TODO: Allow configurable name
-    //            result.setItem(EquipmentSlot.HEAD, TotemConfig.get().getTotemItem().build(this.placeholders()));
-    //
-    //            // Lock all the slots
-    //            for (EquipmentSlot slot : EquipmentSlot.values()) {
-    //                result.addEquipmentLock(slot, ArmorStand.LockType.ADDING_OR_CHANGING);
-    //                result.addEquipmentLock(slot, ArmorStand.LockType.REMOVING_OR_CHANGING);
-    //            }
-    //
-    //            // Save the properties to the entity
-    //            this.saveProperties(result.getPersistentDataContainer());
-    //        });
-    //
-    //        // Create spawning particles around the totem
-    //        long startTime = System.currentTimeMillis();
-    //        // TODO: Spawn particles in a better way than a task
-    //        Bukkit.getScheduler().runTaskTimerAsynchronously(FishingPlugin.get(), task -> {
-    //
-    //            // Remove the task if the entity or center is null
-    //            if (this.entity == null || this.entity.isDead() || this.center == null) {
-    //                task.cancel();
-    //                return;
-    //            }
-    //
-    //            // if longer than 3 seconds cancel
-    //            if (System.currentTimeMillis() - startTime > Duration.ofSeconds(5).toMillis()) {
-    //                task.cancel();
-    //                return;
-    //            }
-    //
-    //            // Spawn dust particles to display the totem radius
-    //            // TODO: RadiusParticleAnimation 
-    //            this.bounds.forEach(x -> this.getDust(Color.LIME).location(x.clone().add(0, 0.5, 0)).spawn());
-    //        }, 0L, 5L);
-    //    }
-    //
-    //    /**
-    //     * Update the totem values
-    //     */
-    //    public void update() {
-    //        if (this.entity != null) {
-    //            this.saveProperties(this.entity.getPersistentDataContainer());
-    //        }
-    //
-    //        FishingPlugin.get().getTotemManager().registerTotem(this);
-    //    }
-    //
-    //    /**
-    //     * Save the totem values to the itemstack
-    //     *
-    //     * @param itemStack The itemstack to save the values to
-    //     */
-    //    public void saveTo(ItemStack itemStack) {
-    //        if (itemStack == null || itemStack.getItemMeta() == null) {
-    //            FishingPlugin.get().getLogger().severe("ItemStack is null, could not save totem by owner: " + this.getProperty(TOTEM_OWNER_NAME, "Unknown"));
-    //            return;
-    //        }
-    //
-    //        itemStack.editMeta(itemMeta -> this.saveProperties(itemMeta.getPersistentDataContainer()));
-    //    }
     //
     //    /**
     //     * Create a new totem from an entity

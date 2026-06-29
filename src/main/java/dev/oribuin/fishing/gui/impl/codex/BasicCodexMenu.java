@@ -1,7 +1,7 @@
 package dev.oribuin.fishing.gui.impl.codex;
 
+import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.gui.PluginMenu;
-import dev.oribuin.fishing.item.ItemConstruct;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import net.kyori.adventure.text.Component;

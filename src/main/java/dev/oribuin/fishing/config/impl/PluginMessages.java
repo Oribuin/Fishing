@@ -47,12 +47,18 @@ public class PluginMessages {
 
     @Comment("Player has not got any fish to gut")
     private TextMessage noGuttedFish = new TextMessage(PREFIX + "There are no fish that could be gutted");
-    
+
     @Comment("Player has sold a fish for money")
     private TextMessage soldFish = new TextMessage(PREFIX + "You have sold <#93bc80><total> <white>fish for <#93bc80>$<money><white>!");
 
     @Comment("Player has not got any fish to sell")
     private TextMessage noSoldFish = new TextMessage(PREFIX + "There are no fish that could be sold");
+
+    @Comment("Player has hit the maximum level for the upgrade")
+    private TextMessage hitMaxLevel = new TextMessage(PREFIX + "You cannot level up your upgrade past level <#93bc80><max>");
+
+    @Comment("Player has levelled up an upgrade on the totem")
+    private TextMessage totemUpgradeLevelup = new TextMessage(PREFIX + "You have increased the level of <#93bc80><upgrade> <white>to <#93bc80><level><white>/<#93bc8i0<max>");
 
     public TextMessage getReload() {
         return reload;
@@ -100,5 +106,13 @@ public class PluginMessages {
 
     public TextMessage getSoldFish() {
         return soldFish;
+    }
+
+    public TextMessage getHitMaxLevel() {
+        return hitMaxLevel;
+    }
+
+    public TextMessage getTotemUpgradeLevelup() {
+        return totemUpgradeLevelup;
     }
 }

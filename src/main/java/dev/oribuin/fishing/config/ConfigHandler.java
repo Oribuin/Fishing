@@ -95,4 +95,5 @@ public class ConfigHandler<T> {
     public T getConfig() {
         return this.config.get();
     }
+
 }

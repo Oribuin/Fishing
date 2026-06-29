@@ -1,9 +1,9 @@
-package dev.oribuin.fishing.item.component;
+package dev.oribuin.fishing.config.item.component;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.config.item.ConstructComponent;
 import dev.oribuin.fishing.hook.plugin.HeadDbProvider;
-import dev.oribuin.fishing.item.ConstructComponent;
 import dev.oribuin.fishing.util.Placeholders;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ResolvableProfile;

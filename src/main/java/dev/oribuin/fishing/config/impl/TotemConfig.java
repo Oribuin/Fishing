@@ -1,8 +1,7 @@
 package dev.oribuin.fishing.config.impl;
 
 import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.item.ItemConstruct;
-import dev.oribuin.fishing.item.component.TextureConstructType;
+import dev.oribuin.fishing.config.item.ItemConstruct;
 import org.bukkit.Material;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 

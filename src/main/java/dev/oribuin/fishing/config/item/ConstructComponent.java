@@ -1,4 +1,4 @@
-package dev.oribuin.fishing.item;
+package dev.oribuin.fishing.config.item;
 
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;

@@ -1,9 +1,9 @@
 package dev.oribuin.fishing.gui.impl.totem;
 
+import dev.oribuin.fishing.config.item.ItemConstruct;
+import dev.oribuin.fishing.config.item.component.ModelConstructType;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
-import dev.oribuin.fishing.item.ItemConstruct;
-import dev.oribuin.fishing.item.component.ModelConstructType;
 import dev.oribuin.fishing.manager.MenuManager;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.storage.util.KeyRegistry;
