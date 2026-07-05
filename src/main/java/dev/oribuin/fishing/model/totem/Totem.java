@@ -383,9 +383,16 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
      */
     public boolean isWithinRadius(Location location) {
         // Radius will be in a circle around the center
-        if (location.getWorld() != this.position.getWorld()) return false;
+        if (!location.getWorld().getName().equalsIgnoreCase(this.position.getWorld().getName())) {
+            return false;
+        }
 
-        return location.distance(this.position) <= this.getRadius();
+        double radius = this.getRadius();
+        double dx = location.getX() - position.getX();
+        double dz = location.getZ() - position.getZ();
+        double dy = Math.abs(location.getY() - position.getY());
+        double normalized = (dx * dx) / (radius * radius) + (dz * dz) / (radius * radius);
+        return normalized <= 1.0 && dy <= radius;
     }
 
     /**
