@@ -8,6 +8,7 @@ import dev.oribuin.fishing.api.event.impl.TotemActivateEvent;
 import dev.oribuin.fishing.api.event.impl.TotemDeactivateEvent;
 import dev.oribuin.fishing.api.task.AsyncTicker;
 import dev.oribuin.fishing.config.impl.TotemConfig;
+import dev.oribuin.fishing.model.cosmetic.skin.TotemSkin;
 import dev.oribuin.fishing.model.totem.upgrade.TotemUpgrade;
 import dev.oribuin.fishing.model.totem.upgrade.UpgradeRegistry;
 import dev.oribuin.fishing.model.totem.upgrade.impl.TotemUpgradeCooldown;
@@ -441,7 +442,7 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
         container.set(TOTEM_BAG.key(), TOTEM_BAG, this.bag);
         container.set(TOTEM_OWNER_NAME.key(), TOTEM_OWNER_NAME, this.ownerName);
         container.set(TOTEM_DISPLAY_NAME.key(), TOTEM_DISPLAY_NAME, this.displayName);
-        if (this.skin != null) container.set(TOTEM_SKIN.key(), TOTEM_SKIN, this.skin.id());
+//        if (this.skin != null) container.set(TOTEM_SKIN.key(), TOTEM_SKIN, this.skin.id()); // TODO: Totem Skin
 
         // Write the upgrade containers
         PersistentDataAdapterContext context = container.getAdapterContext();

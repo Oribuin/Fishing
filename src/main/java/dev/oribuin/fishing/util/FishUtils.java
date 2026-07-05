@@ -13,7 +13,9 @@ import net.objecthunter.exp4j.ExpressionBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Color;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +29,9 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -39,6 +43,7 @@ public final class FishUtils {
     public static LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacyAmpersand();
     public static PlainTextComponentSerializer PLAIN = PlainTextComponentSerializer.plainText();
     public static MiniMessage MINIMESSAGE = MiniMessage.miniMessage();
+    private static final Map<Material, BlockData> BLOCK_DATA_MAPPING = new HashMap<>();
 
     public static TagResolver RESOLVER = TagResolver.builder()
             .resolvers(
@@ -56,10 +61,21 @@ public final class FishUtils {
             )
             .build();
 
+
     public FishUtils() {
         throw new IllegalStateException("FishUtil is a utility class and cannot be instantiated.");
     }
 
+    /**
+     * Create block data from a material and cache it
+     *
+     * @param material The material to get from the map
+     * @return The blockdata to get
+     */
+    public static BlockData getMaterialData(@NotNull Material material) {
+        return BLOCK_DATA_MAPPING.computeIfAbsent(material, Material::createBlockData);
+    }
+    
     /**
      * Convert a string to a component
      *
