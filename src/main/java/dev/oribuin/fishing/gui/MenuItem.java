@@ -43,6 +43,16 @@ public class MenuItem {
      * Place the item in the specified slot in the GUI
      *
      * @param gui      The GUI to place the item in
+     * @param placeholders The placeholders for the menu item
+     */
+    public void place(BaseGui gui, Placeholders placeholders) {
+        this.place(gui, placeholders, event -> {});
+    }
+
+    /**
+     * Place the item in the specified slot in the GUI
+     *
+     * @param gui      The GUI to place the item in
      * @param function The function to run when the item is clicked
      */
     public void place(BaseGui gui, GuiAction<InventoryClickEvent> function) {

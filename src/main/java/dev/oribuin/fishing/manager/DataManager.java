@@ -221,15 +221,9 @@ public class DataManager implements Manager {
      *
      * @return The current players in the cache
      */
-    public Map<UUID, Fisher> all() {
+    public Map<UUID, Fisher> getAll() {
         return this.userData;
     }
-
-
-    //    @Override
-    //    public @NotNull List<Supplier<? extends DataMigration>> getDataMigrations() {
-    //        return List.of(_1_CreateInitialTables::new);
-    //    }
 
     /**
      * Run a task asynchronously

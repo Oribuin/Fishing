@@ -1,6 +1,7 @@
 package dev.oribuin.fishing.listener;
 
 import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.config.impl.PluginMessages;
 import dev.oribuin.fishing.config.impl.TotemConfig;
 import dev.oribuin.fishing.gui.impl.totem.TotemMainMenu;
 import dev.oribuin.fishing.manager.MenuManager;
@@ -13,6 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -60,7 +62,7 @@ public class TotemListeners implements Listener {
 
         Block relative = event.getClickedBlock().getRelative(BlockFace.UP);
         if (relative.getType() != Material.AIR) {
-            event.getPlayer().sendMessage("There is no space to place the totem.");
+            PluginMessages.get().getTotem().getNoSpace().send(event.getPlayer());
             return;
         }
 
@@ -70,7 +72,7 @@ public class TotemListeners implements Listener {
 
         event.getItem().setAmount(event.getItem().getAmount() - 1);
         this.plugin.getTotemManager().registerTotem(totem);
-        event.getPlayer().sendMessage("Totem placed.");
+        PluginMessages.get().getTotem().getPlaced().send(event.getPlayer());
     }
 
     /**
@@ -84,36 +86,37 @@ public class TotemListeners implements Listener {
 
         TotemManager manager = this.plugin.getTotemManager();
         Totem totem = manager.getTotem(stand);
+        Player player = event.getPlayer();
         if (totem == null) return;
 
         event.setCancelled(true);
 
-        if (!event.getPlayer().isSneaking()) {
-            MenuManager.get(TotemMainMenu.class).open(totem, event.getPlayer());
+        if (!player.isSneaking()) {
+            new TotemMainMenu(this.plugin, () -> manager.getTotem(stand)).open(player);
             return;
         }
 
         // Remove the totem if the player is the owner
         UUID owner = totem.getOwner();
-        if (owner != null && !event.getPlayer().getUniqueId().equals(owner)) {
-            event.getPlayer().sendMessage("You cannot remove your own totem.");
+        if (owner != null && !player.getUniqueId().equals(owner)) { // TODO: Permission Bypass
+            PluginMessages.get().getTotem().getCannotAccess().send(player);
             return;
         }
 
-        if (event.getPlayer().getInventory().firstEmpty() == -1) {
-            event.getPlayer().sendMessage("Your inventory is full.");
+        if (player.getInventory().firstEmpty() == -1) {
+            PluginMessages.get().getFullInventory().send(player);
             return;
         }
 
         totem.getDisplay().remove(); // Remove the totem entity
         totem.setDisplay(null); // Set the totem entity to null
         manager.unregisterTotem(totem); // Unregister the totem
-        event.getPlayer().sendMessage("Totem removed."); // Send the player a message
+        PluginMessages.get().getTotem().getRemoved().send(player);
 
         ItemStack itemStack = TotemConfig.get().getTotemItem().build(totem.getPlaceholders());
         totem.saveTo(itemStack);
 
-        event.getPlayer().getInventory().addItem(itemStack);
+        player.getInventory().addItem(itemStack);
     }
 
     /**

@@ -1,11 +1,13 @@
 package dev.oribuin.fishing.gui.impl.user;
 
+import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.impl.PluginMessages;
 import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.config.item.component.TooltipConstructType;
+import dev.oribuin.fishing.gui.GuiConfig;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
-import dev.oribuin.fishing.manager.MenuManager;
+import dev.oribuin.fishing.model.economy.CurrencyRegistry;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.fish.Tier;
 import dev.oribuin.fishing.storage.Fisher;
@@ -25,46 +27,34 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import java.util.List;
 import java.util.function.Supplier;
 
-@ConfigSerializable
 @SuppressWarnings("UnstableApiUsage")
-public class FishGutMenu extends PluginMenu<Gui> {
-
-    private final List<Integer> gutSlots;
-
-    public FishGutMenu() {
-        super("fish_gut_menu");
-
-        this.title = "Gutting Station";
-        this.rows = 5;
-        this.items.put("gut-fish", new MenuItem(GUT_FISH, 40));
-        this.items.put("main-menu", new MenuItem(MAIN_MENU, 36));
-        this.extraItems.put("border", new MenuItem(BORDER, FishUtils.parseList("0-8", "36-44")));
-        this.gutSlots = FishUtils.parseList("9-35");
-    }
+public class FishGutMenu extends PluginMenu<Gui, FishGutMenu.Config> {
 
     /**
-     * Open the menu for the player synchronously and mark the menu as being viewed
+     * Creates a new menu for the plugin to use
      *
-     * @param player The player opening the menu
+     * @param plugin The plugin instance
      */
-    @Override
-    public void open(Player player) {
-        Fisher fisher = this.plugin.getDataManager().get(player.getUniqueId());
-        if (fisher == null) return;
-
+    public FishGutMenu(FishingPlugin plugin, Player player) {
+        super(plugin, FishGutMenu.Config.class);
         this.gui = this.createMenu().get();
+
+        Fisher fisher = plugin.getDataManager().get(player.getUniqueId());
         Placeholders placeholders = Placeholders.builder()
                 .add("player", player.getName())
                 .addAll(fisher.getPlaceholders())
                 .build();
 
-        this.extraItems.forEach((key, value) -> value.place(this.gui, placeholders, CANCELLED));
-        this.placeItem("main-menu", placeholders, event -> {
+        this.setDummyIcons(placeholders);
+
+        // region Place the gui items into the menu 
+        this.config.getMainMenu().place(this.gui, placeholders, event -> {
+            FishMainMenu mainMenu = new FishMainMenu(plugin, (Player) event.getWhoClicked());
+            mainMenu.open(player);
             CANCELLED.execute(event);
-            MenuManager.get(FishMainMenu.class).open((Player) event.getWhoClicked());
         });
 
-        this.placeItem("gut-fish", placeholders, event -> {
+        this.config.getGutFish().place(this.gui, event -> {
             CANCELLED.execute(event);
 
             Inventory inventory = this.gui.getInventory();
@@ -78,7 +68,7 @@ public class FishGutMenu extends PluginMenu<Gui> {
                 if (fish == null) continue;
 
                 Tier tier = fish.getTierInstance();
-                if (tier.getGutEntropy() <= 0) continue;
+                if (tier.getSellMoney() <= 0) continue;
 
                 entropy += (tier.getGutEntropy() * stack.getAmount());
                 totalFish += stack.getAmount();
@@ -92,11 +82,9 @@ public class FishGutMenu extends PluginMenu<Gui> {
             }
 
             PluginMessages.get().getGuttedFish().send(player, "total", totalFish, "entropy", entropy);
-            fisher.setEntropy(fisher.getEntropy() + entropy);
-            this.plugin.getDataManager().saveUser(fisher);
+            CurrencyRegistry.ENTROPY.give(player, entropy);
         });
-
-        super.open(player);
+        // endregion
     }
 
     /**
@@ -107,13 +95,13 @@ public class FishGutMenu extends PluginMenu<Gui> {
     @Override
     public Supplier<Gui> createMenu() {
         return () -> Gui.gui()
-                .title(Component.text(this.title))
-                .rows(this.rows)
+                .title(Component.text(this.config.getTitle()))
+                .rows(this.config.getRows())
                 .apply(x -> {
 
-                    // region Stop the user from clicking non gut slots
+                    // region Stop the user from clicking non sell slots
                     x.setDefaultTopClickAction(event -> {
-                        if (!this.gutSlots.contains(event.getSlot())) {
+                        if (!this.config.getSellSlots().contains(event.getSlot())) {
                             CANCELLED.execute(event);
                         }
                     });
@@ -134,14 +122,14 @@ public class FishGutMenu extends PluginMenu<Gui> {
                         }
 
                         Tier tier = fish.getTierInstance();
-                        if (tier.getGutEntropy() <= 0) CANCELLED.execute(event);
+                        if (tier.getSellMoney() <= 0) CANCELLED.execute(event);
                     });
                     // endregion 
 
                     // region Give any non fish items back to the player
                     x.setCloseGuiAction(event -> {
                         Inventory inventory = event.getInventory();
-                        for (int slot : this.gutSlots) {
+                        for (int slot : this.config.getSellSlots()) {
                             ItemStack stack = inventory.getItem(slot);
                             if (stack == null || stack.getType().isAir()) continue;
 
@@ -166,24 +154,47 @@ public class FishGutMenu extends PluginMenu<Gui> {
                 .create();
     }
 
-    // region Items
-    private static final ItemConstruct BORDER = new ItemConstruct(Material.BLACK_STAINED_GLASS_PANE)
-            .setTooltip(false);
+    @ConfigSerializable
+    @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
+    public static class Config extends GuiConfig {
 
-    private static final ItemConstruct GUT_FISH = new ItemConstruct(Material.NETHERITE_SWORD)
-            .setName("<white>[<#94bc80>Gut Fish<white>]")
-            .setLore(
-                    "<gray>Gut all the fish that you have",
-                    "<gray>placed inside the menu for entropy"
-            )
-            .setGlowing(true)
-            .setTooltip(TooltipConstructType.of(true, List.of(
-                    DataComponentTypes.ATTRIBUTE_MODIFIERS
-            )));
+        private List<Integer> sellSlots = FishUtils.parseList("9-35");
 
-    private static final ItemConstruct MAIN_MENU = new ItemConstruct(Material.ARROW)
-            .setName("<white>[<#94bc80>Main Menu<white>]")
-            .setLore("<gray>Click to go back to the main menu");
+        private MenuItem gutFish = new ItemConstruct(Material.NETHERITE_SWORD)
+                .setName("<white>[<#94bc80>Gut Fish<white>]")
+                .setLore(
+                        "<gray>Gut all the fish that you have",
+                        "<gray>placed inside the menu for entropy"
+                )
+                .setGlowing(true)
+                .setTooltip(TooltipConstructType.of(true, List.of(
+                        DataComponentTypes.ATTRIBUTE_MODIFIERS
+                )))
+                .asMenuItem(40);
 
-    // endregion
+        private MenuItem mainMenu = new ItemConstruct(Material.ARROW)
+                .setName("<white>[<#94bc80>Main Menu<white>]")
+                .setLore("<gray>Click to go back to the main menu")
+                .asMenuItem(36);
+
+
+        public Config() {
+            this.title = "Fishing | Gutting Station";
+            this.rows = 5;
+            this.dummyItems.add(new MenuItem(this.border, FishUtils.parseList("0-8", "36-44")));
+        }
+
+        public List<Integer> getSellSlots() {
+            return sellSlots;
+        }
+
+        public MenuItem getGutFish() {
+            return gutFish;
+        }
+
+        public MenuItem getMainMenu() {
+            return mainMenu;
+        }
+    }
+
 }

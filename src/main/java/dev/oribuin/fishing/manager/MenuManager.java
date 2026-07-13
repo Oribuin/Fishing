@@ -3,6 +3,7 @@ package dev.oribuin.fishing.manager;
 import com.google.common.base.Supplier;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.ConfigLoader;
+import dev.oribuin.fishing.gui.GuiConfig;
 import dev.oribuin.fishing.gui.PluginMenu;
 import dev.oribuin.fishing.gui.impl.codex.impl.AugmentCodexMenu;
 import dev.oribuin.fishing.gui.impl.codex.impl.FishCodexMenu;
@@ -21,8 +22,7 @@ import java.util.Map;
 
 public class MenuManager implements Manager {
 
-    public static final File MENUS_FOLDER = new File(FishingPlugin.get().getDataFolder(), "menus");
-    private static final Map<Class<?>, PluginMenu<?>> menus = new HashMap<>();
+    private static final File MENUS_FOLDER = new File(FishingPlugin.get().getDataFolder(), "menus");
     private static final ConfigLoader loader = new ConfigLoader(MENUS_FOLDER.toPath());
     private final FishingPlugin plugin;
 
@@ -38,20 +38,20 @@ public class MenuManager implements Manager {
     @Override
     public void reload(FishingPlugin plugin) {
         // Codex menus
-        register(AugmentCodexMenu::new);
-        register(FishCodexMenu::new);
-        register(TierCodexMenu::new);
+        register("codex/augments", AugmentCodexMenu.Config.class);
+        register("codex/fish", FishCodexMenu.Config.class);
+        register("codex/tiers", TierCodexMenu.Config.class);
 
         // Totem Menus
-        register(TotemMainMenu::new);
-        register(TotemUpgradeMenu::new);
+        register("totem/main_menu", TotemMainMenu.Config.class);
+        register("totem/upgrades", TotemUpgradeMenu.Config.class);
 
         // User Menus
-        register(FishMainMenu::new);
-        register(FishGutMenu::new);
-        register(FishSellMenu::new);
+        register("main_menu", FishMainMenu.Config.class);
+        register("gutting_menu", FishGutMenu.Config.class);
+        register("selling_menu", FishSellMenu.Config.class);
 
-        this.plugin.getLogger().info("Loaded a total of [" + menus.size() + "] menus into the plugin");
+        this.plugin.getLogger().info("Loaded a total of [" + loader.getConfigs().size() + "] menus into the plugin");
     }
 
     /**
@@ -62,7 +62,6 @@ public class MenuManager implements Manager {
     @Override
     public void disable(FishingPlugin plugin) {
         loader.close();
-        menus.clear();
     }
 
     /**
@@ -70,28 +69,18 @@ public class MenuManager implements Manager {
      *
      * @param supplier The {@link Augment} to register
      */
-    @SuppressWarnings("unchecked")
-    public static <T extends PluginMenu<?>> void register(Supplier<T> supplier) {
-        T menu = supplier.get();
+    public static <T extends GuiConfig> void register(String identifier, Class<T> configClass) {
 
-        if (!menu.getClass().isAnnotationPresent(ConfigSerializable.class)) {
-            FishingPlugin.get().getLogger().warning("Menu[" + menu.name() + "] in class[" + menu.getClass().getSimpleName() + "] does not have ConfigSerializible annotation");
+        if (!configClass.isAnnotationPresent(ConfigSerializable.class)) {
+            FishingPlugin.get().getLogger().warning("Menu[" + identifier + "] in class[" + configClass.getSimpleName() + "] does not have ConfigSerializible annotation");
             return;
         }
-        menu = (T) loader.loadConfig(menu.getClass(), menu.name());
-        menus.put(menu.getClass(), menu);
+        
+        loader.loadConfig(configClass, identifier);
     }
-
-    /**
-     * Get a registered menu by the specified class
-     *
-     * @param menu The menu class
-     *
-     * @return The menu
-     */
-    @SuppressWarnings("unchecked")
-    public static <T extends PluginMenu<?>> T get(Class<T> menu) {
-        return (T) menus.get(menu);
+    
+    public static ConfigLoader getLoader() {
+        return loader;
     }
 
 }

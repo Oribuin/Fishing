@@ -1,11 +1,12 @@
 package dev.oribuin.fishing.gui.impl.user;
 
+import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.config.item.component.TextureConstructType;
 import dev.oribuin.fishing.config.item.component.TooltipConstructType;
+import dev.oribuin.fishing.gui.GuiConfig;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
-import dev.oribuin.fishing.manager.MenuManager;
 import dev.oribuin.fishing.storage.Fisher;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
@@ -19,44 +20,42 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import java.util.List;
 import java.util.function.Supplier;
 
-@ConfigSerializable
 @SuppressWarnings("UnstableApiUsage")
-public class FishMainMenu extends PluginMenu<Gui> {
-
-    public FishMainMenu() {
-        super("main_menu");
-
-        this.title = "Fishing | Main Menu";
-        this.rows = 5;
-        this.items.put("user-stats", new MenuItem(USER_STATS, 4));
-        this.items.put("gutting-station", new MenuItem(GUTTING_STATION, 19));
-        this.items.put("selling-station", new MenuItem(SELLING_STATION, 20));
-        this.items.put("codex-menu", new MenuItem(CODEX_MENU, 21));
-        this.extraItems.put("border", new MenuItem(BORDER, FishUtils.parseList("0-8", "36-44")));
-
-    }
+public class FishMainMenu extends PluginMenu<Gui, FishMainMenu.Config> {
 
     /**
-     * Open the menu for the player synchronously and mark the menu as being viewed
-     *
-     * @param player The player opening the menu
+     * Creates a new menu for the plugin to use
      */
-    @Override
-    public void open(Player player) {
-        Fisher fisher = this.plugin.getDataManager().get(player.getUniqueId());
-
+    public FishMainMenu(FishingPlugin plugin, Player player) {
+        super(plugin, Config.class);
         this.gui = this.createMenu().get();
+
+        Fisher fisher = plugin.getDataManager().get(player.getUniqueId());
         Placeholders placeholders = Placeholders.builder()
                 .add("player", player.getName())
                 .addAll(fisher.getPlaceholders())
                 .build();
 
-        this.placeExtras(placeholders);
-        this.placeItem("user-stats", placeholders); // TODO: Open stats menu
-        this.placeItem("gutting-station", placeholders, event -> MenuManager.get(FishGutMenu.class).open((Player) event.getWhoClicked()));
-        this.placeItem("selling-station", placeholders, event -> MenuManager.get(FishSellMenu.class).open((Player) event.getWhoClicked()));
-        this.placeItem("codex-menu", placeholders); // TODO: Open codex main menu
-        super.open(player);
+        this.setDummyIcons(placeholders);
+
+        // region Place the gui items into the menu 
+        this.config.getUserStats().place(this.gui, placeholders); // TODO: Open stats menu
+        this.config.getGuttingStation().place(this.gui, placeholders, event -> {
+            Player clicked = (Player) event.getWhoClicked();
+            FishGutMenu sellMenu = new FishGutMenu(plugin, clicked);
+            sellMenu.open(clicked);
+        });
+
+        this.config.getSellingStation().place(this.gui, placeholders, event -> {
+            Player clicked = (Player) event.getWhoClicked();
+            FishSellMenu sellMenu = new FishSellMenu(plugin, clicked);
+            sellMenu.open(clicked);
+        });
+
+        this.config.getCodexMenu().place(this.gui, placeholders, event -> {
+            // TODO: Codex menu;
+        });
+        // endregion
     }
 
     /**
@@ -67,55 +66,80 @@ public class FishMainMenu extends PluginMenu<Gui> {
     @Override
     public Supplier<Gui> createMenu() {
         return () -> Gui.gui()
-                .title(Component.text(this.title))
-                .rows(this.rows)
+                .title(Component.text(this.config.getTitle()))
+                .rows(this.config.getRows())
                 .disableAllInteractions()
                 .create();
     }
 
-    // region Items
-    private static final ItemConstruct BORDER = new ItemConstruct(Material.BLACK_STAINED_GLASS_PANE)
-            .setTooltip(false);
+    @ConfigSerializable
+    @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
+    public static class Config extends GuiConfig {
 
-    private static final ItemConstruct USER_STATS = new ItemConstruct(Material.PLAYER_HEAD)
-            .setName("<white>[<#94bc80>Your Stats<white>]")
-            .setLore(
-                    "<gray>Click here to view your current",
-                    "<gray>fishing statistics",
-                    "",
-                    "<#94bc80>Information:",
-                    " <#94bc80>- <white>Entropy: <#94bc80><entropy>",
-                    " <#94bc80>- <white>Level: <#94bc80><level>",
-                    " <#94bc80>- <white>Experience: <#94bc80><experience><gray>/<#94bc80><required_exp>",
-                    " <#94bc80>- <white>Skill Points: <#94bc80><skill_points>"
-            )
-            .setTexture(new TextureConstructType("player-<player>"))
-            .setGlowing(true);
+        private final MenuItem userStats = new ItemConstruct(Material.PLAYER_HEAD)
+                .setName("<white>[<#94bc80>Your Stats<white>]")
+                .setLore(
+                        "<gray>Click here to view your current",
+                        "<gray>fishing statistics",
+                        "",
+                        "<#94bc80>Information:",
+                        " <#94bc80>- <white>Entropy: <#94bc80><entropy>",
+                        " <#94bc80>- <white>Level: <#94bc80><level>",
+                        " <#94bc80>- <white>Experience: <#94bc80><experience><gray>/<#94bc80><required_exp>",
+                        " <#94bc80>- <white>Skill Points: <#94bc80><skill_points>"
+                )
+                .setTexture(new TextureConstructType("player-<player>"))
+                .setGlowing(true)
+                .asMenuItem(4);
 
-    private static final ItemConstruct CODEX_MENU = new ItemConstruct(Material.KNOWLEDGE_BOOK)
-            .setName("<white>[<#94bc80>The Codex<white>]")
-            .setLore(
-                    "<gray>Click to view information about",
-                    "<gray>varies things within the plugin"
-            );
+        private MenuItem guttingStation = new ItemConstruct(Material.NETHERITE_SWORD)
+                .setName("<white>[<#94bc80>Gutting Station<white>]")
+                .setLore(
+                        "<gray>Gut your fish to exchange them",
+                        "<gray>for entropy"
+                )
+                .setTooltip(TooltipConstructType.of(true, List.of(
+                        DataComponentTypes.ATTRIBUTE_MODIFIERS
+                )))
+                .asMenuItem(19);
 
-    private static final ItemConstruct GUTTING_STATION = new ItemConstruct(Material.NETHERITE_SWORD)
-            .setName("<white>[<#94bc80>Gutting Station<white>]")
-            .setLore(
-                    "<gray>Gut your fish to exchange them",
-                    "<gray>for entropy"
-            )
-            .setTooltip(TooltipConstructType.of(true, List.of(
-                    DataComponentTypes.ATTRIBUTE_MODIFIERS
-            )));
+        private MenuItem sellingStation = new ItemConstruct(Material.EMERALD)
+                .setName("<white>[<#94bc80>Selling Station<white>]")
+                .setLore(
+                        "<gray>Sell your fish to exchange them",
+                        "<gray>for money"
+                )
+                .asMenuItem(20);
 
-    private static final ItemConstruct SELLING_STATION = new ItemConstruct(Material.EMERALD)
-            .setName("<white>[<#94bc80>Selling Station<white>]")
-            .setLore(
-                    "<gray>Sell your fish to exchange them",
-                    "<gray>for money"
-            );
+        private MenuItem codexMenu = new ItemConstruct(Material.KNOWLEDGE_BOOK)
+                .setName("<white>[<#94bc80>The Codex<white>]")
+                .setLore(
+                        "<gray>Click to view information about",
+                        "<gray>varies things within the plugin"
+                )
+                .asMenuItem(21);
 
-    // endregion
 
+        public Config() {
+            this.title = "Fishing | Main Menu";
+            this.rows = 5;
+            this.dummyItems.add(new MenuItem(this.border, FishUtils.parseList("0-8", "36-44")));
+        }
+
+        public MenuItem getUserStats() {
+            return userStats;
+        }
+
+        public MenuItem getGuttingStation() {
+            return guttingStation;
+        }
+
+        public MenuItem getSellingStation() {
+            return sellingStation;
+        }
+
+        public MenuItem getCodexMenu() {
+            return codexMenu;
+        }
+    }
 }

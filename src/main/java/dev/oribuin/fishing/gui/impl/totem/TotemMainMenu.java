@@ -1,15 +1,20 @@
 package dev.oribuin.fishing.gui.impl.totem;
 
+import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.config.impl.PluginMessages;
 import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.config.item.component.ModelConstructType;
+import dev.oribuin.fishing.gui.GuiConfig;
+import dev.oribuin.fishing.gui.GuiTickable;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
-import dev.oribuin.fishing.manager.MenuManager;
 import dev.oribuin.fishing.model.totem.Totem;
+import dev.oribuin.fishing.storage.Fisher;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.guis.Gui;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -17,66 +22,117 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.function.Supplier;
 
-@ConfigSerializable
-public class TotemMainMenu extends PluginMenu<Gui> {
+@SuppressWarnings("UnstableApiUsage")
+public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> implements GuiTickable {
 
-    public TotemMainMenu() {
-        super("totem/main_menu");
+    private final Supplier<Totem> totemSupplier;
 
-        this.title = "Fishing Totem";
-        this.rows = 3;
-        this.items.put("totem-upgrade", new MenuItem(TOTEM_UPGRADE, 3));
-        this.items.put("totem-activate", new MenuItem(TOTEM_ACTIVATE, 13));
-        this.items.put("totem-cooldown", new MenuItem(TOTEM_COOLDOWN, 13));
-        this.items.put("totem-active", new MenuItem(TOTEM_ACTIVE, 13));
-        this.extraItems.put("totem-stats", new MenuItem(TOTEM_STATS, 4));
-        this.extraItems.put("border", new MenuItem(BORDER, FishUtils.parseList("0-8", "18-26", "9", "17")));
+    public TotemMainMenu(FishingPlugin plugin, Supplier<Totem> totemSupplier) {
+        super(plugin, Config.class);
+        this.gui = this.createMenu().get();
+        this.totemSupplier = totemSupplier;
+
+        Totem totem = this.totemSupplier.get();
+        Fisher fisher = plugin.getDataManager().get(totem.getOwner());
+        Placeholders placeholders = Placeholders.builder()
+                .addAll(fisher.getPlaceholders())
+                .addAll(totem.getPlaceholders())
+                .build();
+
+        this.setDummyIcons(placeholders);
+        this.config.getTotemName().place(this.gui, placeholders);
+        this.config.getTotemPrivacy().place(this.gui, Placeholders.of("status", totem.getPrivacy().name()));
+        this.config.getTotemStats().place(this.gui, placeholders, event -> {
+            // TODO: Totem Stats menu
+        });
+
+        this.config.getTotemUpgrades().place(this.gui, placeholders, event -> {
+            TotemUpgradeMenu upgradeMenu = new TotemUpgradeMenu(plugin, this.totemSupplier);
+            upgradeMenu.open((Player) event.getWhoClicked());
+        });
+
+        this.tick();
     }
 
     /**
-     * Open the GUI for the specified player
+     * Open the menu for the player synchronously and mark the menu as being viewed
      *
-     * @param totem  The totem to open the GUI for
-     * @param player The player to open the GUI for
+     * @param player The player opening the menu
      */
-    public void open(Totem totem, Player player) {
-        this.gui = this.createMenu().get();
-        this.placeExtras(totem.getPlaceholders());
-        this.updateTask(() -> this.placeDynamics(totem, player));
+    @Override
+    public void open(Player player) {
+        Totem totem = this.totemSupplier.get();
+        boolean isOwner = totem.getOwner().equals(player.getUniqueId());
+        boolean canAccess = switch (totem.getPrivacy()) {
+            case PUBLIC -> true;
+            case FRIENDS_ONLY -> isOwner || totem.getUsers().contains(player.getUniqueId());
+            default -> isOwner;
+        };
+
+        if (!canAccess) {
+            PluginMessages.get().getTotem().getCannotAccess().send(player);
+            return;
+        }
+
         super.open(player);
     }
 
     /**
-     * Place the dynamic items in the GUI for the totem
-     *
-     * @param totem  The totem to place the items for
-     * @param player The player to place the items for
+     * Creates a tickable task for a {@link PluginMenu}
      */
-    private void placeDynamics(Totem totem, Player player) {
-        Placeholders placeholders = totem.getPlaceholders();
-        this.placeItem("totem-upgrade", placeholders, x -> MenuManager.get(TotemUpgradeMenu.class).open(totem, player));
+    @Override
+    public void tick() {
+        Totem totem = this.totemSupplier.get();
+        if (totem == null) return;
 
-        // The totem is active, display the active totem item
-        if (totem.isActive()) {
-            this.placeItem("totem-active", placeholders);
-        }
+        Fisher fisher = plugin.getDataManager().get(totem.getOwner());
+        Placeholders placeholders = Placeholders.builder()
+                .addAll(fisher.getPlaceholders())
+                .addAll(totem.getPlaceholders())
+                .build();
 
-        // The totem is not active and is on cooldown, display the cooldown item
-        if (!totem.isActive() && totem.onCooldown()) {
-            this.placeItem("totem-cooldown", placeholders);
-        }
+        // Totem is currently active :)
+        if (totem.isActive()) this.config.getTotemActive().place(this.gui, placeholders, event -> {
+            Player activator = (Player) event.getWhoClicked();
+            PluginMessages.get().getTotem().getAlreadyActive().send(activator, placeholders);
+        });
 
-        // The totem is not active and is not on cooldown, display the button to activate the totem
+        // Totem is on cooldown and is no logner active
+        if (!totem.isActive() && totem.onCooldown()) this.config.getTotemCooldown().place(this.gui, placeholders, event -> {
+            Player activator = (Player) event.getWhoClicked();
+            PluginMessages.get().getTotem().getOnCooldown().send(activator, placeholders);
+        });
+
+        // Totem is not on cooldown and not active (this is where you can activate it)
         if (!totem.isActive() && !totem.onCooldown()) {
-            this.placeItem("totem-activate", placeholders, x -> {
-                totem.activate(player); // Activate the totem
-                player.sendMessage("§aYou have activated the totem!");
-                player.closeInventory(InventoryCloseEvent.Reason.PLUGIN); // Close the player's inventory
+            this.config.getTotemActivate().place(this.gui, placeholders, event -> {
+                Player activator = (Player) event.getWhoClicked();
+
+                boolean isOwner = totem.getOwner().equals(activator.getUniqueId());
+                boolean canActivate = switch (totem.getPrivacy()) {
+                    case PUBLIC -> true;
+                    case FRIENDS_ONLY -> isOwner || totem.getUsers().contains(activator.getUniqueId());
+                    default -> isOwner;
+                };
+
+                if (!canActivate) {
+                    PluginMessages.get().getTotem().getCannotActivate().send(activator);
+                    return;
+                }
+
+                // Tell the owner that their totem was activated
+                Player owner = Bukkit.getPlayer(totem.getOwner());
+                if (owner != null && !isOwner) {
+                    PluginMessages.get().getTotem().getOtherPlayerActivated().send(owner, "activator", activator.getName());
+                }
+
+                totem.activate(activator); // Activate the totem // TODO: Play totem activate animation
+                PluginMessages.get().getTotem().getActivated().send(activator); // Tell the player they activated the totem
+                activator.closeInventory(InventoryCloseEvent.Reason.PLUGIN); // Close the player's inventory
             });
         }
 
-        // TODO: Add Totem Upgrades to the GUI
-        gui.update();
+        this.gui.update();
     }
 
     /**
@@ -87,79 +143,137 @@ public class TotemMainMenu extends PluginMenu<Gui> {
     @Override
     public Supplier<Gui> createMenu() {
         return () -> Gui.gui()
-                .title(Component.text(this.title))
-                .rows(this.rows)
+                .title(Component.text(this.config.getTitle()))
+                .rows(this.config.getRows())
                 .disableAllInteractions()
                 .create();
     }
 
-    // region Items
-    private static final ItemConstruct BORDER = new ItemConstruct(Material.BLACK_STAINED_GLASS_PANE)
-            .setTooltip(false);
+    @ConfigSerializable
+    @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
+    public static class Config extends GuiConfig {
+        // TODO: Totem Privacy
 
-    private static final ItemConstruct TOTEM_STATS = new ItemConstruct(Material.OAK_HANGING_SIGN)
-            .setName("<white>[<#94bc80>Totem Details<white>]")
-            .setLore(
-                    "<gray>Here are the current upgrades",
-                    "<gray>active for this fishing totem",
-                    "",
-                    "<#94bc80>Statistics:",
-                    " <#94bc80>- <white>Active: <#94bc80><active>",
-                    " <#94bc80>- <white>Owner: <#94bc80><owner>",
-                    " <#94bc80>- <white>Radius: <#94bc80><upgrade_radius_value>",
-                    " <#94bc80>- <white>Duration: <#94bc80><upgrade_duration_value>",
-                    " <#94bc80>- <white>Cooldown: <#94bc80><upgrade_cooldown_value>"
-            )
-            .setGlowing(true);
+        private MenuItem totemName = new ItemConstruct(Material.NAME_TAG)
+                .setName("<white>[<#94bc80>Totem Name<white>]")
+                .setLore(
+                        "<gray>Change the display name for this",
+                        "<gray>fishing totem"
+                )
+                .setGlowing(true)
+                .asMenuItem(15);
 
-    private static final ItemConstruct TOTEM_UPGRADE = new ItemConstruct(Material.PAPER)
-            .setName("<white>[<#94bc80>Totem Upgrades<white>]")
-            .setLore(
-                    "<gray>Click here to view and level",
-                    "<gray>up this fishing totem",
-                    "",
-                    "<#94bc80>Levels:",
-                    " <#94bc80>- <white>Radius: <#94bc80><upgrade_radius_value>",
-                    " <#94bc80>- <white>Duration: <#94bc80><upgrade_duration_value>",
-                    " <#94bc80>- <white>Cooldown: <#94bc80><upgrade_cooldown_value>"
-            )
-            .setGlowing(true)
-            .setModel(new ModelConstructType("minecraft:netherite_upgrade_smithing_template"));
-    //            .setTooltip(new TooltipConstructType().setHiddenComponents(List.of("minecraft:trim")));
+        private MenuItem totemPrivacy = new ItemConstruct(Material.TRIAL_KEY)
+                .setName("<white>[<#94bc80>Totem Privacy<white>]")
+                .setLore(
+                        "<gray>Change the level of access that others",
+                        "<gray>have to this fishing totem",
+                        "",
+                        " <#94bc80>- <white>Status: <#94bc80><status>"
 
-    private static final ItemConstruct TOTEM_ACTIVATE = new ItemConstruct(Material.LIME_DYE)
-            .setName("<white>[<#05e653>Activate Totem<white>]")
-            .setLore(
-                    "<gray>Click here to active this totem",
-                    "",
-                    "<#05e653>Details:",
-                    " <#05e653>- <white>Radius: <#05e653><upgrade_radius_value>",
-                    " <#05e653>- <white>Duration: <#05e653><upgrade_duration_value>",
-                    " <#05e653>- <white>Cooldown: <#05e653><upgrade_cooldown_value>"
-            )
-            .setGlowing(true);
+                )
+                .setGlowing(true)
+                .asMenuItem(16);
 
-    private static final ItemConstruct TOTEM_COOLDOWN = new ItemConstruct(Material.RED_DYE)
-            .setName("<white>[<#e60505>On Cooldown<white>]")
-            .setLore(
-                    "<gray>This totem is currently on cooldown",
-                    "",
-                    "<#e60505>Details:",
-                    " <#e60505>- <white>Radius: <#e60505><upgrade_radius_value>",
-                    " <#e60505>- <white>Duration: <#e60505><upgrade_duration_value>",
-                    " <#e60505>- <white>Cooldown: <#e60505><upgrade_cooldown_value>"
-            )
-            .setGlowing(true);
+        private MenuItem totemStats = new ItemConstruct(Material.OAK_HANGING_SIGN)
+                .setName("<white>[<#94bc80>Totem Details<white>]")
+                .setLore(
+                        "<gray>Here are the current upgrades",
+                        "<gray>active for this fishing totem",
+                        "",
+                        "<#94bc80>Statistics:",
+                        " <#94bc80>- <white>Active: <#94bc80><active>",
+                        " <#94bc80>- <white>Owner: <#94bc80><owner>",
+                        " <#94bc80>- <white>Radius: <#94bc80><upgrade_radius_value>",
+                        " <#94bc80>- <white>Duration: <#94bc80><upgrade_duration_value>",
+                        " <#94bc80>- <white>Cooldown: <#94bc80><upgrade_cooldown_value>"
+                )
+                .setGlowing(true)
+                .asMenuItem(4);
 
-    private static final ItemConstruct TOTEM_ACTIVE = new ItemConstruct(Material.LIME_DYE)
-            .setName("<white>[<#e65f05>Currently Active<white>]")
-            .setLore(
-                    "<gray>Your totem is currently active",
-                    "",
-                    "<#e65f05>- <white>Time Remaining: <#e65f05>%upgrade_duration_timer%"
-            )
-            .setGlowing(true);
+        private MenuItem totemUpgrades = new ItemConstruct(Material.PAPER)
+                .setName("<white>[<#94bc80>Totem Upgrades<white>]")
+                .setLore(
+                        "<gray>Click here to view and level",
+                        "<gray>up this fishing totem",
+                        "",
+                        "<#94bc80>Levels:",
+                        " <#94bc80>- <white>Radius: <#94bc80><upgrade_radius_value>",
+                        " <#94bc80>- <white>Duration: <#94bc80><upgrade_duration_value>",
+                        " <#94bc80>- <white>Cooldown: <#94bc80><upgrade_cooldown_value>"
+                )
+                .setGlowing(true)
+                .setModel(new ModelConstructType("minecraft:netherite_upgrade_smithing_template"))
+                .asMenuItem(10);
 
-    // endregion
+        private MenuItem totemActivate = new ItemConstruct(Material.LIME_DYE)
+                .setName("<white>[<#05e653>Activate Totem<white>]")
+                .setLore(
+                        "<gray>Click here to active this totem",
+                        "",
+                        "<#05e653>Details:",
+                        " <#05e653>- <white>Radius: <#05e653><upgrade_radius_value>",
+                        " <#05e653>- <white>Duration: <#05e653><upgrade_duration_value>",
+                        " <#05e653>- <white>Cooldown: <#05e653><upgrade_cooldown_value>"
+                )
+                .setGlowing(true)
+                .asMenuItem(13);
 
+        private MenuItem totemCooldown = new ItemConstruct(Material.ORANGE_DYE)
+                .setName("<white>[<#e60505>On Cooldown<white>]")
+                .setLore(
+                        "<gray>This totem is currently on cooldown",
+                        "",
+                        "<#e60505>Details:",
+                        " <#e60505>- <white>Radius: <#e60505><upgrade_radius_value>",
+                        " <#e60505>- <white>Duration: <#e60505><upgrade_duration_value>",
+                        " <#e60505>- <white>Cooldown: <#e60505><upgrade_cooldown_value>"
+                )
+                .setGlowing(true)
+                .asMenuItem(13);
+
+        private MenuItem totemActive = new ItemConstruct(Material.RED_DYE)
+                .setName("<white>[<#e65f05>Currently Active<white>]")
+                .setLore(
+                        "<gray>Your totem is currently active",
+                        "",
+                        "<#e65f05>- <white>Time Remaining: <#e65f05><upgrade_duration_timer>"
+                )
+                .setGlowing(true)
+                .asMenuItem(13);
+
+        public Config() {
+            this.title = "Fishing Totem | Main Menu";
+            this.rows = 3;
+            this.dummyItems.add(new MenuItem(this.border, FishUtils.parseList("0-8", "18-26", "9", "17")));
+        }
+
+        public MenuItem getTotemName() {
+            return totemName;
+        }
+
+        public MenuItem getTotemPrivacy() {
+            return totemPrivacy;
+        }
+
+        public MenuItem getTotemStats() {
+            return totemStats;
+        }
+
+        public MenuItem getTotemUpgrades() {
+            return totemUpgrades;
+        }
+
+        public MenuItem getTotemActivate() {
+            return totemActivate;
+        }
+
+        public MenuItem getTotemCooldown() {
+            return totemCooldown;
+        }
+
+        public MenuItem getTotemActive() {
+            return totemActive;
+        }
+    }
 }

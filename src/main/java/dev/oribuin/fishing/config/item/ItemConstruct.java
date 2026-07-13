@@ -7,6 +7,7 @@ import dev.oribuin.fishing.config.item.component.EnchantConstructType;
 import dev.oribuin.fishing.config.item.component.ModelConstructType;
 import dev.oribuin.fishing.config.item.component.TextureConstructType;
 import dev.oribuin.fishing.config.item.component.TooltipConstructType;
+import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import io.papermc.paper.datacomponent.DataComponentTypes;
@@ -18,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
+import java.lang.annotation.Native;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,12 +59,22 @@ public class ItemConstruct {
     }
 
     public ItemStack build() {
-        return this.build(Placeholders.empty());
+        return this.build(null, Placeholders.empty());
+    }
+    
+    
+    public ItemStack build(Placeholders placeholders) {
+        return this.build(null, placeholders);
+    }
+    
+    public ItemStack build(ItemStack base) {
+        return this.build(base, Placeholders.empty());
     }
 
     @SuppressWarnings({ "UnstableApiUsage" })
-    public ItemStack build(Placeholders placeholders) {
-        ItemStack stack = new ItemStack(this.type != null ? this.type : Material.STONE, this.amount);
+    public ItemStack build(ItemStack base, Placeholders placeholders) {
+        ItemStack material = new ItemStack(this.type != null ? this.type : Material.STONE, this.amount);
+        ItemStack stack = base != null ? base : material;
         ItemMeta meta = stack.getItemMeta();
         if (meta == null) return stack; // Probably air
 
@@ -92,6 +104,10 @@ public class ItemConstruct {
         }
         if (this.tooltip != null) this.tooltip.apply(stack);
         return stack;
+    }
+
+    public MenuItem asMenuItem(Integer... slots) {
+        return new MenuItem(this, slots);
     }
 
     public Material getType() {

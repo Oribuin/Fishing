@@ -1,10 +1,11 @@
 package dev.oribuin.fishing.gui.impl.user;
 
+import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.impl.PluginMessages;
 import dev.oribuin.fishing.config.item.ItemConstruct;
+import dev.oribuin.fishing.gui.GuiConfig;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
-import dev.oribuin.fishing.manager.MenuManager;
 import dev.oribuin.fishing.model.economy.CurrencyRegistry;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.fish.Tier;
@@ -24,45 +25,33 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import java.util.List;
 import java.util.function.Supplier;
 
-@ConfigSerializable
-public class FishSellMenu extends PluginMenu<Gui> {
-
-    private final List<Integer> sellSlots;
-
-    public FishSellMenu() {
-        super("fish_sell_menu");
-
-        this.title = "Selling Station";
-        this.rows = 5;
-        this.items.put("sell-fish", new MenuItem(SELL_FISH, 40));
-        this.items.put("main-menu", new MenuItem(MAIN_MENU, 36));
-        this.extraItems.put("border", new MenuItem(BORDER, FishUtils.parseList("0-8", "36-44")));
-        this.sellSlots = FishUtils.parseList("9-35");
-    }
+public class FishSellMenu extends PluginMenu<Gui, FishSellMenu.Config> {
 
     /**
-     * Open the menu for the player synchronously and mark the menu as being viewed
+     * Creates a new menu for the plugin to use
      *
-     * @param player The player opening the menu
+     * @param plugin The plugin instance
      */
-    @Override
-    public void open(Player player) {
-        Fisher fisher = this.plugin.getDataManager().get(player.getUniqueId());
-        if (fisher == null) return;
-
+    public FishSellMenu(FishingPlugin plugin, Player player) {
+        super(plugin, FishSellMenu.Config.class);
         this.gui = this.createMenu().get();
+
+        Fisher fisher = plugin.getDataManager().get(player.getUniqueId());
         Placeholders placeholders = Placeholders.builder()
                 .add("player", player.getName())
                 .addAll(fisher.getPlaceholders())
                 .build();
 
-        this.extraItems.forEach((key, value) -> value.place(this.gui, placeholders, CANCELLED));
-        this.placeItem("main-menu", placeholders, event -> {
+        this.setDummyIcons(placeholders);
+
+        // region Place the gui items into the menu 
+        this.config.getMainMenu().place(this.gui, placeholders, event -> {
+            FishMainMenu mainMenu = new FishMainMenu(plugin, (Player) event.getWhoClicked());
+            mainMenu.open(player);
             CANCELLED.execute(event);
-            MenuManager.get(FishMainMenu.class).open((Player) event.getWhoClicked());
         });
 
-        this.placeItem("sell-fish", placeholders, event -> {
+        this.config.getSellFish().place(this.gui, event -> {
             CANCELLED.execute(event);
 
             Inventory inventory = this.gui.getInventory();
@@ -92,8 +81,7 @@ public class FishSellMenu extends PluginMenu<Gui> {
             PluginMessages.get().getSoldFish().send(player, "total", totalFish, "money", money);
             CurrencyRegistry.VAULT.give(player, money);
         });
-
-        super.open(player);
+        // endregion
     }
 
     /**
@@ -104,13 +92,13 @@ public class FishSellMenu extends PluginMenu<Gui> {
     @Override
     public Supplier<Gui> createMenu() {
         return () -> Gui.gui()
-                .title(Component.text(this.title))
-                .rows(this.rows)
+                .title(Component.text(this.config.getTitle()))
+                .rows(this.config.getRows())
                 .apply(x -> {
 
                     // region Stop the user from clicking non sell slots
                     x.setDefaultTopClickAction(event -> {
-                        if (!this.sellSlots.contains(event.getSlot())) {
+                        if (!this.config.getSellSlots().contains(event.getSlot())) {
                             CANCELLED.execute(event);
                         }
                     });
@@ -138,7 +126,7 @@ public class FishSellMenu extends PluginMenu<Gui> {
                     // region Give any non fish items back to the player
                     x.setCloseGuiAction(event -> {
                         Inventory inventory = event.getInventory();
-                        for (int slot : this.sellSlots) {
+                        for (int slot : this.config.getSellSlots()) {
                             ItemStack stack = inventory.getItem(slot);
                             if (stack == null || stack.getType().isAir()) continue;
 
@@ -163,21 +151,45 @@ public class FishSellMenu extends PluginMenu<Gui> {
                 .create();
     }
 
-    // region Items
-    private static final ItemConstruct BORDER = new ItemConstruct(Material.BLACK_STAINED_GLASS_PANE)
-            .setTooltip(false);
+    @ConfigSerializable
+    @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
+    public static class Config extends GuiConfig {
 
-    private static final ItemConstruct SELL_FISH = new ItemConstruct(Material.EMERALD)
-            .setName("<white>[<#94bc80>Sell Fish<white>]")
-            .setLore(
-                    "<gray>Sell all the fish that you have",
-                    "<gray>placed inside the menu for money"
-            )
-            .setGlowing(true);
+        private List<Integer> sellSlots = FishUtils.parseList("9-35");
 
-    private static final ItemConstruct MAIN_MENU = new ItemConstruct(Material.ARROW)
-            .setName("<white>[<#94bc80>Main Menu<white>]")
-            .setLore("<gray>Click to go back to the main menu");
 
-    // endregion
+        private MenuItem sellFish = new ItemConstruct(Material.EMERALD)
+                .setName("<white>[<#94bc80>Sell Fish<white>]")
+                .setLore(
+                        "<gray>Sell all the fish that you have",
+                        "<gray>placed inside the menu for money"
+                )
+                .setGlowing(true)
+                .asMenuItem(40);
+
+        private MenuItem mainMenu = new ItemConstruct(Material.ARROW)
+                .setName("<white>[<#94bc80>Main Menu<white>]")
+                .setLore("<gray>Click to go back to the main menu")
+                .asMenuItem(36);
+
+
+        public Config() {
+            this.title = "Fishing | Selling Station";
+            this.rows = 5;
+            this.dummyItems.add(new MenuItem(this.border, FishUtils.parseList("0-8", "36-44")));
+        }
+
+        public List<Integer> getSellSlots() {
+            return sellSlots;
+        }
+
+        public MenuItem getSellFish() {
+            return sellFish;
+        }
+
+        public MenuItem getMainMenu() {
+            return mainMenu;
+        }
+    }
+
 }

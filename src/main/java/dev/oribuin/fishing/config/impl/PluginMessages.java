@@ -57,8 +57,88 @@ public class PluginMessages {
     @Comment("Player has hit the maximum level for the upgrade")
     private TextMessage hitMaxLevel = new TextMessage(PREFIX + "You cannot level up your upgrade past level <#93bc80><max>");
 
-    @Comment("Player has levelled up an upgrade on the totem")
-    private TextMessage totemUpgradeLevelup = new TextMessage(PREFIX + "You have increased the level of <#93bc80><upgrade> <white>to <#93bc80><level><white>/<#93bc8i0<max>");
+    @Comment("Totem messages")
+    private TotemMessages totem = new TotemMessages();
+    
+    @ConfigSerializable
+    @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
+    public static class TotemMessages {
+        
+        @Comment("Player has placed a fishing totem")
+        private TextMessage placed = new TextMessage(PREFIX + "You have placed a fishing totem down");
+        
+        @Comment("Player has removed a fishing totem")
+        private TextMessage removed = new TextMessage(PREFIX + "You have removed a fishing totem");
+        
+        @Comment("Player has no space for the totem")
+        private TextMessage noSpace = new TextMessage(PREFIX + "There is not enough space available for the fishing totem");
+
+        @Comment("Player has activated the totem")
+        private TextMessage activated = new TextMessage(PREFIX + "You have activated this fishing totem, It will last for <#93bc80><time> <white>minutes");
+
+        @Comment("Totem is currently on cooldown")
+        private TextMessage onCooldown = new TextMessage(PREFIX + "You cannot activate this totem as it is on cooldown");
+
+        @Comment("Totem is already active")
+        private TextMessage alreadyActive = new TextMessage(PREFIX + "This totem is already active");
+        
+        @Comment("Player has levelled up an upgrade on the totem")
+        private TextMessage upgradeLevelUp = new TextMessage(PREFIX + "You have increased the level of <#93bc80><upgrade> <white>to <#93bc80><level><white>/<#93bc8i0<max>");
+        
+        @Comment("Player cannot access the totems menu")
+        private TextMessage cannotAccess = new TextMessage(PREFIX + "You cannot interact with this totem as it belongs to someone else.");
+        
+        @Comment("Player cannot activate the totem")
+        private TextMessage cannotActivate = new TextMessage(PREFIX + "You cannot activate this totem due to it's privacy settings.");
+        
+        @Comment("Other player activated totem")
+        private TextMessage otherPlayerActivated = new TextMessage(PREFIX + "The player <#93bc80><activator> <white>has activated your totem");
+
+
+        public TextMessage getPlaced() {
+            return placed;
+        }
+
+        public TextMessage getRemoved() {
+            return removed;
+        }
+
+        public TextMessage getNoSpace() {
+            return noSpace;
+        }
+
+        public TextMessage getActivated() {
+            return activated;
+        }
+
+        public TextMessage getOnCooldown() {
+            return onCooldown;
+        }
+
+        public TextMessage getAlreadyActive() {
+            return alreadyActive;
+        }
+
+        public TextMessage getUpgradeLevelUp() {
+            return upgradeLevelUp;
+        }
+
+        public TextMessage getCannotAccess() {
+            return cannotAccess;
+        }
+
+        public TextMessage getCannotActivate() {
+            return cannotActivate;
+        }
+
+        public TextMessage getOtherPlayerActivated() {
+            return otherPlayerActivated;
+        }
+    }
+
+    public TotemMessages getTotem() {
+        return totem;
+    }
 
     public TextMessage getReload() {
         return reload;
@@ -111,8 +191,5 @@ public class PluginMessages {
     public TextMessage getHitMaxLevel() {
         return hitMaxLevel;
     }
-
-    public TextMessage getTotemUpgradeLevelup() {
-        return totemUpgradeLevelup;
-    }
+    
 }

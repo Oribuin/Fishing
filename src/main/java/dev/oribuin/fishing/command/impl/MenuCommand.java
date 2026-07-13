@@ -40,7 +40,8 @@ public class MenuCommand implements FishCommand {
         if (target == null) return;
 
         Player finalTarget = target;
-        PluginScheduler.get().runTask(() -> MenuManager.get(FishMainMenu.class).open(finalTarget));
+        
+        new FishMainMenu(this.plugin, finalTarget).open(finalTarget);
     }
 
     /**
@@ -74,7 +75,7 @@ public class MenuCommand implements FishCommand {
         if (target == null) return;
 
         Player finalTarget = target;
-        PluginScheduler.get().runTask(() -> MenuManager.get(FishGutMenu.class).open(finalTarget));
+        new FishGutMenu(this.plugin, finalTarget).open(finalTarget);
     }
 
 
@@ -92,7 +93,7 @@ public class MenuCommand implements FishCommand {
         if (target == null) return;
 
         Player finalTarget = target;
-        PluginScheduler.get().runTask(() -> MenuManager.get(FishSellMenu.class).open(finalTarget));
+        new FishSellMenu(this.plugin, finalTarget).open(finalTarget);
     }
 
 }

@@ -42,8 +42,8 @@ public class CodexCommand implements FishCommand {
         Player finalTarget = target;
         PluginScheduler.get().runTask(() -> {
             switch (type) {
-                case TIER -> MenuManager.get(TierCodexMenu.class).open(finalTarget);
-                case AUGMENT -> MenuManager.get(AugmentCodexMenu.class).open(finalTarget);
+                case TIER -> new TierCodexMenu(this.plugin).open(finalTarget);
+                case AUGMENT -> new AugmentCodexMenu(this.plugin).open(finalTarget);
                 default -> finalTarget.sendMessage("who");
             }
         });

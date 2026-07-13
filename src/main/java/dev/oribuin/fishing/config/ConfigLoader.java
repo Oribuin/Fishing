@@ -128,4 +128,7 @@ public class ConfigLoader {
         }
     }
 
+    public Map<Class<?>, ConfigHandler<?>> getConfigs() {
+        return configs;
+    }
 }

@@ -1,5 +1,6 @@
 package dev.oribuin.fishing.gui.impl.codex.impl;
 
+import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.impl.codex.BasicCodexMenu;
 import dev.oribuin.fishing.manager.MenuManager;
@@ -9,6 +10,8 @@ import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.guis.GuiItem;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.ArrayList;
@@ -17,61 +20,58 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
-@ConfigSerializable
-public class TierCodexMenu extends BasicCodexMenu<Tier> {
+public class TierCodexMenu extends BasicCodexMenu<Tier, TierCodexMenu.Config> {
 
     /**
      * Creates a new plugin menu instance, with the specified name
      */
-    public TierCodexMenu() {
-        super("codex/tier");
-
-        this.title = "Fishing Codex | Tiers";
-        this.rows = 3;
-        this.items.put("page-backward", new MenuItem(PAGE_BACKWARD, 3));
-        this.items.put("codex-main-menu", new MenuItem(CODEX_MAIN_MENU, 4));
-        this.items.put("page-forward", new MenuItem(PAGE_FORWARD, 5));
-        this.extraItems.put("border", new MenuItem(BORDER, FishUtils.parseList("0-8", "18-26", "9", "17")));
-    }
-
-    /**
-     * Open the GUI for the specified player
-     *
-     * @param player The player to open the GUI for
-     */
-    @Override
-    public void open(Player player) {
+    public TierCodexMenu(FishingPlugin plugin) {
+        super(plugin, TierCodexMenu.Config.class);
         this.gui = this.createMenu().get();
-        this.placeExtras(Placeholders.empty());
-        this.placeItem("page-forward", x -> gui.next());
-        this.placeItem("page-backward", x -> gui.previous());
 
-        List<Tier> content = new ArrayList<>(this.getContent(player, tier -> true));
-        content.sort(Comparator.comparingDouble(Tier::getChance));
-        Collections.reverse(content);
-
-        // Add all the fish to the GUI
-        content.forEach(tier -> {
-            ItemStack stack = tier.getTierDisplay().build();
-            GuiItem guiItem = new GuiItem(stack, action -> MenuManager.get(FishCodexMenu.class)
-                    .open((Player) action.getWhoClicked(), tier));
-            gui.addItem(guiItem);
+        this.getContent().forEach(t -> {
+            ItemStack stack = this.getStack(t);
+            this.gui.addItem(new GuiItem(stack, event -> {
+                FishCodexMenu codexMenu = new FishCodexMenu(plugin, t);
+                codexMenu.open((Player) event.getWhoClicked());
+            }));
         });
-
-        super.open(player);
     }
-
+    
     /**
      * Get all the content that is going to be displayed in the codex
-     *
-     * @param player    The player to get the content for
-     * @param condition The condition required to display the content
      *
      * @return The content to display in the menu
      */
     @Override
-    public List<Tier> getContent(Player player, Predicate<Tier> condition) {
-        return this.plugin.getTierManager().getTiers().values().stream().toList();
+    public List<Tier> getContent() {
+        return new ArrayList<>(this.plugin.getTierManager().getTiers().values())
+                .stream()
+                .sorted(Comparator.comparingDouble(Tier::getChance).reversed())
+                .toList();
+    }
+
+    /**
+     * Get the t value as an itemstack to display
+     *
+     * @param value The value to show
+     *
+     * @return The itemstack form
+     */
+    @Override
+    public @NotNull ItemStack getStack(@NonNull Tier value) {
+        return value.getTierDisplay().build();
+    }
+
+    @ConfigSerializable
+    public static class Config extends CodexGuiConfig {
+        public Config() {
+            this.title = "Fishing Codex | Tiers";
+            this.rows = 3;
+            this.dummyItems.add(new MenuItem(this.border, FishUtils.parseList(
+                    "0-8", "18-26", "9", "17"
+            )));
+        }
     }
 
 }
