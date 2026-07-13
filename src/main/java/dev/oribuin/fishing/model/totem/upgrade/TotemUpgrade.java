@@ -82,7 +82,14 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
         );
         return true;
     }
-    
+
+    /**
+     * Get the additional placeholders for a totem upgrade
+     *
+     * @param totem The totem with the upgrade
+     *
+     * @return The resulting placeholders
+     */
     public @NotNull Placeholders getPlaceholders(@NotNull Totem totem) {
         return Placeholders.empty();
     }

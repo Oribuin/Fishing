@@ -1,8 +1,10 @@
 package dev.oribuin.fishing.model.totem.upgrade.impl;
 
+import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.model.totem.upgrade.TotemUpgrade;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.List;
@@ -57,6 +59,18 @@ public class TotemUpgradeRadius extends TotemUpgrade {
      */
     public static Supplier<String> getStaticIdentifier() {
         return () -> "radius";
+    }
+
+    /**
+     * Get the additional placeholders for a totem upgrade
+     *
+     * @param totem The totem with the upgrade
+     *
+     * @return The resulting placeholders
+     */
+    @Override
+    public @NotNull Placeholders getPlaceholders(@NotNull Totem totem) {
+        return Placeholders.of("total", this.getRadius());
     }
 
     //    /**

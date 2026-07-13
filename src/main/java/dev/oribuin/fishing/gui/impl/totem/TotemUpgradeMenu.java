@@ -96,9 +96,9 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui, TotemUpgradeMenu.
                         "<#94bc80>Statistics:",
                         " <#94bc80>- <white>Active: <#94bc80><active>",
                         " <#94bc80>- <white>Owner: <#94bc80><owner>",
-                        " <#94bc80>- <white>Radius: <#94bc80><upgrade_radius_value>",
-                        " <#94bc80>- <white>Duration: <#94bc80><upgrade_duration_value>",
-                        " <#94bc80>- <white>Cooldown: <#94bc80><upgrade_cooldown_value>"
+                        " <#94bc80>- <white>Radius: <#94bc80><upgrade_radius_total>",
+                        " <#94bc80>- <white>Duration: <#94bc80><upgrade_duration_total>",
+                        " <#94bc80>- <white>Cooldown: <#94bc80><upgrade_cooldown_total>"
                 )
                 .setGlowing(true)
                 .asMenuItem(4);

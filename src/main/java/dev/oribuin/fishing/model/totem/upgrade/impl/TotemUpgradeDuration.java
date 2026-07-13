@@ -1,8 +1,10 @@
 package dev.oribuin.fishing.model.totem.upgrade.impl;
 
+import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.model.totem.upgrade.TotemUpgrade;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.time.Duration;
@@ -57,7 +59,24 @@ public class TotemUpgradeDuration extends TotemUpgrade {
         return () -> "duration";
     }
 
+    /**
+     * Get the additional placeholders for a totem upgrade
+     *
+     * @param totem The totem with the upgrade
+     *
+     * @return The resulting placeholders
+     */
+    @Override
+    public @NotNull Placeholders getPlaceholders(@NotNull Totem totem) {
+        long duration = this.getDuration().toMillis();
+        String totalDuration = FishUtils.formatTime(duration);
 
+        return Placeholders.of(
+                "total", totalDuration,
+                "remaining", totem.isActive() ? FishUtils.formatTime(totem.getCurrentDuration()) : totalDuration
+        );
+    }
+    
     //    /**
     //     * The totem upgrade placeholders for the upgrade.
     //     * All upgrades are added to the totems placeholders as "upgrade_<name>_<placeholder>"

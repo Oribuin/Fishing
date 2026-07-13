@@ -184,9 +184,9 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
                         "<#94bc80>Statistics:",
                         " <#94bc80>- <white>Active: <#94bc80><active>",
                         " <#94bc80>- <white>Owner: <#94bc80><owner>",
-                        " <#94bc80>- <white>Radius: <#94bc80><upgrade_radius_value>",
-                        " <#94bc80>- <white>Duration: <#94bc80><upgrade_duration_value>",
-                        " <#94bc80>- <white>Cooldown: <#94bc80><upgrade_cooldown_value>"
+                        " <#94bc80>- <white>Radius: <#94bc80><upgrade_radius_total>",
+                        " <#94bc80>- <white>Duration: <#94bc80><upgrade_duration_total>",
+                        " <#94bc80>- <white>Cooldown: <#94bc80><upgrade_cooldown_total>"
                 )
                 .setGlowing(true)
                 .asMenuItem(4);
@@ -198,9 +198,9 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
                         "<gray>up this fishing totem",
                         "",
                         "<#94bc80>Levels:",
-                        " <#94bc80>- <white>Radius: <#94bc80><upgrade_radius_value>",
-                        " <#94bc80>- <white>Duration: <#94bc80><upgrade_duration_value>",
-                        " <#94bc80>- <white>Cooldown: <#94bc80><upgrade_cooldown_value>"
+                        " <#94bc80>- <white>Radius: <#94bc80><upgrade_radius>",
+                        " <#94bc80>- <white>Duration: <#94bc80><upgrade_duration>",
+                        " <#94bc80>- <white>Cooldown: <#94bc80><upgrade_cooldown>"
                 )
                 .setGlowing(true)
                 .setModel(new ModelConstructType("minecraft:netherite_upgrade_smithing_template"))
@@ -212,9 +212,9 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
                         "<gray>Click here to active this totem",
                         "",
                         "<#05e653>Details:",
-                        " <#05e653>- <white>Radius: <#05e653><upgrade_radius_value>",
-                        " <#05e653>- <white>Duration: <#05e653><upgrade_duration_value>",
-                        " <#05e653>- <white>Cooldown: <#05e653><upgrade_cooldown_value>"
+                        " <#05e653>- <white>Radius: <#05e653><upgrade_radius_total>",
+                        " <#05e653>- <white>Duration: <#05e653><upgrade_duration_total>",
+                        " <#05e653>- <white>Cooldown: <#05e653><upgrade_cooldowntotale>"
                 )
                 .setGlowing(true)
                 .asMenuItem(13);
@@ -224,10 +224,7 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
                 .setLore(
                         "<gray>This totem is currently on cooldown",
                         "",
-                        "<#e60505>Details:",
-                        " <#e60505>- <white>Radius: <#e60505><upgrade_radius_value>",
-                        " <#e60505>- <white>Duration: <#e60505><upgrade_duration_value>",
-                        " <#e60505>- <white>Cooldown: <#e60505><upgrade_cooldown_value>"
+                        "<#e65f05>- <white>Time Remaining: <#e65f05><upgrade_cooldown>"
                 )
                 .setGlowing(true)
                 .asMenuItem(13);
@@ -237,7 +234,7 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
                 .setLore(
                         "<gray>Your totem is currently active",
                         "",
-                        "<#e65f05>- <white>Time Remaining: <#e65f05><upgrade_duration_timer>"
+                        "<#e65f05>- <white>Time Remaining: <#e65f05><upgrade_duration_remaining>"
                 )
                 .setGlowing(true)
                 .asMenuItem(13);

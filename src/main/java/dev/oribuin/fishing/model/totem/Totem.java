@@ -116,7 +116,7 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
         this.level = 1;
         this.privacy = TotemPrivacy.FRIENDS_ONLY;
         this.ownerName = "N/A";
-        this.displayName = this.ownerName + "'s Totem";
+        this.displayName = null;
         this.bag = new HashMap<>();
         this.users = new HashSet<>();
         this.upgrades = new LinkedHashMap<>(UpgradeRegistry.getDefault());
@@ -197,14 +197,14 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
 
             // Spawn additional particles around the totem bounds while active
             // TODO: Active particle builder
-//            if (active) {
-//                ParticleBuilder dust = this.getDust(Color.LIME);
-//                this.bounds = this.getBounds(); // regularly update the bounds of the totem
-//                this.bounds.forEach(x -> dust.clone().location(x.clone().add(0, 1.5, 0)).spawn());
-//            }
-//
-//
-//            this.lastTick = System.currentTimeMillis();
+            //            if (active) {
+            //                ParticleBuilder dust = this.getDust(Color.LIME);
+            //                this.bounds = this.getBounds(); // regularly update the bounds of the totem
+            //                this.bounds.forEach(x -> dust.clone().location(x.clone().add(0, 1.5, 0)).spawn());
+            //            }
+            //
+            //
+            //            this.lastTick = System.currentTimeMillis();
         }
 
         // Make the totem rotate it's head
@@ -255,6 +255,10 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
      * @param location The block location to spawn the totem
      */
     public void spawn(Location location) {
+        if (this.displayName == null) {
+            this.displayName = this.ownerName + "'s Totem";
+        }
+        
         this.position = location.toBlockLocation().add(0.5, -0.3, 0.5);
         this.display = this.position.getWorld().spawn(this.position, ArmorStand.class, CreatureSpawnEvent.SpawnReason.CUSTOM, result -> {
             result.setInvisible(false);
@@ -263,7 +267,7 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
             result.setVisible(false);
             result.setCustomNameVisible(true);
             result.setPersistent(true);
-            result.customName(FishUtils.kyorify(this.ownerName));
+            result.customName(FishUtils.kyorify(this.displayName));
             result.setItem(EquipmentSlot.HEAD, TotemConfig.get().getTotemItem().build());
 
             // Lock all the slots
@@ -439,7 +443,7 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
     @Override
     public void writeContainer(PersistentDataContainer container) {
         if (container == null) return;
-        
+
         container.set(TOTEM_OWNER.key(), TOTEM_OWNER, this.owner);
         container.set(TOTEM_ACTIVE.key(), TOTEM_ACTIVE, this.active);
         container.set(TOTEM_LAST_ACTIVE.key(), TOTEM_LAST_ACTIVE, this.lastActive);
@@ -449,7 +453,7 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
         container.set(TOTEM_BAG.key(), TOTEM_BAG, this.bag);
         container.set(TOTEM_OWNER_NAME.key(), TOTEM_OWNER_NAME, this.ownerName);
         container.set(TOTEM_DISPLAY_NAME.key(), TOTEM_DISPLAY_NAME, this.displayName);
-//        if (this.skin != null) container.set(TOTEM_SKIN.key(), TOTEM_SKIN, this.skin.id()); // TODO: Totem Skin
+        //        if (this.skin != null) container.set(TOTEM_SKIN.key(), TOTEM_SKIN, this.skin.id()); // TODO: Totem Skin
 
         // Write the upgrade containers
         PersistentDataAdapterContext context = container.getAdapterContext();
@@ -486,7 +490,7 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
     @Override
     public void readContainer(PersistentDataContainer container) {
         if (container == null) return;
-        
+
         this.owner = container.get(TOTEM_OWNER.key(), TOTEM_OWNER);
         this.active = container.getOrDefault(TOTEM_ACTIVE.key(), TOTEM_ACTIVE, false);
         this.lastActive = container.getOrDefault(TOTEM_LAST_ACTIVE.key(), TOTEM_LAST_ACTIVE, 0L);
@@ -523,7 +527,9 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
         Placeholders.Builder builder = Placeholders.builder();
         builder.add("owner", this.ownerName);
         builder.add("active", this.active ? "Active" : "Inactive");
-
+        builder.add("status", FishUtils.capitalizeFully(this.privacy.name().replace("_", " ")));
+        builder.add("name", this.displayName != null ? this.displayName : "N/A");
+        
         // Add the upgrade placeholders
         this.upgrades.forEach((upgradeId, upgrade) -> {
             builder.add("upgrade_" + upgradeId, upgrade.getLevel());
@@ -531,9 +537,10 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
             // Add all the placeholders for the upgrade
             upgrade.getPlaceholders(this)
                     .getPlaceholders()
-                    .forEach((key, value) ->
-                            builder.add(String.format("upgrade_%s_%s", upgrade.getName(), key), value)
-                    );
+                    .forEach((key, value) -> {
+                        String upgradeKey = "upgrade_" + upgradeId + "_" + key;
+                        builder.add(upgradeKey, value);
+                    });
         });
 
         return builder.build();
