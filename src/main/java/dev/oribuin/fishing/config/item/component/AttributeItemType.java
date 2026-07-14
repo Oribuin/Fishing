@@ -2,7 +2,6 @@ package dev.oribuin.fishing.config.item.component;
 
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.item.ConstructComponent;
-import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemAttributeModifiers;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
@@ -15,17 +14,19 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.Map;
 
+import static io.papermc.paper.datacomponent.DataComponentTypes.ATTRIBUTE_MODIFIERS;
+
 @ConfigSerializable
-@SuppressWarnings({ "UnstableApiUsage", "FieldMayBeFinal" })
-public class AttributeConstructType implements ConstructComponent<ItemAttributeModifiers> {
+@SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal", "UnstableApiUsage" })
+public class AttributeItemType extends ConstructComponent<ItemAttributeModifiers> {
 
     private final Map<Attribute, AttributeType> values;
 
-    public AttributeConstructType() {
+    public AttributeItemType() {
         this(null);
     }
 
-    public AttributeConstructType(Map<Attribute, AttributeType> values) {
+    public AttributeItemType(Map<Attribute, AttributeType> values) {
         this.values = values;
     }
 
@@ -60,10 +61,10 @@ public class AttributeConstructType implements ConstructComponent<ItemAttributeM
      */
     @Override
     public void apply(@NotNull ItemStack stack) {
-        ItemAttributeModifiers modifiers = this.establish();
-        if (modifiers != null) {
-            stack.setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, modifiers);
-        }
+        ItemAttributeModifiers established = this.establish();
+        if (established == null || !this.enabled) return;
+
+        stack.setData(ATTRIBUTE_MODIFIERS, established);
     }
 
     /**
@@ -73,7 +74,11 @@ public class AttributeConstructType implements ConstructComponent<ItemAttributeM
      */
     @Override
     public void clear(@NotNull ItemStack stack) {
-        stack.unsetData(DataComponentTypes.ATTRIBUTE_MODIFIERS);
+        stack.unsetData(ATTRIBUTE_MODIFIERS);
+    }
+
+    public Map<Attribute, AttributeType> getValues() {
+        return values;
     }
 
     @ConfigSerializable
@@ -82,6 +87,15 @@ public class AttributeConstructType implements ConstructComponent<ItemAttributeM
         private AttributeModifier.Operation operation;
         private double amount;
         private EquipmentSlotGroup slot;
+
+        public AttributeType() {
+        }
+
+        public AttributeType(AttributeModifier.Operation operation, double amount, EquipmentSlotGroup slot) {
+            this.operation = operation;
+            this.amount = amount;
+            this.slot = slot;
+        }
 
         public AttributeModifier.Operation getOperation() {
             return operation;

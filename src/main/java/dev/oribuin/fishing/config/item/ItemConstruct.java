@@ -1,84 +1,152 @@
 package dev.oribuin.fishing.config.item;
 
-import dev.oribuin.fishing.config.item.component.AttributeConstructType;
-import dev.oribuin.fishing.config.item.component.DyedConstructType;
-import dev.oribuin.fishing.config.item.component.EdibleConstructType;
-import dev.oribuin.fishing.config.item.component.EnchantConstructType;
-import dev.oribuin.fishing.config.item.component.ModelConstructType;
-import dev.oribuin.fishing.config.item.component.TextureConstructType;
-import dev.oribuin.fishing.config.item.component.TooltipConstructType;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
+import io.papermc.paper.datacomponent.DataComponentType;
 import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.CustomModelData;
 import io.papermc.paper.datacomponent.item.ItemLore;
+import io.papermc.paper.registry.RegistryAccess;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
-import java.lang.annotation.Native;
+import javax.naming.Name;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
 
+import static io.papermc.paper.datacomponent.DataComponentTypes.*;
+
+
+/**
+ * ComponentStack is a class that represents a stack of items with additional properties.
+ * Utilizes Paper Component API to create custom items.
+ */
 @ConfigSerializable
-@SuppressWarnings({ "unused", "FieldMayBeFinal" })
-public class ItemConstruct {
+@SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal", "UnstableApiUsage" })
+public class ItemConstruct implements Cloneable {
 
-    private Material type;
-    private Integer amount;
+    private static final RegistryAccess registry = RegistryAccess.registryAccess();
+
+    private Material material;
+    private int amount;
     private String name;
     private List<String> lore;
-    private Boolean glowing;
-    private AttributeConstructType attributes;
-    private DyedConstructType dyed;
-    private EdibleConstructType edible;
-    private EnchantConstructType enchantments;
-    private ModelConstructType model;
-    private TextureConstructType texture;
-    private TooltipConstructType tooltip;
+    private Integer maxStackSize;
+    private Integer customModelData;
+    private Map<String, ConstructComponent<?>> properties;
+    private transient Consumer<ItemStack> function;
 
     public ItemConstruct() {
-        this(Material.STONE);
-    }
-
-    public ItemConstruct(Material type) {
-        this.type = type;
+        this.material = Material.STONE;
         this.amount = 1;
         this.name = null;
-        this.lore = new ArrayList<>();
-        this.glowing = null;
-        this.attributes = null;
-        this.dyed = null;
-        this.enchantments = null;
-        this.model = null;
-        this.texture = null;
-        this.tooltip = null;
+        this.lore = null;
+        this.maxStackSize = null;
+        this.customModelData = null;
+        this.properties = new HashMap<>();
+        this.function = null;
     }
 
-    public ItemStack build() {
-        return this.build(null, Placeholders.empty());
-    }
-    
-    
-    public ItemStack build(Placeholders placeholders) {
-        return this.build(null, placeholders);
-    }
-    
-    public ItemStack build(ItemStack base) {
-        return this.build(base, Placeholders.empty());
+    /**
+     * Create a new {@link ItemConstruct} object with the specified material.
+     *
+     * @param material The material of the item
+     *
+     * @return The created ComponentStack object
+     */
+    @NotNull
+    public static ItemConstruct of(@NotNull Material material) {
+        return new ItemConstruct().setMaterial(material);
     }
 
-    @SuppressWarnings({ "UnstableApiUsage" })
-    public ItemStack build(ItemStack base, Placeholders placeholders) {
-        ItemStack material = new ItemStack(this.type != null ? this.type : Material.STONE, this.amount);
-        ItemStack stack = base != null ? base : material;
-        ItemMeta meta = stack.getItemMeta();
-        if (meta == null) return stack; // Probably air
+    /**
+     * Create a new {@link ItemStack} with the properties of this ComponentStack object.
+     **
+     * @return The created ItemStack
+     */
+    @NotNull
+    public ItemStack create() {
+        return this.create(null, Placeholders.empty());
+    }
 
-        if (this.name != null) stack.setData(DataComponentTypes.CUSTOM_NAME, FishUtils.kyorify(this.name, placeholders));
+    /**
+     * Create a new {@link ItemStack} with the properties of this ComponentStack object.
+     *
+     * @param placeholders The placeholders to replace in the item's name and lore
+     *
+     * @return The created ItemStack
+     */
+    @NotNull
+    public ItemStack create(Placeholders placeholders) {
+        return this.create(null, placeholders);
+    }
+
+    /**
+     * Create a new {@link ItemStack} with the properties of this ComponentStack object.
+     *
+     * @param consumer Additional functionality for the gadget
+     *
+     * @return The created ItemStack
+     */
+    public @NotNull ItemStack createCustom(Consumer<ItemStack> consumer) {
+        return createCustom(null, Placeholders.empty(), consumer);
+    }
+
+    /**
+     * Create a new {@link ItemStack} with the properties of this ComponentStack object.
+     *
+     * @param consumer     Additional functionality for the gadget
+     * @param placeholders The placeholders to replace in the item's name and lore
+     *
+     * @return The created ItemStack
+     */
+    public @NotNull ItemStack createCustom(Placeholders placeholders, Consumer<ItemStack> consumer) {
+        return createCustom(null, placeholders, consumer);
+    }
+
+    /**
+     * Create a new {@link ItemStack} with the properties of this ComponentStack object.
+     *
+     * @param base         The base ItemStack to modify with the properties of this ComponentStack
+     * @param consumer     Additional functionality for the gadget
+     * @param placeholders The placeholders to replace in the item's name and lore
+     *
+     * @return The created ItemStack
+     */
+    public @NotNull ItemStack createCustom(@Nullable ItemStack base, Placeholders placeholders, Consumer<ItemStack> consumer) {
+        ItemStack stack = create(base, placeholders);
+        consumer.accept(stack);
+        return stack;
+    }
+
+    /**
+     * Create a new {@link ItemStack} with the properties of this ComponentStack object.
+     *
+     * @param base         The base ItemStack to modify with the properties of this ComponentStack
+     * @param placeholders The placeholders to replace in the item's name and lore
+     *
+     * @return The created ItemStack
+     */
+    @NotNull
+    public ItemStack create(@Nullable ItemStack base, Placeholders placeholders) {
+        ItemStack item = base != null ? base.clone() : new ItemStack(this.material);
+
+        if (this.name != null) {
+            Component customName = parse(this.name, placeholders);
+            item.setData(ITEM_NAME, customName);
+            item.setData(CUSTOM_NAME, customName);
+        }
+        
         if (this.lore != null) {
             List<Component> lines = new ArrayList<>();
             for (String line : this.lore) {
@@ -88,42 +156,119 @@ public class ItemConstruct {
                 for (String s : newLine) lines.add(FishUtils.kyorify(s));
             }
 
-            stack.setData(DataComponentTypes.LORE, ItemLore.lore(lines));
+            item.setData(DataComponentTypes.LORE, ItemLore.lore(lines));
+        }
+        if (this.maxStackSize != null) item.setData(MAX_STACK_SIZE, maxStackSize);
+        if (this.customModelData != null && this.customModelData > 0) item.setData(CUSTOM_MODEL_DATA, CustomModelData.customModelData().addFloat(this.customModelData));
+        if (this.function != null) this.function.accept(item);
+
+        this.properties.values().forEach(x -> x.apply(item));
+        return item.asQuantity(Math.max(1, amount));
+    }
+
+
+    /**
+     * Get the paper registry access object
+     *
+     * @return The registry access object
+     */
+    public static RegistryAccess getRegistry() {
+        return registry;
+    }
+
+    /**
+     * Parse a string with placeholders
+     *
+     * @param text         The text to parse
+     * @param placeholders The placeholders to replace in the text
+     *
+     * @return The parsed text
+     */
+    private static Component parse(String text, Placeholders placeholders) {
+        return FishUtils.kyorify(text, placeholders);
+    }
+
+    /**
+     * Get the data of a specific type from an ItemStack
+     *
+     * @param stack The ItemStack to get the data from
+     * @param type  The type of data to get
+     *
+     * @return The data if it exists
+     */
+    public static Optional<Boolean> getData(ItemStack stack, DataComponentType.NonValued type) {
+        return Optional.of(stack.hasData(type));
+    }
+
+    /**
+     * Get the data of a specific type from an ItemStack
+     *
+     * @param stack The ItemStack to get the data from
+     * @param type  The type of data to get
+     * @param <T>   The type of data
+     *
+     * @return The data if it exists
+     */
+    private static <T> @NotNull Optional<T> getData(ItemStack stack, DataComponentType.@NotNull Valued<T> type) {
+        return Optional.ofNullable(stack.getData(type));
+    }
+
+    /**
+     * Set a property within the item construct
+     *
+     * @param type     The type tos et
+     * @param consumer The consumer for the function
+     * @param <T>      The construct type to set
+     *
+     * @return The resulting item construct
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends ConstructComponent<?>> ItemConstruct setProperty(ConstructType<T> type, Consumer<T> consumer) {
+        T property = (T) this.properties.getOrDefault(type.identifier(), type.supplier().get());
+        if (property != null) {
+            consumer.accept(property);
+            this.properties.put(type.identifier(), property);
         }
 
-        if (this.amount != null) stack.setAmount(this.amount);
-        if (this.glowing != null) stack.setData(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, this.glowing);
-        if (this.attributes != null) this.attributes.apply(stack);
-        if (this.dyed != null) this.dyed.apply(stack);
-        if (this.edible != null) this.edible.apply(stack);
-        if (this.enchantments != null) this.enchantments.apply(stack);
-        if (this.model != null) this.model.apply(stack);
-        if (this.texture != null) {
-            this.texture.setPlaceholders(placeholders);
-            this.texture.apply(stack);
-        }
-        if (this.tooltip != null) this.tooltip.apply(stack);
-        return stack;
+        return this;
     }
 
     public MenuItem asMenuItem(Integer... slots) {
         return new MenuItem(this, slots);
     }
 
-    public Material getType() {
-        return type;
+    @Override
+    public ItemConstruct clone() {
+        try {
+            ItemConstruct clone = (ItemConstruct) super.clone();
+            clone.setMaterial(this.material);
+            clone.setAmount(this.amount);
+            clone.setName(this.name);
+            clone.setLore(this.lore);
+            clone.setMaxStackSize(this.maxStackSize);
+            clone.setCustomModelData(this.customModelData);
+            clone.setProperties(this.properties);
+            clone.setFunction(this.function);
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 
-    public ItemConstruct setType(Material type) {
-        this.type = type;
+    public Material getMaterial() {
+        return material;
+    }
+
+    public ItemConstruct setMaterial(Material material) {
+        this.material = material;
         return this;
     }
 
-    public Integer getAmount() {
+    public int getAmount() {
         return amount;
     }
 
-    public ItemConstruct setAmount(Integer amount) {
+    public ItemConstruct setAmount(int amount) {
         this.amount = amount;
         return this;
     }
@@ -141,97 +286,49 @@ public class ItemConstruct {
         return lore;
     }
 
-    public ItemConstruct setLore(String... lore) {
-        this.lore = List.of(lore);
-        return this;
-    }
-
-
     public ItemConstruct setLore(List<String> lore) {
         this.lore = lore;
         return this;
     }
 
-    public Boolean getGlowing() {
-        return glowing;
-    }
-
-    public ItemConstruct setGlowing(Boolean glowing) {
-        this.glowing = glowing;
+    public ItemConstruct setLore(String... lore) {
+        this.lore = List.of(lore);
         return this;
     }
 
-    public AttributeConstructType getAttributes() {
-        return attributes;
+    public Integer getMaxStackSize() {
+        return maxStackSize;
     }
 
-    public ItemConstruct setAttributes(AttributeConstructType attributes) {
-        this.attributes = attributes;
+    public ItemConstruct setMaxStackSize(Integer maxStackSize) {
+        this.maxStackSize = maxStackSize;
         return this;
     }
 
-    public DyedConstructType getDyed() {
-        return dyed;
+    public Integer getCustomModelData() {
+        return customModelData;
     }
 
-    public ItemConstruct setDyed(DyedConstructType dyed) {
-        this.dyed = dyed;
+    public ItemConstruct setCustomModelData(Integer customModelData) {
+        this.customModelData = customModelData;
         return this;
     }
 
-    public EdibleConstructType getEdible() {
-        return edible;
+    public Map<String, ConstructComponent<?>> getProperties() {
+        return properties;
     }
 
-    public ItemConstruct setEdible(EdibleConstructType edible) {
-        this.edible = edible;
+    public ItemConstruct setProperties(Map<String, ConstructComponent<?>> properties) {
+        this.properties = properties;
         return this;
     }
 
-    public EnchantConstructType getEnchantments() {
-        return enchantments;
+    public Consumer<ItemStack> getFunction() {
+        return function;
     }
 
-    public ItemConstruct setEnchantments(EnchantConstructType enchantments) {
-        this.enchantments = enchantments;
+    public ItemConstruct setFunction(Consumer<ItemStack> function) {
+        this.function = function;
         return this;
     }
-
-    public ModelConstructType getModel() {
-        return model;
-    }
-
-    public ItemConstruct setModel(ModelConstructType model) {
-        this.model = model;
-        return this;
-    }
-
-    public TextureConstructType getTexture() {
-        return texture;
-    }
-
-    public ItemConstruct setTexture(String texture) {
-        this.texture = new TextureConstructType(texture);
-        return this;
-    }
-
-    public ItemConstruct setTexture(TextureConstructType texture) {
-        this.texture = texture;
-        return this;
-    }
-
-    public TooltipConstructType getTooltip() {
-        return tooltip;
-    }
-
-    public ItemConstruct setTooltip(boolean visible) {
-        this.tooltip = new TooltipConstructType(visible);
-        return this;
-    }
-
-    public ItemConstruct setTooltip(TooltipConstructType tooltip) {
-        this.tooltip = tooltip;
-        return this;
-    }
-
 }

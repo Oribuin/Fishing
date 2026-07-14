@@ -1,79 +1,63 @@
 package dev.oribuin.fishing.config.item;
 
-import dev.oribuin.fishing.config.item.component.AttributeConstructType;
-import dev.oribuin.fishing.config.item.component.DyedConstructType;
-import dev.oribuin.fishing.config.item.component.EdibleConstructType;
-import dev.oribuin.fishing.config.item.component.EnchantConstructType;
-import dev.oribuin.fishing.config.item.component.ModelConstructType;
-import dev.oribuin.fishing.config.item.component.TextureConstructType;
-import dev.oribuin.fishing.config.item.component.TooltipConstructType;
-import io.papermc.paper.datacomponent.DataComponentType;
-import io.papermc.paper.datacomponent.DataComponentTypes;
+import dev.oribuin.fishing.config.item.component.AttributeItemType;
+import dev.oribuin.fishing.config.item.component.DyeItemType;
+import dev.oribuin.fishing.config.item.component.EdibleItemType;
+import dev.oribuin.fishing.config.item.component.EnchantItemType;
+import dev.oribuin.fishing.config.item.component.EquippableItemType;
+import dev.oribuin.fishing.config.item.component.GliderItemType;
+import dev.oribuin.fishing.config.item.component.GlowingItemType;
+import dev.oribuin.fishing.config.item.component.ModelItemType;
+import dev.oribuin.fishing.config.item.component.TextureItemType;
+import dev.oribuin.fishing.config.item.component.ToolItemType;
+import dev.oribuin.fishing.config.item.component.TooltipItemType;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Collection;
+import java.beans.Transient;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
-@SuppressWarnings("UnstableApiUsage")
-public enum ConstructType {
-    ATTRIBUTE(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeConstructType::new),
-    DYED(DataComponentTypes.DYED_COLOR, DyedConstructType::new),
-    EDIBLE(DataComponentTypes.FOOD, EdibleConstructType::new),
-    ENCHANT(DataComponentTypes.ENCHANTMENTS, EnchantConstructType::new),
-    MODEL(DataComponentTypes.ITEM_MODEL, ModelConstructType::new),
-    TEXTURE(DataComponentTypes.PROFILE, TextureConstructType::new),
-    TOOLTIP(DataComponentTypes.TOOLTIP_DISPLAY, TooltipConstructType::new),
-    ;
+public record ConstructType<T extends ConstructComponent<?>>(String identifier, Supplier<T> supplier) {
 
-    private final DataComponentType type;
-    private final Supplier<ConstructComponent<?>> supplier;
+    private static final Map<String, ConstructType<?>> REGISTRY = new HashMap<>();
+    public static ConstructType<AttributeItemType> ATTRIBUTE = create("attribute", AttributeItemType::new);
+    public static ConstructType<DyeItemType> DYED = create("dyed", DyeItemType::new);
+    public static ConstructType<EdibleItemType> EDIBLE = create("edible", EdibleItemType::new);
+    public static ConstructType<EnchantItemType> ENCHANT = create("enchanted", EnchantItemType::new);
+    public static ConstructType<EquippableItemType> EQUIPPABLE = create("equippable", EquippableItemType::new);
+    public static ConstructType<GliderItemType> GLIDER = create("glider", GliderItemType::new);
+    public static ConstructType<GlowingItemType> GLOWING = create("glowing", GlowingItemType::new);
+    public static ConstructType<ModelItemType> MODEL = create("model", ModelItemType::new);
+    public static ConstructType<TextureItemType> TEXTURE = create("texture", TextureItemType::new);
+    public static ConstructType<ToolItemType> TOOL = create("tool", ToolItemType::new);
+    public static ConstructType<TooltipItemType> TOOLTIP = create("tooltip", TooltipItemType::new);
 
-    ConstructType(DataComponentType type, Supplier<ConstructComponent<?>> supplier) {
-        this.type = type;
-        this.supplier = supplier;
+    /**
+     * Create a new construct type within the plugin to register
+     *
+     * @param supplier The supplier to register
+     * @param <T>      The construct type
+     *
+     * @return The resulting construct
+     */
+    public static <T extends ConstructComponent<?>> ConstructType<T> create(String identifier, Supplier<T> supplier) {
+        ConstructType<T> constructType = new ConstructType<>(identifier,supplier);
+        REGISTRY.put(identifier, constructType);
+        return constructType;
     }
 
     /**
-     * Get a null map from all construct types
+     * Create an empty set of construct types
      *
-     * @return The null map
+     * @return The construct types
      */
-    public static Map<ConstructType, ConstructComponent<?>> getNullMap() {
-        Map<ConstructType, ConstructComponent<?>> results = new HashMap<>();
-        for (ConstructType component : ConstructType.values()) results.put(component, null);
-        return results;
+    public static Map<ConstructType<?>, ConstructComponent<?>> getEmpty() {
+        return REGISTRY.values().stream().collect(Collectors.toMap(
+                x -> x,
+                x -> x.supplier().get()
+        ));
     }
-
-    public void apply(ItemStack stack) {
-        ConstructComponent<?> component = this.supplier.get();
-        if (component != null) component.apply(stack);
-    }
-
-    public static void apply(Collection<ConstructComponent<?>> components, ItemStack stack) {
-        for (ConstructComponent<?> component : components) {
-            if (component != null) component.apply(stack);
-        }
-    }
-
-    public void clear(ItemStack stack) {
-        ConstructComponent<?> component = this.supplier.get();
-        if (component != null) component.clear(stack);
-    }
-
-    public static void clear(Collection<ConstructComponent<?>> components, ItemStack stack) {
-        for (ConstructComponent<?> component : components) {
-            if (component != null) component.apply(stack);
-        }
-    }
-
-    public DataComponentType getType() {
-        return type;
-    }
-
-    public Supplier<ConstructComponent<?>> getSupplier() {
-        return supplier;
-    }
-
+   
 }

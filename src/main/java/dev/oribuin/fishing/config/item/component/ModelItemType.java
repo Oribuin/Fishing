@@ -1,26 +1,25 @@
 package dev.oribuin.fishing.config.item.component;
 
 import dev.oribuin.fishing.config.item.ConstructComponent;
-import io.papermc.paper.datacomponent.DataComponentTypes;
-import net.kyori.adventure.key.Key;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
-import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
-@ConfigSerializable
-@SuppressWarnings({ "UnstableApiUsage", "FieldMayBeFinal" })
-public final class ModelConstructType implements ConstructComponent<Key> {
+import static io.papermc.paper.datacomponent.DataComponentTypes.ITEM_MODEL;
 
-    @Subst("minecraft:cod")
+@ConfigSerializable
+@SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal", "UnstableApiUsage" })
+public final class ModelItemType extends ConstructComponent<NamespacedKey> {
+
     private String value;
 
-    public ModelConstructType() {
+    public ModelItemType() {
         this(null);
     }
 
-    public ModelConstructType(String value) {
+    public ModelItemType(String value) {
         this.value = value;
     }
 
@@ -30,9 +29,10 @@ public final class ModelConstructType implements ConstructComponent<Key> {
      * @return item component type
      */
     @Override
-    public @Nullable Key establish() {
+    public @Nullable NamespacedKey establish() {
         if (this.value == null) return null;
-        return Key.key(value);
+        
+        return NamespacedKey.fromString(value);
     }
 
     /**
@@ -42,10 +42,10 @@ public final class ModelConstructType implements ConstructComponent<Key> {
      */
     @Override
     public void apply(@NotNull ItemStack stack) {
-        Key key = this.establish();
-        if (key == null) return;
+        NamespacedKey established = this.establish();
+        if (established == null || !this.enabled) return;
 
-        stack.setData(DataComponentTypes.ITEM_MODEL, key);
+        stack.setData(ITEM_MODEL, established);
     }
 
     /**
@@ -55,7 +55,15 @@ public final class ModelConstructType implements ConstructComponent<Key> {
      */
     @Override
     public void clear(@NotNull ItemStack stack) {
-        stack.unsetData(DataComponentTypes.ITEM_MODEL);
+        stack.unsetData(ITEM_MODEL);
     }
 
+    public String getValue() {
+        return value;
+    }
+
+    public ModelItemType setValue(String value) {
+        this.value = value;
+        return this;
+    }
 }

@@ -2,8 +2,9 @@ package dev.oribuin.fishing.gui.impl.totem;
 
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.impl.PluginMessages;
+import dev.oribuin.fishing.config.item.ConstructComponent;
+import dev.oribuin.fishing.config.item.ConstructType;
 import dev.oribuin.fishing.config.item.ItemConstruct;
-import dev.oribuin.fishing.config.item.component.ModelConstructType;
 import dev.oribuin.fishing.gui.GuiConfig;
 import dev.oribuin.fishing.gui.GuiTickable;
 import dev.oribuin.fishing.gui.MenuItem;
@@ -22,7 +23,6 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.function.Supplier;
 
-@SuppressWarnings("UnstableApiUsage")
 public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> implements GuiTickable {
 
     private final Supplier<Totem> totemSupplier;
@@ -41,7 +41,7 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
 
         this.setDummyIcons(placeholders);
         this.config.getTotemName().place(this.gui, placeholders);
-        this.config.getTotemPrivacy().place(this.gui, Placeholders.of("status", totem.getPrivacy().name()));
+        this.config.getTotemPrivacy().place(this.gui, placeholders);
         this.config.getTotemStats().place(this.gui, placeholders, event -> {
             // TODO: Totem Stats menu
         });
@@ -154,16 +154,16 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
     public static class Config extends GuiConfig {
         // TODO: Totem Privacy
 
-        private MenuItem totemName = new ItemConstruct(Material.NAME_TAG)
+        private MenuItem totemName = ItemConstruct.of(Material.NAME_TAG)
                 .setName("<white>[<#94bc80>Totem Name<white>]")
                 .setLore(
                         "<gray>Change the display name for this",
                         "<gray>fishing totem"
                 )
-                .setGlowing(true)
+                .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
                 .asMenuItem(15);
 
-        private MenuItem totemPrivacy = new ItemConstruct(Material.TRIAL_KEY)
+        private MenuItem totemPrivacy = ItemConstruct.of(Material.TRIAL_KEY)
                 .setName("<white>[<#94bc80>Totem Privacy<white>]")
                 .setLore(
                         "<gray>Change the level of access that others",
@@ -172,10 +172,10 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
                         " <#94bc80>- <white>Status: <#94bc80><status>"
 
                 )
-                .setGlowing(true)
+                .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
                 .asMenuItem(16);
 
-        private MenuItem totemStats = new ItemConstruct(Material.OAK_HANGING_SIGN)
+        private MenuItem totemStats = ItemConstruct.of(Material.OAK_HANGING_SIGN)
                 .setName("<white>[<#94bc80>Totem Details<white>]")
                 .setLore(
                         "<gray>Here are the current upgrades",
@@ -188,10 +188,10 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
                         " <#94bc80>- <white>Duration: <#94bc80><upgrade_duration_total>",
                         " <#94bc80>- <white>Cooldown: <#94bc80><upgrade_cooldown_total>"
                 )
-                .setGlowing(true)
+                .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
                 .asMenuItem(4);
 
-        private MenuItem totemUpgrades = new ItemConstruct(Material.PAPER)
+        private MenuItem totemUpgrades = ItemConstruct.of(Material.PAPER)
                 .setName("<white>[<#94bc80>Totem Upgrades<white>]")
                 .setLore(
                         "<gray>Click here to view and level",
@@ -202,11 +202,11 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
                         " <#94bc80>- <white>Duration: <#94bc80><upgrade_duration>",
                         " <#94bc80>- <white>Cooldown: <#94bc80><upgrade_cooldown>"
                 )
-                .setGlowing(true)
-                .setModel(new ModelConstructType("minecraft:netherite_upgrade_smithing_template"))
+                .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
+                .setProperty(ConstructType.MODEL, x -> x.setValue("minecraft:netherite_upgrade_smithing_template"))
                 .asMenuItem(10);
 
-        private MenuItem totemActivate = new ItemConstruct(Material.LIME_DYE)
+        private MenuItem totemActivate = ItemConstruct.of(Material.LIME_DYE)
                 .setName("<white>[<#05e653>Activate Totem<white>]")
                 .setLore(
                         "<gray>Click here to active this totem",
@@ -214,29 +214,29 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
                         "<#05e653>Details:",
                         " <#05e653>- <white>Radius: <#05e653><upgrade_radius_total>",
                         " <#05e653>- <white>Duration: <#05e653><upgrade_duration_total>",
-                        " <#05e653>- <white>Cooldown: <#05e653><upgrade_cooldowntotale>"
+                        " <#05e653>- <white>Cooldown: <#05e653><upgrade_cooldown_total>"
                 )
-                .setGlowing(true)
+                .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
                 .asMenuItem(13);
 
-        private MenuItem totemCooldown = new ItemConstruct(Material.ORANGE_DYE)
+        private MenuItem totemCooldown = ItemConstruct.of(Material.RED_DYE)
                 .setName("<white>[<#e60505>On Cooldown<white>]")
                 .setLore(
                         "<gray>This totem is currently on cooldown",
                         "",
                         "<#e65f05>- <white>Time Remaining: <#e65f05><upgrade_cooldown>"
                 )
-                .setGlowing(true)
+                .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
                 .asMenuItem(13);
 
-        private MenuItem totemActive = new ItemConstruct(Material.RED_DYE)
+        private MenuItem totemActive = ItemConstruct.of(Material.ORANGE_DYE)
                 .setName("<white>[<#e65f05>Currently Active<white>]")
                 .setLore(
                         "<gray>Your totem is currently active",
                         "",
                         "<#e65f05>- <white>Time Remaining: <#e65f05><upgrade_duration_remaining>"
                 )
-                .setGlowing(true)
+                .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
                 .asMenuItem(13);
 
         public Config() {

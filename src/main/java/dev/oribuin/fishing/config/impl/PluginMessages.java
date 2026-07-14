@@ -57,7 +57,7 @@ public class PluginMessages {
     @Comment("Player has hit the maximum level for the upgrade")
     private TextMessage hitMaxLevel = new TextMessage(PREFIX + "You cannot level up your upgrade past level <#93bc80><max>");
 
-    @Comment("Totem messages")
+    @Comment("All the messages regarding a fishing totem")
     private TotemMessages totem = new TotemMessages();
     
     @ConfigSerializable

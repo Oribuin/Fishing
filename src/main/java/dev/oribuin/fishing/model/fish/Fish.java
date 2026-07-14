@@ -7,6 +7,7 @@ import dev.oribuin.fishing.storage.util.KeyRegistry;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import org.apache.commons.lang3.StringUtils;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +37,7 @@ public class Fish {
         this.name = "unknown-cod";
         this.description = List.of("Example fish style");
         this.conditions = new ArrayList<>();
-        this.construct = null; // inherits Tier construct
+        this.construct = ItemConstruct.of(Material.COD);
     }
 
     /**
@@ -78,15 +79,16 @@ public class Fish {
         placeholders.addAll(this.getTierInstance().placeholders());
 
         ItemConstruct tierConstruct = fishTier.getItem();
-        ItemStack itemStack = tierConstruct.build(placeholders.build());
-        itemStack.editMeta(itemMeta -> {
-            // fish data :-)
-            PersistentDataContainer container = itemMeta.getPersistentDataContainer();
-            container.set(KeyRegistry.FISH_NAME.key(), KeyRegistry.FISH_TYPE, this.name);
-            container.set(KeyRegistry.FISH_TYPE.key(), KeyRegistry.FISH_NAME, this.tier);
-        });
+        ItemStack fishConstruct = this.construct.create();
+        this.itemStack = tierConstruct.createCustom(
+                fishConstruct,
+                placeholders.build(),
+                stack -> stack.editMeta(itemMeta -> {
+                    PersistentDataContainer container = itemMeta.getPersistentDataContainer();
+                    container.set(KeyRegistry.FISH_NAME.key(), KeyRegistry.FISH_TYPE, this.name);
+                    container.set(KeyRegistry.FISH_TYPE.key(), KeyRegistry.FISH_NAME, this.tier);
+                }));
 
-        this.itemStack = itemStack;
         return this.itemStack.clone(); // Clone the item stack to prevent any changes
     }
 

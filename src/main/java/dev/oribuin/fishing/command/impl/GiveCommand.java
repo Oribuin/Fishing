@@ -76,7 +76,7 @@ public class GiveCommand implements FishCommand {
     public void giveAugment(CommandSender sender, Player target, Augment augment, Integer amount) {
         if (amount == null || amount < 0) amount = 1;
 
-        ItemStack item = augment.getDisplayItem().build(augment.getPlaceholders());
+        ItemStack item = augment.getDisplayItem().create(augment.getPlaceholders());
         if (item == null) {
             sender.sendMessage("An error occurred while creating the fish item."); // TODO: Plugin Message
             return;
@@ -110,7 +110,7 @@ public class GiveCommand implements FishCommand {
         if (amount == null || amount < 0) amount = 1;
 
         Totem totem = new Totem(null, null, target.getUniqueId());
-        ItemStack itemStack = TotemConfig.get().getTotemItem().build(totem.getPlaceholders());
+        ItemStack itemStack = TotemConfig.get().getTotemItem().create(totem.getPlaceholders());
         totem.saveTo(itemStack);
 
         if (itemStack == null) {

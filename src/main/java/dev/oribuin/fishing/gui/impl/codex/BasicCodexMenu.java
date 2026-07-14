@@ -5,18 +5,14 @@ import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.gui.GuiConfig;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
-import dev.oribuin.fishing.gui.impl.totem.TotemMainMenu;
-import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.guis.Gui;
-import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.PolarBear;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.List;
@@ -47,7 +43,7 @@ public abstract class BasicCodexMenu<T, Z extends BasicCodexMenu.CodexGuiConfig>
      *
      * @return The itemstack form
      */
-    @NotNull
+    @Nullable
     public abstract ItemStack getStack(@NotNull T value);
 
     /**
@@ -81,12 +77,12 @@ public abstract class BasicCodexMenu<T, Z extends BasicCodexMenu.CodexGuiConfig>
     @ConfigSerializable
     @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
     public static abstract class CodexGuiConfig extends GuiConfig {
-        private MenuItem previousPage = new ItemConstruct(Material.ARROW)
+        private MenuItem previousPage = ItemConstruct.of(Material.ARROW)
                 .setName("<white>[<#94bc80>Previous Page<white>]")
                 .setLore("<gray>Click here to go to the previous page")
                 .asMenuItem(3);
 
-        private MenuItem codexMainMenu = new ItemConstruct(Material.KNOWLEDGE_BOOK)
+        private MenuItem codexMainMenu = ItemConstruct.of(Material.KNOWLEDGE_BOOK)
                 .setName("<white>[<#94bc80>Codex Menu<white>]")
                 .setLore(
                         "<gray>Click here to go to the index page",
@@ -95,7 +91,7 @@ public abstract class BasicCodexMenu<T, Z extends BasicCodexMenu.CodexGuiConfig>
                 )
                 .asMenuItem(4);
 
-        private MenuItem nextPage = new ItemConstruct(Material.ARROW)
+        private MenuItem nextPage = ItemConstruct.of(Material.ARROW)
                 .setName("<white>[<#94bc80>Next Page<white>]")
                 .setLore("<gray>Click here to go to the next page")
                 .asMenuItem(5);

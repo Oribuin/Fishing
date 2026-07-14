@@ -24,6 +24,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.checkerframework.checker.i18nformatter.qual.I18nUnknownFormat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -107,15 +108,17 @@ public class TotemListeners implements Listener {
             PluginMessages.get().getFullInventory().send(player);
             return;
         }
+        
+        ItemStack itemStack = TotemConfig.get().getTotemItem().create(totem.getPlaceholders());
+        if (itemStack == null) return;
 
         totem.getDisplay().remove(); // Remove the totem entity
         totem.setDisplay(null); // Set the totem entity to null
         manager.unregisterTotem(totem); // Unregister the totem
         PluginMessages.get().getTotem().getRemoved().send(player);
 
-        ItemStack itemStack = TotemConfig.get().getTotemItem().build(totem.getPlaceholders());
+        
         totem.saveTo(itemStack);
-
         player.getInventory().addItem(itemStack);
     }
 

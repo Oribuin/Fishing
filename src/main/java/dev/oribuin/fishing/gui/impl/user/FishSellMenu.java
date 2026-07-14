@@ -2,6 +2,8 @@ package dev.oribuin.fishing.gui.impl.user;
 
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.impl.PluginMessages;
+import dev.oribuin.fishing.config.item.ConstructComponent;
+import dev.oribuin.fishing.config.item.ConstructType;
 import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.gui.GuiConfig;
 import dev.oribuin.fishing.gui.MenuItem;
@@ -158,16 +160,16 @@ public class FishSellMenu extends PluginMenu<Gui, FishSellMenu.Config> {
         private List<Integer> sellSlots = FishUtils.parseList("9-35");
 
 
-        private MenuItem sellFish = new ItemConstruct(Material.EMERALD)
+        private MenuItem sellFish = ItemConstruct.of(Material.EMERALD)
                 .setName("<white>[<#94bc80>Sell Fish<white>]")
                 .setLore(
                         "<gray>Sell all the fish that you have",
                         "<gray>placed inside the menu for money"
                 )
-                .setGlowing(true)
+                .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
                 .asMenuItem(40);
 
-        private MenuItem mainMenu = new ItemConstruct(Material.ARROW)
+        private MenuItem mainMenu = ItemConstruct.of(Material.ARROW)
                 .setName("<white>[<#94bc80>Main Menu<white>]")
                 .setLore("<gray>Click to go back to the main menu")
                 .asMenuItem(36);

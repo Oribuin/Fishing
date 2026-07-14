@@ -21,21 +21,21 @@ import java.util.Base64;
 import java.util.UUID;
 
 @ConfigSerializable
-@SuppressWarnings({ "UnstableApiUsage", "FieldMayBeFinal" })
-public final class TextureConstructType implements ConstructComponent<ResolvableProfile> {
+@SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal", "UnstableApiUsage" })
+public final class TextureItemType extends ConstructComponent<ResolvableProfile> {
 
     private transient Placeholders placeholders;
     private String value;
 
-    public TextureConstructType() {
+    public TextureItemType() {
         this(null, Placeholders.empty());
     }
 
-    public TextureConstructType(String value) {
+    public TextureItemType(String value) {
         this(value, Placeholders.empty());
     }
 
-    public TextureConstructType(String value, Placeholders placeholders) {
+    public TextureItemType(String value, Placeholders placeholders) {
         this.value = value;
         this.placeholders = placeholders;
     }
@@ -126,6 +126,19 @@ public final class TextureConstructType implements ConstructComponent<Resolvable
         if (player == null) return ResolvableProfile.resolvableProfile().build();
 
         return ResolvableProfile.resolvableProfile(player.getPlayerProfile());
+    }
+
+    public Placeholders getPlaceholders() {
+        return placeholders;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public TextureItemType setValue(String value) {
+        this.value = value;
+        return this;
     }
 
     public void setPlaceholders(Placeholders placeholders) {

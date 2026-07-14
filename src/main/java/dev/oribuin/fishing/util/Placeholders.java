@@ -60,7 +60,7 @@ public final class Placeholders {
     /**
      * @return an unmodifiable map of the placeholders
      */
-    public Map<String, Component> getPlaceholders() {
+    public Map<String, Component> getAll() {
         return this.placeholders;
     }
 
@@ -491,7 +491,7 @@ public final class Placeholders {
          * @return this
          */
         public Builder addAll(Placeholders placeholders) {
-            return this.addAll(placeholders.getPlaceholders());
+            return this.addAll(placeholders.getAll());
         }
 
         /**

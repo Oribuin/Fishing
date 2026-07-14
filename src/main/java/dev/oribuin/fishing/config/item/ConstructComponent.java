@@ -6,8 +6,10 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @ConfigSerializable
-@SuppressWarnings({ "unused", "FieldMayBeFinal" })
-public interface ConstructComponent<T> {
+@SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal" })
+public abstract class ConstructComponent<T> {
+
+    protected boolean enabled = true;
 
     /**
      * Create a new item component type from the plugin
@@ -15,20 +17,45 @@ public interface ConstructComponent<T> {
      * @return item component type
      */
     @Nullable
-    T establish();
+    public abstract T establish();
 
     /**
      * Apply an {@link ConstructComponent} to an ItemStack
      *
      * @param stack The ItemStack to apply to
      */
-    void apply(@NotNull ItemStack stack);
+    public abstract void apply(@NotNull ItemStack stack);
 
     /**
      * Clear an {@link ConstructComponent} from an ItemStack
      *
      * @param stack The ItemStack to apply to
      */
-    void clear(@NotNull ItemStack stack);
+    public abstract void clear(@NotNull ItemStack stack);
 
+    /**
+     * Should the value be applied to the itemstack
+     *
+     * @return The stack to apply
+     */
+    public final boolean isEnabled() {
+        return this.enabled;
+    }
+
+    public ConstructComponent<T> setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        return this;
+    }
+    
+    public ConstructComponent<T> setEnabled() {
+        this.enabled = true;
+        return this;
+    }
+    
+    public ConstructComponent<T> setDisabled() {
+        this.enabled = false;
+        return this;
+    }
+    
+    
 }

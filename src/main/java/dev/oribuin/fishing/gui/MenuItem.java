@@ -24,7 +24,7 @@ public class MenuItem {
     public MenuItem() {
         this.enabled = true;
         this.slots = List.of(0);
-        this.item = new ItemConstruct(Material.STONE);
+        this.item = ItemConstruct.of(Material.STONE);
     }
 
     public MenuItem(ItemConstruct construct, Integer... slots) {
@@ -74,7 +74,7 @@ public class MenuItem {
         this.slots.forEach(x -> {
             if (x < 0 || x >= guiSize) return;
 
-            ItemStack item = this.item.build(placeholders);
+            ItemStack item = this.item.create(placeholders);
             if (item == null) return;
 
             gui.setItem(x, new dev.triumphteam.gui.guis.GuiItem(item, function));

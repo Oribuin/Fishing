@@ -1,9 +1,11 @@
 package dev.oribuin.fishing.gui.impl.user;
 
 import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.config.item.ConstructComponent;
+import dev.oribuin.fishing.config.item.ConstructType;
 import dev.oribuin.fishing.config.item.ItemConstruct;
-import dev.oribuin.fishing.config.item.component.TextureConstructType;
-import dev.oribuin.fishing.config.item.component.TooltipConstructType;
+import dev.oribuin.fishing.config.item.component.TextureItemType;
+import dev.oribuin.fishing.config.item.component.TooltipItemType;
 import dev.oribuin.fishing.gui.GuiConfig;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
@@ -17,6 +19,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
+import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -76,7 +79,7 @@ public class FishMainMenu extends PluginMenu<Gui, FishMainMenu.Config> {
     @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
     public static class Config extends GuiConfig {
 
-        private final MenuItem userStats = new ItemConstruct(Material.PLAYER_HEAD)
+        private final MenuItem userStats = ItemConstruct.of(Material.PLAYER_HEAD)
                 .setName("<white>[<#94bc80>Your Stats<white>]")
                 .setLore(
                         "<gray>Click here to view your current",
@@ -88,22 +91,21 @@ public class FishMainMenu extends PluginMenu<Gui, FishMainMenu.Config> {
                         " <#94bc80>- <white>Experience: <#94bc80><experience><gray>/<#94bc80><required_exp>",
                         " <#94bc80>- <white>Skill Points: <#94bc80><skill_points>"
                 )
-                .setTexture(new TextureConstructType("player-<player>"))
-                .setGlowing(true)
+                .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
+                .setProperty(ConstructType.TEXTURE, x -> x.setValue("player-<player>"))
                 .asMenuItem(4);
 
-        private MenuItem guttingStation = new ItemConstruct(Material.NETHERITE_SWORD)
-                .setName("<white>[<#94bc80>Gutting Station<white>]")
+        private MenuItem guttingStation = ItemConstruct.of(Material.PAPER)
+                .setName("<white>[<#94bc80>Gut Fish<white>]")
                 .setLore(
-                        "<gray>Gut your fish to exchange them",
-                        "<gray>for entropy"
+                        "<gray>Gut all the fish that you have",
+                        "<gray>placed inside the menu for entropy"
                 )
-                .setTooltip(TooltipConstructType.of(true, List.of(
-                        DataComponentTypes.ATTRIBUTE_MODIFIERS
-                )))
+                .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
+                .setProperty(ConstructType.MODEL, x -> x.setValue("minecraft:netherite_sword"))
                 .asMenuItem(19);
 
-        private MenuItem sellingStation = new ItemConstruct(Material.EMERALD)
+        private MenuItem sellingStation = ItemConstruct.of(Material.EMERALD)
                 .setName("<white>[<#94bc80>Selling Station<white>]")
                 .setLore(
                         "<gray>Sell your fish to exchange them",
@@ -111,7 +113,7 @@ public class FishMainMenu extends PluginMenu<Gui, FishMainMenu.Config> {
                 )
                 .asMenuItem(20);
 
-        private MenuItem codexMenu = new ItemConstruct(Material.KNOWLEDGE_BOOK)
+        private MenuItem codexMenu = ItemConstruct.of(Material.KNOWLEDGE_BOOK)
                 .setName("<white>[<#94bc80>The Codex<white>]")
                 .setLore(
                         "<gray>Click to view information about",

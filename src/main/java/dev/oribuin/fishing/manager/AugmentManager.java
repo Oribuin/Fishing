@@ -114,9 +114,9 @@ public class AugmentManager implements Manager {
 
         PersistentDataContainer container = meta.getPersistentDataContainer();
         augments.forEach((augment, level) -> {
-            int previousLevel = container.getOrDefault(augment.key(), PersistentDataType.INTEGER, 0);
+            int previousLevel = container.getOrDefault(augment.getNamespace(), PersistentDataType.INTEGER, 0);
             int newLevel = Math.min(level, augment.getMaxLevel());
-            container.set(augment.key(), PersistentDataType.INTEGER, newLevel);
+            container.set(augment.getNamespace(), PersistentDataType.INTEGER, newLevel);
 
             Placeholders placeholders = Placeholders.of(
                     "level", previousLevel,
@@ -131,12 +131,12 @@ public class AugmentManager implements Manager {
             }
 
             Component text = FishUtils.kyorify(augment.getDisplayLine(), placeholders);
-            Integer currentIndex = container.get(augment.loreKey(), PersistentDataType.INTEGER);
+            Integer currentIndex = container.get(augment.getLoreNamespace(), PersistentDataType.INTEGER);
             if (currentIndex != null) {
                 lore.set(currentIndex, text);
             } else {
                 lore.add(text);
-                container.set(augment.loreKey(), DataType.INTEGER, lore.size() - 1);
+                container.set(augment.getLoreNamespace(), DataType.INTEGER, lore.size() - 1);
             }
 
             meta.lore(lore);
@@ -161,7 +161,7 @@ public class AugmentManager implements Manager {
         // Load the augments from the item meta
         PersistentDataContainer container = meta.getPersistentDataContainer();
         augments.forEach((name, augment) -> {
-            Integer level = container.get(augment.key(), PersistentDataType.INTEGER);
+            Integer level = container.get(augment.getNamespace(), PersistentDataType.INTEGER);
             if (level == null || level <= 0) return;
 
             result.put(augment, Math.min(level, augment.getMaxLevel())); // Use the maximum level of the augment

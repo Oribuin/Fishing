@@ -268,7 +268,7 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
             result.setCustomNameVisible(true);
             result.setPersistent(true);
             result.customName(FishUtils.kyorify(this.displayName));
-            result.setItem(EquipmentSlot.HEAD, TotemConfig.get().getTotemItem().build());
+            result.setItem(EquipmentSlot.HEAD, TotemConfig.get().getTotemItem().create());
 
             // Lock all the slots
             for (EquipmentSlot slot : EquipmentSlot.values()) {
@@ -452,7 +452,9 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
         container.set(TOTEM_USERS.key(), TOTEM_USERS, this.users);
         container.set(TOTEM_BAG.key(), TOTEM_BAG, this.bag);
         container.set(TOTEM_OWNER_NAME.key(), TOTEM_OWNER_NAME, this.ownerName);
-        container.set(TOTEM_DISPLAY_NAME.key(), TOTEM_DISPLAY_NAME, this.displayName);
+        
+        if (this.displayName != null) container.set(TOTEM_DISPLAY_NAME.key(), TOTEM_DISPLAY_NAME, this.displayName);
+        
         //        if (this.skin != null) container.set(TOTEM_SKIN.key(), TOTEM_SKIN, this.skin.id()); // TODO: Totem Skin
 
         // Write the upgrade containers
@@ -536,7 +538,7 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
 
             // Add all the placeholders for the upgrade
             upgrade.getPlaceholders(this)
-                    .getPlaceholders()
+                    .getAll()
                     .forEach((key, value) -> {
                         String upgradeKey = "upgrade_" + upgradeId + "_" + key;
                         builder.add(upgradeKey, value);

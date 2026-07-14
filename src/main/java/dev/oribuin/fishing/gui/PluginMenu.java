@@ -1,6 +1,7 @@
 package dev.oribuin.fishing.gui;
 
 import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.config.item.ConstructType;
 import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.manager.MenuManager;
 import dev.oribuin.fishing.scheduler.PluginScheduler;
@@ -8,15 +9,12 @@ import dev.oribuin.fishing.scheduler.task.ScheduledTask;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.BaseGui;
-import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -24,8 +22,8 @@ import java.util.function.Supplier;
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
 public abstract class PluginMenu<T extends BaseGui, Z extends GuiConfig> {
 
-    public static final ItemConstruct BORDER = new ItemConstruct(Material.BLACK_STAINED_GLASS_PANE)
-            .setTooltip(false);
+    public static final ItemConstruct BORDER = ItemConstruct.of(Material.BLACK_STAINED_GLASS_PANE)
+            .setProperty(ConstructType.TOOLTIP, x -> x.setVisible(false));
 
     protected final FishingPlugin plugin;
     protected final Class<Z> configClass;

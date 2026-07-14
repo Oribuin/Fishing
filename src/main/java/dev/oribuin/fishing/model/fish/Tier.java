@@ -51,8 +51,8 @@ public class Tier {
         this.sellMoney = 25;
         this.catchExperience = 100;
         this.naturalExperience = 10;
-        this.tierDisplay = new ItemConstruct(Material.COPPER_INGOT);
-        this.item = new ItemConstruct(Material.COD);
+        this.tierDisplay = ItemConstruct.of(Material.COPPER_INGOT);
+        this.item = ItemConstruct.of(Material.COD);
     }
 
     /**

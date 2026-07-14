@@ -2,8 +2,10 @@ package dev.oribuin.fishing.gui.impl.user;
 
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.impl.PluginMessages;
+import dev.oribuin.fishing.config.item.ConstructComponent;
+import dev.oribuin.fishing.config.item.ConstructType;
 import dev.oribuin.fishing.config.item.ItemConstruct;
-import dev.oribuin.fishing.config.item.component.TooltipConstructType;
+import dev.oribuin.fishing.config.item.component.TooltipItemType;
 import dev.oribuin.fishing.gui.GuiConfig;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
@@ -160,19 +162,17 @@ public class FishGutMenu extends PluginMenu<Gui, FishGutMenu.Config> {
 
         private List<Integer> sellSlots = FishUtils.parseList("9-35");
 
-        private MenuItem gutFish = new ItemConstruct(Material.NETHERITE_SWORD)
+        private MenuItem gutFish = ItemConstruct.of(Material.PAPER)
                 .setName("<white>[<#94bc80>Gut Fish<white>]")
                 .setLore(
                         "<gray>Gut all the fish that you have",
                         "<gray>placed inside the menu for entropy"
                 )
-                .setGlowing(true)
-                .setTooltip(TooltipConstructType.of(true, List.of(
-                        DataComponentTypes.ATTRIBUTE_MODIFIERS
-                )))
+                .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
+                .setProperty(ConstructType.MODEL, x -> x.setValue("minecraft:netherite_sword"))
                 .asMenuItem(40);
 
-        private MenuItem mainMenu = new ItemConstruct(Material.ARROW)
+        private MenuItem mainMenu = ItemConstruct.of(Material.ARROW)
                 .setName("<white>[<#94bc80>Main Menu<white>]")
                 .setLore("<gray>Click to go back to the main menu")
                 .asMenuItem(36);

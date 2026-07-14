@@ -1,6 +1,8 @@
 package dev.oribuin.fishing.gui.impl.totem;
 
 import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.config.item.ConstructComponent;
+import dev.oribuin.fishing.config.item.ConstructType;
 import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.gui.GuiConfig;
 import dev.oribuin.fishing.gui.MenuItem;
@@ -44,7 +46,7 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui, TotemUpgradeMenu.
             TotemMainMenu mainMenu = new TotemMainMenu(plugin, totemSupplier);
             mainMenu.open((Player) event.getWhoClicked());
         });
-        
+
         this.placeUpgrades();
     }
 
@@ -58,7 +60,8 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui, TotemUpgradeMenu.
         gui.clearPageItems();
         Totem totem = this.totemSupplier.get();
         totem.getUpgrades().forEach((upgradeId, upgrade) -> {
-            ItemStack item = UPGRADE_STYLE.build(upgrade.getPlaceholders(totem));
+            ItemStack item = UPGRADE_STYLE.create(upgrade.getPlaceholders(totem));
+            if (item == null) return;
             // todo: make less ugly
             gui.addItem(new GuiItem(item, x -> {
                 if (upgrade.increaseLevel((Player) x.getWhoClicked(), totem)) {
@@ -87,7 +90,7 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui, TotemUpgradeMenu.
     @ConfigSerializable
     @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
     public static class Config extends GuiConfig {
-        private MenuItem totemStats = new ItemConstruct(Material.OAK_HANGING_SIGN)
+        private MenuItem totemStats = ItemConstruct.of(Material.OAK_HANGING_SIGN)
                 .setName("<white>[<#94bc80>Totem Details<white>]")
                 .setLore(
                         "<gray>Here are the current upgrades",
@@ -100,20 +103,20 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui, TotemUpgradeMenu.
                         " <#94bc80>- <white>Duration: <#94bc80><upgrade_duration_total>",
                         " <#94bc80>- <white>Cooldown: <#94bc80><upgrade_cooldown_total>"
                 )
-                .setGlowing(true)
+                .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
                 .asMenuItem(4);
 
-        private MenuItem previousPage = new ItemConstruct(Material.ARROW)
+        private MenuItem previousPage = ItemConstruct.of(Material.ARROW)
                 .setName("<white>[<#94bc80>Previous Page<white>]")
                 .setLore("<gray>Click here to go to the previous page")
                 .asMenuItem(3);
 
-        private MenuItem totemMainMenu = new ItemConstruct(Material.KNOWLEDGE_BOOK)
+        private MenuItem totemMainMenu = ItemConstruct.of(Material.KNOWLEDGE_BOOK)
                 .setName("<white>[<#94bc80>Totem Main Menu<white>]")
                 .setLore("<gray>Click here to go to the totem menu")
                 .asMenuItem(4);
 
-        private MenuItem nextPage = new ItemConstruct(Material.ARROW)
+        private MenuItem nextPage = ItemConstruct.of(Material.ARROW)
                 .setName("<white>[<#94bc80>Next Page<white>]")
                 .setLore("<gray>Click here to go to the next page")
                 .asMenuItem(5);
@@ -144,15 +147,15 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui, TotemUpgradeMenu.
 
     // region Items
 
-    private static final ItemConstruct PAGE_FORWARD = new ItemConstruct(Material.ARROW)
+    private static final ItemConstruct PAGE_FORWARD = ItemConstruct.of(Material.ARROW)
             .setName("<white>[<#94bc80>Next Page<white>]")
             .setLore("<gray>Click here to go to the next page");
 
-    private static final ItemConstruct PAGE_BACKWARD = new ItemConstruct(Material.ARROW)
+    private static final ItemConstruct PAGE_BACKWARD = ItemConstruct.of(Material.ARROW)
             .setName("<white>[<#94bc80>Previous Page<white>]")
             .setLore("<gray>Click here to go to the previous page");
 
-    private static final ItemConstruct UPGRADE_STYLE = new ItemConstruct(Material.HEART_OF_THE_SEA) // Upgrades will choose their own item, idgaf
+    private static final ItemConstruct UPGRADE_STYLE = ItemConstruct.of(Material.HEART_OF_THE_SEA) // Upgrades will choose their own item, idgaf
             .setName("<white>[<#94bc80><bold><name><white>]")
             .setLore(
                     "<gray><description>",
@@ -162,7 +165,8 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui, TotemUpgradeMenu.
                     " <#94bc80>- <gray>Max Level: <white><max_level>",
                     ""
             )
-            .setGlowing(true);
+            .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
+            .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled);
     // endregion
 
 

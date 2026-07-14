@@ -3,6 +3,8 @@ package dev.oribuin.fishing.model.augment;
 import com.google.common.base.Supplier;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.FishEventHandler;
+import dev.oribuin.fishing.config.item.ConstructComponent;
+import dev.oribuin.fishing.config.item.ConstructType;
 import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.manager.AugmentManager;
 import dev.oribuin.fishing.model.economy.Cost;
@@ -13,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.Event;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.ArrayList;
@@ -20,6 +23,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Logger;
+
+import static com.jeff_media.morepersistentdatatypes.DataType.STRING;
 
 /**
  * Augments are upgrades that can be crafted and applied to fishing rods to give them unique abilities to help the player produce more fish.
@@ -63,8 +68,23 @@ public abstract class Augment extends FishEventHandler {
         this.displayLine = "<red>" + StringUtils.capitalize(name.replace("_", " ")) + " <level_roman>";
         this.permission = "fishing.augment." + name;
         this.conflictsWith = new ArrayList<>();
-        this.displayItem = this.defaultItem();
         this.price = Cost.of(CurrencyRegistry.ENTROPY, 25000);
+        this.displayItem = ItemConstruct.of(Material.FIREWORK_STAR)
+                .setName("<white>[<#94bc80><bold><display_name></bold><white>]")
+                .setLore(
+                        "<gray>" + String.join("<br>", description),
+                        "",
+                        "<#94bc80>Information",
+                        " <#94bc80>- <gray>Required Level: <white><required_level>",
+                        " <#94bc80>- <gray>Max Level: <white><max_level>",
+                        ""
+                )
+                .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
+                .setFunction(stack -> stack.editMeta(itemMeta -> {
+                    PersistentDataContainer container = itemMeta.getPersistentDataContainer();
+                    container.set(this.getNamespace(), STRING, this.name);
+                }));
+
     }
 
     /**
@@ -88,34 +108,11 @@ public abstract class Augment extends FishEventHandler {
     }
 
     /**
-     * The base itemstack design for the augment, this will be handed to players and shown in the codex
-     * <p>
-     * TODO: Replace this method with a global itemstack registry
-     *
-     * @return The default {@link ItemConstruct} for the augment
-     */
-    private ItemConstruct defaultItem() {
-        List<String> lore = new ArrayList<>(this.description);
-        lore.addAll(List.of(
-                "",
-                "<#94bc80>Information",
-                " <#94bc80>- <gray>Required Level: <white><required_level>",
-                " <#94bc80>- <gray>Max Level: <white><max_level>",
-                ""
-        ));
-
-        return new ItemConstruct(Material.FIREWORK_STAR)
-                .setName("<white>[<#94bc80><bold><display_name></bold><white>]")
-                .setLore(lore)
-                .setGlowing(true);
-    }
-
-    /**
      * The {@link NamespacedKey} for the augment, used to identify the augment in the plugin
      *
      * @return The namespace key, typically this will be "fishing:augment_name"
      */
-    public final NamespacedKey key() {
+    public final NamespacedKey getNamespace() {
         return new NamespacedKey(FishingPlugin.get(), this.name);
     }
 
@@ -124,7 +121,7 @@ public abstract class Augment extends FishEventHandler {
      *
      * @return The namespace key for the lore of the augment, typically this will be "fishing:augment_name-lore"
      */
-    public final NamespacedKey loreKey() {
+    public final NamespacedKey getLoreNamespace() {
         return new NamespacedKey(FishingPlugin.get(), this.name + "-lore");
     }
 
