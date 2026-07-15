@@ -110,13 +110,8 @@ public class GiveCommand implements FishCommand {
         if (amount == null || amount < 0) amount = 1;
 
         Totem totem = new Totem(null, null, target.getUniqueId());
-        ItemStack itemStack = TotemConfig.get().getTotemItem().create(totem.getPlaceholders());
+        ItemStack itemStack = TotemConfig.get().getTotemItem().create(totem.getPlaceholders()).clone();
         totem.saveTo(itemStack);
-
-        if (itemStack == null) {
-            sender.sendMessage("An error occurred while creating the fish item."); // TODO: Plugin Message
-            return;
-        }
 
         if (target.getInventory().firstEmpty() == -1) {
             PluginMessages.get().getFullInventory().send(sender); // TODO: Drop items on the ground

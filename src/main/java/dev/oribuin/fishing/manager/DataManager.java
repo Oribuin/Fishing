@@ -6,23 +6,29 @@ import dev.oribuin.fishing.config.impl.MySQLConfig;
 import dev.oribuin.fishing.database.connector.DatabaseConnector;
 import dev.oribuin.fishing.database.connector.MySQLConnector;
 import dev.oribuin.fishing.database.connector.SQLiteConnector;
+import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.scheduler.PluginScheduler;
 import dev.oribuin.fishing.storage.Fisher;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class DataManager implements Manager {
 
     private static final String USERS_PREFIX = "fishingplugin_users";
+    private static final String TOTEMS_PREFIX = "fishingplugin_totems";
     private static final Gson GSON = new Gson();
 
     private final FishingPlugin plugin;
@@ -62,8 +68,10 @@ public class DataManager implements Manager {
 
         // Create the initial table for the plugin
         this.connector.connect(connection -> {
-            try (PreparedStatement statement = connection.prepareStatement(CREATE_TABLE)) {
-                statement.executeUpdate();
+            try (Statement statement = connection.createStatement()) {
+                statement.addBatch(CREATE_TABLE_USERS);
+                statement.addBatch(CREATE_TABLE_TOTEMS);
+                statement.executeBatch();
             }
         });
 
@@ -73,6 +81,9 @@ public class DataManager implements Manager {
         // Load all the users who are currently online
         Collection<UUID> uuids = Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).toList();
         this.loadBatch(uuids);
+
+        // Load all the totems in the plugin 
+
     }
 
     /**
@@ -217,6 +228,71 @@ public class DataManager implements Manager {
     }
 
     /**
+     * Save a totem into the database
+     *
+     * @param totem The totem to save
+     */
+    public void saveTotem(Totem totem) {
+        ArmorStand display = totem.getDisplay();
+        if (display == null) return;
+
+        this.async(() -> this.connector.connect(connection -> {
+            try (PreparedStatement statement = connection.prepareStatement(SAVE_TOTEM)) {
+                statement.setString(1, display.getUniqueId().toString());
+                statement.setString(2, display.getWorld().getName());
+                statement.executeUpdate();
+            }
+        }));
+    }
+
+    /**
+     * Remove a totem from the database
+     *
+     * @param totem The totem to remove
+     */
+    public void removeTotem(UUID totem) {
+        this.async(() -> this.connector.connect(connection -> {
+            try (PreparedStatement statement = connection.prepareStatement(REMOVE_TOTEM)) {
+                statement.setString(1, totem.toString());
+                statement.executeUpdate();
+            }
+        }));
+    }
+
+    /**
+     * Load all the totems that are stored in the database
+     *
+     * @return The totem stored
+     */
+    public CompletableFuture<Map<UUID, Totem>> loadTotems() {
+        return CompletableFuture.supplyAsync(() -> {
+            Map<UUID, Totem> results = new HashMap<>();
+            try (
+                    Connection connection = this.connector.connect();
+                    PreparedStatement statement = connection.prepareStatement(SELECT_TOTEMS)
+            ) {
+                ResultSet result = statement.executeQuery();
+                while (result.next()) {
+                    String world = result.getString("world");
+                    String entityId = result.getString("entityId");
+                    if (entityId == null || world == null) continue;
+
+                    UUID entityUUID = UUID.fromString(entityId);
+                    Entity entity = Bukkit.getEntity(entityUUID);
+                    if (entity == null || entity.isDead() || !(entity instanceof ArmorStand stand)) continue;
+                    if (!entity.getWorld().getName().equals(world)) continue;
+
+                    results.put(entityUUID, new Totem(stand));
+                }
+            } catch (SQLException e) {
+                this.plugin.getLogger().severe("An error occurred loading totems: " + e.getMessage());
+            }
+
+            return results;
+        });
+    }
+
+    /**
      * Get all the current players from the cache
      *
      * @return The current players in the cache
@@ -238,17 +314,24 @@ public class DataManager implements Manager {
     }
 
     // SQL Queries
-    private final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS `fishingplugin_users` (" +
-                                        "`uuid` VARCHAR(36) NOT NULL PRIMARY KEY," +
-                                        "`entropy` INT NOT NULL," +
-                                        "`level` INT NOT NULL," +
-                                        "`experience` INT NOT NULL," +
-                                        "`skill_points` INT NOT NULL," +
-                                        "`skills` TEXT NOT NULL" +
-                                        ");";
+    private final String CREATE_TABLE_USERS = "CREATE TABLE IF NOT EXISTS `fishingplugin_users` (" +
+                                              "`uuid` VARCHAR(36) NOT NULL PRIMARY KEY," +
+                                              "`entropy` INT NOT NULL," +
+                                              "`level` INT NOT NULL," +
+                                              "`experience` INT NOT NULL," +
+                                              "`skill_points` INT NOT NULL," +
+                                              "`skills` TEXT NOT NULL" +
+                                              ")";
     private final String SAVE_USER = "REPLACE INTO `fishingplugin_users` " +
                                      "(`uuid`, `entropy`, `level`, `experience`, `skill_points`, `skills`) " +
                                      "VALUES(?, ?, ?, ?, ?, ?)";
 
+    private final String CREATE_TABLE_TOTEMS = "CREATE TABLE IF NOT EXISTS `fishingplugin_totems`(" +
+                                               "`entityId` VARCHAR(36) NOT NULL PRIMARY KEY, " +
+                                               "`world` VARCHAR(100) NOT NULL" +
+                                               ")";
 
+    private final String SELECT_TOTEMS = "SELECT * FROM `fishingplugin_totems`";
+    private final String SAVE_TOTEM = "REPLACE INTO `fishingplugin_totems` (`entityId`, `world`) VALUES (?, ?)";
+    private final String REMOVE_TOTEM = "DELETE FROM `fishingplugin_totems` WHERE `entityId` = ?";
 }

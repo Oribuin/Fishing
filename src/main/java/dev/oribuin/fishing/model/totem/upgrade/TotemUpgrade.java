@@ -75,7 +75,7 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
         // TODO: Cost check here
         this.level++;
         this.writeContainer(display.getPersistentDataContainer());
-        PluginMessages.get().getHitMaxLevel().send(player,
+        PluginMessages.get().getTotem().getUpgradeLevelUp().send(player,
                 "level", this.level,
                 "max", this.maxLevel,
                 "upgrade", this.name
@@ -91,6 +91,14 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
      * @return The resulting placeholders
      */
     public @NotNull Placeholders getPlaceholders(@NotNull Totem totem) {
+        //     protected transient int level;
+        //    protected boolean enabled; // If the upgrade is enabled
+        //    protected String name; // The name of the upgrade
+        //    protected List<String> description; // The description of the upgrade
+        //    protected ItemConstruct icon; // The icon of the upgrade
+        //    protected int defaultLevel; // The default level of the upgrade
+        //    protected int maxLevel; // The maximum level of the upgrade
+        //    protected String permission; // The permission required to purchase the upgrade
         return Placeholders.empty();
     }
 

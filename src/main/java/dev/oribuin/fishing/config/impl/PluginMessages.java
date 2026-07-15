@@ -74,7 +74,7 @@ public class PluginMessages {
         private TextMessage noSpace = new TextMessage(PREFIX + "There is not enough space available for the fishing totem");
 
         @Comment("Player has activated the totem")
-        private TextMessage activated = new TextMessage(PREFIX + "You have activated this fishing totem, It will last for <#93bc80><time> <white>minutes");
+        private TextMessage activated = new TextMessage(PREFIX + "Your fishing totem will be active for <#93bc80><time>");
 
         @Comment("Totem is currently on cooldown")
         private TextMessage onCooldown = new TextMessage(PREFIX + "You cannot activate this totem as it is on cooldown");
@@ -83,7 +83,7 @@ public class PluginMessages {
         private TextMessage alreadyActive = new TextMessage(PREFIX + "This totem is already active");
         
         @Comment("Player has levelled up an upgrade on the totem")
-        private TextMessage upgradeLevelUp = new TextMessage(PREFIX + "You have increased the level of <#93bc80><upgrade> <white>to <#93bc80><level><white>/<#93bc8i0<max>");
+        private TextMessage upgradeLevelUp = new TextMessage(PREFIX + "You have increased the level of <#93bc80><upgrade> <white>to <#93bc80><level><white>/<#93bc80><max>");
         
         @Comment("Player cannot access the totems menu")
         private TextMessage cannotAccess = new TextMessage(PREFIX + "You cannot interact with this totem as it belongs to someone else.");
@@ -93,7 +93,9 @@ public class PluginMessages {
         
         @Comment("Other player activated totem")
         private TextMessage otherPlayerActivated = new TextMessage(PREFIX + "The player <#93bc80><activator> <white>has activated your totem");
-
+        
+        @Comment("Another totem is active in the nearby area")
+        private TextMessage otherActiveNearby = new TextMessage(PREFIX + "There is already a totem active within this totem's range which may conflict, Activate this totem again to confirm");
 
         public TextMessage getPlaced() {
             return placed;
@@ -133,6 +135,10 @@ public class PluginMessages {
 
         public TextMessage getOtherPlayerActivated() {
             return otherPlayerActivated;
+        }
+
+        public TextMessage getOtherActiveNearby() {
+            return otherActiveNearby;
         }
     }
 

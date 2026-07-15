@@ -1,12 +1,12 @@
 package dev.oribuin.fishing.model.totem;
 
 import com.destroystokyo.paper.ParticleBuilder;
-import com.jeff_media.morepersistentdatatypes.DataType;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.FishEventHandler;
 import dev.oribuin.fishing.api.event.impl.TotemActivateEvent;
 import dev.oribuin.fishing.api.event.impl.TotemDeactivateEvent;
 import dev.oribuin.fishing.api.task.AsyncTicker;
+import dev.oribuin.fishing.config.impl.PluginMessages;
 import dev.oribuin.fishing.config.impl.TotemConfig;
 import dev.oribuin.fishing.model.cosmetic.skin.TotemSkin;
 import dev.oribuin.fishing.model.totem.upgrade.TotemUpgrade;
@@ -45,6 +45,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.jeff_media.morepersistentdatatypes.DataType.TAG_CONTAINER;
 import static dev.oribuin.fishing.storage.util.KeyRegistry.*;
 
 public class Totem implements PDCSerializable, AsyncTicker { // extends Propertied implements AsyncTicker, Animated
@@ -61,6 +62,8 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
     private Map<Integer, ItemStack> bag;
     private Set<UUID> users;
     private Map<String, TotemUpgrade> upgrades;
+    private UUID displayId;
+    private boolean confirmedActivate;
     private ArmorStand display;
 
     /**
@@ -70,6 +73,7 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
      */
     public Totem(ArmorStand display) {
         this(display, display.getPersistentDataContainer());
+        this.displayId = display.getUniqueId();
         this.display = display;
     }
 
@@ -81,7 +85,9 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
      */
     public Totem(ArmorStand display, PersistentDataContainer container) {
         this(display.getLocation().toCenterLocation(), container);
+        this.displayId = display.getUniqueId();
         this.display = display;
+        this.readContainer(container);
     }
 
     /**
@@ -99,7 +105,6 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
         } else {
             this.ownerName = "N/A";
         }
-        this.writeContainer(container);
         this.readContainer(container);
     }
 
@@ -120,6 +125,7 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
         this.bag = new HashMap<>();
         this.users = new HashSet<>();
         this.upgrades = new LinkedHashMap<>(UpgradeRegistry.getDefault());
+        this.confirmedActivate = false;
         this.readContainer(container);
     }
 
@@ -177,8 +183,6 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
      */
     @Override
     public void tickAsync() {
-        if (this.display == null || this.display.isDead() || this.position.isChunkLoaded()) return;
-
         // Spawn particles around the totem 
         // TODO: Move this to an animation API
         if (System.currentTimeMillis() - this.lastActive > Duration.ofSeconds(1).toMillis()) {
@@ -186,9 +190,10 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
             Color color = Color.RED;
             if (active) color = Color.LIME;
             if (!active && this.onCooldown()) color = Color.YELLOW;
+            System.out.println();
 
             new ParticleBuilder(Particle.DUST)
-                    .location(this.display.getEyeLocation().toCenterLocation())
+                    .location(this.position)
                     .offset(0.5, 0.5, 0.5)
                     .count(10)
                     .extra(0)
@@ -220,9 +225,10 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
         // TODO: Move this to a disabled state
         long duration = this.getDuration().toMillis();
         if (active && System.currentTimeMillis() - lastActive > duration) {
+            System.out.println("Deactivating the totem ");
             this.active = false;
             this.lastActive = System.currentTimeMillis();
-            this.writeContainer(this.display.getPersistentDataContainer());// Update the totem
+            this.writeContainer(this.display.getPersistentDataContainer()); // Update the totem
 
             // Call the totem activate event on upgrades
             FishEventHandler.callEvents(this.getUpgradeLevelMapping(), new TotemDeactivateEvent(this));
@@ -235,15 +241,33 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
      * @param player The activating player
      */
     public void activate(Player player) {
-        if (this.display == null || this.display.isDead()) return;
+        ArmorStand display = this.getDisplay();
+        if (display == null || display.isDead()) return;
+
         if (this.onCooldown()) {
-            FishingPlugin.get().getLogger().warning("Failed to activate totem, The totem is on cooldown.");
+            PluginMessages.get().getTotem().getOnCooldown().send(player);
             return;
         }
 
+        Totem closestActive = FishingPlugin.get().getTotemManager().getClosestActive(this.position);
+        if (closestActive != null) {
+            boolean isInRadius = this.isWithinRadius(closestActive.getPosition()) || closestActive.isWithinRadius(this.position);
+            // Checks whether either totems are within each other's bounds
+            if (isInRadius && !confirmedActivate) {
+                PluginMessages.get().getTotem().getOtherActiveNearby().send(player);
+                confirmedActivate = true;
+                return;
+            }
+
+        }
+
+        this.confirmedActivate = false;
         this.active = true;
         this.lastActive = System.currentTimeMillis();
-        this.writeContainer(this.display.getPersistentDataContainer());
+        this.writeContainer(display.getPersistentDataContainer());
+
+        // Tell the player they activated the totem
+        PluginMessages.get().getTotem().getActivated().send(player, "time", FishUtils.formatTime(this.getDuration().toMillis()));
 
         // Call the totem activate event on upgrades
         FishEventHandler.callEvents(this.getUpgradeLevelMapping(), new TotemActivateEvent(this, player));
@@ -258,9 +282,9 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
         if (this.displayName == null) {
             this.displayName = this.ownerName + "'s Totem";
         }
-        
+
         this.position = location.toBlockLocation().add(0.5, -0.3, 0.5);
-        this.display = this.position.getWorld().spawn(this.position, ArmorStand.class, CreatureSpawnEvent.SpawnReason.CUSTOM, result -> {
+        ArmorStand stand = this.position.getWorld().spawn(this.position, ArmorStand.class, CreatureSpawnEvent.SpawnReason.CUSTOM, result -> {
             result.setInvisible(false);
             result.setCanTick(false);
             result.setGravity(false);
@@ -277,6 +301,7 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
             }
 
             // Save the properties to the entity
+            this.displayId = result.getUniqueId();
             this.writeContainer(result.getPersistentDataContainer());
         });
 
@@ -287,7 +312,7 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
         Bukkit.getScheduler().runTaskTimerAsynchronously(FishingPlugin.get(), task -> {
 
             // Remove the task if the entity or center is null
-            if (this.display == null || this.display.isDead() || this.position == null) {
+            if (stand.isDead() || this.position == null || !this.position.isChunkLoaded()) {
                 task.cancel();
                 return;
             }
@@ -427,15 +452,6 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
     }
 
     /**
-     * Write data into a data container using the armour stand display
-     */
-    public void writeContainer() {
-        if (this.display == null) return;
-
-        this.writeContainer(this.display.getPersistentDataContainer());
-    }
-
-    /**
      * Write data into a data container
      *
      * @param container The container to write into
@@ -452,9 +468,9 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
         container.set(TOTEM_USERS.key(), TOTEM_USERS, this.users);
         container.set(TOTEM_BAG.key(), TOTEM_BAG, this.bag);
         container.set(TOTEM_OWNER_NAME.key(), TOTEM_OWNER_NAME, this.ownerName);
-        
+
         if (this.displayName != null) container.set(TOTEM_DISPLAY_NAME.key(), TOTEM_DISPLAY_NAME, this.displayName);
-        
+
         //        if (this.skin != null) container.set(TOTEM_SKIN.key(), TOTEM_SKIN, this.skin.id()); // TODO: Totem Skin
 
         // Write the upgrade containers
@@ -462,25 +478,21 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
         PersistentDataContainer upgradesContainer = context.newPersistentDataContainer();
         for (TotemUpgrade totemUpgrade : this.upgrades.values()) {
             PersistentDataContainer upgradeContainer = context.newPersistentDataContainer();
-            totemUpgrade.writeContainer(upgradeContainer);
-            if (!upgradesContainer.getKeys().isEmpty()) {
-                String identifier = totemUpgrade.getIdentifier().get();
-                NamespacedKey key = NamespacedKey.fromString("upgrade_" + identifier, FishingPlugin.get());
-                if (identifier == null || key == null) {
-                    FishingPlugin.get().getLogger().warning("Totem Upgrade[" + totemUpgrade.getClass().getSimpleName() + "] does not have an identifier");
-                    return;
-                }
-
-                upgradesContainer.set(key, TOTEM_UPGRADES, upgradesContainer);
+            String identifier = totemUpgrade.getIdentifier().get();
+            NamespacedKey key = NamespacedKey.fromString("upgrade_" + identifier, FishingPlugin.get());
+            if (identifier == null || key == null) {
+                FishingPlugin.get().getLogger().warning("Totem Upgrade[" + totemUpgrade.getClass().getSimpleName() + "] does not have an identifier");
+                return;
             }
+
+            totemUpgrade.writeContainer(upgradeContainer);
+            upgradesContainer.set(key, TAG_CONTAINER, upgradeContainer);
         }
 
-        if (!upgradesContainer.isEmpty()) {
-            container.set(TOTEM_UPGRADES.key(), TOTEM_UPGRADES, upgradesContainer);
-        }
+        container.set(TOTEM_UPGRADES.key(), TAG_CONTAINER, upgradesContainer);
 
-        if (this.display != null) {
-            FishingPlugin.get().getTotemManager().registerTotem(this);
+        if (this.displayId != null) {
+            FishingPlugin.get().getTotemManager().registerTotem(this.displayId, this);
         }
     }
 
@@ -507,14 +519,13 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
         // this.skin = container.get(TOTEM_SKIN.key(), TOTEM_SKIN);
 
         // Load all the totem upgrades from the container
-        PersistentDataContainer upgradeContainer = container.get(TOTEM_UPGRADES.key(), TOTEM_UPGRADES);
+        PersistentDataContainer upgradeContainer = container.get(TOTEM_UPGRADES.key(), TAG_CONTAINER);
         if (upgradeContainer != null) {
             for (NamespacedKey key : upgradeContainer.getKeys()) {
-                String name = key.getKey();
-                PersistentDataContainer upgrade = upgradeContainer.get(key, DataType.TAG_CONTAINER);
+                PersistentDataContainer upgrade = upgradeContainer.get(key, TAG_CONTAINER);
                 if (upgrade == null) continue;
 
-                TotemUpgrade totemUpgrade = this.upgrades.get(name);
+                TotemUpgrade totemUpgrade = this.upgrades.get(key.value().replace("upgrade_", ""));
                 if (totemUpgrade != null) totemUpgrade.readContainer(upgrade);
             }
         }
@@ -531,7 +542,7 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
         builder.add("active", this.active ? "Active" : "Inactive");
         builder.add("status", FishUtils.capitalizeFully(this.privacy.name().replace("_", " ")));
         builder.add("name", this.displayName != null ? this.displayName : "N/A");
-        
+
         // Add the upgrade placeholders
         this.upgrades.forEach((upgradeId, upgrade) -> {
             builder.add("upgrade_" + upgradeId, upgrade.getLevel());
@@ -546,6 +557,26 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
         });
 
         return builder.build();
+    }
+
+    @Override
+    public String toString() {
+        return "Totem{" +
+               "position=" + position +
+               ", owner=" + owner +
+               ", active=" + active +
+               ", lastActive=" + lastActive +
+               ", level=" + level +
+               ", privacy=" + privacy +
+               ", skin=" + skin +
+               ", ownerName='" + ownerName + '\'' +
+               ", displayName='" + displayName + '\'' +
+               ", bag=" + bag +
+               ", users=" + users +
+               ", upgrades=" + upgrades +
+               ", displayId=" + displayId +
+               ", confirmedActivate=" + confirmedActivate +
+               '}';
     }
 
     public Location getPosition() {
@@ -645,11 +676,28 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
     }
 
     public ArmorStand getDisplay() {
-        return display;
+        if (this.displayId == null) return null;
+        if (this.display != null && !this.display.isDead()) {
+            return this.display;
+        }
+
+        return this.display = this.position.getWorld().getEntity(this.displayId) instanceof ArmorStand stand ? stand : null;
     }
 
-    public void setDisplay(ArmorStand display) {
-        this.display = display;
+    public UUID getDisplayId() {
+        return displayId;
+    }
+
+    public void setDisplayId(UUID displayId) {
+        this.displayId = displayId;
+    }
+
+    public boolean isConfirmedActivate() {
+        return confirmedActivate;
+    }
+
+    public void setConfirmedActivate(boolean confirmedActivate) {
+        this.confirmedActivate = confirmedActivate;
     }
 
     //

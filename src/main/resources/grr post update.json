@@ -1,0 +1,112 @@
+{
+  Paper.SpawnReason: "CUSTOM",
+  DeathTime: 0s,
+  BukkitValues: {
+    "fishing:totem_owner": [
+      B
+      ;
+      -97b,
+      124b,
+      -12b,
+      97b,
+      -112b,
+      63b,
+      78b,
+      -8b,
+      -118b,
+      -120b,
+      -67b,
+      -68b,
+      73b,
+      -128b,
+      99b,
+      100b
+    ],
+    "fishing:totem_owner_name": "Oribuin",
+    "fishing:totem_privacy": "FRIENDS_ONLY",
+    "fishing:totem_bag": {
+      "k:s": 0
+    },
+    "fishing:totem_active": 0b,
+    "fishing:totem_users": {
+      "v:s": 0
+    },
+    "fishing:totem_display_name": "Oribuin's Totem",
+    "fishing:totem_level": 1,
+    "fishing:totem_last_active": 0L,
+    "fishing:upgrade_level": 12
+  },
+  Bukkit.updateLevel: 2,
+  OnGround: 0b,
+  AbsorptionAmount: 0.0f,
+  Invulnerable: 0b,
+  Brain: {
+    memories: {}
+  },
+  Paper.Origin: [
+    -223.5d,
+    62.7d,
+    -620.5d
+  ],
+  Pose: {},
+  CustomNameVisible: 1b,
+  Rotation: [
+    0.0f,
+    0.0f
+  ],
+  HurtByTimestamp: 0,
+  WorldUUIDMost: -8286447063142217114L,
+  attributes: [
+    {
+      base: 0.0d,
+      id: "minecraft:waypoint_transmit_range"
+    }
+  ],
+  CustomName: {
+    italic: 0b,
+    text: "Oribuin's Totem"
+  },
+  fall_distance: 0.0d,
+  Paper.CanTickOverride: 0b,
+  Invisible: 1b,
+  Air: 300s,
+  Paper.OriginWorld: [
+    I
+    ;
+    -1929338804,
+    -1353430426,
+    -1782818792,
+    592852171
+  ],
+  UUID: [
+    I
+    ;
+    1526421333,
+    -1336784345,
+    -1904396435,
+    -1585029665
+  ],
+  NoBasePlate: 0b,
+  Spigot.ticksLived: 2240,
+  DisabledSlots: 65535,
+  ShowArms: 0b,
+  NoGravity: 1b,
+  WorldUUIDLeast: -7657148405741374261L,
+  Motion: [
+    0.0d,
+    0.0d,
+    0.0d
+  ],
+  Pos: [
+    -223.5d,
+    62.7d,
+    -620.5d
+  ],
+  Health: 20.0f,
+  HurtTime: 0s,
+  current_impulse_context_reset_grace_time: 0,
+  FallFlying: 0b,
+  Fire: 0s,
+  Small: 0b,
+  PortalCooldown: 0
+}

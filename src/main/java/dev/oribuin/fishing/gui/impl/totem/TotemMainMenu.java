@@ -33,6 +33,7 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
         this.totemSupplier = totemSupplier;
 
         Totem totem = this.totemSupplier.get();
+        System.out.println("MAIN MENU - TOTEM DISPLAY ID: " + totem.getDisplayId());
         Fisher fisher = plugin.getDataManager().get(totem.getOwner());
         Placeholders placeholders = Placeholders.builder()
                 .addAll(fisher.getPlaceholders())
@@ -127,7 +128,6 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
                 }
 
                 totem.activate(activator); // Activate the totem // TODO: Play totem activate animation
-                PluginMessages.get().getTotem().getActivated().send(activator); // Tell the player they activated the totem
                 activator.closeInventory(InventoryCloseEvent.Reason.PLUGIN); // Close the player's inventory
             });
         }

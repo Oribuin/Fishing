@@ -6,19 +6,13 @@ import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.model.totem.upgrade.UpgradeRegistry;
 import dev.oribuin.fishing.scheduler.PluginScheduler;
 import dev.oribuin.fishing.scheduler.task.ScheduledTask;
-import dev.oribuin.fishing.storage.util.FinePosition;
 import dev.oribuin.fishing.storage.util.KeyRegistry;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.persistence.PersistentDataContainer;
 
 import java.io.File;
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -28,7 +22,7 @@ public class TotemManager implements Manager {
     private static final File UPGRADES_FOLDER = new File(FishingPlugin.get().getDataFolder(), "totem");
     private static final ConfigLoader loader = new ConfigLoader(UPGRADES_FOLDER.toPath());
     private final FishingPlugin plugin;
-    private final Map<FinePosition, Totem> totems;
+    private final Map<UUID, Totem> totems;
     private ScheduledTask asyncTicker;
     private long lastTick;
 
@@ -40,16 +34,18 @@ public class TotemManager implements Manager {
 
         UpgradeRegistry.register();
         // Check active chunks
-        CompletableFuture.runAsync(() -> Bukkit.getWorlds().forEach(world ->
-                Arrays.stream(world.getLoadedChunks()).forEach(chunk ->
-                        Arrays.stream(chunk.getEntities()).forEach(entity -> {
-                            if (!(entity instanceof ArmorStand stand)) return;
+        this.plugin.getDataManager().loadTotems().thenAccept(this.totems::putAll);
 
-                            PersistentDataContainer container = stand.getPersistentDataContainer();
-                            if (!container.has(KeyRegistry.TOTEM_OWNER.key(), KeyRegistry.TOTEM_OWNER)) return;
-
-                            this.registerTotem(new Totem(stand));
-                        }))));
+        //        CompletableFuture.runAsync(() -> Bukkit.getWorlds().forEach(world ->
+        //                Arrays.stream(world.getLoadedChunks()).forEach(chunk ->
+        //                        Arrays.stream(chunk.getEntities()).forEach(entity -> {
+        //                            if (!(entity instanceof ArmorStand stand)) return;
+        //
+        //                            PersistentDataContainer container = stand.getPersistentDataContainer();
+        //                            if (!container.has(KeyRegistry.TOTEM_OWNER.key(), KeyRegistry.TOTEM_OWNER)) return;
+        //
+        //                            this.registerTotem(new Totem(stand));
+        //                        }))));
     }
 
     /**
@@ -66,13 +62,10 @@ public class TotemManager implements Manager {
             this.asyncTicker.cancel();
         }
 
-        this.asyncTicker = PluginScheduler.get().runTaskTimerAsync(() -> this.tick(totem -> {
-            Duration cooldown = totem.getCooldown();
-            if (cooldown != Duration.ZERO && System.currentTimeMillis() - this.lastTick < cooldown.toMillis()) return;
-
-            this.lastTick = System.currentTimeMillis();
-            totem.tickAsync();
-        }), 1, 1, TimeUnit.SECONDS);
+        this.asyncTicker = PluginScheduler.get().runTaskTimerAsync(
+                () -> this.tick(Totem::tickAsync),
+                1, 1, TimeUnit.SECONDS
+        );
     }
 
     /**
@@ -94,16 +87,12 @@ public class TotemManager implements Manager {
     public void tick(Consumer<Totem> action) {
         if (this.totems.isEmpty()) return; // don't bother attempting anything if no totems loaded
 
-        new HashMap<>(this.totems).forEach((finePosition, totem) -> {
-            if (!totem.getPosition().isChunkLoaded()) return;
-
-            if (totem.getDisplay() == null || totem.getDisplay().isDead()) {
-                this.unregisterTotem(totem);
-                return;
-            }
-
+        for (Totem totem : this.totems.values()) {
+            if (totem.getDisplayId() == null) continue;
+            if (!totem.isActive()) continue;
+            if (!totem.getPosition().isChunkLoaded()) continue;
             action.accept(totem);
-        });
+        }
     }
 
     /**
@@ -112,11 +101,31 @@ public class TotemManager implements Manager {
      * @param totem The totem to register.
      */
     public void registerTotem(Totem totem) {
-        FinePosition position = FinePosition.from(totem.getPosition());
+        ArmorStand display = totem.getDisplay();
+        if (display == null) return;
 
-        if (!totem.getPosition().isChunkLoaded()) return;
+        this.totems.put(display.getUniqueId(), totem);
+        this.plugin.getDataManager().saveTotem(totem);
+    }
 
-        this.totems.put(position, totem);
+    /**
+     * Register a totem to the totem manager. This will add the totem to the totem map.
+     *
+     * @param stand The armour stand to register it to
+     * @param totem The totem to register.
+     */
+    public void registerTotem(ArmorStand stand, Totem totem) {
+        this.totems.put(stand.getUniqueId(), totem);
+    }
+
+    /**
+     * Register a totem to the totem manager. This will add the totem to the totem map.
+     *
+     * @param stand The armourstand to register it to
+     * @param totem The totem to register.
+     */
+    public void registerTotem(UUID stand, Totem totem) {
+        this.totems.put(stand, totem);
     }
 
     /**
@@ -125,9 +134,10 @@ public class TotemManager implements Manager {
      * @param totem The totem to unregister.
      */
     public void unregisterTotem(Totem totem) {
-        FinePosition position = FinePosition.from(totem.getPosition());
+        if (totem.getDisplayId() == null) return;
 
-        this.totems.remove(position);
+        this.totems.remove(totem.getDisplayId());
+        this.plugin.getDataManager().removeTotem(totem.getDisplayId());
     }
 
     /**
@@ -138,10 +148,20 @@ public class TotemManager implements Manager {
      * @return If the totem is registered.
      */
     public boolean isRegistered(Totem totem) {
-        if (totem == null) return false;
+        if (totem == null || totem.getDisplayId() == null) return false;
 
-        FinePosition position = FinePosition.from(totem.getPosition());
-        return this.totems.containsKey(position);
+        return this.totems.containsKey(totem.getDisplayId());
+    }
+
+    /**
+     * Check if a totem is registered in the totem manager.
+     *
+     * @param totem The totem to check.
+     *
+     * @return If the totem is registered.
+     */
+    public boolean isRegistered(UUID totem) {
+        return this.totems.containsKey(totem);
     }
 
     /**
@@ -164,23 +184,12 @@ public class TotemManager implements Manager {
     /**
      * Get a totem from the totem manager by its fine position.
      *
-     * @param position The fine position of the totem.
+     * @param display The display entity of the totem.
      *
      * @return The totem.
      */
-    public Totem getTotem(FinePosition position) {
-        return this.totems.get(position);
-    }
-
-    /**
-     * Get a totem from the totem manager by its location.
-     *
-     * @param location The location of the totem.
-     *
-     * @return The totem.
-     */
-    public Totem getTotem(Location location) {
-        return this.getTotem(FinePosition.from(location));
+    public Totem getTotem(UUID display) {
+        return this.totems.get(display);
     }
 
     /**
@@ -190,13 +199,19 @@ public class TotemManager implements Manager {
      *
      * @return The totem.
      */
-    public Totem getTotem(ArmorStand stand) {
-        FinePosition position = FinePosition.from(stand.getLocation());
-        return this.totems.computeIfAbsent(position, x -> new Totem(stand));
+    public Totem getAndLoadTotem(ArmorStand stand) {
+        if (!stand.getPersistentDataContainer().has(KeyRegistry.TOTEM_ACTIVE.key())) return null;
+
+        return this.totems.computeIfAbsent(stand.getUniqueId(), uuid -> {
+            System.out.println("Totem has not been registered before, Creating another one with uuid[" + uuid + "]");
+            Totem totem = new Totem(stand);
+            this.plugin.getDataManager().saveTotem(totem);
+            return totem;
+        });
     }
 
-    public Map<FinePosition, Totem> getTotems() {
-        return this.totems;
+    public Map<UUID, Totem> getTotems() {
+        return totems;
     }
 
     public FishingPlugin getPlugin() {

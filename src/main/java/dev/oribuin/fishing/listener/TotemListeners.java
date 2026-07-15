@@ -4,7 +4,6 @@ import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.impl.PluginMessages;
 import dev.oribuin.fishing.config.impl.TotemConfig;
 import dev.oribuin.fishing.gui.impl.totem.TotemMainMenu;
-import dev.oribuin.fishing.manager.MenuManager;
 import dev.oribuin.fishing.manager.TotemManager;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.storage.util.KeyRegistry;
@@ -24,7 +23,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.checkerframework.checker.i18nformatter.qual.I18nUnknownFormat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -86,14 +84,14 @@ public class TotemListeners implements Listener {
         if (!(event.getRightClicked() instanceof ArmorStand stand)) return;
 
         TotemManager manager = this.plugin.getTotemManager();
-        Totem totem = manager.getTotem(stand);
+        Totem totem = manager.getAndLoadTotem(stand);
         Player player = event.getPlayer();
         if (totem == null) return;
 
         event.setCancelled(true);
 
         if (!player.isSneaking()) {
-            new TotemMainMenu(this.plugin, () -> manager.getTotem(stand)).open(player);
+            new TotemMainMenu(this.plugin, () -> manager.getTotem(stand.getUniqueId())).open(player);
             return;
         }
 
@@ -108,53 +106,36 @@ public class TotemListeners implements Listener {
             PluginMessages.get().getFullInventory().send(player);
             return;
         }
-        
+
         ItemStack itemStack = TotemConfig.get().getTotemItem().create(totem.getPlaceholders());
-        if (itemStack == null) return;
 
-        totem.getDisplay().remove(); // Remove the totem entity
-        totem.setDisplay(null); // Set the totem entity to null
         manager.unregisterTotem(totem); // Unregister the totem
+        totem.getDisplay().remove(); // Remove the totem entity
+        totem.setDisplayId(null); // Set the totem entity to null
         PluginMessages.get().getTotem().getRemoved().send(player);
-
         
         totem.saveTo(itemStack);
         player.getInventory().addItem(itemStack);
     }
 
-    /**
-     * Load all the totems in the chunk. This will register all the totems in the chunk.
-     *
-     * @param event The event to listen to.
-     */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    public void onChunkLoad(PlayerChunkLoadEvent event) {
-        TotemManager totemManager = this.plugin.getTotemManager();
-        CompletableFuture.runAsync(() -> Arrays.stream(event.getChunk().getEntities()).forEach(entity -> {
-            if (!(entity instanceof ArmorStand stand)) return;
-
-            totemManager.getTotem(stand); // Loads & Registers Totem
-        }));
-    }
-
-    /**
-     * Unload all the totems in the chunk. This will unregister all the totems in the chunk.
-     *
-     * @param event The event to listen to.
-     */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    public void onChunkUnload(ChunkUnloadEvent event) {
-        TotemManager totemManager = this.plugin.getTotemManager();
-        new ArrayList<>(totemManager.getTotems().values()).forEach(totem -> {
-            if (!totem.getPosition().getWorld().getName().equalsIgnoreCase(event.getWorld().getName())) return;
-
-            int chunkX = totem.getPosition().getBlockX() >> 4;
-            int chunkZ = totem.getPosition().getBlockZ() >> 4;
-
-            if (chunkX != event.getChunk().getX() || chunkZ != event.getChunk().getZ()) return;
-
-            totemManager.unregisterTotem(totem);
-        });
-    }
+//    /**
+//     * Unload all the totems in the chunk. This will unregister all the totems in the chunk.
+//     *
+//     * @param event The event to listen to.
+//     */
+//    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+//    public void onChunkUnload(ChunkUnloadEvent event) {
+//        TotemManager totemManager = this.plugin.getTotemManager();
+//        new ArrayList<>(totemManager.getTotems().values()).forEach(totem -> {
+//            if (!totem.getPosition().getWorld().getName().equalsIgnoreCase(event.getWorld().getName())) return;
+//
+//            int chunkX = totem.getPosition().getBlockX() >> 4;
+//            int chunkZ = totem.getPosition().getBlockZ() >> 4;
+//
+//            if (chunkX != event.getChunk().getX() || chunkZ != event.getChunk().getZ()) return;
+//
+//            totemManager.unregisterTotem(totem);
+//        });
+//    }
 
 }

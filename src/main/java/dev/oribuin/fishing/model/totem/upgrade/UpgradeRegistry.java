@@ -43,7 +43,6 @@ public class UpgradeRegistry {
             return;
         }
 
-
         TotemManager.getLoader().loadConfig(upgradeClass);
         UPGRADES.put(identifier, new RegisteredUpgrade<>(identifier, upgradeClass, () -> TotemManager.getLoader().get(upgradeClass)));
     }
