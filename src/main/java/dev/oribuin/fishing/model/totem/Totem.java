@@ -10,7 +10,7 @@ import dev.oribuin.fishing.config.impl.PluginMessages;
 import dev.oribuin.fishing.config.impl.TotemConfig;
 import dev.oribuin.fishing.model.cosmetic.skin.TotemSkin;
 import dev.oribuin.fishing.model.totem.upgrade.TotemUpgrade;
-import dev.oribuin.fishing.model.totem.upgrade.UpgradeRegistry;
+import dev.oribuin.fishing.model.totem.upgrade.TotemUpgradeRegistry;
 import dev.oribuin.fishing.model.totem.upgrade.impl.TotemUpgradeCooldown;
 import dev.oribuin.fishing.model.totem.upgrade.impl.TotemUpgradeDuration;
 import dev.oribuin.fishing.model.totem.upgrade.impl.TotemUpgradeRadius;
@@ -124,7 +124,7 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
         this.displayName = null;
         this.bag = new HashMap<>();
         this.users = new HashSet<>();
-        this.upgrades = new LinkedHashMap<>(UpgradeRegistry.getDefault());
+        this.upgrades = new LinkedHashMap<>(TotemUpgradeRegistry.getDefault());
         this.confirmedActivate = false;
         this.readContainer(container);
     }
@@ -170,7 +170,7 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
     @SuppressWarnings("unchecked")
     @Nullable
     public <T extends TotemUpgrade> T getUpgrade(@NotNull Class<T> upgradeClass) {
-        String id = UpgradeRegistry.getUpgradeId(upgradeClass);
+        String id = TotemUpgradeRegistry.getUpgradeId(upgradeClass);
         if (id == null) return null;
 
         TotemUpgrade upgrade = this.upgrades.get(id);
@@ -190,7 +190,6 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
             Color color = Color.RED;
             if (active) color = Color.LIME;
             if (!active && this.onCooldown()) color = Color.YELLOW;
-            System.out.println();
 
             new ParticleBuilder(Particle.DUST)
                     .location(this.position)

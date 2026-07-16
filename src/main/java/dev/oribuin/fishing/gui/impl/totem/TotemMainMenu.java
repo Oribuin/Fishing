@@ -33,7 +33,6 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
         this.totemSupplier = totemSupplier;
 
         Totem totem = this.totemSupplier.get();
-        System.out.println("MAIN MENU - TOTEM DISPLAY ID: " + totem.getDisplayId());
         Fisher fisher = plugin.getDataManager().get(totem.getOwner());
         Placeholders placeholders = Placeholders.builder()
                 .addAll(fisher.getPlaceholders())

@@ -3,7 +3,7 @@ package dev.oribuin.fishing.manager;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.ConfigLoader;
 import dev.oribuin.fishing.model.totem.Totem;
-import dev.oribuin.fishing.model.totem.upgrade.UpgradeRegistry;
+import dev.oribuin.fishing.model.totem.upgrade.TotemUpgradeRegistry;
 import dev.oribuin.fishing.scheduler.PluginScheduler;
 import dev.oribuin.fishing.scheduler.task.ScheduledTask;
 import dev.oribuin.fishing.storage.util.KeyRegistry;
@@ -32,7 +32,7 @@ public class TotemManager implements Manager {
         this.asyncTicker = null;
         this.lastTick = System.currentTimeMillis();
 
-        UpgradeRegistry.register();
+        TotemUpgradeRegistry.register();
         // Check active chunks
         this.plugin.getDataManager().loadTotems().thenAccept(this.totems::putAll);
 
@@ -203,7 +203,6 @@ public class TotemManager implements Manager {
         if (!stand.getPersistentDataContainer().has(KeyRegistry.TOTEM_ACTIVE.key())) return null;
 
         return this.totems.computeIfAbsent(stand.getUniqueId(), uuid -> {
-            System.out.println("Totem has not been registered before, Creating another one with uuid[" + uuid + "]");
             Totem totem = new Totem(stand);
             this.plugin.getDataManager().saveTotem(totem);
             return totem;

@@ -33,7 +33,6 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui, TotemUpgradeMenu.
         this.totemSupplier = totemSupplier;
 
         Totem totem = this.totemSupplier.get();
-        System.out.println("UPGRADE MENU - TOTEM DISPLAY ID: " + totem.getDisplayId());
         Fisher fisher = plugin.getDataManager().get(totem.getOwner());
         Placeholders placeholders = Placeholders.builder()
                 .addAll(fisher.getPlaceholders())

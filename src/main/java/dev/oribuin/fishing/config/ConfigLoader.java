@@ -49,6 +49,19 @@ public class ConfigLoader {
     public <T> T get(Class<T> config) {
         return (T) this.configs.get(config).getConfig();
     }
+    
+    /**
+     * Get the config from the config handler
+     *
+     * @param config The config to load
+     * @param <T>    The
+     *
+     * @return The initialised config
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getClone(Class<T> config) {
+        return (T) this.configs.get(config).getClone();
+    }
 
     /**
      * Initialize a config class into the plugin

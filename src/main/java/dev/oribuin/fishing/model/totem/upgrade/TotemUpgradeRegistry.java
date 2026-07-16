@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class UpgradeRegistry {
+public class TotemUpgradeRegistry {
 
 
     private static final Map<String, RegisteredUpgrade<?>> UPGRADES = new HashMap<>();
@@ -43,8 +43,8 @@ public class UpgradeRegistry {
             return;
         }
 
-        TotemManager.getLoader().loadConfig(upgradeClass);
-        UPGRADES.put(identifier, new RegisteredUpgrade<>(identifier, upgradeClass, () -> TotemManager.getLoader().get(upgradeClass)));
+        TotemManager.getLoader().loadConfig(upgradeClass, identifier);
+        UPGRADES.put(identifier, new RegisteredUpgrade<>(identifier, upgradeClass, () -> TotemManager.getLoader().getClone(upgradeClass)));
     }
 
     /**

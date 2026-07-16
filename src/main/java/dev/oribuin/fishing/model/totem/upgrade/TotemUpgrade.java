@@ -74,7 +74,7 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
         // TODO: Minimum level for upgrade (maybe tiered e.g. level 5 totem = max level 2 upgrade)
         // TODO: Cost check here
         this.level++;
-        this.writeContainer(display.getPersistentDataContainer());
+        totem.writeContainer(display.getPersistentDataContainer());
         PluginMessages.get().getTotem().getUpgradeLevelUp().send(player,
                 "level", this.level,
                 "max", this.maxLevel,

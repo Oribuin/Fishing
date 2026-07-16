@@ -65,13 +65,13 @@ public class FishingPlugin extends JavaPlugin {
     }
 
     public void reload() {
+        this.dataManager.reload(this);
         this.commandManager.reload(this);
         this.tierManager.reload(this);
         this.fishManager.reload(this);
         this.augmentManager.reload(this);
         this.totemManager.reload(this);
         this.menuManager.reload(this);
-        this.dataManager.reload(this);
     }
 
     public static FishingPlugin get() {

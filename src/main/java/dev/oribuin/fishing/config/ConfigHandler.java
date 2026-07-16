@@ -15,6 +15,7 @@ import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.reference.ConfigurationReference;
 import org.spongepowered.configurate.reference.ValueReference;
+import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
@@ -48,7 +49,11 @@ public class ConfigHandler<T> {
     public ConfigHandler(Class<T> configClass, File configFile) {
         this.configClass = configClass;
         this.configFile = configFile;
+        this.load();
+    }
 
+
+    public void load() {
         try {
             this.base = ConfigurationReference.fixed(YamlConfigurationLoader.builder()
                     .defaultOptions(options -> options
@@ -94,6 +99,14 @@ public class ConfigHandler<T> {
 
     public T getConfig() {
         return this.config.get();
+    }
+
+    public T getClone() {
+        try {
+            return this.base.referenceTo(this.configClass).get();
+        } catch (SerializationException e) {
+            return null;
+        }
     }
 
 }
