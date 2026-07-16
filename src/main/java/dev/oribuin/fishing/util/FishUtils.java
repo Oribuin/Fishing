@@ -70,12 +70,13 @@ public final class FishUtils {
      * Create block data from a material and cache it
      *
      * @param material The material to get from the map
+     *
      * @return The blockdata to get
      */
     public static BlockData getMaterialData(@NotNull Material material) {
         return BLOCK_DATA_MAPPING.computeIfAbsent(material, Material::createBlockData);
     }
-    
+
     /**
      * Convert a string to a component
      *

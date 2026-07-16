@@ -35,9 +35,10 @@ public class FishListener implements Listener {
 
         ItemStack hand = event.getPlayer().getInventory().getItem(event.getHand()).clone();
         Map<Augment, Integer> augments = this.plugin.getAugmentManager().from(hand);
+        Totem nearby = this.plugin.getTotemManager().getClosestActive(event.getHook().getLocation());
 
         switch (event.getState()) {
-            case CAUGHT_FISH -> this.catchNewFish(event, hand, augments);
+            case CAUGHT_FISH -> this.catchNewFish(event, hand, augments, nearby);
             // todo: allow bite actual modification
         }
 
@@ -48,7 +49,7 @@ public class FishListener implements Listener {
      *
      * @param event The catching event
      */
-    private void catchNewFish(PlayerFishEvent event, ItemStack rod, Map<Augment, Integer> augments) {
+    private void catchNewFish(PlayerFishEvent event, ItemStack rod, Map<Augment, Integer> augments, Totem totem) {
         FishManager manager = this.plugin.getFishManager();
         TotemManager totemProvider = this.plugin.getTotemManager();
 

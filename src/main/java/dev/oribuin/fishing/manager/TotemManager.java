@@ -24,7 +24,7 @@ public class TotemManager implements Manager {
     private final FishingPlugin plugin;
     private final Map<UUID, Totem> totems;
     private ScheduledTask asyncTicker;
-    private long lastTick;
+    private final long lastTick;
 
     public TotemManager(FishingPlugin plugin) {
         this.plugin = plugin;

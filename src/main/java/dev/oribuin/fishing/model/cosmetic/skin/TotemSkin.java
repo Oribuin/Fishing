@@ -6,5 +6,5 @@ public final class TotemSkin {
 
     private String id;
     private TotemModel model;
-    
+
 }

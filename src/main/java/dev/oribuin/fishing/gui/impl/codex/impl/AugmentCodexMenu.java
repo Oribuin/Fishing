@@ -7,7 +7,6 @@ import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.triumphteam.gui.guis.GuiItem;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
@@ -24,7 +23,7 @@ public class AugmentCodexMenu extends BasicCodexMenu<Augment, AugmentCodexMenu.C
     public AugmentCodexMenu(FishingPlugin plugin) {
         super(plugin, AugmentCodexMenu.Config.class);
         this.gui = this.createMenu().get();
-        
+
         this.getContent().forEach(x -> {
             ItemStack stack = this.getStack(x);
             if (stack != null) this.gui.addItem(new GuiItem(stack));

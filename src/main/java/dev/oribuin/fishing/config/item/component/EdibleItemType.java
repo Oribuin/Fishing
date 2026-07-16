@@ -51,8 +51,8 @@ public class EdibleItemType extends ConstructComponent<FoodProperties> {
 
         FoodProperties properties = stack.getData(FOOD);
         return properties != null ? new EdibleItemType(
-                properties.nutrition(), 
-                (int) properties.saturation(), 
+                properties.nutrition(),
+                (int) properties.saturation(),
                 !properties.canAlwaysEat()
         ) : null;
     }

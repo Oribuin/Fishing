@@ -2,7 +2,6 @@ package dev.oribuin.fishing.command.impl;
 
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.command.FishCommand;
-import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.storage.util.KeyRegistry;
 import net.kyori.adventure.text.Component;
@@ -30,7 +29,7 @@ public class DebugCommand implements FishCommand {
     }
 
     /**
-     * Debug all the placeholders a totem has 
+     * Debug all the placeholders a totem has
      *
      * @param player The sender running the command
      */
@@ -60,10 +59,10 @@ public class DebugCommand implements FishCommand {
                 .forEach(entry -> player.sendMessage(
                         Component.text("<" + entry.getKey() + "> = ").append(entry.getValue()))
                 );
-    } 
-    
+    }
+
     /**
-     * Debug all the placeholders a totem has 
+     * Debug all the placeholders a totem has
      *
      * @param player The sender running the command
      */
@@ -75,7 +74,6 @@ public class DebugCommand implements FishCommand {
         ItemMeta meta = stack.getItemMeta();
         if (meta == null || stack.getType() == Material.AIR) {
             player.sendMessage("no item in hand :/");
-            return;
         }
 
         // TODO: Get augment from itemstack

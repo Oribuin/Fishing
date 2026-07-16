@@ -31,7 +31,7 @@ public final class ModelItemType extends ConstructComponent<NamespacedKey> {
     @Override
     public @Nullable NamespacedKey establish() {
         if (this.value == null) return null;
-        
+
         return NamespacedKey.fromString(value);
     }
 

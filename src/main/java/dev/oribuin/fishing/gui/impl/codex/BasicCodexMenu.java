@@ -59,10 +59,10 @@ public abstract class BasicCodexMenu<T, Z extends BasicCodexMenu.CodexGuiConfig>
                 .disableAllInteractions()
                 .apply(paginatedGui -> {
                     this.config.getDummyItems().forEach(icon -> icon.place(
-                            paginatedGui, 
-                            Placeholders.empty(), 
+                            paginatedGui,
+                            Placeholders.empty(),
                             EMPTY
-                            ));
+                    ));
 
                     this.setDummyIcons();
                     this.config.getPreviousPage().place(paginatedGui, Placeholders.empty(), event -> gui.previous());
@@ -78,12 +78,12 @@ public abstract class BasicCodexMenu<T, Z extends BasicCodexMenu.CodexGuiConfig>
     @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
     public static abstract class CodexGuiConfig extends GuiConfig {
         private MenuItem previousPage = ItemConstruct.of(Material.ARROW)
-                .setName("<white>[<#94bc80>Previous Page<white>]")
+                .setName("<white>[<#94bc80><bold>Previous Page</bold><white>]")
                 .setLore("<gray>Click here to go to the previous page")
                 .asMenuItem(3);
 
         private MenuItem codexMainMenu = ItemConstruct.of(Material.KNOWLEDGE_BOOK)
-                .setName("<white>[<#94bc80>Codex Menu<white>]")
+                .setName("<white>[<#94bc80><bold>Codex Menu</bold><white>]")
                 .setLore(
                         "<gray>Click here to go to the index page",
                         "<gray>with all the different types of information",
@@ -92,7 +92,7 @@ public abstract class BasicCodexMenu<T, Z extends BasicCodexMenu.CodexGuiConfig>
                 .asMenuItem(4);
 
         private MenuItem nextPage = ItemConstruct.of(Material.ARROW)
-                .setName("<white>[<#94bc80>Next Page<white>]")
+                .setName("<white>[<#94bc80><bold>Next Page</bold><white>]")
                 .setLore("<gray>Click here to go to the next page")
                 .asMenuItem(5);
 

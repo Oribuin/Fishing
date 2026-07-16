@@ -99,7 +99,7 @@ public class AugmentMakeItRain {
     ////    @Override
     ////    public List<String> comments() {
     ////        return List.of(
-    ////                "Augment [Make It Rain] - Chance of spawning additional fish falling from the sky",
+    ////                "Augment [MakeItRain] - Chance of spawning additional fish falling from the sky",
     ////                "in a single catch.",
     ////                "",
     ////                "chance-formula: The formula to calculate the chance this augment triggers",

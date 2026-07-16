@@ -7,7 +7,6 @@ import dev.oribuin.fishing.gui.impl.totem.TotemMainMenu;
 import dev.oribuin.fishing.manager.TotemManager;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.storage.util.KeyRegistry;
-import io.papermc.paper.event.packet.PlayerChunkLoadEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -20,14 +19,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 public class TotemListeners implements Listener {
 
@@ -113,29 +108,29 @@ public class TotemListeners implements Listener {
         totem.getDisplay().remove(); // Remove the totem entity
         totem.setDisplayId(null); // Set the totem entity to null
         PluginMessages.get().getTotem().getRemoved().send(player);
-        
+
         totem.saveTo(itemStack);
         player.getInventory().addItem(itemStack);
     }
 
-//    /**
-//     * Unload all the totems in the chunk. This will unregister all the totems in the chunk.
-//     *
-//     * @param event The event to listen to.
-//     */
-//    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-//    public void onChunkUnload(ChunkUnloadEvent event) {
-//        TotemManager totemManager = this.plugin.getTotemManager();
-//        new ArrayList<>(totemManager.getTotems().values()).forEach(totem -> {
-//            if (!totem.getPosition().getWorld().getName().equalsIgnoreCase(event.getWorld().getName())) return;
-//
-//            int chunkX = totem.getPosition().getBlockX() >> 4;
-//            int chunkZ = totem.getPosition().getBlockZ() >> 4;
-//
-//            if (chunkX != event.getChunk().getX() || chunkZ != event.getChunk().getZ()) return;
-//
-//            totemManager.unregisterTotem(totem);
-//        });
-//    }
+    //    /**
+    //     * Unload all the totems in the chunk. This will unregister all the totems in the chunk.
+    //     *
+    //     * @param event The event to listen to.
+    //     */
+    //    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    //    public void onChunkUnload(ChunkUnloadEvent event) {
+    //        TotemManager totemManager = this.plugin.getTotemManager();
+    //        new ArrayList<>(totemManager.getTotems().values()).forEach(totem -> {
+    //            if (!totem.getPosition().getWorld().getName().equalsIgnoreCase(event.getWorld().getName())) return;
+    //
+    //            int chunkX = totem.getPosition().getBlockX() >> 4;
+    //            int chunkZ = totem.getPosition().getBlockZ() >> 4;
+    //
+    //            if (chunkX != event.getChunk().getX() || chunkZ != event.getChunk().getZ()) return;
+    //
+    //            totemManager.unregisterTotem(totem);
+    //        });
+    //    }
 
 }

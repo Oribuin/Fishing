@@ -5,7 +5,6 @@ import dev.oribuin.fishing.config.impl.PluginMessages;
 import dev.oribuin.fishing.config.item.ConstructComponent;
 import dev.oribuin.fishing.config.item.ConstructType;
 import dev.oribuin.fishing.config.item.ItemConstruct;
-import dev.oribuin.fishing.config.item.component.TooltipItemType;
 import dev.oribuin.fishing.gui.GuiConfig;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
@@ -16,7 +15,6 @@ import dev.oribuin.fishing.storage.Fisher;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.guis.Gui;
-import io.papermc.paper.datacomponent.DataComponentTypes;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -163,7 +161,7 @@ public class FishGutMenu extends PluginMenu<Gui, FishGutMenu.Config> {
         private List<Integer> sellSlots = FishUtils.parseList("9-35");
 
         private MenuItem gutFish = ItemConstruct.of(Material.PAPER)
-                .setName("<white>[<#94bc80>Gut Fish<white>]")
+                .setName("<white>[<#94bc80><bold>Gut Fish</bold><white>]")
                 .setLore(
                         "<gray>Gut all the fish that you have",
                         "<gray>placed inside the menu for entropy"
@@ -173,7 +171,7 @@ public class FishGutMenu extends PluginMenu<Gui, FishGutMenu.Config> {
                 .asMenuItem(40);
 
         private MenuItem mainMenu = ItemConstruct.of(Material.ARROW)
-                .setName("<white>[<#94bc80>Main Menu<white>]")
+                .setName("<white>[<#94bc80><bold>Main Menu</bold><white>]")
                 .setLore("<gray>Click to go back to the main menu")
                 .asMenuItem(36);
 

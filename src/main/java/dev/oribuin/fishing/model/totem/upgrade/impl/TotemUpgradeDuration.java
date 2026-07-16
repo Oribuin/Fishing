@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -18,15 +17,14 @@ import java.util.function.Supplier;
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
 public class TotemUpgradeDuration extends TotemUpgrade {
 
-    private String durationFormula = "180 + (<level> * 30)"; // The formula to calculate the duration of the totem (60 seconds + 30 seconds per level)
+    private String durationFormula = "150 + (<level> * 30)"; // The formula to calculate the duration of the totem (60 seconds + 30 seconds per level)
 
     /**
      * Create a new totem upgrade with the name "radius"
      */
     public TotemUpgradeDuration() {
         super();
-        this.description = List.of("Increases the duration of the totem when activated");
-        this.defaultLevel = 0;
+        this.description = "Increases the duration of the totem";
         this.maxLevel = 10;
     }
 
@@ -71,29 +69,10 @@ public class TotemUpgradeDuration extends TotemUpgrade {
         long duration = this.getDuration().toMillis();
         String totalDuration = FishUtils.formatTime(duration);
 
-        return Placeholders.of(
-                "total", totalDuration,
-                "remaining", totem.isActive() ? FishUtils.formatTime(totem.getCurrentDuration()) : totalDuration
-        );
+        return Placeholders.builder().addAll(super.getPlaceholders(totem))
+                .add("total", totalDuration)
+                .add("remaining", totem.isActive() ? FishUtils.formatTime(totem.getCurrentDuration()) : totalDuration)
+                .build();
     }
-    
-    //    /**
-    //     * The totem upgrade placeholders for the upgrade.
-    //     * All upgrades are added to the totems placeholders as "upgrade_<name>_<placeholder>"
-    //     * <p>
-    //     * Example: upgrade_radius_value
-    //     *
-    //     * @param totem The totem to apply the upgrade to
-    //     *
-    //     * @return The value of the upgrade
-    //     */
-    //    @Override
-    //    public Placeholders getPlaceholders(Totem totem) {
-    //        return Placeholders.builder()
-    //                .addAll(super.getPlaceholders(totem))
-    //                .add("value", FishUtils.formatTime(this.calculateDuration(totem).toMillis()))
-    //                .add("timer", FishUtils.formatTime(totem.getCurrentDuration()))
-    //                .build();
-    //    }
 
 }

@@ -42,7 +42,7 @@ public class MenuItem {
     /**
      * Place the item in the specified slot in the GUI
      *
-     * @param gui      The GUI to place the item in
+     * @param gui          The GUI to place the item in
      * @param placeholders The placeholders for the menu item
      */
     public void place(BaseGui gui, Placeholders placeholders) {

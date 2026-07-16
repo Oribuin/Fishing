@@ -1,7 +1,7 @@
 package dev.oribuin.fishing.config.item.component;
 
-import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.config.item.ConstructComponent;
+import dev.oribuin.fishing.config.item.ItemConstruct;
 import io.papermc.paper.datacomponent.DataComponentType;
 import io.papermc.paper.datacomponent.item.TooltipDisplay;
 import io.papermc.paper.registry.RegistryKey;
@@ -19,7 +19,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static io.papermc.paper.datacomponent.DataComponentTypes.*;
+import static io.papermc.paper.datacomponent.DataComponentTypes.TOOLTIP_DISPLAY;
+import static io.papermc.paper.datacomponent.DataComponentTypes.TOOLTIP_STYLE;
 
 @ConfigSerializable
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal", "UnstableApiUsage" })
@@ -72,7 +73,7 @@ public class TooltipItemType extends ConstructComponent<TooltipDisplay> {
         }
 
         return new TooltipItemType(
-                display != null && display.hideTooltip(), 
+                display != null && display.hideTooltip(),
                 components,
                 style != null ? style.asString() : null
         );

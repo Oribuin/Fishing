@@ -1,7 +1,7 @@
 package dev.oribuin.fishing.config.item.component;
 
-import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.config.item.ConstructComponent;
+import dev.oribuin.fishing.config.item.ItemConstruct;
 import io.papermc.paper.datacomponent.item.ItemEnchantments;
 import io.papermc.paper.registry.RegistryKey;
 import org.bukkit.NamespacedKey;

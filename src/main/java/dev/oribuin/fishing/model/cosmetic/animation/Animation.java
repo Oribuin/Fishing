@@ -12,7 +12,7 @@ public abstract class Animation<T> {
     /**
      * Display the animation to the nearby audience, usually the player.
      *
-     * @param position The centre point of the animation 
+     * @param position The centre point of the animation
      * @param target   The audience to display the animation to.
      */
     public abstract void display(Location position, T target);

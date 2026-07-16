@@ -154,7 +154,7 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
         // TODO: Totem Privacy
 
         private MenuItem totemName = ItemConstruct.of(Material.NAME_TAG)
-                .setName("<white>[<#94bc80>Totem Name<white>]")
+                .setName("<white>[<#94bc80><bold>Totem Name</bold><white>]")
                 .setLore(
                         "<gray>Change the display name for this",
                         "<gray>fishing totem"
@@ -163,7 +163,7 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
                 .asMenuItem(15);
 
         private MenuItem totemPrivacy = ItemConstruct.of(Material.TRIAL_KEY)
-                .setName("<white>[<#94bc80>Totem Privacy<white>]")
+                .setName("<white>[<#94bc80><bold>Totem Privacy</bold><white>]")
                 .setLore(
                         "<gray>Change the level of access that others",
                         "<gray>have to this fishing totem",
@@ -175,7 +175,7 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
                 .asMenuItem(16);
 
         private MenuItem totemStats = ItemConstruct.of(Material.OAK_HANGING_SIGN)
-                .setName("<white>[<#94bc80>Totem Details<white>]")
+                .setName("<white>[<#94bc80><bold>Totem Details</bold><white>]")
                 .setLore(
                         "<gray>Here are the current upgrades",
                         "<gray>active for this fishing totem",
@@ -191,7 +191,7 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
                 .asMenuItem(4);
 
         private MenuItem totemUpgrades = ItemConstruct.of(Material.PAPER)
-                .setName("<white>[<#94bc80>Totem Upgrades<white>]")
+                .setName("<white>[<#94bc80><bold>Totem Upgrades</bold><white>]")
                 .setLore(
                         "<gray>Click here to view and level",
                         "<gray>up this fishing totem",
@@ -206,7 +206,7 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
                 .asMenuItem(10);
 
         private MenuItem totemActivate = ItemConstruct.of(Material.LIME_DYE)
-                .setName("<white>[<#05e653>Activate Totem<white>]")
+                .setName("<white>[<#05e653><bold>Activate Totem</bold><white>]")
                 .setLore(
                         "<gray>Click here to active this totem",
                         "",
@@ -219,7 +219,7 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
                 .asMenuItem(13);
 
         private MenuItem totemCooldown = ItemConstruct.of(Material.RED_DYE)
-                .setName("<white>[<#e60505>On Cooldown<white>]")
+                .setName("<white>[<#e60505><bold>On Cooldown</bold><white>]")
                 .setLore(
                         "<gray>This totem is currently on cooldown",
                         "",
@@ -229,7 +229,7 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
                 .asMenuItem(13);
 
         private MenuItem totemActive = ItemConstruct.of(Material.ORANGE_DYE)
-                .setName("<white>[<#e65f05>Currently Active<white>]")
+                .setName("<white>[<#e65f05><bold>Currently Active</bold><white>]")
                 .setLore(
                         "<gray>Your totem is currently active",
                         "",

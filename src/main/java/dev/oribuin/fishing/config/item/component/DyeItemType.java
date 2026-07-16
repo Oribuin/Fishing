@@ -74,7 +74,7 @@ public class DyeItemType extends ConstructComponent<DyedItemColor> {
      */
     public static DyeItemType from(ItemStack stack) {
         if (stack == null) return null;
-        
+
         DyedItemColor itemColor = stack.getData(DYED_COLOR);
         return itemColor != null ? new DyeItemType(itemColor.color()) : null;
     }

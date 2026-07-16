@@ -7,7 +7,6 @@ import dev.oribuin.fishing.util.Placeholders;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
-import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -25,8 +24,7 @@ public class TotemUpgradeRadius extends TotemUpgrade {
      */
     public TotemUpgradeRadius() {
         super();
-        this.description = List.of("Increases the effective range of the totem");
-        this.defaultLevel = 1;
+        this.description = "Increases the totem's range";
         this.maxLevel = 5;
     }
 
@@ -40,6 +38,18 @@ public class TotemUpgradeRadius extends TotemUpgrade {
     public double getRadius() {
         Placeholders plc = Placeholders.of("level", this.level, "base_radius", this.baseRadius);
         return FishUtils.evaluate(plc.applyString(this.radiusFormula)) / 2;
+    }
+
+    /**
+     * Calculate the radius of the totem based on the level of the upgrade.
+     * <p>
+     * Radius is divided by 2 so it acts as a radius instead of a diameter.
+     *
+     * @return The radius of the totem
+     */
+    public double getTotalRadius() {
+        Placeholders plc = Placeholders.of("level", this.level, "base_radius", this.baseRadius);
+        return FishUtils.evaluate(plc.applyString(this.radiusFormula));
     }
 
     /**
@@ -70,25 +80,10 @@ public class TotemUpgradeRadius extends TotemUpgrade {
      */
     @Override
     public @NotNull Placeholders getPlaceholders(@NotNull Totem totem) {
-        return Placeholders.of("total", this.getRadius());
+        return Placeholders.builder().addAll(super.getPlaceholders(totem))
+                .add("effective", this.getRadius())
+                .add("total", this.getTotalRadius())
+                .build();
+
     }
-
-    //    /**
-    //     * The totem upgrade placeholders for the upgrade.
-    //     * All upgrades are added to the totems placeholders as "upgrade_<name>_<placeholder>"
-    //     * <p>
-    //     * Example: upgrade_radius_value
-    //     *
-    //     * @param totem The totem to apply the upgrade to
-    //     *
-    //     * @return The value of the upgrade
-    //     */
-    //    @Override
-    //    public Placeholders getPlaceholders(Totem totem) {
-    //        return Placeholders.builder()
-    //                .addAll(super.getPlaceholders(totem))
-    //                .add("value", this.getRadius(totem))
-    //                .build();
-    //    }
-
 }

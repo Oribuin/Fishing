@@ -30,7 +30,7 @@ public class CubeParticleAnimation extends ParticleAnimation {
 
     /**
      * Create a 3D Cube Animation for particles
-     * 
+     *
      * @param radiusX The width of the cube on the x-axis
      * @param radiusY The width of the cube on the y-axis
      * @param radiusZ The width of the cube on the z-axis

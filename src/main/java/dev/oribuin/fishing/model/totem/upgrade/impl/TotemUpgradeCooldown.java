@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -18,15 +17,14 @@ import java.util.function.Supplier;
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
 public class TotemUpgradeCooldown extends TotemUpgrade {
 
-    private String cooldownFormula = "(60 * 60) - (<level> * 120)"; // The formula to calculate the cooldown of the totem (1 hour - 2 minute per level)
+    private String cooldownFormula = "(3600+120) - (<level> * 120)"; // The formula to calculate the cooldown of the totem (1 hour - 2 minute per level)
 
     /**
      * Create a new totem upgrade with the name "radius"
      */
     public TotemUpgradeCooldown() {
         super();
-        this.description = List.of("Decreases the cooldown of the totem when it has expired");
-        this.defaultLevel = 0;
+        this.description = "Decreases the activation cooldown";
         this.maxLevel = 25;
     }
 
@@ -71,29 +69,10 @@ public class TotemUpgradeCooldown extends TotemUpgrade {
         long cooldown = this.getCooldown().toMillis();
         String totalCooldown = FishUtils.formatTime(cooldown);
 
-        return Placeholders.of(
-                "total", totalCooldown,
-                "remaining", totem.onCooldown() ? FishUtils.formatTime(totem.getCurrentCooldown()) : totalCooldown
-        );
+        return Placeholders.builder().addAll(super.getPlaceholders(totem))
+                .add("total", totalCooldown)
+                .add("remaining", totem.onCooldown() ? FishUtils.formatTime(totem.getCurrentCooldown()) : totalCooldown)
+                .build();
     }
-    
-    //    /**
-    //     * The totem upgrade placeholders for the upgrade.
-    //     * All upgrades are added to the totems placeholders as "upgrade_<name>_<placeholder>"
-    //     * <p>
-    //     * Example: upgrade_radius_value
-    //     *
-    //     * @param totem The totem to apply the upgrade to
-    //     *
-    //     * @return The value of the upgrade
-    //     */
-    //    @Override
-    //    public Placeholders getPlaceholders(Totem totem) {
-    //        return Placeholders.builder()
-    //                .addAll(super.getPlaceholders(totem))
-    //                .add("value", FishUtils.formatTime(this.getCooldown(totem).toMillis()))
-    //                .add("timer", FishUtils.formatTime(totem.getCurrentCooldown()))
-    //                .build();
-    //    }
 
 }

@@ -4,8 +4,6 @@ import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.item.ConstructComponent;
 import dev.oribuin.fishing.config.item.ConstructType;
 import dev.oribuin.fishing.config.item.ItemConstruct;
-import dev.oribuin.fishing.config.item.component.TextureItemType;
-import dev.oribuin.fishing.config.item.component.TooltipItemType;
 import dev.oribuin.fishing.gui.GuiConfig;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
@@ -13,14 +11,11 @@ import dev.oribuin.fishing.storage.Fisher;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.guis.Gui;
-import io.papermc.paper.datacomponent.DataComponentTypes;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
-import java.security.cert.X509Certificate;
-import java.util.List;
 import java.util.function.Supplier;
 
 @SuppressWarnings("UnstableApiUsage")
@@ -80,7 +75,7 @@ public class FishMainMenu extends PluginMenu<Gui, FishMainMenu.Config> {
     public static class Config extends GuiConfig {
 
         private final MenuItem userStats = ItemConstruct.of(Material.PLAYER_HEAD)
-                .setName("<white>[<#94bc80>Your Stats<white>]")
+                .setName("<white>[<#94bc80><bold>Your Stats</bold><white>]")
                 .setLore(
                         "<gray>Click here to view your current",
                         "<gray>fishing statistics",
@@ -96,7 +91,7 @@ public class FishMainMenu extends PluginMenu<Gui, FishMainMenu.Config> {
                 .asMenuItem(4);
 
         private MenuItem guttingStation = ItemConstruct.of(Material.PAPER)
-                .setName("<white>[<#94bc80>Gut Fish<white>]")
+                .setName("<white>[<#94bc80><bold>Gut Fish</bold><white>]")
                 .setLore(
                         "<gray>Gut all the fish that you have",
                         "<gray>placed inside the menu for entropy"
@@ -106,7 +101,7 @@ public class FishMainMenu extends PluginMenu<Gui, FishMainMenu.Config> {
                 .asMenuItem(19);
 
         private MenuItem sellingStation = ItemConstruct.of(Material.EMERALD)
-                .setName("<white>[<#94bc80>Selling Station<white>]")
+                .setName("<white>[<#94bc80><bold>Selling Station</bold><white>]")
                 .setLore(
                         "<gray>Sell your fish to exchange them",
                         "<gray>for money"
@@ -114,7 +109,7 @@ public class FishMainMenu extends PluginMenu<Gui, FishMainMenu.Config> {
                 .asMenuItem(20);
 
         private MenuItem codexMenu = ItemConstruct.of(Material.KNOWLEDGE_BOOK)
-                .setName("<white>[<#94bc80>The Codex<white>]")
+                .setName("<white>[<#94bc80><bold>The Codex</bold><white>]")
                 .setLore(
                         "<gray>Click to view information about",
                         "<gray>varies things within the plugin"

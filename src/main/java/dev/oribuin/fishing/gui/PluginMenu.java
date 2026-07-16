@@ -44,13 +44,13 @@ public abstract class PluginMenu<T extends BaseGui, Z extends GuiConfig> {
      * @param plugin      The plugin instance
      * @param configClass The config for the menu
      */
-    public PluginMenu(FishingPlugin plugin,Class<Z> configClass) {
+    public PluginMenu(FishingPlugin plugin, Class<Z> configClass) {
         this.plugin = plugin;
         this.configClass = configClass;
         this.viewed = false;
         this.config = MenuManager.getLoader().get(configClass);
     }
-    
+
     /**
      * Open the menu for the player synchronously and mark the menu as being viewed
      *
@@ -90,7 +90,7 @@ public abstract class PluginMenu<T extends BaseGui, Z extends GuiConfig> {
      * @return the resulting menu
      */
     public abstract Supplier<T> createMenu();
-    
+
     /**
      * Set the dummy items as defined in the config
      *
@@ -99,7 +99,7 @@ public abstract class PluginMenu<T extends BaseGui, Z extends GuiConfig> {
     public void setDummyIcons(Placeholders placeholders) {
         this.config.getDummyItems().forEach(icon -> icon.place(this.gui, placeholders, EMPTY));
     }
-    
+
     /**
      * Set the dummy items as defined in the config
      */

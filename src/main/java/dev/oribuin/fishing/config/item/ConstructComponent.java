@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @ConfigSerializable
-@SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal" })
+@SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
 public abstract class ConstructComponent<T> {
 
     protected boolean enabled = true;
@@ -46,16 +46,16 @@ public abstract class ConstructComponent<T> {
         this.enabled = enabled;
         return this;
     }
-    
+
     public ConstructComponent<T> setEnabled() {
         this.enabled = true;
         return this;
     }
-    
+
     public ConstructComponent<T> setDisabled() {
         this.enabled = false;
         return this;
     }
-    
-    
+
+
 }

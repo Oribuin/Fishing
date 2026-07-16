@@ -47,7 +47,7 @@ public class SquareParticleAnimation extends ParticleAnimation {
     @Override
     public List<Location> getPositions(Location center) {
         List<Location> bounds = new ArrayList<>();
-        
+
         Location min = center.clone().subtract(radiusX, 0, radiusZ);
         Location max = center.clone().add(radiusX, 0, radiusZ);
         double minX = min.getBlockX();
@@ -73,7 +73,7 @@ public class SquareParticleAnimation extends ParticleAnimation {
     public int getRadiusX() {
         return radiusX;
     }
-    
+
     public int getRadiusZ() {
         return radiusZ;
     }

@@ -11,9 +11,7 @@ import dev.oribuin.fishing.config.item.component.ModelItemType;
 import dev.oribuin.fishing.config.item.component.TextureItemType;
 import dev.oribuin.fishing.config.item.component.ToolItemType;
 import dev.oribuin.fishing.config.item.component.TooltipItemType;
-import org.bukkit.inventory.ItemStack;
 
-import java.beans.Transient;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -43,7 +41,7 @@ public record ConstructType<T extends ConstructComponent<?>>(String identifier, 
      * @return The resulting construct
      */
     public static <T extends ConstructComponent<?>> ConstructType<T> create(String identifier, Supplier<T> supplier) {
-        ConstructType<T> constructType = new ConstructType<>(identifier,supplier);
+        ConstructType<T> constructType = new ConstructType<>(identifier, supplier);
         REGISTRY.put(identifier, constructType);
         return constructType;
     }
@@ -59,5 +57,5 @@ public record ConstructType<T extends ConstructComponent<?>>(String identifier, 
                 x -> x.supplier().get()
         ));
     }
-   
+
 }

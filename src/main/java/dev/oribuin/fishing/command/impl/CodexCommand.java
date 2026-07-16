@@ -4,7 +4,6 @@ import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.command.FishCommand;
 import dev.oribuin.fishing.gui.impl.codex.impl.AugmentCodexMenu;
 import dev.oribuin.fishing.gui.impl.codex.impl.TierCodexMenu;
-import dev.oribuin.fishing.manager.MenuManager;
 import dev.oribuin.fishing.scheduler.PluginScheduler;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

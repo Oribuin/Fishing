@@ -1,10 +1,8 @@
 package dev.oribuin.fishing.manager;
 
-import com.google.common.base.Supplier;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.ConfigLoader;
 import dev.oribuin.fishing.gui.GuiConfig;
-import dev.oribuin.fishing.gui.PluginMenu;
 import dev.oribuin.fishing.gui.impl.codex.impl.AugmentCodexMenu;
 import dev.oribuin.fishing.gui.impl.codex.impl.FishCodexMenu;
 import dev.oribuin.fishing.gui.impl.codex.impl.TierCodexMenu;
@@ -17,8 +15,6 @@ import dev.oribuin.fishing.model.augment.Augment;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MenuManager implements Manager {
 
@@ -75,10 +71,10 @@ public class MenuManager implements Manager {
             FishingPlugin.get().getLogger().warning("Menu[" + identifier + "] in class[" + configClass.getSimpleName() + "] does not have ConfigSerializible annotation");
             return;
         }
-        
+
         loader.loadConfig(configClass, identifier);
     }
-    
+
     public static ConfigLoader getLoader() {
         return loader;
     }

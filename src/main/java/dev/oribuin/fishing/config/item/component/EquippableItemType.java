@@ -11,7 +11,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import static io.papermc.paper.datacomponent.DataComponentTypes.EQUIPPABLE;
 
 @ConfigSerializable
-@SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal", "UnstableApiUsage"})
+@SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal", "UnstableApiUsage" })
 public class EquippableItemType extends ConstructComponent<Equippable> {
 
     private EquipmentSlot slot; // The slot the item can be equipped in
@@ -43,20 +43,21 @@ public class EquippableItemType extends ConstructComponent<Equippable> {
         this.damageable = damageable;
         this.dispensable = dispensable;
     }
-    
+
     /**
      * Create a new equippable stack from an equippable component
      *
      * @param component The equippable component
+     *
      * @return The equippable stack
      */
     public static EquippableItemType fromComponent(Equippable component) {
         if (component == null) return null;
-        
+
         return new EquippableItemType(
-                component.slot(), 
-                component.swappable(), 
-                component.damageOnHurt(), 
+                component.slot(),
+                component.swappable(),
+                component.damageOnHurt(),
                 component.dispensable()
         );
     }
@@ -98,5 +99,5 @@ public class EquippableItemType extends ConstructComponent<Equippable> {
     public void clear(@NotNull ItemStack stack) {
         stack.unsetData(EQUIPPABLE);
     }
-    
+
 }

@@ -161,7 +161,7 @@ public class FishSellMenu extends PluginMenu<Gui, FishSellMenu.Config> {
 
 
         private MenuItem sellFish = ItemConstruct.of(Material.EMERALD)
-                .setName("<white>[<#94bc80>Sell Fish<white>]")
+                .setName("<white>[<#94bc80><bold>Sell Fish</bold><white>]")
                 .setLore(
                         "<gray>Sell all the fish that you have",
                         "<gray>placed inside the menu for money"
@@ -170,7 +170,7 @@ public class FishSellMenu extends PluginMenu<Gui, FishSellMenu.Config> {
                 .asMenuItem(40);
 
         private MenuItem mainMenu = ItemConstruct.of(Material.ARROW)
-                .setName("<white>[<#94bc80>Main Menu<white>]")
+                .setName("<white>[<#94bc80><bold>Main Menu</bold><white>]")
                 .setLore("<gray>Click to go back to the main menu")
                 .asMenuItem(36);
 

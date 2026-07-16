@@ -2,17 +2,19 @@ package dev.oribuin.fishing.model.totem.upgrade;
 
 import dev.oribuin.fishing.api.event.FishEventHandler;
 import dev.oribuin.fishing.config.impl.PluginMessages;
+import dev.oribuin.fishing.config.item.ConstructComponent;
+import dev.oribuin.fishing.config.item.ConstructType;
 import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.storage.persistent.PDCSerializable;
 import dev.oribuin.fishing.util.Placeholders;
+import org.apache.commons.lang3.StringUtils;
+import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Supplier;
 
 import static dev.oribuin.fishing.storage.util.KeyRegistry.TOTEM_UPGRADE_LEVEL;
@@ -28,19 +30,33 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
     protected transient int level;
     protected boolean enabled; // If the upgrade is enabled
     protected String name; // The name of the upgrade
-    protected List<String> description; // The description of the upgrade
+    protected String description; // The description of the upgrade
     protected ItemConstruct icon; // The icon of the upgrade
     protected int defaultLevel; // The default level of the upgrade
     protected int maxLevel; // The maximum level of the upgrade
     protected String permission; // The permission required to purchase the upgrade
 
+    private static final ItemConstruct BASE_UPGRADE = ItemConstruct.of(Material.HEART_OF_THE_SEA) // Upgrades will choose their own item, idgaf
+            .setName("<white>[<#94bc80><bold><name></bold><white>]")
+            .setLore(
+                    "<gray><description>",
+                    "",
+                    "<#94bc80>Information",
+                    " <#94bc80>- <white>Current: <#94bc80><level>",
+                    " <#94bc80>- <white>Max Level: <#94bc80><max_level>",
+                    ""
+            )
+            .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled);
+
     public TotemUpgrade() {
         this.enabled = true;
-        this.name = this.getIdentifier().get();
-        this.description = new ArrayList<>();
+        this.name = StringUtils.capitalize(this.getIdentifier().get());
+        this.description = "Allows the totem to do something new";
         this.defaultLevel = 1;
         this.maxLevel = 1;
+        this.icon = BASE_UPGRADE.clone();
         this.permission = "fishing.upgrade." + this.name.toLowerCase();
+        this.level = this.defaultLevel;
     }
 
     /**
@@ -91,15 +107,15 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
      * @return The resulting placeholders
      */
     public @NotNull Placeholders getPlaceholders(@NotNull Totem totem) {
-        //     protected transient int level;
-        //    protected boolean enabled; // If the upgrade is enabled
-        //    protected String name; // The name of the upgrade
-        //    protected List<String> description; // The description of the upgrade
-        //    protected ItemConstruct icon; // The icon of the upgrade
-        //    protected int defaultLevel; // The default level of the upgrade
-        //    protected int maxLevel; // The maximum level of the upgrade
-        //    protected String permission; // The permission required to purchase the upgrade
-        return Placeholders.empty();
+        return Placeholders.builder()
+                .add("enabled", this.enabled)
+                .add("name", this.name)
+                .add("description", this.description)
+                .add("default_level", this.defaultLevel)
+                .add("max_level", this.maxLevel)
+                .add("level", this.level)
+                .add("permission", this.permission)
+                .build();
     }
 
     /**
@@ -153,11 +169,11 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
         this.name = name;
     }
 
-    public List<String> getDescription() {
+    public String getDescription() {
         return description;
     }
 
-    public void setDescription(List<String> description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -192,156 +208,5 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
     public void setPermission(String permission) {
         this.permission = permission;
     }
-    //
-    //    /**
-    //     * The totem upgrade placeholders for the upgrade.
-    //     * All upgrades are added to the totems placeholders as "upgrade_<name>_<placeholder>"
-    //     * <p>
-    //     * Example: upgrade_radius_value
-    //     *
-    //     * @param totem The totem to apply the upgrade to
-    //     *
-    //     * @return The value of the upgrade
-    //     */
-    //    public Placeholders getPlaceholders(Totem totem) {
-    //        Placeholders.Builder base = Placeholders.builder();
-    //        base.add("name", StringUtils.capitalize(this.name));
-    //        base.add("max_level", this.maxLevel);
-    //        base.add("description", String.join("\n", this.description));
-    //
-    //        if (totem != null) {
-    //            base.add("level", totem.getProperty(this.getKey(), this.defaultLevel));
-    //            base.add("next_level", Math.min(totem.getProperty(this.getKey(), this.defaultLevel) + 1, this.maxLevel));
-    //            // todo: base.add("cost" , cost);
-    //        }
-    //
-    //        return base.build();
-    //    }
-
-    //    /**
-    //     * Get the namespace key of the upgrade for use in the configuration file
-    //     *
-    //     * @return The namespace key of the upgrade
-    //     */
-    //    public NamespacedKey getKey() {
-    //        return new NamespacedKey(FishingPlugin.get(), "upgrade_" + this.name);
-    //    }
-    //
-    //    /**
-    //     * Get the name of the upgrade
-    //     *
-    //     * @return The name of the upgrade
-    //     */
-    //    public String getName() {
-    //        return this.name;
-    //    }
-    //
-    //    /**
-    //     * Get the description of the upgrade
-    //     *
-    //     * @return The description of the upgrade
-    //     */
-    //    public List<String> getDescription() {
-    //        return this.description;
-    //    }
-    //
-    //    /**
-    //     * Set the description of the upgrade
-    //     *
-    //     * @param description The description of the upgrade
-    //     */
-    //    public void setDescription(List<String> description) {
-    //        this.description = description;
-    //    }
-    //
-    //    /**
-    //     * Get if the upgrade is enabled
-    //     *
-    //     * @return If the upgrade is enabled
-    //     */
-    //    public boolean isEnabled() {
-    //        return this.enabled;
-    //    }
-    //
-    //    /**
-    //     * Set if the upgrade is enabled
-    //     *
-    //     * @param enabled If the upgrade is enabled
-    //     */
-    //    public void setEnabled(boolean enabled) {
-    //        this.enabled = enabled;
-    //    }
-    //
-    //    /**
-    //     * Get the icon of the upgrade
-    //     *
-    //     * @return The icon of the upgrade
-    //     */
-    //    public ItemConstruct getIcon() {
-    //        return this.icon;
-    //    }
-    //
-    //    /**
-    //     * Set the icon of the upgrade
-    //     *
-    //     * @param icon The icon of the upgrade
-    //     */
-    //    public void setIcon(ItemConstruct icon) {
-    //        this.icon = icon;
-    //    }
-    //
-    //    /**
-    //     * Get the default level of the upgrade
-    //     *
-    //     * @return The level of the upgrade
-    //     */
-    //    public int getDefaultLevel() {
-    //        return this.defaultLevel;
-    //    }
-    //
-    //    /**
-    //     * Set the default level of the upgrade
-    //     *
-    //     * @param defaultLevel The default level of the upgrade
-    //     */
-    //    public void setDefaultLevel(int defaultLevel) {
-    //        this.defaultLevel = defaultLevel;
-    //    }
-    //
-    //    /**
-    //     * Get the maximum level of the upgrade
-    //     *
-    //     * @return The maximum level of the upgrade
-    //     */
-    //    public int getMaxLevel() {
-    //        return this.maxLevel;
-    //    }
-    //
-    //    /**
-    //     * Set the maximum level of the upgrade
-    //     *
-    //     * @param maxLevel The maximum level of the upgrade
-    //     */
-    //    public void setMaxLevel(int maxLevel) {
-    //        this.maxLevel = maxLevel;
-    //    }
-    //
-    //    /**
-    //     * Get the permission required to purchase the upgrade
-    //     *
-    //     * @return The permission required to purchase the upgrade
-    //     */
-    //    public String getPermission() {
-    //        return this.permission;
-    //    }
-    //
-    //    /**
-    //     * Set the permission required to purchase the upgrade
-    //     *
-    //     * @param permission The permission required to purchase the upgrade
-    //     */
-    //    public void setPermission(String permission) {
-    //        this.permission = permission;
-    //    }
 
 }

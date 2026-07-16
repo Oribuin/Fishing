@@ -60,9 +60,7 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui, TotemUpgradeMenu.
         gui.clearPageItems();
         Totem totem = this.totemSupplier.get();
         totem.getUpgrades().forEach((upgradeId, upgrade) -> {
-            ItemStack item = UPGRADE_STYLE.create(upgrade.getPlaceholders(totem));
-            if (item == null) return;
-            // todo: make less ugly
+            ItemStack item = upgrade.getIcon().create(upgrade.getPlaceholders(totem));
             gui.addItem(new GuiItem(item, x -> {
                 if (upgrade.increaseLevel((Player) x.getWhoClicked(), totem)) {
                     this.placeUpgrades();
@@ -91,7 +89,7 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui, TotemUpgradeMenu.
     @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
     public static class Config extends GuiConfig {
         private MenuItem totemStats = ItemConstruct.of(Material.OAK_HANGING_SIGN)
-                .setName("<white>[<#94bc80>Totem Details<white>]")
+                .setName("<white>[<#94bc80><bold>Totem Details</bold><white>]")
                 .setLore(
                         "<gray>Here are the current upgrades",
                         "<gray>active for this fishing totem",
@@ -107,17 +105,17 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui, TotemUpgradeMenu.
                 .asMenuItem(4);
 
         private MenuItem previousPage = ItemConstruct.of(Material.ARROW)
-                .setName("<white>[<#94bc80>Previous Page<white>]")
+                .setName("<white>[<#94bc80><bold>Previous Page</bold><white>]")
                 .setLore("<gray>Click here to go to the previous page")
                 .asMenuItem(3);
 
         private MenuItem totemMainMenu = ItemConstruct.of(Material.KNOWLEDGE_BOOK)
-                .setName("<white>[<#94bc80>Totem Main Menu<white>]")
+                .setName("<white>[<#94bc80><bold>Totem Main Menu</bold><white>]")
                 .setLore("<gray>Click here to go to the totem menu")
                 .asMenuItem(4);
 
         private MenuItem nextPage = ItemConstruct.of(Material.ARROW)
-                .setName("<white>[<#94bc80>Next Page<white>]")
+                .setName("<white>[<#94bc80><bold>Next Page</bold><white>]")
                 .setLore("<gray>Click here to go to the next page")
                 .asMenuItem(5);
 
@@ -143,31 +141,5 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui, TotemUpgradeMenu.
             return nextPage;
         }
     }
-
-
-    // region Items
-
-    private static final ItemConstruct PAGE_FORWARD = ItemConstruct.of(Material.ARROW)
-            .setName("<white>[<#94bc80>Next Page<white>]")
-            .setLore("<gray>Click here to go to the next page");
-
-    private static final ItemConstruct PAGE_BACKWARD = ItemConstruct.of(Material.ARROW)
-            .setName("<white>[<#94bc80>Previous Page<white>]")
-            .setLore("<gray>Click here to go to the previous page");
-
-    private static final ItemConstruct UPGRADE_STYLE = ItemConstruct.of(Material.HEART_OF_THE_SEA) // Upgrades will choose their own item, idgaf
-            .setName("<white>[<#94bc80><bold><name><white>]")
-            .setLore(
-                    "<gray><description>",
-                    "",
-                    "<#94bc80>Information",
-                    " <#94bc80>- <gray>Current: <white><level>",
-                    " <#94bc80>- <gray>Max Level: <white><max_level>",
-                    ""
-            )
-            .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
-            .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled);
-    // endregion
-
 
 }

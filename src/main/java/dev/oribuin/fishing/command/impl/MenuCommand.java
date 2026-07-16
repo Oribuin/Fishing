@@ -5,8 +5,6 @@ import dev.oribuin.fishing.command.FishCommand;
 import dev.oribuin.fishing.gui.impl.user.FishGutMenu;
 import dev.oribuin.fishing.gui.impl.user.FishMainMenu;
 import dev.oribuin.fishing.gui.impl.user.FishSellMenu;
-import dev.oribuin.fishing.manager.MenuManager;
-import dev.oribuin.fishing.scheduler.PluginScheduler;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.incendo.cloud.annotations.Command;
@@ -40,7 +38,7 @@ public class MenuCommand implements FishCommand {
         if (target == null) return;
 
         Player finalTarget = target;
-        
+
         new FishMainMenu(this.plugin, finalTarget).open(finalTarget);
     }
 

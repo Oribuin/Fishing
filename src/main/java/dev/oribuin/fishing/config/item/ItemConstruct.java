@@ -16,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
-import javax.naming.Name;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,7 +70,8 @@ public class ItemConstruct implements Cloneable {
 
     /**
      * Create a new {@link ItemStack} with the properties of this ComponentStack object.
-     **
+     * *
+     *
      * @return The created ItemStack
      */
     @NotNull
@@ -146,7 +146,7 @@ public class ItemConstruct implements Cloneable {
             item.setData(ITEM_NAME, customName);
             item.setData(CUSTOM_NAME, customName);
         }
-        
+
         if (this.lore != null) {
             List<Component> lines = new ArrayList<>();
             for (String line : this.lore) {
