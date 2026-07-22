@@ -3,6 +3,8 @@ package dev.oribuin.fishing.model.totem;
 import com.destroystokyo.paper.ParticleBuilder;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.FishEventHandler;
+import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
+import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
 import dev.oribuin.fishing.api.event.impl.TotemActivateEvent;
 import dev.oribuin.fishing.api.event.impl.TotemDeactivateEvent;
 import dev.oribuin.fishing.api.task.AsyncTicker;
@@ -14,6 +16,8 @@ import dev.oribuin.fishing.model.totem.upgrade.TotemUpgradeRegistry;
 import dev.oribuin.fishing.model.totem.upgrade.impl.TotemUpgradeCooldown;
 import dev.oribuin.fishing.model.totem.upgrade.impl.TotemUpgradeDuration;
 import dev.oribuin.fishing.model.totem.upgrade.impl.TotemUpgradeRadius;
+import dev.oribuin.fishing.scheduler.PluginScheduler;
+import dev.oribuin.fishing.scheduler.task.ScheduledTask;
 import dev.oribuin.fishing.storage.persistent.PDCSerializable;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
@@ -31,6 +35,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,6 +49,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.jeff_media.morepersistentdatatypes.DataType.TAG_CONTAINER;
@@ -128,6 +134,8 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
         this.upgrades = new LinkedHashMap<>(TotemUpgradeRegistry.getDefault());
         this.confirmedActivate = false;
         this.readContainer(container);
+
+        this.registerListener(InitialFishCatchEvent.class, this::onInitialCatch);
     }
 
     /**
@@ -270,6 +278,86 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
         PluginMessages.get().getTotem().getActivated().send(player, "time", FishUtils.formatTime(this.getDuration().toMillis()));
 
         new TotemActivateEvent(this, player).callEvent();
+    }
+
+    /**
+     * The functionality provided when a player is first starting to catch a fish, Use this to determine how many fish should be generated.
+     * <p>
+     * Use {@link InitialFishCatchEvent#setAmountToCatch(int)} to set the amount of fish to catch
+     * <p>
+     * Use {@link FishGenerateEvent#addIncrease(double)} to change the chances of catching a fish
+     *
+     * @param event The event that was called when the fish was caught
+     */
+    @Override
+    public void onInitialCatch(InitialFishCatchEvent event) {
+        Location hook = event.getHook().getLocation().clone().add(0, 1, 0);
+        Location position = this.position.clone().add(0, 1, 0);
+        int distance = (int) hook.distance(position);
+        Vector direction = hook.toVector().clone().subtract(position.toVector()).normalize();
+        List<Location> line = new ArrayList<>();
+        for (double i = 0; i < distance; i += 0.5) {
+            Location location = position.clone().add(direction.clone().multiply(i));
+            line.add(location);
+        }
+
+        ParticleBuilder builder = new ParticleBuilder(Particle.DUST_COLOR_TRANSITION)
+                .location(position)
+                .receivers((int) this.getRadius() + 5)
+                .colorTransition(
+                        Color.fromRGB(162, 191, 254),
+                        Color.fromRGB(193, 225, 193)
+                )
+                .extra(0);
+
+        ScheduledTask task = PluginScheduler.get().runTaskTimerAsync(() -> line.forEach(location -> builder
+                .clone()
+                .location(location)
+                .spawn()
+        ), 250, 250, TimeUnit.MILLISECONDS);
+
+        PluginScheduler.get().runTaskLater(task::cancel, 3, TimeUnit.SECONDS);
+    }
+
+    /**
+     * The functionality provided when a player has finished catching a fish, Use this to modify the rewards given to the player once caught
+     * <p>
+     * Use {@link FishCatchEvent#setCatchEntropy(int)} to change the entropy received
+     * <p>
+     * Use {@link FishCatchEvent#setNaturalExp(float)} to change the minecraft experience received
+     * <p>
+     * Use {@link FishCatchEvent#setCatchExp(int)} to change the fishing experience received
+     *
+     * @param event The event that was called when the fish was caught
+     */
+    @Override
+    public void onFishCatch(FishCatchEvent event) {
+        Location hook = event.getHook().getLocation().clone().add(0, 1, 0);
+        Location position = this.position.clone().add(0, 1, 0);
+        int distance = (int) hook.distance(position);
+        Vector direction = hook.toVector().clone().subtract(position.toVector()).normalize();
+        List<Location> line = new ArrayList<>();
+        for (double i = 0; i < distance; i += 0.5) {
+            Location location = position.clone().add(direction.clone().multiply(i));
+            line.add(location);
+        }
+
+        ParticleBuilder builder = new ParticleBuilder(Particle.DUST_COLOR_TRANSITION)
+                .location(position)
+                .receivers((int) this.getRadius() + 5)
+                .colorTransition(
+                        Color.fromRGB(162, 191, 254),
+                        Color.fromRGB(193, 225, 193)
+                )
+                .extra(0);
+
+        ScheduledTask task = PluginScheduler.get().runTaskTimerAsync(() -> line.forEach(location -> builder
+                .clone()
+                .location(location)
+                .spawn()
+        ), 500, 500, TimeUnit.MILLISECONDS);
+
+        PluginScheduler.get().runTaskLater(task::cancel, 3, TimeUnit.SECONDS);
     }
 
     /**
