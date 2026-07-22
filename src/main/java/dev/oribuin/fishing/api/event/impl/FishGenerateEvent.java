@@ -1,11 +1,13 @@
 package dev.oribuin.fishing.api.event.impl;
 
 import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.api.event.FishEventWrapper;
 import dev.oribuin.fishing.manager.TierManager;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.condition.ConditionRegistry;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.fish.Tier;
+import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.util.FishUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.FishHook;
@@ -27,8 +29,7 @@ import java.util.Map;
 public class FishGenerateEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
-    private final @NotNull ItemStack rod;
-    private final @NotNull FishHook hook;
+    private final FishEventWrapper wrapper;
     private final double baseChance;
     private @Nullable Fish fish;
     private final List<Double> chanceIncreases;
@@ -42,18 +43,14 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
      * The base chance is a random number between 0 and 100. Use {@link java.util.concurrent.ThreadLocalRandom#nextDouble(double)} to generate new numbers.
      *
      * @param who  The {@link Player} who is catching the fish
-     * @param rod  The {@link ItemStack} fishing rod the player is using
-     * @param hook The {@link FishHook} the hook the fish was caught on
-     *
-     * @see dev.oribuin.fishing.manager.FishManager#generateFish(Map, Player, ItemStack, FishHook)   Where the event is called
+     * @param wrapper The {@link FishEventWrapper} wrapper for the event
      */
-    public FishGenerateEvent(@NotNull Player who, @NotNull ItemStack rod, @NotNull FishHook hook) {
+    public FishGenerateEvent(@NotNull Player who, @NotNull  FishEventWrapper wrapper) {
         super(who, !Bukkit.isPrimaryThread());
-
-        this.rod = rod;
-        this.hook = hook;
+        this.wrapper = wrapper;
         this.baseChance = FishUtils.RANDOM.nextDouble(100);
         this.chanceIncreases = new ArrayList<>();
+        this.generate();
     }
 
     /**
@@ -67,16 +64,7 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
         this.chanceIncreases.add(increase);
         return this.baseChance + increase;
     }
-
-    /**
-     * Pulls the list of augments that a player has equipped on their fishing rod.
-     *
-     * @return The list of augments used
-     */
-    public Map<Augment, Integer> getAugments() {
-        return FishingPlugin.get().getAugmentManager().from(this.rod);
-    }
-
+    
     /**
      * Generates a new {@link Fish} based on the base chance and the chance increases.
      * <p>
@@ -97,7 +85,7 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
 
         // Make sure the quality is not null
         List<Fish> canCatch = quality.getFish().values().stream()
-                .filter(x -> ConditionRegistry.check(x, player, rod, hook))
+                .filter(x -> ConditionRegistry.check(x, wrapper))
                 .toList();
 
         if (canCatch.isEmpty()) return;
@@ -107,23 +95,23 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
         this.fish = canCatch.get(index);
     }
 
-    /**
-     * The fishing rod the player is using
-     *
-     * @return The itemstack of the fishing rod
-     */
-    public @NotNull ItemStack rod() {
-        return rod;
+
+    public ItemStack getRod() {
+        return this.wrapper.rod();
     }
 
-    /**
-     * The hook that the fish was caught on
-     *
-     * @return The fishhook entity
-     */
-    public @NotNull FishHook hook() {
-        return hook;
+    public FishHook getHook() {
+        return this.wrapper.hook();
     }
+
+    public Map<Augment, Integer> getAugments() {
+        return this.wrapper.augments();
+    }
+
+    public Totem getTotem() {
+        return this.wrapper.totem();
+    }
+
 
     /**
      * The base chance of the fish, this was the original rarity chance of the fish

@@ -34,7 +34,7 @@ public class AugmentIndulge extends Augment {
         super("indulge", "<gray>Restores a player's saturation", "<gray>when they catch a fish");
 
         this.setMaxLevel(3);
-        this.register(InitialFishCatchEvent.class, this::onInitialCatch);
+        this.registerListener(InitialFishCatchEvent.class, this::onInitialCatch);
     }
 
     /**
@@ -45,10 +45,9 @@ public class AugmentIndulge extends Augment {
      * Use {@link FishGenerateEvent#addIncrease(double)} to change the chances of catching a fish
      *
      * @param event The event that was called when the fish was caught
-     * @param level The level of the ability that was used, if applicable (0 if not)
      */
     @Override
-    public void onInitialCatch(InitialFishCatchEvent event, int level) {
+    public void onInitialCatch(InitialFishCatchEvent event) {
         if (event.getPlayer().getFoodLevel() >= 20.0) return;
 
         Placeholders plc = Placeholders.of("level", level);

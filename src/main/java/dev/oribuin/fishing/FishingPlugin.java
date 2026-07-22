@@ -13,7 +13,6 @@ import dev.oribuin.fishing.listener.TotemListeners;
 import dev.oribuin.fishing.manager.AugmentManager;
 import dev.oribuin.fishing.manager.CommandManager;
 import dev.oribuin.fishing.manager.DataManager;
-import dev.oribuin.fishing.manager.FishManager;
 import dev.oribuin.fishing.manager.MenuManager;
 import dev.oribuin.fishing.manager.TierManager;
 import dev.oribuin.fishing.manager.TotemManager;
@@ -27,7 +26,6 @@ public class FishingPlugin extends JavaPlugin {
     private AugmentManager augmentManager;
     private CommandManager commandManager;
     private DataManager dataManager;
-    private FishManager fishManager;
     private MenuManager menuManager;
     private TierManager tierManager;
     private TotemManager totemManager;
@@ -48,7 +46,6 @@ public class FishingPlugin extends JavaPlugin {
         this.commandManager = new CommandManager(this);
         this.dataManager = new DataManager(this);
         this.tierManager = new TierManager(this);
-        this.fishManager = new FishManager(this);
         this.augmentManager = new AugmentManager(this);
         this.totemManager = new TotemManager(this);
         this.menuManager = new MenuManager(this);
@@ -68,7 +65,6 @@ public class FishingPlugin extends JavaPlugin {
         this.dataManager.reload(this);
         this.commandManager.reload(this);
         this.tierManager.reload(this);
-        this.fishManager.reload(this);
         this.augmentManager.reload(this);
         this.totemManager.reload(this);
         this.menuManager.reload(this);
@@ -85,11 +81,7 @@ public class FishingPlugin extends JavaPlugin {
     public TierManager getTierManager() {
         return tierManager;
     }
-
-    public FishManager getFishManager() {
-        return fishManager;
-    }
-
+    
     public CommandManager getCommandManager() {
         return commandManager;
     }

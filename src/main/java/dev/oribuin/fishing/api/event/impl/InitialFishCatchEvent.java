@@ -1,5 +1,9 @@
 package dev.oribuin.fishing.api.event.impl;
 
+import dev.oribuin.fishing.api.event.FishEventWrapper;
+import dev.oribuin.fishing.api.event.def.TotemEvents;
+import dev.oribuin.fishing.model.augment.Augment;
+import dev.oribuin.fishing.model.totem.Totem;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -8,28 +12,35 @@ import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
 public class InitialFishCatchEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
+    private final FishEventWrapper wrapper;
     private boolean cancelled;
-    private final ItemStack rod;
-    private final FishHook hook;
     private int amountToCatch;
 
-    public InitialFishCatchEvent(@NotNull Player who, @NotNull ItemStack rod, @NotNull FishHook hook) {
+    public InitialFishCatchEvent(@NotNull Player who, @NotNull FishEventWrapper wrapper) {
         super(who, false);
-
-        this.rod = rod;
-        this.hook = hook;
+        this.wrapper = wrapper;
         this.amountToCatch = 1;
     }
 
     public ItemStack getRod() {
-        return rod;
+        return this.wrapper.rod();
     }
 
     public FishHook getHook() {
-        return hook;
+        return this.wrapper.hook();
+    }
+    
+    public Map<Augment, Integer> getAugments() {
+        return this.wrapper.augments();
+    } 
+    
+    public Totem getTotem() {
+        return this.wrapper.totem();
     }
 
     public int getAmountToCatch() {

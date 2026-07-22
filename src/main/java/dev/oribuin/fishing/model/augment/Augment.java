@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.jeff_media.morepersistentdatatypes.DataType.STRING;
@@ -39,6 +40,7 @@ public abstract class Augment extends FishEventHandler {
     protected transient final Random random = ThreadLocalRandom.current();
     protected transient final Logger logger;
     protected transient final String name;
+    protected transient int level;
 
     protected Boolean enabled;
     protected Integer maxLevel;
@@ -142,20 +144,7 @@ public abstract class Augment extends FishEventHandler {
                 .add("permission", this.permission)
                 .build();
     }
-
-    /**
-     * Call an event from the handler's registered events, This will not take priority into account.
-     *
-     * @param event The {@link Event} to call
-     * @param level The level of the event
-     */
-    @Override
-    public <T extends Event> void callEvent(T event, int level) {
-        if (this.enabled) {
-            super.callEvent(event, level);
-        }
-    }
-
+    
     /**
      * Checks if the augment is enabled
      *
@@ -311,4 +300,19 @@ public abstract class Augment extends FishEventHandler {
         this.price = price;
     }
 
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
 }

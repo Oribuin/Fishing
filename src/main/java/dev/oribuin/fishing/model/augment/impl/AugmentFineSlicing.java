@@ -25,17 +25,16 @@ public class AugmentFineSlicing extends Augment {
         super("fine_slicing", "<gray>Increases the entropy ", "<gray>gained from gutting fish.");
 
         this.setMaxLevel(12);
-        this.register(FishGutEvent.class, this::onFishGut);
+        this.registerListener(FishGutEvent.class, this::onFishGut);
     }
 
     /**
      * The functionality provided when a player has gutted a fish, Use this to modify the rewards given to the player once gutted
      *
      * @param event The event that was called when the fish was gutted
-     * @param level The level of the ability that was used, if applicable (0 if not)
      */
     @Override
-    public void onFishGut(FishGutEvent event, int level) {
+    public void onFishGut(FishGutEvent event) {
         Placeholders plc = Placeholders.of(
                 "level", level,
                 "entropy", event.getEntropy()

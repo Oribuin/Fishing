@@ -1,6 +1,5 @@
 package dev.oribuin.fishing.manager;
 
-import com.google.common.base.Supplier;
 import com.jeff_media.morepersistentdatatypes.DataType;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.ConfigLoader;
@@ -27,12 +26,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class AugmentManager implements Manager {
 
     private static final File AUGMENTS_FOLDER = new File(FishingPlugin.get().getDataFolder(), "augments");
     private static final ConfigLoader loader = new ConfigLoader(AUGMENTS_FOLDER.toPath());
-    private static final Map<String, Augment> augments = new HashMap<>();
+    private static final Map<String, Supplier<? extends Augment>> augments = new HashMap<>();
     private final FishingPlugin plugin;
 
     public AugmentManager(FishingPlugin plugin) {
@@ -46,15 +47,15 @@ public class AugmentManager implements Manager {
      */
     @Override
     public void reload(FishingPlugin plugin) {
-        register(AugmentBiomeBlend::new);
-        register(AugmentEnlightened::new);
-        register(AugmentFineSlicing::new);
-        register(AugmentGenius::new);
-        register(AugmentHotspot::new);
-        register(AugmentIndulge::new);
-        register(AugmentIntuition::new);
+        register("biome_blend", AugmentBiomeBlend.class);
+        register("enlightened", AugmentEnlightened.class);
+        register("fine_slicing", AugmentFineSlicing.class);
+        register("genius", AugmentGenius.class);
+        register("hotspot", AugmentHotspot.class);
+        register("indulge", AugmentIndulge.class);
+        register("intuition", AugmentIntuition.class);
         //        register(AugmentMakeItRain::new); // TODO: Redo
-        register(AugmentRainDance::new);
+        register("rain_dance", AugmentRainDance.class);
 
         this.plugin.getLogger().info("Loaded a total of [" + augments.size() + "] augments into the plugin");
     }
@@ -73,24 +74,29 @@ public class AugmentManager implements Manager {
     /**
      * Loads an augment into the registry to be used in the plugin and caches it.
      *
-     * @param supplier The {@link Augment} to register
+     * @param identifier   The identifier for the augment
+     * @param augmentClass The augment to register
+     * @param <T>          The type of augment to register
      */
-    public static void register(Supplier<Augment> supplier) {
-        Augment augment = supplier.get();
-        augments.put(augment.getName().toLowerCase(), augment); // Register the augment
+    public static <T extends Augment> void register(String identifier, Class<T> augmentClass) {
+        loader.loadConfig(augmentClass, identifier);
 
-        loader.loadConfig(augment.getClass(), augment.getName());
+        augments.put(identifier.toLowerCase(), () -> loader.getClone(augmentClass));
     }
 
     /**
      * Get an augment from the registry by its name
      *
-     * @param name The name of the augment
+     * @param identifier The name of the augment
      *
      * @return The augment
      */
-    public Augment from(String name) {
-        return augments.get(name);
+    @SuppressWarnings("unchecked")
+    public <T extends Augment> T from(String identifier) {
+        Supplier<? extends Augment> supplier = augments.get(identifier);
+        if (supplier == null) return null;
+
+        return (T) supplier.get();
     }
 
     /**
@@ -99,7 +105,12 @@ public class AugmentManager implements Manager {
      * @return The map of all augments in the registry
      */
     public Map<String, Augment> getAugments() {
-        return augments;
+        return augments.entrySet().stream()
+                .map(x -> Map.entry(x.getKey(), x.getValue()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().get()
+                ));
     }
 
     /**
@@ -153,16 +164,21 @@ public class AugmentManager implements Manager {
      * @return The augments and what level they are at
      */
     public Map<Augment, Integer> from(ItemStack itemStack) {
-        Map<Augment, Integer> result = new HashMap<>();
-        // Implementation here
         ItemMeta meta = itemStack.getItemMeta();
-        if (meta == null) return result;
-
-        // Load the augments from the item meta
+        if (meta == null) return new HashMap<>();
+        
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        augments.forEach((name, augment) -> {
+                
+        // Load the augments from the item meta
+        Map<Augment, Integer> result = new HashMap<>(); 
+        augments.forEach((name, supplier) -> {
+            Augment augment = supplier.get();
+            if (augment == null) return;
+
             Integer level = container.get(augment.getNamespace(), PersistentDataType.INTEGER);
             if (level == null || level <= 0) return;
+            
+            augment.setLevel(level);
 
             result.put(augment, Math.min(level, augment.getMaxLevel())); // Use the maximum level of the augment
         });

@@ -75,10 +75,14 @@ public class Fish {
 
         // Add all the information to the item stack
         Placeholders.Builder placeholders = Placeholders.builder();
-        placeholders.addAll(this.placeholders());
-        placeholders.addAll(this.getTierInstance().placeholders());
+        placeholders.addAll(this.getPlaceholders());
+        placeholders.addAll(this.getTierInstance().getPlaceholders());
 
-        ItemConstruct tierConstruct = fishTier.getItem();
+        ItemConstruct tierConstruct = fishTier.getItem().clone();
+        // Apply fish description to the lore 
+        List<String> lore = new ArrayList<>(this.description);
+        lore.addAll(tierConstruct.getLore());
+        tierConstruct.setLore(lore);
         ItemStack fishConstruct = this.construct.create();
         this.itemStack = tierConstruct.createCustom(
                 fishConstruct,
@@ -97,7 +101,7 @@ public class Fish {
         return FishingPlugin.get().getTierManager().get(this.tier);
     }
 
-    public Placeholders placeholders() {
+    public Placeholders getPlaceholders() {
         Placeholders.Builder builder = Placeholders.builder()
                 .add("id", this.name)
                 .add("name", this.displayName)

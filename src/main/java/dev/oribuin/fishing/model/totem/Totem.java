@@ -25,6 +25,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -48,7 +49,7 @@ import java.util.stream.Collectors;
 import static com.jeff_media.morepersistentdatatypes.DataType.TAG_CONTAINER;
 import static dev.oribuin.fishing.storage.util.KeyRegistry.*;
 
-public class Totem implements PDCSerializable, AsyncTicker { // extends Propertied implements AsyncTicker, Animated
+public class Totem extends FishEventHandler implements PDCSerializable, AsyncTicker { // extends Propertied implements AsyncTicker, Animated
 
     private Location position;
     private UUID owner;
@@ -224,13 +225,13 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
         // TODO: Move this to a disabled state
         long duration = this.getDuration().toMillis();
         if (active && System.currentTimeMillis() - lastActive > duration) {
-            System.out.println("Deactivating the totem ");
             this.active = false;
             this.lastActive = System.currentTimeMillis();
             this.writeContainer(this.display.getPersistentDataContainer()); // Update the totem
 
             // Call the totem activate event on upgrades
-            FishEventHandler.callEvents(this.getUpgradeLevelMapping(), new TotemDeactivateEvent(this));
+            TotemDeactivateEvent deactivateEvent = new TotemDeactivateEvent(this);
+            deactivateEvent.callEvent();
         }
     }
 
@@ -268,8 +269,7 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
         // Tell the player they activated the totem
         PluginMessages.get().getTotem().getActivated().send(player, "time", FishUtils.formatTime(this.getDuration().toMillis()));
 
-        // Call the totem activate event on upgrades
-        FishEventHandler.callEvents(this.getUpgradeLevelMapping(), new TotemActivateEvent(this, player));
+        new TotemActivateEvent(this, player).callEvent();
     }
 
     /**
@@ -442,6 +442,17 @@ public class Totem implements PDCSerializable, AsyncTicker { // extends Properti
         }
 
         return results;
+    }
+
+    /**
+     * Handle an event and call the consumer for it
+     *
+     * @param event The event to handle
+     */
+    @Override
+    public <T extends Event> void handleEvent(T event) {
+        super.handleEvent(event);
+        this.upgrades.values().forEach(x -> x.handleEvent(event));
     }
 
     public Map<TotemUpgrade, Integer> getUpgradeLevelMapping() {

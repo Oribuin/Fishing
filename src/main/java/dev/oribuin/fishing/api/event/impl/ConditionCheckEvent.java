@@ -1,5 +1,6 @@
 package dev.oribuin.fishing.api.event.impl;
 
+import dev.oribuin.fishing.api.event.FishEventWrapper;
 import dev.oribuin.fishing.model.condition.CatchCondition;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.FishHook;
@@ -16,8 +17,7 @@ import org.jetbrains.annotations.NotNull;
 public class ConditionCheckEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
-    private final ItemStack rod;
-    private final FishHook hook;
+    private final FishEventWrapper wrapper;
     private final CatchCondition condition;
     private boolean result;
     private boolean cancelled;
@@ -26,16 +26,12 @@ public class ConditionCheckEvent extends PlayerEvent implements Cancellable {
      * Define a new Condition Check Event, This is called when a fish condition is checked, Use this to modify the result of the condition.
      *
      * @param who       The {@link Player} who is checking the condition
-     * @param rod       The {@link ItemStack} fishing rod the player is using
-     * @param hook      The {@link FishHook} the hook the fish was caught on
      * @param condition The {@link CatchCondition} that is being checked
      * @param result    The result of the condition check, True if the player meets the condition
      */
-    public ConditionCheckEvent(@NotNull Player who, @NotNull ItemStack rod, @NotNull FishHook hook, @NotNull CatchCondition condition, boolean result) {
+    public ConditionCheckEvent(@NotNull Player who, @NotNull FishEventWrapper wrapper, @NotNull CatchCondition condition, boolean result) {
         super(who, !Bukkit.isPrimaryThread());
-
-        this.rod = rod;
-        this.hook = hook;
+        this.wrapper = wrapper;
         this.condition = condition;
         this.result = result;
     }
@@ -45,8 +41,8 @@ public class ConditionCheckEvent extends PlayerEvent implements Cancellable {
      *
      * @return The itemstack of the fishing rod
      */
-    public ItemStack rod() {
-        return rod;
+    public ItemStack getRod() {
+        return this.wrapper.rod();
     }
 
     /**
@@ -54,8 +50,8 @@ public class ConditionCheckEvent extends PlayerEvent implements Cancellable {
      *
      * @return The fishhook entity
      */
-    public FishHook hook() {
-        return hook;
+    public FishHook getHook() {
+        return this.wrapper.hook();
     }
 
     /**
@@ -63,7 +59,7 @@ public class ConditionCheckEvent extends PlayerEvent implements Cancellable {
      *
      * @return The condition being checked
      */
-    public CatchCondition condition() {
+    public CatchCondition getCondition() {
         return condition;
     }
 

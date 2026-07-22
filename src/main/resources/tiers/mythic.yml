@@ -18,8 +18,6 @@ item:
   name: '<#db4675><bold><name>'
   lore:
     - ''
-    - '<gray><description>'
-    - ''
     - '<#db4675>Information:'
     - ' <#db4675>- <gray>Tier: <white><tier>'
     - ' <#db4675>- <gray>Entropy: <white><gut_entropy>'

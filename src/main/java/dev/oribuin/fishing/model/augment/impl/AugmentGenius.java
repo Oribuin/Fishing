@@ -25,27 +25,26 @@ public class AugmentGenius extends Augment {
         super("genius", "<gray>Increases the base minecraft xp", "<gray>earned from catching fish.");
 
         this.setMaxLevel(3);
-        this.register(FishCatchEvent.class, this::onFishCatch);
+        this.registerListener(FishCatchEvent.class, this::onFishCatch);
     }
 
     /**
      * The functionality provided when a player has finished catching a fish, Use this to modify the rewards given to the player once caught
      * <p>
-     * Use {@link FishCatchEvent#entropy(int)} to change the entropy received
-     * Use {@link FishCatchEvent#naturalExp(float)} to change the minecraft experience received
-     * Use {@link FishCatchEvent#fishExp(int)} to change the fishing experience received
+     * Use {@link FishCatchEvent#setCatchEntropy(int)} to change the entropy received
+     * Use {@link FishCatchEvent#setNaturalExp(float)} to change the minecraft experience received
+     * Use {@link FishCatchEvent#setCatchExp(int)} to change the fishing experience received
      *
      * @param event The event that was called when the fish was caught
-     * @param level The level of the ability that was used, if applicable (0 if not)
      */
     @Override
-    public void onFishCatch(FishCatchEvent event, int level) {
+    public void onFishCatch(FishCatchEvent event) {
         Placeholders plc = Placeholders.of(
                 "level", level,
-                "xp", event.naturalExp()
+                "xp", event.getNaturalExp()
         );
         double xp = FishUtils.evaluate(plc.applyString(this.formula));
-        event.naturalExp((int) xp);
+        event.setNaturalExp((int) xp);
     }
 
     /**

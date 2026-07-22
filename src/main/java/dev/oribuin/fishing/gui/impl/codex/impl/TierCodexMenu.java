@@ -58,7 +58,7 @@ public class TierCodexMenu extends BasicCodexMenu<Tier, TierCodexMenu.Config> {
      */
     @Override
     public @Nullable ItemStack getStack(@NonNull Tier value) {
-        return value.getTierDisplay().create(value.placeholders());
+        return value.getTierDisplay().create(value.getPlaceholders());
     }
 
     @ConfigSerializable

@@ -34,7 +34,7 @@ public class AugmentRainDance extends Augment {
         super("rain_dance", "<gray>Increases the amount of fish", "<gray>caught when the weather is raining");
 
         this.setMaxLevel(15);
-        this.register(InitialFishCatchEvent.class, this::onInitialCatch);
+        this.registerListener(InitialFishCatchEvent.class, this::onInitialCatch);
     }
 
     /**
@@ -45,12 +45,11 @@ public class AugmentRainDance extends Augment {
      * Use {@link FishGenerateEvent#addIncrease(double)} to change the chances of catching a fish
      *
      * @param event The event that was called when the fish was caught
-     * @param level The level of the ability that was used, if applicable (0 if not)
      */
     @Override
-    public void onInitialCatch(InitialFishCatchEvent event, int level) {
+    public void onInitialCatch(InitialFishCatchEvent event) {
         if (Weather.CLEAR.isState(event.getHook().getLocation())) return;
-
+        
         Placeholders plc = Placeholders.of("level", level);
         double chance = FishUtils.evaluate(plc.applyString(this.formula));
         if (this.random.nextDouble(100) <= chance) return;

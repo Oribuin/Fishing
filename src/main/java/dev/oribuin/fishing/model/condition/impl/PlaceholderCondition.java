@@ -63,7 +63,7 @@ public class PlaceholderCondition extends CatchCondition {
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
         Placeholders.Builder builder = Placeholders.builder();
-        builder.addAll(fish.placeholders());
+        builder.addAll(fish.getPlaceholders());
         //        builder.addAll(fish.getTierInstance()).placeholders()); // todo: tier placeholders
         builder.add("player", player.getName());
         Placeholders built = builder.build();

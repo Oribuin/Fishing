@@ -30,7 +30,7 @@ public class AugmentBiomeBlend extends Augment {
         super("biome_blend", "<gray>When a player catches a fish, there is", "<gray>a chance to ignore the biome restrictions.");
 
         this.setMaxLevel(3);
-        this.register(ConditionCheckEvent.class, this::onConditionCheck);
+        this.registerListener(ConditionCheckEvent.class, this::onConditionCheck);
     }
 
     /**
@@ -40,11 +40,10 @@ public class AugmentBiomeBlend extends Augment {
      * Use {@link FishGenerateEvent#addIncrease(double)} to change the chances of catching a fish
      *
      * @param event The event that was called when the fish was gutted
-     * @param level The level of the ability that was used, if applicable (0 if not)
      */
     @Override
-    public void onConditionCheck(ConditionCheckEvent event, int level) {
-        if (!(event.condition() instanceof BiomeCondition)) return;
+    public void onConditionCheck(ConditionCheckEvent event ) {
+        if (!(event.getCondition() instanceof BiomeCondition)) return;
 
         Placeholders placeholders = Placeholders.of("level", level);
         double chance = FishUtils.evaluate(placeholders.applyString(this.formula));

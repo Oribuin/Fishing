@@ -17,8 +17,6 @@ item:
   name: '<#FFD700><bold><name>'
   lore:
     - ''
-    - '<gray><description>'
-    - ''
     - '<#FFD700>Information:'
     - ' <#FFD700>- <gray>Tier: <white><tier>'
     - ' <#FFD700>- <gray>Entropy: <white><gut_entropy>'

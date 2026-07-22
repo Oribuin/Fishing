@@ -33,7 +33,7 @@ public class AugmentHotspot extends Augment {
         super("hotspot", "<gray>Increases the amount of fish", "<gray>caught when the weather is clear");
 
         this.setMaxLevel(15);
-        this.register(InitialFishCatchEvent.class, this::onInitialCatch);
+        this.registerListener(InitialFishCatchEvent.class, this::onInitialCatch);
     }
 
     /**
@@ -44,10 +44,9 @@ public class AugmentHotspot extends Augment {
      * Use {@link FishGenerateEvent#addIncrease(double)} to change the chances of catching a fish
      *
      * @param event The event that was called when the fish was caught
-     * @param level The level of the ability that was used, if applicable (0 if not)
      */
     @Override
-    public void onInitialCatch(InitialFishCatchEvent event, int level) {
+    public void onInitialCatch(InitialFishCatchEvent event) {
         if (!Weather.CLEAR.isState(event.getHook().getLocation())) return;
 
         Placeholders plc = Placeholders.of("level", level);

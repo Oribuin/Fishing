@@ -17,8 +17,6 @@ item:
   name: '<#c28df7><bold><name>'
   lore:
     - ''
-    - '<gray><description>'
-    - ''
     - '<#c28df7>Information:'
     - ' <#c28df7>- <gray>Tier: <white><tier>'
     - ' <#c28df7>- <gray>Entropy: <white><gut_entropy>'

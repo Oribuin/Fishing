@@ -2,12 +2,12 @@ package dev.oribuin.fishing.api.event;
 
 import dev.oribuin.fishing.api.event.def.FishingEvents;
 import dev.oribuin.fishing.api.event.def.TotemEvents;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
-import org.bukkit.event.EventPriority;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * A global handler to parse any fishing related events, used to detect
@@ -15,107 +15,52 @@ import java.util.function.BiConsumer;
  */
 public abstract class FishEventHandler implements FishingEvents, TotemEvents {
 
-    private transient final Map<Class<? extends Event>, EventWrapper<?>> events = new HashMap<>();
+    private final transient Map<Class<? extends Event>, Consumer<? extends Event>> listeners;
 
-    /**
-     * Call an event from the handler's registered events, This will take priority into account.
-     *
-     * @param event The {@link Event} to call
-     * @param <T>   The event type to call
-     */
-    public static <T extends FishEventHandler, Z extends Event> void callEvents(Map<T, Integer> values, Z event) {
-        if (!event.callEvent()) return; // Call the event through bukkit to allow other plugins to listen to the event
-
-        Map<T, Integer> applicable = new HashMap<>(values);
-        applicable.keySet().removeIf(x -> !x.applicable(event));
-
-        // Sort the events by their priority and call them
-        applicable.entrySet().stream().map(x -> new MutableEventWrapper<>(x.getKey(), x.getValue(), event))
-                .sorted(MutableEventWrapper::compare)
-                .forEachOrdered(x -> x.getType().callEvent(event, x.getLevel()));
+    public FishEventHandler() {
+        this.listeners = new HashMap<>();
     }
 
     /**
-     * Call an event from the handler's registered events, This will not take priority into account.
+     * Check if an event class is registered into the plugin
      *
-     * @param event The {@link Event} to call
-     * @param level The level of the event
-     * @param <T>   The event type to call
+     * @param eventClass The event class to register
+     * @param <T>        The event type
+     *
+     * @return Whether the event is registered
+     */
+    public <T extends Event> boolean isRegistered(Class<T> eventClass) {
+        return eventClass != null && this.listeners.containsKey(eventClass);
+    }
+
+    /**
+     * Register a listener into the event handler to be used later
+     *
+     * @param eventClass The event class to register
+     * @param listener   The listener to register
+     * @param <T>        The type of event
+     */
+    public <T extends Event> void registerListener(Class<T> eventClass, Consumer<T> listener) {
+        this.listeners.put(eventClass, listener);
+    }
+
+    /**
+     * Handle an event and call the consumer for it
+     *
+     * @param event The event to handle
+     * @param <T>   The type of event
      */
     @SuppressWarnings("unchecked")
-    public <T extends Event> void callEvent(T event, int level) {
-        EventWrapper<?> wrapper = this.events.get(event.getClass());
-        if (wrapper == null) return;
+    public <T extends Event> void handleEvent(T event) {
+        if (event == null || event instanceof Cancellable cancellable && cancellable.isCancelled()) return;
 
-        ((EventWrapper<T>) wrapper).function().accept(event, level);
-    }
+        Class<? extends Event> eventClass = event.getClass();
+        Consumer<? extends Event> consumer = this.listeners.get(eventClass);
+        if (consumer == null) return;
 
-    /**
-     * Register a function to be called when an {@link Event} is fired for the specified event with {@link EventPriority#NORMAL} priority
-     *
-     * @param event    The event to register the function for
-     * @param function The function to be called when the event is fired
-     * @param <T>      The event type to register
-     */
-    public <T extends Event> void register(Class<T> event, BiConsumer<T, Integer> function) {
-        this.register(new EventWrapper<>(event, function, EventPriority.NORMAL));
-    }
-
-    /**
-     * Register a function to be called when an {@link Event} is fired for the specified event
-     *
-     * @param event    The event to register the function for
-     * @param function The function to be called when the event is fired
-     * @param order    The priority of the event, used to determine when it is called relative to other events. Uses the {@link EventPriority} enum and behaves like Bukkit's event priority
-     * @param <T>      The event type to register
-     */
-    public <T extends Event> void register(Class<T> event, BiConsumer<T, Integer> function, EventPriority order) {
-        this.register(new EventWrapper<>(event, function, order));
-    }
-
-    /**
-     * Register a function to be called when an {@link Event} is fired for the specified event
-     *
-     * @param wrapper The event to register the function for
-     * @param <T>     The event type to register
-     */
-    public <T extends Event> void register(EventWrapper<T> wrapper) {
-        this.events.put(wrapper.event(), wrapper);
-    }
-
-    /**
-     * Get all the events that are registered with the handler
-     *
-     * @return A map of all the events that are registered
-     */
-    public Map<Class<? extends Event>, EventWrapper<?>> events() {
-        return events;
-    }
-
-    /**
-     * Check if an {@link Event} is applicable to the handler and has a function registered
-     *
-     * @param event The event to check
-     *
-     * @return If the event is applicable
-     */
-    public boolean applicable(Event event) {
-        return this.events.containsKey(event.getClass());
-    }
-
-    /**
-     * Get the wrapper for an event
-     *
-     * @param event The event to get the wrapper for
-     * @param <T>   The event type to get the wrapper for
-     *
-     * @return The wrapper for the event
-     */
-    @SuppressWarnings("unchecked")
-    public <T extends Event> EventWrapper<T> getWrapper(Class<T> event) {
-        if (!this.events.containsKey(event)) return null;
-
-        return (EventWrapper<T>) this.events.get(event);
+        ((Consumer<T>) consumer).accept(event);
     }
 
 }
+
+

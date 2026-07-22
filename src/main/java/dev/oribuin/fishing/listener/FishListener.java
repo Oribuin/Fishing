@@ -1,12 +1,11 @@
 package dev.oribuin.fishing.listener;
 
 import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.api.event.FishEventHandler;
+import dev.oribuin.fishing.api.event.FishEventWrapper;
 import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
+import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
 import dev.oribuin.fishing.config.impl.PluginMessages;
-import dev.oribuin.fishing.manager.FishManager;
-import dev.oribuin.fishing.manager.TotemManager;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.totem.Totem;
@@ -37,8 +36,15 @@ public class FishListener implements Listener {
         Map<Augment, Integer> augments = this.plugin.getAugmentManager().from(hand);
         Totem nearby = this.plugin.getTotemManager().getClosestActive(event.getHook().getLocation());
 
+        FishEventWrapper eventWrapper = new FishEventWrapper(
+                event.getPlayer(),
+                event.getHook(),
+                hand,
+                augments, nearby
+        );
+
         switch (event.getState()) {
-            case CAUGHT_FISH -> this.catchNewFish(event, hand, augments, nearby);
+            case CAUGHT_FISH -> this.catchNewFish(event, eventWrapper);
             // todo: allow bite actual modification
         }
 
@@ -49,28 +55,19 @@ public class FishListener implements Listener {
      *
      * @param event The catching event
      */
-    private void catchNewFish(PlayerFishEvent event, ItemStack rod, Map<Augment, Integer> augments, Totem totem) {
-        FishManager manager = this.plugin.getFishManager();
-        TotemManager totemProvider = this.plugin.getTotemManager();
-
+    private void catchNewFish(PlayerFishEvent event, FishEventWrapper wrapper) {
         // If caught no fish, do nothing
         List<Fish> caught = new ArrayList<>();
-        InitialFishCatchEvent catchEvent = new InitialFishCatchEvent(event.getPlayer(), rod, event.getHook());
-        Totem nearest = totemProvider.getClosestActive(event.getHook().getLocation());
+        InitialFishCatchEvent catchEvent = new InitialFishCatchEvent(event.getPlayer(), wrapper);
 
         // Run the augments onInitialCatch method
-        FishEventHandler.callEvents(augments, catchEvent);
-
-        // Run Totem Stuff
-        if (nearest != null) {
-            FishEventHandler.callEvents(nearest.getUpgradeLevelMapping(), catchEvent);
-        }
+        wrapper.handleEvent(catchEvent);
 
         // Cancel the event if it is cancelled
         if (catchEvent.isCancelled()) return;
 
         for (int i = 0; i < catchEvent.getAmountToCatch(); i++) {
-            caught.add(manager.generateFish(augments, event.getPlayer().getPlayer(), rod, event.getHook()));
+            caught.add(this.generateFish(wrapper));
         }
 
         // Add the fish into the player inventory
@@ -81,17 +78,20 @@ public class FishListener implements Listener {
         for (Fish fish : caught) {
             if (fish == null) continue;
 
-            FishCatchEvent fishCatchEvent = new FishCatchEvent(event.getPlayer(), rod, event.getHook(), fish);
-            fishCatchEvent.naturalExp(naturalExp); // Set the base experience gained
+            FishCatchEvent fishCatchEvent = new FishCatchEvent(event.getPlayer(), wrapper, fish);
+            fishCatchEvent.setNaturalExp(naturalExp); // Set the base experience gained
             fishCatchEvent.callEvent(); // call through bukkit
 
-            FishEventHandler.callEvents(augments, fishCatchEvent);
+            // Run the augments onInitialCatch method
+            if (!wrapper.augments().isEmpty()) wrapper.augments().keySet().forEach(augment -> augment.handleEvent(fishCatchEvent));
+            if (wrapper.totem() != null && wrapper.totem().isActive()) wrapper.totem().handleEvent(fishCatchEvent);
+
             if (fishCatchEvent.isCancelled()) continue; // If the event is cancelled, do nothing
 
             // Use the event values because they could have been modified
-            naturalExp += fishCatchEvent.naturalExp();
-            newFishExp += fishCatchEvent.fishExp();
-            newEntropy += fishCatchEvent.entropy();
+            naturalExp += fishCatchEvent.getNaturalExp();
+            newFishExp += fishCatchEvent.getCatchExp();
+            newEntropy += fishCatchEvent.getCatchEntropy();
 
             // Tell the player they caught a fish
 
@@ -123,6 +123,25 @@ public class FishListener implements Listener {
             this.plugin.getDataManager().saveUser(fisher); // Save the player data on levelup
             PluginMessages.get().getLevelUp().send(fisher, "level", fisher.getLevel()); // Tell the player they leveled up
         }
+    }
+
+    /**
+     * Fires the {@link FishGenerateEvent} and returns the fish
+     * This generates its own fish that can be overridden by augments or other plugins.
+     *
+     * @param wrapper The fish event wrapper
+     *
+     * @return The fish the player caught
+     */
+    private Fish generateFish(FishEventWrapper wrapper) {
+        FishGenerateEvent event = new FishGenerateEvent(wrapper.player(), wrapper);
+        event.callEvent(); // Call the fish generation event
+
+        wrapper.handleEvent(event);
+        if (event.isCancelled()) return null;
+
+        event.generate();
+        return event.fish();
     }
 
 }

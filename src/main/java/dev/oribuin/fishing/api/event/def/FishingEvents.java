@@ -1,7 +1,5 @@
 package dev.oribuin.fishing.api.event.def;
 
-import dev.oribuin.fishing.api.event.EventWrapper;
-import dev.oribuin.fishing.api.event.FishEventHandler;
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
@@ -13,8 +11,6 @@ import org.bukkit.event.player.PlayerFishEvent;
  * A global list of methods that can be used to modify all the relevant events in the plugin
  * <p>
  * This is to be used as a template reference for all augments, skills and other classes that need to modify the fish events
- * <p>
- * If you are implementing these methods, They should be registered through {@link FishEventHandler#register(EventWrapper)} class.
  */
 @SuppressWarnings("unused")
 public interface FishingEvents {
@@ -27,9 +23,8 @@ public interface FishingEvents {
      * Use {@link FishGenerateEvent#addIncrease(double)} to change the chances of catching a fish
      *
      * @param event The event that was called when the fish was caught
-     * @param level The level of the ability that was used, if applicable (0 if not)
      */
-    default void onInitialCatch(InitialFishCatchEvent event, int level) {}
+    default void onInitialCatch(InitialFishCatchEvent event) {}
 
     /**
      * The functionality provided when a fish is generated, Use this to modify the fish that are caught
@@ -41,31 +36,28 @@ public interface FishingEvents {
      * Use {@link ConditionCheckEvent} to modify the conditions that are checked
      *
      * @param event The event that was called when the fish was generated
-     * @param level The level of the ability that was used, if applicable (0 if not)
      */
-    default void onFishGenerate(FishGenerateEvent event, int level) {}
+    default void onFishGenerate(FishGenerateEvent event) {}
 
     /**
      * The functionality provided when a player has finished catching a fish, Use this to modify the rewards given to the player once caught
      * <p>
-     * Use {@link FishCatchEvent#entropy(int)} to change the entropy received
+     * Use {@link FishCatchEvent#setCatchEntropy(int)} to change the entropy received
      * <p>
-     * Use {@link FishCatchEvent#naturalExp(float)} to change the minecraft experience received
+     * Use {@link FishCatchEvent#setNaturalExp(float)} to change the minecraft experience received
      * <p>
-     * Use {@link FishCatchEvent#fishExp(int)} to change the fishing experience received
+     * Use {@link FishCatchEvent#setCatchExp(int)} to change the fishing experience received
      *
      * @param event The event that was called when the fish was caught
-     * @param level The level of the ability that was used, if applicable (0 if not)
      */
-    default void onFishCatch(FishCatchEvent event, int level) {}
+    default void onFishCatch(FishCatchEvent event) {}
 
     /**
      * The functionality provided when a player has gutted a fish, Use this to modify the rewards given to the player once gutted
      *
      * @param event The event that was called when the fish was gutted
-     * @param level The level of the ability that was used, if applicable (0 if not)
      */
-    default void onFishGut(FishGutEvent event, int level) {}
+    default void onFishGut(FishGutEvent event) {}
 
     /**
      * The functionality provided when the plugin checks if a player could catch a fish. Use this to modify the outcome of the check
@@ -74,16 +66,14 @@ public interface FishingEvents {
      * Use {@link FishGenerateEvent#addIncrease(double)} to change the chances of catching a fish
      *
      * @param event The event that was called when the fish was gutted
-     * @param level The level of the ability that was used, if applicable (0 if not)
      */
-    default void onConditionCheck(ConditionCheckEvent event, int level) {}
+    default void onConditionCheck(ConditionCheckEvent event) {}
 
     /**
      * The functionality provided when a fish bites the rod before it is caught
      *
      * @param event The fishing event
-     * @param level The level of the ability that was used, if applicable (0 if not)
      */
-    default void onBite(PlayerFishEvent event, int level) {}
+    default void onBite(PlayerFishEvent event) {}
 
 }

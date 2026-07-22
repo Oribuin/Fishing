@@ -65,7 +65,7 @@ public class Tier {
         this.configHandler = new ConfigHandler<>(Tier.class, config);
     }
 
-    public Placeholders placeholders() {
+    public Placeholders getPlaceholders() {
         return Placeholders.builder()
                 .add("tier", StringUtils.capitalize(this.name))
                 .add("chance", this.chance)

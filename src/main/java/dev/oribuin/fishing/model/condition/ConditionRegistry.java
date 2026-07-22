@@ -1,5 +1,6 @@
 package dev.oribuin.fishing.model.condition;
 
+import dev.oribuin.fishing.api.event.FishEventWrapper;
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import dev.oribuin.fishing.model.condition.impl.AugmentCondition;
 import dev.oribuin.fishing.model.condition.impl.BiomeCondition;
@@ -16,9 +17,6 @@ import dev.oribuin.fishing.model.condition.impl.TimeCondition;
 import dev.oribuin.fishing.model.condition.impl.WeatherCondition;
 import dev.oribuin.fishing.model.condition.impl.WorldCondition;
 import dev.oribuin.fishing.model.fish.Fish;
-import org.bukkit.entity.FishHook;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -82,22 +80,20 @@ public class ConditionRegistry {
     /**
      * Runs a fish context through all the conditions to check if the player can catch the fish or not.
      *
-     * @param fish   The fish the player is trying to catch
-     * @param player The player to check
-     * @param rod    The fishing rod the player is using
-     * @param hook   The fishhook the player is using
+     * @param fish    The fish the player is trying to catch
+     * @param wrapper The event wrapper
      *
      * @return Results in true if the player can catch the fish
      */
-    public static boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
+    public static boolean check(Fish fish, FishEventWrapper wrapper) {
         for (CatchCondition condition : fish.getConditions()) {
             if (!condition.shouldRun(fish)) {
                 continue; // Don't run the condition they don't have 
             }
 
             // Check the condition
-            boolean result = condition.check(fish, player, rod, hook);
-            ConditionCheckEvent event = new ConditionCheckEvent(player, rod, hook, condition, result);
+            boolean result = condition.check(fish, wrapper.player(), wrapper.rod(), wrapper.hook());
+            ConditionCheckEvent event = new ConditionCheckEvent(wrapper.player(), wrapper, condition, result);
             event.callEvent(); // Call the event
 
             if (event.isCancelled()) continue;

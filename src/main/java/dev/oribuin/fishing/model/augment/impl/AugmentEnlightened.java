@@ -25,7 +25,7 @@ public class AugmentEnlightened extends Augment {
         super("enlightened", "<gray>Increases the base plugin xp", "<gray>earned from catching fish.");
 
         this.setMaxLevel(5);
-        this.register(FishCatchEvent.class, this::onFishCatch);
+        this.registerListener(FishCatchEvent.class, this::onFishCatch);
     }
 
     /**
@@ -33,17 +33,16 @@ public class AugmentEnlightened extends Augment {
      * This method is run for each fish caught
      *
      * @param event The context of the fish event
-     * @param level The level of the augment that was used
      */
     @Override
-    public void onFishCatch(FishCatchEvent event, int level) {
+    public void onFishCatch(FishCatchEvent event) {
         Placeholders plc = Placeholders.of(
                 "level", level,
-                "xp", event.baseFishExp()
+                "xp", event.getBaseCatchExp()
         );
 
         double xp = FishUtils.evaluate(plc.applyString(this.formula));
-        event.fishExp((int) xp);
+        event.setCatchExp((int) xp);
     }
 
     /**

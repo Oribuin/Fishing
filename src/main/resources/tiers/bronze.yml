@@ -17,8 +17,6 @@ item:
   name: '<#CD7F32><bold><name>'
   lore:
     - ''
-    - '<description>'
-    - ''
     - '<#CD7F32>Information:'
     - ' <#CD7F32>- <gray>Tier: <white><tier>'
     - ' <#CD7F32>- <gray>Entropy: <white><gut_entropy>'
