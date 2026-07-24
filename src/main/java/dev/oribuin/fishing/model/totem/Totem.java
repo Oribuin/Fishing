@@ -22,6 +22,7 @@ import dev.oribuin.fishing.storage.persistent.PDCSerializable;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.oribuin.fishing.util.math.MathL;
+import io.papermc.paper.math.Rotations;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -192,47 +193,10 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
      */
     @Override
     public void tickAsync() {
-        // Spawn particles around the totem 
-        // TODO: Move this to an animation API
-        if (System.currentTimeMillis() - this.lastActive > Duration.ofSeconds(1).toMillis()) {
-
-            Color color = Color.RED;
-            if (active) color = Color.LIME;
-            if (!active && this.onCooldown()) color = Color.YELLOW;
-
-            new ParticleBuilder(Particle.DUST)
-                    .location(this.position)
-                    .offset(0.5, 0.5, 0.5)
-                    .count(10)
-                    .extra(0)
-                    .color(color)
-                    .spawn();
-
-            // Spawn additional particles around the totem bounds while active
-            // TODO: Active particle builder
-            //            if (active) {
-            //                ParticleBuilder dust = this.getDust(Color.LIME);
-            //                this.bounds = this.getBounds(); // regularly update the bounds of the totem
-            //                this.bounds.forEach(x -> dust.clone().location(x.clone().add(0, 1.5, 0)).spawn());
-            //            }
-            //
-            //
-            //            this.lastTick = System.currentTimeMillis();
-        }
-
-        // Make the totem rotate it's head
-        // todo: rotation, make skin animation
-        //        if (active && this.entity != null) {
-        //            if (this.rotation >= 360) this.rotation = -1;
-        //            this.rotation += 2;
-        //
-        //            this.entity.setHeadRotations(Rotations.ofDegrees(0, this.rotation, 0));
-        //        }
-
-        // Check if the totem should be disabled
-        // TODO: Move this to a disabled state
+        
+        // Deactivate the totem when unused
         long duration = this.getDuration().toMillis();
-        if (active && System.currentTimeMillis() - lastActive > duration) {
+        if (this.active && System.currentTimeMillis() - this.lastActive > duration) {
             this.active = false;
             this.lastActive = System.currentTimeMillis();
             this.writeContainer(this.display.getPersistentDataContainer()); // Update the totem
@@ -240,6 +204,33 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
             // Call the totem activate event on upgrades
             TotemDeactivateEvent deactivateEvent = new TotemDeactivateEvent(this);
             deactivateEvent.callEvent();
+            return;
+        }
+
+        // Spawn particles around the totem 
+        // TODO: Move this to an animation API
+
+        Color color = Color.RED;
+        if (active) color = Color.LIME;
+        if (!active && this.onCooldown()) color = Color.YELLOW;
+
+        new ParticleBuilder(Particle.DUST)
+                .location(this.position.clone().add(0, 1, 0))
+                .offset(0.5, 0.5, 0.5)
+                .count(10)
+                .extra(0)
+                .color(color)
+                .spawn();
+
+        // Spawn additional particles around the totem bounds while active
+        // TODO: Active particle builder
+        if (active) {
+            ParticleBuilder dust = this.getDust(Color.LIME);
+            this.getBounds().forEach(x -> dust.clone().location(x.clone().add(0, 1.5, 0)).spawn());
+
+            Rotations rotations = this.display.getHeadRotations();
+            double y = rotations.y() >= 360 ? 0 : rotations.y() + 2;
+            this.display.setHeadRotations(Rotations.ofDegrees(0, y, 0));
         }
     }
 
@@ -284,8 +275,6 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
      * The functionality provided when a player is first starting to catch a fish, Use this to determine how many fish should be generated.
      * <p>
      * Use {@link InitialFishCatchEvent#setAmountToCatch(int)} to set the amount of fish to catch
-     * <p>
-     * Use {@link FishGenerateEvent#addIncrease(double)} to change the chances of catching a fish
      *
      * @param event The event that was called when the fish was caught
      */
@@ -310,13 +299,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
                 )
                 .extra(0);
 
-        ScheduledTask task = PluginScheduler.get().runTaskTimerAsync(() -> line.forEach(location -> builder
-                .clone()
-                .location(location)
-                .spawn()
-        ), 250, 250, TimeUnit.MILLISECONDS);
-
-        PluginScheduler.get().runTaskLater(task::cancel, 3, TimeUnit.SECONDS);
+        line.forEach(location -> builder.clone().location(location).spawn());
     }
 
     /**
@@ -379,6 +362,8 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
             result.setCustomNameVisible(true);
             result.setPersistent(true);
             result.customName(FishUtils.kyorify(this.displayName));
+
+            // TODO: Use the totem skin
             result.setItem(EquipmentSlot.HEAD, TotemConfig.get().getTotemItem().create());
 
             // Lock all the slots
@@ -393,27 +378,19 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
         });
 
         // Create spawning particles around the totem
-        long startTime = System.currentTimeMillis();
-        // TODO: Spawn particles in a better way than a task
         List<Location> bounds = this.getBounds();
-        Bukkit.getScheduler().runTaskTimerAsynchronously(FishingPlugin.get(), task -> {
+        ScheduledTask repeating = PluginScheduler.get().runTaskTimerAsync(() -> {
+            // dont display particles if running
+            if (stand.isDead() || this.position == null || !this.position.isChunkLoaded()) return;
 
-            // Remove the task if the entity or center is null
-            if (stand.isDead() || this.position == null || !this.position.isChunkLoaded()) {
-                task.cancel();
-                return;
-            }
+            bounds.forEach(x ->
+                    this.getDust(Color.LIME)
+                            .location(x.clone().add(0, 0.5, 0))
+                            .spawn()
+            );
+        }, 1000, 250, TimeUnit.MILLISECONDS);
 
-            // if longer than 3 seconds cancel
-            if (System.currentTimeMillis() - startTime > Duration.ofSeconds(5).toMillis()) {
-                task.cancel();
-                return;
-            }
-
-            // Spawn dust particles to display the totem radius
-            // TODO: RadiusParticleAnimation 
-            bounds.forEach(x -> this.getDust(Color.LIME).location(x.clone().add(0, 0.5, 0)).spawn());
-        }, 0L, 5L);
+        PluginScheduler.get().runTaskLaterAsync(repeating::cancel, 3, TimeUnit.SECONDS);
     }
 
     /**

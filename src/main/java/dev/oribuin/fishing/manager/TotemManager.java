@@ -64,7 +64,7 @@ public class TotemManager implements Manager {
 
         this.asyncTicker = PluginScheduler.get().runTaskTimerAsync(
                 () -> this.tick(Totem::tickAsync),
-                1, 1, TimeUnit.SECONDS
+                1000, 250, TimeUnit.MILLISECONDS
         );
     }
 

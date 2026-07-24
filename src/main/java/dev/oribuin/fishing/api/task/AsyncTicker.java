@@ -27,7 +27,7 @@ public interface AsyncTicker {
      *
      * @return The delay between each task
      */
-    default Duration delay() {
+    default Duration getTickDelay() {
         return Duration.ZERO;
     }
 
@@ -37,9 +37,9 @@ public interface AsyncTicker {
      * @return The BukkitTask instance
      */
     default ScheduledTask schedule() {
-        if (this.delay().toSeconds() == 0) return null; // If the delay is 0, return null
+        if (this.getTickDelay().toSeconds() == 0) return null; // If the delay is 0, return null
 
-        return PluginScheduler.get().runTaskTimerAsync(this::tickAsync, this.delay().toSeconds(), 0, TimeUnit.SECONDS);
+        return PluginScheduler.get().runTaskTimerAsync(this::tickAsync, this.getTickDelay().toSeconds(), 0, TimeUnit.SECONDS);
     }
 
 }
