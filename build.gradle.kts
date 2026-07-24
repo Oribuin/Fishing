@@ -102,6 +102,7 @@ tasks {
         this.author = "Oribuin"
         this.description = "hello"
         this.apiVersion = "1.21"
+        this.foliaSupported = true
         this.softDepend = listOf("Vault", "HeadDatabase", "PlaceholderAPI", "PlayerPoints")
     }
     

@@ -223,7 +223,7 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
                 .setLore(
                         "<gray>This totem is currently on cooldown",
                         "",
-                        "<#e65f05>- <white>Time Remaining: <#e65f05><upgrade_cooldown>"
+                        "<#e65f05>- <white>Time Remaining: <#e65f05><upgrade_cooldown_remaining>"
                 )
                 .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
                 .asMenuItem(13);
