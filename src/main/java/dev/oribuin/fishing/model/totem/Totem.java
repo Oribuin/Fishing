@@ -404,7 +404,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
                             .location(x.clone().add(0, 0.5, 0))
                             .spawn()
             );
-        }, 1000, 250, TimeUnit.MILLISECONDS);
+        }, 0, 250, TimeUnit.MILLISECONDS);
 
         PluginScheduler.get().runTaskLaterAsync(repeating::cancel, 3, TimeUnit.SECONDS);
     }
