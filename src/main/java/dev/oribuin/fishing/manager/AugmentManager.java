@@ -16,10 +16,14 @@ import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.oribuin.fishing.util.math.RomanNumber;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -163,21 +167,24 @@ public class AugmentManager implements Manager {
      *
      * @return The augments and what level they are at
      */
-    public Map<Augment, Integer> from(ItemStack itemStack) {
+    @NotNull
+    public Map<Augment, Integer> from(@Nullable ItemStack itemStack) {
+        if (itemStack == null) return new HashMap<>();
+        
         ItemMeta meta = itemStack.getItemMeta();
         if (meta == null) return new HashMap<>();
-        
+
         PersistentDataContainer container = meta.getPersistentDataContainer();
-                
+
         // Load the augments from the item meta
-        Map<Augment, Integer> result = new HashMap<>(); 
+        Map<Augment, Integer> result = new HashMap<>();
         augments.forEach((name, supplier) -> {
             Augment augment = supplier.get();
             if (augment == null) return;
 
             Integer level = container.get(augment.getNamespace(), PersistentDataType.INTEGER);
             if (level == null || level <= 0) return;
-            
+
             augment.setLevel(level);
 
             result.put(augment, Math.min(level, augment.getMaxLevel())); // Use the maximum level of the augment
@@ -185,4 +192,45 @@ public class AugmentManager implements Manager {
 
         return result;
     }
+
+    /**
+     * Get the sum strength of all the augments
+     *
+     * @param augments The equipped augments
+     *
+     * @return The strength of the augments
+     */
+    public int getStrength(Map<Augment, Integer> augments) {
+        return augments.values().stream().mapToInt(i -> i).sum();
+    }
+
+    /**
+     * Get the strongest equipped rod inside an inventory
+     *
+     * @param inventory The inventory to checkl
+     *
+     * @return The strongest rod
+     */
+    @Nullable
+    public ItemStack getStrongestRod(@NotNull Inventory inventory) {
+        ItemStack contender = null;
+        int strength = 0;
+        Map<Augment, Integer> contenderAugments = null;
+        for (ItemStack stack : inventory.getContents()) {
+            if (stack == null || stack.getType().isAir()) continue; // Ignore null/air
+            if (stack.getType() != Material.FISHING_ROD) continue; // Make sure its actually a fishing rod
+
+            Map<Augment, Integer> available = from(stack);
+            if (available.isEmpty()) continue;
+
+            int currentStr = getStrength(available);
+            if (currentStr <= strength) continue;
+
+            contender = stack;
+            strength = currentStr;
+        }
+
+        return contender;
+    }
+
 }

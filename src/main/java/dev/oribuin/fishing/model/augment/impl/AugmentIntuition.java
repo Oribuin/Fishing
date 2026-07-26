@@ -41,7 +41,7 @@ public class AugmentIntuition extends Augment {
     public void onFishCatch(FishCatchEvent event) {
         Placeholders plc = Placeholders.of("level", level, "entropy", event.getBaseCatchEntropy());
         double entropy = FishUtils.evaluate(plc.applyString(this.formula));
-        event.setCatchEntropy((int) entropy);
+        event.setCatchEntropy((int) (event.getCatchEntropy() + entropy));
     }
 
     /**

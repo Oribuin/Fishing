@@ -10,7 +10,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment;
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
 public class PluginMessages {
 
-    private static final String PREFIX = "<#94bc80><b>Fish</b> <gray>| <white>";
+    public static final String PREFIX = "<#94bc80><b>Fish</b> <gray>| <white>";
 
     public static PluginMessages get() {
         return FishingPlugin.get().getConfigLoader().get(PluginMessages.class);

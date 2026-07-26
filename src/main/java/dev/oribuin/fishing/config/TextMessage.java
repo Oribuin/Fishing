@@ -10,6 +10,7 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
@@ -76,6 +77,18 @@ public class TextMessage {
      */
     public TextMessage(@Nullable String message, boolean placeholderapi) {
         this(message, null, null, null, null, null, placeholderapi);
+    }
+    
+    /**
+     * Create a new text message with an action bar
+     *
+     * @param actionbar The action bar to send
+     *
+     * @return The resulting text message
+     */
+    @NotNull
+    public static TextMessage ofActionBar(@NotNull String actionbar) {
+        return new TextMessage().actionbar(actionbar);
     }
 
     /**

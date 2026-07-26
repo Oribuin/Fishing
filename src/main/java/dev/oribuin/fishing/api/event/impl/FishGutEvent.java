@@ -1,6 +1,9 @@
 package dev.oribuin.fishing.api.event.impl;
 
+import dev.oribuin.fishing.gui.impl.user.FishGutMenu;
+import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.fish.Fish;
+import dev.oribuin.fishing.model.fish.GuttedFish;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -8,38 +11,34 @@ import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Map;
 
 public class FishGutEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
-    private final ItemStack rod;
-    private final Map<Fish, Integer> gutted;
+    private final Map<Augment, Integer> augments;
+    private final List<GuttedFish> gutted;
     private final int baseEntropy;
     private int entropy;
     private boolean cancelled;
 
-    public FishGutEvent(@NotNull Player who, @NotNull ItemStack rod, @NotNull Map<Fish, Integer> gutted) {
+    public FishGutEvent(@NotNull Player who, @NotNull Map<Augment, Integer> augments, @NotNull List<GuttedFish> gutted) {
         super(who, false);
 
-        this.rod = rod;
+        this.augments = augments;
         this.gutted = gutted;
-        this.baseEntropy = this.calculateEntropy();
+        this.baseEntropy = this.gutted.stream()
+                .mapToInt(value -> value.tier().getGutEntropy() * value.amount())
+                .sum();
         this.entropy = this.baseEntropy;
     }
 
-    public int calculateEntropy() {
-        return this.gutted.entrySet()
-                .stream()
-                .mapToInt(e -> e.getKey().getTierInstance().getGutEntropy() * e.getValue())
-                .sum();
+    public Map<Augment, Integer> getAugments() {
+        return augments;
     }
 
-    public ItemStack getRod() {
-        return rod;
-    }
-
-    public Map<Fish, Integer> getGutted() {
+    public List<GuttedFish> getGutted() {
         return gutted;
     }
 

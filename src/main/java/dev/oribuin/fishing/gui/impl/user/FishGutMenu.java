@@ -1,6 +1,7 @@
 package dev.oribuin.fishing.gui.impl.user;
 
 import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.api.event.impl.FishGutEvent;
 import dev.oribuin.fishing.config.impl.PluginMessages;
 import dev.oribuin.fishing.config.item.ConstructComponent;
 import dev.oribuin.fishing.config.item.ConstructType;
@@ -8,24 +9,30 @@ import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.gui.GuiConfig;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
+import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.economy.CurrencyRegistry;
 import dev.oribuin.fishing.model.fish.Fish;
+import dev.oribuin.fishing.model.fish.GuttedFish;
 import dev.oribuin.fishing.model.fish.Tier;
 import dev.oribuin.fishing.storage.Fisher;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.guis.Gui;
+import dev.triumphteam.gui.guis.GuiItem;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
+
+import static org.bukkit.event.inventory.InventoryCloseEvent.Reason.PLUGIN;
 
 @SuppressWarnings("UnstableApiUsage")
 public class FishGutMenu extends PluginMenu<Gui, FishGutMenu.Config> {
@@ -47,6 +54,12 @@ public class FishGutMenu extends PluginMenu<Gui, FishGutMenu.Config> {
 
         this.setDummyIcons(placeholders);
 
+        // Add the strongest rod in the inventory
+        ItemStack strongest = plugin.getAugmentManager().getStrongestRod(player.getInventory());
+        if (this.config.getRodSlot() != -1 && strongest != null) {
+            this.gui.setItem(this.config.getRodSlot(), new GuiItem(strongest, CANCELLED));
+        }
+
         // region Place the gui items into the menu 
         this.config.getMainMenu().place(this.gui, placeholders, event -> {
             FishMainMenu mainMenu = new FishMainMenu(plugin, (Player) event.getWhoClicked());
@@ -59,6 +72,7 @@ public class FishGutMenu extends PluginMenu<Gui, FishGutMenu.Config> {
 
             Inventory inventory = this.gui.getInventory();
 
+            List<GuttedFish> target = new ArrayList<>();
             int entropy = 0;
             int totalFish = 0;
             for (ItemStack stack : inventory.getStorageContents()) {
@@ -68,18 +82,44 @@ public class FishGutMenu extends PluginMenu<Gui, FishGutMenu.Config> {
                 if (fish == null) continue;
 
                 Tier tier = fish.getTierInstance();
-                if (tier.getSellMoney() <= 0) continue;
+                if (tier.getGutEntropy() <= 0) continue;
 
-                entropy += (tier.getGutEntropy() * stack.getAmount());
-                totalFish += stack.getAmount();
-                stack.setAmount(0);
+                target.add(new GuttedFish(
+                        fish,
+                        tier,
+                        stack.getAmount(),
+                        stack
+                ));
             }
 
-            event.getWhoClicked().closeInventory(InventoryCloseEvent.Reason.PLUGIN);
-            if (entropy <= 0 || totalFish <= 0) {
+            if (target.isEmpty()) {
                 PluginMessages.get().getNoGuttedFish().send(player);
+                event.getWhoClicked().closeInventory(PLUGIN);
                 return;
             }
+
+            Map<Augment, Integer> augments = plugin.getAugmentManager().from(strongest);
+
+            FishGutEvent gutEvent = new FishGutEvent(
+                    (Player) event.getWhoClicked(),
+                    augments,
+                    target
+            );
+            
+            gutEvent.callEvent();
+            augments.keySet().forEach(x -> x.handleEvent(gutEvent));
+            if (gutEvent.isCancelled()) {
+                event.getWhoClicked().closeInventory(PLUGIN);
+                return;
+            }
+            
+            entropy += gutEvent.getEntropy();
+            totalFish += target.stream().mapToInt(GuttedFish::amount).sum();
+            
+            // make sure that shit is GONE
+            target.forEach(fish -> fish.stack().setAmount(0));
+            config.getGuttingSlots().forEach(integer -> gui.getInventory().setItem(0, null));
+            event.getWhoClicked().closeInventory(PLUGIN);
 
             PluginMessages.get().getGuttedFish().send(player, "total", totalFish, "entropy", entropy);
             CurrencyRegistry.ENTROPY.give(player, entropy);
@@ -101,7 +141,7 @@ public class FishGutMenu extends PluginMenu<Gui, FishGutMenu.Config> {
 
                     // region Stop the user from clicking non sell slots
                     x.setDefaultTopClickAction(event -> {
-                        if (!this.config.getSellSlots().contains(event.getSlot())) {
+                        if (!this.config.getGuttingSlots().contains(event.getSlot())) {
                             CANCELLED.execute(event);
                         }
                     });
@@ -129,7 +169,7 @@ public class FishGutMenu extends PluginMenu<Gui, FishGutMenu.Config> {
                     // region Give any non fish items back to the player
                     x.setCloseGuiAction(event -> {
                         Inventory inventory = event.getInventory();
-                        for (int slot : this.config.getSellSlots()) {
+                        for (int slot : this.config.getGuttingSlots()) {
                             ItemStack stack = inventory.getItem(slot);
                             if (stack == null || stack.getType().isAir()) continue;
 
@@ -158,7 +198,8 @@ public class FishGutMenu extends PluginMenu<Gui, FishGutMenu.Config> {
     @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
     public static class Config extends GuiConfig {
 
-        private List<Integer> sellSlots = FishUtils.parseList("9-35");
+        private int rodSlot = 44;
+        private List<Integer> guttingSlots = FishUtils.parseList("9-35");
 
         private MenuItem gutFish = ItemConstruct.of(Material.PAPER)
                 .setName("<white>[<#94bc80><bold>Gut Fish</bold><white>]")
@@ -182,8 +223,12 @@ public class FishGutMenu extends PluginMenu<Gui, FishGutMenu.Config> {
             this.dummyItems.add(new MenuItem(this.border, FishUtils.parseList("0-8", "36-44")));
         }
 
-        public List<Integer> getSellSlots() {
-            return sellSlots;
+        public int getRodSlot() {
+            return rodSlot;
+        }
+
+        public List<Integer> getGuttingSlots() {
+            return guttingSlots;
         }
 
         public MenuItem getGutFish() {

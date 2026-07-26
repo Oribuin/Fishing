@@ -41,10 +41,10 @@ public class AugmentGenius extends Augment {
     public void onFishCatch(FishCatchEvent event) {
         Placeholders plc = Placeholders.of(
                 "level", level,
-                "xp", event.getNaturalExp()
+                "xp", event.getBaseNaturalExp()
         );
         double xp = FishUtils.evaluate(plc.applyString(this.formula));
-        event.setNaturalExp((int) xp);
+        event.setNaturalExp((int) (event.getNaturalExp() + xp));
     }
 
     /**

@@ -42,7 +42,7 @@ public class AugmentEnlightened extends Augment {
         );
 
         double xp = FishUtils.evaluate(plc.applyString(this.formula));
-        event.setCatchExp((int) xp);
+        event.setCatchEntropy((int) (event.getCatchExp() + xp));
     }
 
     /**

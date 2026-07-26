@@ -1,19 +1,30 @@
 package dev.oribuin.fishing.model.augment.impl;
 
+import aQute.bnd.annotation.metatype.Meta;
+import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
+import dev.oribuin.fishing.config.TextMessage;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.condition.Weather;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
+import org.incendo.cloud.annotations.CommandDescription;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Comment;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * When the weather is clear, there is a chance to catch multiple fish in a single catch.
  */
 @ConfigSerializable
 public class AugmentHotspot extends Augment {
+    
+    private static final Map<UUID, Long> ADDITIONAL = new HashMap<>();
 
     @Comment("The required formula for the augment to trigger")
     private String formula = "<level> * 0.05"; // 5% per level
@@ -24,6 +35,9 @@ public class AugmentHotspot extends Augment {
     @Comment("The maximum fish to be spawned in")
     private int maximumFish = 3;
 
+    @Comment("The message sent when a player has caught additional fish")
+    private TextMessage gotAdditional = TextMessage.ofActionBar("<#93bc80>[<white>Hotspot granted you additional fish<#93bc80>]");
+    
     /**
      * Create a new type of augment with a name and description.
      * <p>
@@ -34,6 +48,7 @@ public class AugmentHotspot extends Augment {
 
         this.setMaxLevel(15);
         this.registerListener(InitialFishCatchEvent.class, this::onInitialCatch);
+        this.registerListener(FishCatchEvent.class, this::onFishCatch);
     }
 
     /**
@@ -55,23 +70,32 @@ public class AugmentHotspot extends Augment {
 
         int fishCaught = this.minimumFish + (int) (Math.random() * (this.maximumFish - this.minimumFish));
         event.setAmountToCatch(event.getAmountToCatch() + fishCaught);
+        ADDITIONAL.put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
     }
 
     /**
-     * Information about the augment which will be displayed in top of the augment configuration file
+     * The functionality provided when a player has finished catching a fish, Use this to modify the rewards given to the player once caught
+     * <p>
+     * Use {@link FishCatchEvent#setCatchEntropy(int)} to change the entropy received
+     * <p>
+     * Use {@link FishCatchEvent#setNaturalExp(float)} to change the minecraft experience received
+     * <p>
+     * Use {@link FishCatchEvent#setCatchExp(int)} to change the fishing experience received
      *
-     * @return The comments for the augment
+     * @param event The event that was called when the fish was caught
      */
-    //    @Override
-    //    public List<String> comments() {
-    //        return List.of(
-    //                "Augment [Hotspot] - When the weather is clear, there is a chance to catch multiple fish",
-    //                "in a single catch.",
-    //                "",
-    //                "chance-formula: The formula to calculate the chance this augment triggers",
-    //                "min-fish: The minimum additional fish caught",
-    //                "max-fish: The maximum additional fish caught"
-    //        );
-    //    }
+    @Override
+    public void onFishCatch(FishCatchEvent event) {
+        if (!Weather.CLEAR.isState(event.getHook().getLocation())) return;
+        Long last = ADDITIONAL.get(event.getPlayer().getUniqueId());
+        if (last == null) return;
+
+        ADDITIONAL.remove(event.getPlayer().getUniqueId());
+        
+        // require their last thing to be less than < 3 seconds ago
+        if (System.currentTimeMillis() - last >= TimeUnit.SECONDS.toMillis(3)) return;
+        
+        this.gotAdditional.send(event.getPlayer());
+    }
 
 }
