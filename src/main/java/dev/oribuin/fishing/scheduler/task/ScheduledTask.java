@@ -4,7 +4,7 @@ package dev.oribuin.fishing.scheduler.task;
 import dev.oribuin.fishing.FishingPlugin;
 
 public interface ScheduledTask {
-
+    
     /**
      * Cancels this task
      */

@@ -20,6 +20,7 @@ import dev.oribuin.fishing.scheduler.PluginScheduler;
 import dev.oribuin.fishing.scheduler.task.ScheduledTask;
 import dev.oribuin.fishing.storage.persistent.PDCSerializable;
 import dev.oribuin.fishing.util.FishUtils;
+import dev.oribuin.fishing.util.NMSUtil;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.oribuin.fishing.util.math.MathL;
 import io.papermc.paper.math.Rotations;
@@ -73,6 +74,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
     private UUID displayId;
     private boolean confirmedActivate;
     private ArmorStand display;
+    private ScheduledTask foliaTask;
 
     /**
      * Create a new totem from an armor stand with a container
@@ -135,7 +137,6 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
         this.upgrades = new LinkedHashMap<>(TotemUpgradeRegistry.getDefault());
         this.confirmedActivate = false;
         this.readContainer(container);
-
         this.registerListener(InitialFishCatchEvent.class, this::onInitialCatch);
     }
 
@@ -193,13 +194,14 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
      */
     @Override
     public void tickAsync() {
-        
+
         // Deactivate the totem when unused
         long duration = this.getDuration().toMillis();
         if (this.active && System.currentTimeMillis() - this.lastActive > duration) {
             this.active = false;
             this.lastActive = System.currentTimeMillis();
             this.writeContainer(this.display.getPersistentDataContainer()); // Update the totem
+            if (this.foliaTask != null) this.foliaTask = PluginScheduler.cancelNull(this.foliaTask);
 
             // Call the totem activate event on upgrades
             TotemDeactivateEvent deactivateEvent = new TotemDeactivateEvent(this);
@@ -264,6 +266,20 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
         this.active = true;
         this.lastActive = System.currentTimeMillis();
         this.writeContainer(display.getPersistentDataContainer());
+
+        if (NMSUtil.isFolia()) {
+            if (this.foliaTask != null) this.foliaTask = PluginScheduler.cancelNull(this.foliaTask);
+
+            this.foliaTask = PluginScheduler.get().runTaskTimerAtEntity(this.display, () -> {
+                if (!this.active || this.display == null) {
+                    this.foliaTask = PluginScheduler.cancelNull(this.foliaTask);
+                    return;
+                }
+
+                if (this.position.isChunkLoaded()) this.tickAsync();
+            }, 250, 250, TimeUnit.MILLISECONDS);
+        }
+
 
         // Tell the player they activated the totem
         PluginMessages.get().getTotem().getActivated().send(player, "time", FishUtils.formatTime(this.getDuration().toMillis()));
@@ -773,6 +789,14 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
 
     public void setConfirmedActivate(boolean confirmedActivate) {
         this.confirmedActivate = confirmedActivate;
+    }
+
+    public ScheduledTask getFoliaTask() {
+        return foliaTask;
+    }
+
+    public void setFoliaTask(ScheduledTask foliaTask) {
+        this.foliaTask = foliaTask;
     }
 
     //

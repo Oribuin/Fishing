@@ -152,6 +152,12 @@ public class PluginScheduler implements SchedulerWrapper {
         return this.runningTasks.get();
     }
 
+    public static ScheduledTask cancelNull(ScheduledTask task) {
+        if (task != null) task.cancel();
+        task = null;
+        return task;
+    }
+
     private Runnable wrap(Runnable runnable) {
         return () -> {
             this.runningTasks.incrementAndGet();
