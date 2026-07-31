@@ -13,7 +13,7 @@ import java.util.List;
 public abstract class GuiConfig {
 
     protected transient final ItemConstruct border = ItemConstruct.of(Material.BLACK_STAINED_GLASS_PANE)
-            .setProperty(ConstructType.TOOLTIP, tooltipItemType -> tooltipItemType.setVisible(false));
+            .setProperty(ConstructType.TOOLTIP, x -> x.setVisible(false));
 
     protected String title = "Plugin Menu";
     protected int rows = 5;

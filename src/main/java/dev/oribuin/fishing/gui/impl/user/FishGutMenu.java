@@ -73,8 +73,6 @@ public class FishGutMenu extends PluginMenu<Gui, FishGutMenu.Config> {
             Inventory inventory = this.gui.getInventory();
 
             List<GuttedFish> target = new ArrayList<>();
-            int entropy = 0;
-            int totalFish = 0;
             for (ItemStack stack : inventory.getStorageContents()) {
                 if (stack == null || stack.getType().isAir()) continue;
 
@@ -113,8 +111,8 @@ public class FishGutMenu extends PluginMenu<Gui, FishGutMenu.Config> {
                 return;
             }
             
-            entropy += gutEvent.getEntropy();
-            totalFish += target.stream().mapToInt(GuttedFish::amount).sum();
+            int entropy = gutEvent.getEntropy();
+            int totalFish = target.stream().mapToInt(GuttedFish::amount).sum();
             
             // make sure that shit is GONE
             target.forEach(fish -> fish.stack().setAmount(0));

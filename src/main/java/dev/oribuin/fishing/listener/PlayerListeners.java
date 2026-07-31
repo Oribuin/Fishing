@@ -32,10 +32,7 @@ public class PlayerListeners implements Listener {
                 .thenRun(() -> {
                     // create a new Fisher object if the player is not found
                     Fisher fisher = manager.get(event.getPlayer().getUniqueId());
-                    if (fisher == null) fisher = new Fisher(event.getPlayer().getUniqueId());
-
-                    // Save the new user data
-                    manager.saveUser(fisher);
+                    if (fisher == null) manager.saveUser(new Fisher(event.getPlayer().getUniqueId()));
                 });
     }
 
