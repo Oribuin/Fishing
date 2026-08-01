@@ -33,6 +33,8 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static dev.oribuin.fishing.storage.util.KeyRegistry.AUGMENT_TYPE;
+
 public class AugmentManager implements Manager {
 
     private static final File AUGMENTS_FOLDER = new File(FishingPlugin.get().getDataFolder(), "augments");
@@ -97,6 +99,8 @@ public class AugmentManager implements Manager {
      */
     @SuppressWarnings("unchecked")
     public <T extends Augment> T from(String identifier) {
+        if (identifier == null) return null;
+        
         Supplier<? extends Augment> supplier = augments.get(identifier);
         if (supplier == null) return null;
 
@@ -116,6 +120,20 @@ public class AugmentManager implements Manager {
                         entry -> entry.getValue().get()
                 ));
     }
+    
+    @Nullable
+    public Augment getAugment(@Nullable ItemStack itemStack) {
+        if (itemStack == null) return null;
+
+        ItemMeta meta = itemStack.getItemMeta();
+        if (meta == null) return null;
+
+        PersistentDataContainer container = meta.getPersistentDataContainer();
+        String identifier = container.get(AUGMENT_TYPE.key(), AUGMENT_TYPE);
+        
+        return this.plugin.getAugmentManager().from(identifier);
+    }
+
 
     /**
      * Save a map of augments to an itemstack and update the lore of the itemstack
@@ -170,7 +188,7 @@ public class AugmentManager implements Manager {
     @NotNull
     public Map<Augment, Integer> from(@Nullable ItemStack itemStack) {
         if (itemStack == null) return new HashMap<>();
-        
+
         ItemMeta meta = itemStack.getItemMeta();
         if (meta == null) return new HashMap<>();
 

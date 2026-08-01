@@ -26,6 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.jeff_media.morepersistentdatatypes.DataType.STRING;
+import static dev.oribuin.fishing.storage.util.KeyRegistry.AUGMENT_TYPE;
 
 /**
  * Augments are upgrades that can be crafted and applied to fishing rods to give them unique abilities to help the player produce more fish.
@@ -84,7 +85,7 @@ public abstract class Augment extends FishEventHandler {
                 .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
                 .setFunction(stack -> stack.editMeta(itemMeta -> {
                     PersistentDataContainer container = itemMeta.getPersistentDataContainer();
-                    container.set(this.getNamespace(), STRING, this.name);
+                    container.set(AUGMENT_TYPE.key(), AUGMENT_TYPE, this.name);
                 }));
 
     }

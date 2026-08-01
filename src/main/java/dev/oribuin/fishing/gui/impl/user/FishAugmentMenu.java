@@ -7,6 +7,7 @@ import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.gui.GuiConfig;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
+import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.storage.Fisher;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
@@ -14,6 +15,8 @@ import dev.triumphteam.gui.guis.Gui;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.function.Supplier;
@@ -36,7 +39,7 @@ public class FishAugmentMenu extends PluginMenu<Gui, FishAugmentMenu.Config> {
         this.setDummyIcons(placeholders);
 
         // region Place the gui items into the menu
-        
+
         // endregion
     }
 
@@ -50,7 +53,56 @@ public class FishAugmentMenu extends PluginMenu<Gui, FishAugmentMenu.Config> {
         return () -> Gui.gui()
                 .title(Component.text(this.config.getTitle()))
                 .rows(this.config.getRows())
-                .disableAllInteractions()
+                .apply(x -> {
+
+                    // region Stop the user from clicking non sell slots
+                    x.setDefaultTopClickAction(event -> {
+                        if (event.getSlot() != this.config.getRodSlot() && event.getSlot() != this.config.getAugmentSlot()) {
+                            CANCELLED.execute(event);
+                            return;
+                        }
+
+                        // region make sure we're placing a rod
+                        ItemStack itemStack = event.getCursor();
+                        if (event.getSlot() == this.config.getRodSlot()) {
+                            if (itemStack.getType() == Material.FISHING_ROD) return;
+                        }
+                        // endregion
+
+                        // region Make sure we're placing an augment
+                        if (event.getSlot() == this.config.getAugmentSlot()) {
+                            Augment augment = this.plugin.getAugmentManager().getAugment(itemStack);
+                            if (augment != null) return;
+                        }
+                        // endregion
+
+                        CANCELLED.execute(event);
+                    });
+                    // endregion
+
+                    // region Only let players click on fish in their inventory
+                    x.setPlayerInventoryAction(event -> {
+                        ItemStack stack = event.getCurrentItem();
+                        if (stack == null || stack.getType().isAir()) {
+                            CANCELLED.execute(event);
+                            return;
+                        }
+
+                        Augment augment = this.plugin.getAugmentManager().getAugment(stack);
+                        if (stack.getType() != Material.FISHING_ROD && augment == null) {
+                            CANCELLED.execute(event);
+                            return;
+                        }
+                    });
+                    // endregion 
+
+                    // region Give any non fish items back to the player
+                    x.setCloseGuiAction(event -> {
+                        Inventory inventory = event.getInventory();
+                        // give augment and rod back
+                    });
+                    // endregion
+                })
                 .create();
     }
 

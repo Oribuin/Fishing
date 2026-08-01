@@ -49,6 +49,8 @@ public class TotemUpgradeMenu extends PluginMenu<PaginatedGui, TotemUpgradeMenu.
 
         this.placeUpgrades();
     }
+    
+    
 
     /**
      * Place the dynamic items in the GUI for the totem
