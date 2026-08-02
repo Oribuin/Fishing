@@ -48,6 +48,16 @@ public class MenuItem {
     public void place(BaseGui gui, Placeholders placeholders) {
         this.place(gui, placeholders, event -> {});
     }
+    
+    /**
+     * Place the item in the specified slot in the GUI
+     *
+     * @param gui          The GUI to place the item in
+     * @param placeholders The placeholders for the menu item
+     */
+    public void update(BaseGui gui, Placeholders placeholders) {
+        this.update(gui, placeholders, event -> {});
+    }
 
     /**
      * Place the item in the specified slot in the GUI
@@ -58,6 +68,16 @@ public class MenuItem {
     public void place(BaseGui gui, GuiAction<InventoryClickEvent> function) {
         this.place(gui, Placeholders.empty(), function);
     }
+    
+    /**
+     * Place the item in the specified slot in the GUI
+     *
+     * @param gui      The GUI to place the item in
+     * @param function The function to run when the item is clicked
+     */
+    public void update(BaseGui gui, GuiAction<InventoryClickEvent> function) {
+        this.update(gui, Placeholders.empty(), function);
+    }
 
     /**
      * Place the item in the specified slot in the GUI
@@ -67,8 +87,7 @@ public class MenuItem {
      * @param function     The function to run when the item is clicked
      */
     public void place(BaseGui gui, Placeholders placeholders, GuiAction<InventoryClickEvent> function) {
-        if (gui == null) return;
-        if (!this.enabled) return;
+        if (gui == null || !this.enabled) return;
 
         int guiSize = gui.getRows() * 9;
         ItemStack item = this.item.create(placeholders);
@@ -76,6 +95,18 @@ public class MenuItem {
             if (x < 0 || x >= guiSize) return;
 
             gui.setItem(x, new dev.triumphteam.gui.guis.GuiItem(item, function));
+        });
+    }
+    
+    public void update(BaseGui gui, Placeholders placeholders, GuiAction<InventoryClickEvent> function) {
+        if (gui == null || !this.enabled) return;
+
+        int guiSize = gui.getRows() * 9;
+        ItemStack item = this.item.create(placeholders);
+        this.slots.forEach(x -> {
+            if (x < 0 || x >= guiSize) return;
+
+            gui.updateItem(x, new dev.triumphteam.gui.guis.GuiItem(item, function));
         });
     }
 
