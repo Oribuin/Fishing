@@ -160,9 +160,9 @@ public class ItemConstruct implements Cloneable {
         }
         if (this.maxStackSize != null) item.setData(MAX_STACK_SIZE, maxStackSize);
         if (this.customModelData != null && this.customModelData > 0) item.setData(CUSTOM_MODEL_DATA, CustomModelData.customModelData().addFloat(this.customModelData));
-        if (this.function != null) this.function.accept(item);
-
         this.properties.values().forEach(x -> x.apply(item));
+        
+        if (this.function != null) this.function.accept(item);
         return item.asQuantity(Math.max(1, amount));
     }
 
@@ -293,6 +293,12 @@ public class ItemConstruct implements Cloneable {
 
     public ItemConstruct setLore(String... lore) {
         this.lore = List.of(lore);
+        return this;
+    }
+    
+    public ItemConstruct setLore(List<String> preLore, String... additional) {
+        this.lore = new ArrayList<>(preLore);
+        this.lore.addAll(List.of(additional));
         return this;
     }
 

@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import static dev.oribuin.fishing.config.item.ConstructType.TOOLTIP;
+
 public class FishAugmentMenu extends PluginMenu<Gui, FishAugmentMenu.Config> {
 
     /**
@@ -101,9 +103,9 @@ public class FishAugmentMenu extends PluginMenu<Gui, FishAugmentMenu.Config> {
                         }
 
                         // region make sure we're placing a rod
-                        ItemStack itemStack = event.getCursor();
+                        ItemStack itemStack = event.getInventory().getItem(event.getSlot());
                         if (event.getSlot() == this.config.getRodSlot()) {
-                            if (itemStack.getType() == Material.FISHING_ROD) return;
+                            if (itemStack != null && itemStack.getType() == Material.FISHING_ROD) return;
                         }
                         // endregion
 
@@ -121,7 +123,8 @@ public class FishAugmentMenu extends PluginMenu<Gui, FishAugmentMenu.Config> {
                     // region Only let players click on fish in their inventory
                     x.setPlayerInventoryAction(event -> {
                         ItemStack stack = event.getCurrentItem();
-                        if (stack == null || stack.getType().isAir()) {
+                        if (stack == null || stack.getType().isAir()) stack = event.getCursor();
+                        if (stack.getType().isAir()) {
                             CANCELLED.execute(event);
                             return;
                         }
@@ -172,12 +175,12 @@ public class FishAugmentMenu extends PluginMenu<Gui, FishAugmentMenu.Config> {
                         " <#93bc80>Click to apply the augment"
                 )
                 .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
-                .asMenuItem(4);
+                .asMenuItem(31);
 
         private MenuItem displayArrow = ItemConstruct.of(Material.PLAYER_HEAD)
                 .setProperty(ConstructType.TEXTURE, x -> x.setValue("base64-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjUyN2ViYWU5ZjE1MzE1NGE3ZWQ0OWM4OGMwMmI1YTlhOWNhN2NiMTYxOGQ5OTE0YTNkOWRmOGNjYjNjODQifX19"))
-                .setProperty(ConstructType.TOOLTIP, x -> x.setVisible(false))
-                .asMenuItem(22);
+                .setProperty(TOOLTIP, x -> x.setVisible(false))
+                .asMenuItem(13);
 
         private MenuItem displayRod = ItemConstruct.of(Material.FISHING_ROD)
                 .setName("<white>[<#94bc80><bold>Fishing Rod</bold><white>]")
@@ -186,10 +189,10 @@ public class FishAugmentMenu extends PluginMenu<Gui, FishAugmentMenu.Config> {
                         "<gray>you want to apply an augment to",
                         "<gray>in the empty space below"
                 )
-                .asMenuItem(12);
+                .asMenuItem(11);
 
         private MenuItem displayBook = ItemConstruct.of(Material.BOOK)
-                .setName("<white>[<#94bc80><bold>Augment </bold><white>]")
+                .setName("<white>[<#94bc80><bold>Augment</bold><white>]")
                 .setLore(
                         "<gray>Place the augment that",
                         "<gray>you want to spend apply",
@@ -200,13 +203,21 @@ public class FishAugmentMenu extends PluginMenu<Gui, FishAugmentMenu.Config> {
         public Config() {
             this.title = "Fishing | Apply Augments";
             this.rows = 5;
-            this.dummyItems.add(new MenuItem(this.border, FishUtils.parseList("0-8", "36-44")));
+            this.dummyItems.add(new MenuItem(this.border, FishUtils.parseList(
+                    "0-8",
+                    "36-44"
+            )));
+            this.dummyItems.add(new MenuItem(ItemConstruct.of(Material.GRAY_STAINED_GLASS_PANE)
+                    .setProperty(TOOLTIP, x -> x.setVisible(false)),
+                    FishUtils.parseList("9-19", "21", "22", "23", "25-35")
+            ));
+
             this.dummyItems.add(displayArrow);
             this.dummyItems.add(displayRod);
             this.dummyItems.add(displayBook);
             this.dummyItems.add(
                     ItemConstruct.of(Material.GREEN_STAINED_GLASS_PANE)
-                            .setProperty(ConstructType.TOOLTIP, x -> x.setVisible(false))
+                            .setProperty(TOOLTIP, x -> x.setVisible(false))
                             .asMenuItem(29, 33)
             );
         }

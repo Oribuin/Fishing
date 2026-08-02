@@ -71,11 +71,9 @@ public class MenuItem {
         if (!this.enabled) return;
 
         int guiSize = gui.getRows() * 9;
+        ItemStack item = this.item.create(placeholders);
         this.slots.forEach(x -> {
             if (x < 0 || x >= guiSize) return;
-
-            ItemStack item = this.item.create(placeholders);
-            if (item == null) return;
 
             gui.setItem(x, new dev.triumphteam.gui.guis.GuiItem(item, function));
         });

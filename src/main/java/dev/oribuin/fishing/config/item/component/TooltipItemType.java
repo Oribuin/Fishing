@@ -95,7 +95,7 @@ public class TooltipItemType extends ConstructComponent<TooltipDisplay> {
                 .collect(Collectors.toSet());
 
         return TooltipDisplay.tooltipDisplay()
-                .hideTooltip(this.visible)
+                .hideTooltip(!this.visible)
                 .hiddenComponents(hiddenTypes)
                 .build();
     }
@@ -108,7 +108,7 @@ public class TooltipItemType extends ConstructComponent<TooltipDisplay> {
     @Override
     public void apply(@NotNull ItemStack stack) {
         if (!this.enabled) return;
-
+        
         if (!this.visible || !this.hiddenComponents.isEmpty()) {
             stack.setData(TOOLTIP_DISPLAY, this.establish());
         }

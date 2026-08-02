@@ -17,7 +17,6 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataContainer;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
@@ -26,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -40,6 +40,8 @@ import static dev.oribuin.fishing.storage.util.KeyRegistry.AUGMENT_TYPE;
  */
 @ConfigSerializable
 public abstract class Augment extends FishEventHandler {
+
+    protected transient Consumer<ItemStack> augmentFunction;
 
     protected transient final Random random = ThreadLocalRandom.current();
     protected transient final Logger logger;
@@ -75,10 +77,15 @@ public abstract class Augment extends FishEventHandler {
         this.permission = "fishing.augment." + name;
         this.conflictsWith = new ArrayList<>();
         this.price = Cost.of(CurrencyRegistry.ENTROPY, 25000);
+        this.augmentFunction = stack -> stack.editPersistentDataContainer(x -> x.set(
+                AUGMENT_TYPE.key(),
+                AUGMENT_TYPE,
+                this.name
+        ));
         this.displayItem = ItemConstruct.of(Material.FIREWORK_STAR)
                 .setName("<white>[<#94bc80><bold><display_name></bold><white>]")
                 .setLore(
-                        "<gray>" + String.join("<br>", description),
+                        this.description,
                         "",
                         "<#94bc80>Information",
                         " <#94bc80>- <gray>Required Level: <white><required_level>",
@@ -86,10 +93,7 @@ public abstract class Augment extends FishEventHandler {
                         ""
                 )
                 .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
-                .setFunction(stack -> stack.editMeta(itemMeta -> {
-                    PersistentDataContainer container = itemMeta.getPersistentDataContainer();
-                    container.set(AUGMENT_TYPE.key(), AUGMENT_TYPE, this.name);
-                }));
+                .setFunction(this.augmentFunction);
 
     }
 
@@ -118,7 +122,7 @@ public abstract class Augment extends FishEventHandler {
      *
      * @param player The player to check
      *
-     * @return Whether the player can use the augment   
+     * @return Whether the player can use the augment
      */
     public boolean canUse(Player player) {
         Fisher fisher = FishingPlugin.get().getDataManager().get(player.getUniqueId());
@@ -150,7 +154,7 @@ public abstract class Augment extends FishEventHandler {
                 ));
 
         int currentLevel = current.getOrDefault(this.name, 0);
-        return currentLevel + level > maxLevel;
+        return currentLevel + level <= maxLevel;
     }
 
     /**
@@ -240,7 +244,7 @@ public abstract class Augment extends FishEventHandler {
      * @return The display item of the augment
      */
     public final ItemConstruct getDisplayItem() {
-        return displayItem;
+        return displayItem.setFunction(this.augmentFunction);
     }
 
     /**

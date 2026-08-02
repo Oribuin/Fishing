@@ -83,6 +83,7 @@ public class Fish {
         List<String> lore = new ArrayList<>(this.description);
         lore.addAll(tierConstruct.getLore());
         tierConstruct.setLore(lore);
+        
         ItemStack fishConstruct = this.construct.create();
         this.itemStack = tierConstruct.createCustom(
                 fishConstruct,
