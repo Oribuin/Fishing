@@ -250,5 +250,5 @@ public class AugmentManager implements Manager {
 
         return contender;
     }
-
+    
 }

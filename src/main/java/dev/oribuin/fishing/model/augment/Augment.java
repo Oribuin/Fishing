@@ -9,23 +9,26 @@ import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.manager.AugmentManager;
 import dev.oribuin.fishing.model.economy.Cost;
 import dev.oribuin.fishing.model.economy.CurrencyRegistry;
+import dev.oribuin.fishing.storage.Fisher;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.event.Event;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
-import static com.jeff_media.morepersistentdatatypes.DataType.STRING;
 import static dev.oribuin.fishing.storage.util.KeyRegistry.AUGMENT_TYPE;
 
 /**
@@ -111,6 +114,46 @@ public abstract class Augment extends FishEventHandler {
     }
 
     /**
+     * Check whether the player is allowed to use the augment
+     *
+     * @param player The player to check
+     *
+     * @return Whether the player can use the augment   
+     */
+    public boolean canUse(Player player) {
+        Fisher fisher = FishingPlugin.get().getDataManager().get(player.getUniqueId());
+
+        // Check whether the player has access to use the augment
+        if (this.permission != null && !player.hasPermission(this.permission)) return false;
+
+        // Check whether the player is the correct level for the augment
+        return fisher.getLevel() >= this.requiredLevel;
+    }
+
+    /**
+     * Check whether an augment can be applied to the fishing rod
+     *
+     * @param stack The stack to check against
+     * @param level The level to add to the rod
+     *
+     * @return Whether the fishing rod can apply
+     */
+    public boolean doesAccept(@Nullable ItemStack stack, int level) {
+        if (stack == null || stack.getType() == Material.AIR) return false;
+
+        AugmentManager manager = FishingPlugin.get().getAugmentManager();
+        Map<String, Integer> current = manager.from(stack).entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        x -> x.getKey().getName(),
+                        Map.Entry::getValue
+                ));
+
+        int currentLevel = current.getOrDefault(this.name, 0);
+        return currentLevel + level > maxLevel;
+    }
+
+    /**
      * The {@link NamespacedKey} for the augment, used to identify the augment in the plugin
      *
      * @return The namespace key, typically this will be "fishing:augment_name"
@@ -145,7 +188,7 @@ public abstract class Augment extends FishEventHandler {
                 .add("permission", this.permission)
                 .build();
     }
-    
+
     /**
      * Checks if the augment is enabled
      *

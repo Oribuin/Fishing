@@ -7,6 +7,7 @@ import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.gui.GuiConfig;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
+import dev.oribuin.fishing.manager.AugmentManager;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.storage.Fisher;
 import dev.oribuin.fishing.util.FishUtils;
@@ -19,6 +20,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class FishAugmentMenu extends PluginMenu<Gui, FishAugmentMenu.Config> {
@@ -39,6 +42,41 @@ public class FishAugmentMenu extends PluginMenu<Gui, FishAugmentMenu.Config> {
         this.setDummyIcons(placeholders);
 
         // region Place the gui items into the menu
+
+        // todo: consider putting this as a tickable to check
+        this.config.getApplyAugment().place(this.gui, placeholders, event -> {
+            AugmentManager manager = plugin.getAugmentManager();
+            Player who = (Player) event.getWhoClicked();
+
+            ItemStack rodStack = event.getInventory().getItem(this.config.getRodSlot());
+            if (rodStack == null || rodStack.getType() != Material.FISHING_ROD) return;
+
+            ItemStack augmentStack = event.getInventory().getItem(this.config.getAugmentSlot());
+            Augment augment = manager.getAugment(augmentStack);
+            if (augmentStack == null || augment == null) {
+                who.sendMessage("need to place an augment");
+                return;
+            }
+
+            if (!augment.canUse(who)) {
+                who.sendMessage("player cannot use this augment");
+                return;
+            }
+
+            int level = augmentStack.getAmount();
+            if (!augment.doesAccept(rodStack, level)) {
+                who.sendMessage("level too high for this rod :/");
+                return;
+            }
+
+            this.gui.getInventory().clear(this.config.getAugmentSlot());
+
+            // Get the augment from the argument
+            Map<Augment, Integer> augments = new HashMap<>(manager.from(augmentStack));
+            augments.put(augment, Math.min(level, augment.getMaxLevel()));
+            manager.save(rodStack, augments);
+            who.sendMessage("Successfully applied the augment to the fishing rod.");
+        });
 
         // endregion
     }
@@ -125,6 +163,17 @@ public class FishAugmentMenu extends PluginMenu<Gui, FishAugmentMenu.Config> {
                 .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
                 .asMenuItem(4);
 
+        private MenuItem applyAugment = ItemConstruct.of(Material.LIME_CONCRETE) // TODO: Change
+                .setName("<white>[<#94bc80><bold>Apply Augments</bold><white>]")
+                .setLore(
+                        "<gray>Imagine things are listed here like cost",
+                        "<gray>Required level blah blah",
+                        "",
+                        " <#93bc80>Click to apply the augment"
+                )
+                .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
+                .asMenuItem(4);
+
         private MenuItem displayArrow = ItemConstruct.of(Material.PLAYER_HEAD)
                 .setProperty(ConstructType.TEXTURE, x -> x.setValue("base64-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjUyN2ViYWU5ZjE1MzE1NGE3ZWQ0OWM4OGMwMmI1YTlhOWNhN2NiMTYxOGQ5OTE0YTNkOWRmOGNjYjNjODQifX19"))
                 .setProperty(ConstructType.TOOLTIP, x -> x.setVisible(false))
@@ -172,6 +221,10 @@ public class FishAugmentMenu extends PluginMenu<Gui, FishAugmentMenu.Config> {
 
         public MenuItem getAugmentInfo() {
             return augmentInfo;
+        }
+
+        public MenuItem getApplyAugment() {
+            return applyAugment;
         }
     }
 }
