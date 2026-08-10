@@ -56,7 +56,7 @@ public class TooltipItemType extends ConstructComponent<TooltipDisplay> {
     /**
      * Create a new tooltip display stack
      *
-     * @param display An existing tooltip display
+     * @param stack The stack to get it from
      */
     public static TooltipItemType from(ItemStack stack) {
         if (stack == null) return null;

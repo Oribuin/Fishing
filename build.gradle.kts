@@ -38,7 +38,7 @@ dependencies {
     // Commands, Configs & Database
     api("org.incendo:cloud-core:2.0.0")
     api("org.incendo:cloud-annotations:2.0.0")
-    api("org.incendo:cloud-paper:2.0.0-SNAPSHOT")
+    api("org.incendo:cloud-paper:2.0.0")
     api("org.spongepowered:configurate-yaml:4.2.0")
     api("com.zaxxer:HikariCP:4.0.3")
     api("dev.triumphteam:triumph-gui:3.1.13") {  // https://triumphteam.dev/docs/triumph-gui/
@@ -51,7 +51,7 @@ dependencies {
     api("com.jeff-media:MorePersistentDataTypes:2.4.0")
 
     // Spigot
-    compileOnly("io.papermc.paper:paper-api:26.2.build.31-alpha")
+    compileOnly("io.papermc.paper:paper-api:26.2.build.+")
     compileOnly("org.jetbrains:annotations:23.0.0")
 
     // External Plugins
@@ -71,9 +71,9 @@ tasks {
 
         output.toString().trim()
     }
-    
+
     project.version = commitHash
-    
+
     compileJava {
         this.options.compilerArgs.add("-parameters")
         this.options.isFork = true
@@ -95,7 +95,7 @@ tasks {
         this.relocate("org.slf4j", "${project.group}.fishing.libs.slf4j")
         this.minimize()
     }
-    
+
     bukkit {
         this.main = "dev.oribuin.fishing.FishingPlugin"
         this.version = project.version as String?
@@ -105,20 +105,20 @@ tasks {
         this.foliaSupported = true
         this.softDepend = listOf("Vault", "HeadDatabase", "PlaceholderAPI", "PlayerPoints")
     }
-    
+
     javadoc {
         this.options {
             this as StandardJavadocDocletOptions
 
-            this.links("https://jd.papermc.io/paper/1.21.4/")
-            this.links("https://www.javadoc.io/doc/dev.triumphteam/triumph-gui/3.1.10/")
+            this.links("https://jd.papermc.io/paper/26.2/")
+//            this.links("https://www.javadoc.io/doc/dev.triumphteam/triumph-gui/3.1.13/")
 
             // Exclude unnecessary classes from javadocs
             this.excludeDocFilesSubDir("command")
             this.excludeDocFilesSubDir("database")
-            this.excludeDocFilesSubDir("listener")
             this.excludeDocFilesSubDir("gui")
             this.excludeDocFilesSubDir("hook")
+            this.excludeDocFilesSubDir("listener")
 
             // encoding options
             this.addStringOption("encoding", "UTF-8")
@@ -128,35 +128,32 @@ tasks {
         }
     }
 
-//    publishing {
-//        publications {
-//            create("shadow", MavenPublication::class) {
-//                project.shadow.component(this)
-//                this.artifactId = "fishing"
-//                this.pom.name.set("fishing")
-//            }
-//        }
-//
-//        repositories {
-//            val version = project.version as String
-//            val mavenUser = project.properties["mavenUser"] as String?
-//            val mavenPassword = project.properties["mavenPassword"] as String?
-//
-//            if (mavenUser != null && mavenPassword != null) {
-//                maven {
-//                    credentials {
-//                        username = mavenUser
-//                        password = mavenPassword
-//                    }
-//
-//                    val releasesRepoUrl = "https://repo.rosewooddev.io/repository/public-releases/"
-//                    val snapshotsRepoUrl = "https://repo.rosewooddev.io/repository/public-snapshots/"
-//                    url = uri(if (version.endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
-//                }
-//            }
-//        }
-//    }
+    publishing {
+        publications {
+            create<MavenPublication>("shadow") {
+                artifact(this@tasks["shadowJar"]) {
+                    classifier = null
+                }
 
+                groupId = project.group as String
+                artifactId = rootProject.name
+                repositories {
+                    maven {
+                        val version = project.version as String
+                        credentials {
+                            username = project.property("mavenUser") as String?
+                            password = project.property("mavenPassword") as String?
+                        }
+
+                        val releasesRepoUrl = "https://repo.rosewooddev.io/repository/public-releases/"
+                        val snapshotsRepoUrl = "https://repo.rosewooddev.io/repository/public-snapshots/"
+                        url = uri(if (version.endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
+                    }
+                }
+            }
+        }
+    }
+    
     build {
 //        this.dependsOn(javadoc)
         this.dependsOn(shadowJar)

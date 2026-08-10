@@ -11,6 +11,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
 public class TotemConfig {
 
+    private double experienceMultiplier = 0.15;
     private ItemConstruct totemItem = ItemConstruct.of(Material.PLAYER_HEAD)
             .setName("<white>[<#94bc80><bold>Fishing Totem</bold><white>]")
             .setLore(
@@ -32,6 +33,10 @@ public class TotemConfig {
 
     public static TotemConfig get() {
         return FishingPlugin.get().getConfigLoader().get(TotemConfig.class);
+    }
+
+    public double getExperienceMultiplier() {
+        return experienceMultiplier;
     }
 
     public ItemConstruct getTotemItem() {

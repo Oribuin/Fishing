@@ -87,8 +87,7 @@ public class ConfigLoader {
      * Initialize a config class into the plugin
      *
      * @param config The config to load
-     * @param parent The parent directory for it to be placed in
-     * @param name   The name of the file
+     * @param file The file to load
      */
     public ConfigHandler<?> loadConfig(@NotNull Class<?> config, @Nullable File file) {
         try {
@@ -138,6 +137,12 @@ public class ConfigLoader {
     public void close() {
         for (ConfigHandler<?> handler : this.configs.values()) {
             handler.unload();
+        }
+    }
+    
+    public void reload() {
+        for (ConfigHandler<?> handler : this.configs.values()) {
+            handler.load();
         }
     }
 

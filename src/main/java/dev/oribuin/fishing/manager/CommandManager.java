@@ -8,7 +8,6 @@ import dev.oribuin.fishing.command.impl.ApplyCommand;
 import dev.oribuin.fishing.command.impl.CodexCommand;
 import dev.oribuin.fishing.command.impl.DebugCommand;
 import dev.oribuin.fishing.command.impl.GiveCommand;
-import dev.oribuin.fishing.command.impl.ListCommand;
 import dev.oribuin.fishing.command.impl.MenuCommand;
 import dev.oribuin.fishing.command.impl.ReloadCommand;
 import dev.oribuin.fishing.config.impl.PluginMessages;
@@ -82,7 +81,6 @@ public class CommandManager extends LegacyPaperCommandManager<CommandSender> imp
                 new CodexCommand(this.plugin),
                 new DebugCommand(this.plugin),
                 new GiveCommand(this.plugin),
-                new ListCommand(this.plugin),
                 new MenuCommand(this.plugin),
                 new ReloadCommand(this.plugin)
         );

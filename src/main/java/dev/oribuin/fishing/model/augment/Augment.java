@@ -34,7 +34,7 @@ import static dev.oribuin.fishing.storage.util.KeyRegistry.AUGMENT_TYPE;
 /**
  * Augments are upgrades that can be crafted and applied to fishing rods to give them unique abilities to help the player produce more fish.
  * <p>
- * Use this class to create a new augment for the plugin. Any augments created should be registered using {@link AugmentManager#register(Supplier)}
+ * Use this class to create a new augment for the plugin. Any augments created should be registered using {@link AugmentManager#register(String, Class)}
  * <p>
  * All augment classes should be titled AugmentName and named in snake_case.
  */

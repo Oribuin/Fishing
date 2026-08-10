@@ -138,6 +138,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
         this.confirmedActivate = false;
         this.readContainer(container);
         this.registerListener(InitialFishCatchEvent.class, this::onInitialCatch);
+        this.registerListener(FishCatchEvent.class, this::onFishCatch);
     }
 
     /**
@@ -331,6 +332,12 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
      */
     @Override
     public void onFishCatch(FishCatchEvent event) {
+        
+        // Increase the experience gain by 15%
+        double multiplier = TotemConfig.get().getExperienceMultiplier();
+        event.setCatchExp((int) (event.getCatchExp() + event.getCatchEntropy() * multiplier));
+        
+        // region Particle effects on catch
         Location hook = event.getHook().getLocation().clone().add(0, 1, 0);
         Location position = this.position.clone().add(0, 1, 0);
         int distance = (int) hook.distance(position);
@@ -357,6 +364,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
         ), 500, 500, TimeUnit.MILLISECONDS);
 
         PluginScheduler.get().runTaskLater(task::cancel, 3, TimeUnit.SECONDS);
+        // endregion
     }
 
     /**

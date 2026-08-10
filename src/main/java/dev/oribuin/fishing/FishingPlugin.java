@@ -16,6 +16,7 @@ import dev.oribuin.fishing.manager.DataManager;
 import dev.oribuin.fishing.manager.MenuManager;
 import dev.oribuin.fishing.manager.TierManager;
 import dev.oribuin.fishing.manager.TotemManager;
+import dev.oribuin.fishing.model.totem.upgrade.TotemUpgradeRegistry;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -62,12 +63,15 @@ public class FishingPlugin extends JavaPlugin {
     }
 
     public void reload() {
+        this.configLoader.reload();
         this.dataManager.reload(this);
         this.commandManager.reload(this);
         this.tierManager.reload(this);
         this.augmentManager.reload(this);
         this.totemManager.reload(this);
         this.menuManager.reload(this);
+
+        TotemUpgradeRegistry.register();
     }
 
     public static FishingPlugin get() {

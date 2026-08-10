@@ -53,6 +53,7 @@ public class AugmentManager implements Manager {
      */
     @Override
     public void reload(FishingPlugin plugin) {
+        loader.reload();
         register("biome_blend", AugmentBiomeBlend.class);
         register("enlightened", AugmentEnlightened.class);
         register("fine_slicing", AugmentFineSlicing.class);

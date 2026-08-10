@@ -63,9 +63,10 @@ public class MenuManager implements Manager {
     }
 
     /**
-     * Loads an augment into the registry to be used in the plugin and caches it.
+     * Load and register a gui config into the plugin
      *
-     * @param supplier The {@link Augment} to register
+     * @param identifier The path to the file / the name of it
+     * @param configClass The class that the config will inherit
      */
     public static <T extends GuiConfig> void register(String identifier, Class<T> configClass) {
 

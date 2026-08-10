@@ -48,6 +48,7 @@ public class TotemManager implements Manager {
     @Override
     public void reload(FishingPlugin plugin) {
         this.disable(plugin);
+        loader.reload();
         
         // When using folia, The task to ticket them is activated in Totem#activate(Player)
         // This is done to tick each individual active totem's display entity as thats how folia works....
