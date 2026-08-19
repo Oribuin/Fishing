@@ -128,31 +128,31 @@ tasks {
         }
     }
 
-    publishing {
-        publications {
-            create<MavenPublication>("shadow") {
-                artifact(this@tasks["shadowJar"]) {
-                    classifier = null
-                }
-
-                groupId = project.group as String
-                artifactId = rootProject.name
-                repositories {
-                    maven {
-                        val version = project.version as String
-                        credentials {
-                            username = project.property("mavenUser") as String?
-                            password = project.property("mavenPassword") as String?
-                        }
-
-                        val releasesRepoUrl = "https://repo.rosewooddev.io/repository/public-releases/"
-                        val snapshotsRepoUrl = "https://repo.rosewooddev.io/repository/public-snapshots/"
-                        url = uri(if (version.endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
-                    }
-                }
-            }
-        }
-    }
+//    publishing {
+//        publications {
+//            create<MavenPublication>("shadow") {
+//                artifact(this@tasks["shadowJar"]) {
+//                    classifier = null
+//                }
+//
+//                groupId = project.group as String
+//                artifactId = rootProject.name
+//                repositories {
+//                    maven {
+//                        val version = project.version as String
+//                        credentials {
+//                            username = project.property("mavenUser") as String?
+//                            password = project.property("mavenPassword") as String?
+//                        }
+//
+//                        val releasesRepoUrl = "https://repo.rosewooddev.io/repository/public-releases/"
+//                        val snapshotsRepoUrl = "https://repo.rosewooddev.io/repository/public-snapshots/"
+//                        url = uri(if (version.endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
+//                    }
+//                }
+//            }
+//        }
+//    }
     
     build {
 //        this.dependsOn(javadoc)
