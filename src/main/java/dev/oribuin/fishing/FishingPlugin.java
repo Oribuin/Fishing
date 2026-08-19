@@ -2,6 +2,7 @@ package dev.oribuin.fishing;
 
 import dev.oribuin.fishing.config.ConfigLoader;
 import dev.oribuin.fishing.config.impl.Config;
+import dev.oribuin.fishing.config.impl.LootConfig;
 import dev.oribuin.fishing.config.impl.MySQLConfig;
 import dev.oribuin.fishing.config.impl.PluginMessages;
 import dev.oribuin.fishing.config.impl.TotemConfig;
@@ -14,6 +15,7 @@ import dev.oribuin.fishing.manager.AugmentManager;
 import dev.oribuin.fishing.manager.CommandManager;
 import dev.oribuin.fishing.manager.DataManager;
 import dev.oribuin.fishing.manager.MenuManager;
+import dev.oribuin.fishing.manager.RodManager;
 import dev.oribuin.fishing.manager.TierManager;
 import dev.oribuin.fishing.manager.TotemManager;
 import dev.oribuin.fishing.model.totem.upgrade.TotemUpgradeRegistry;
@@ -30,8 +32,8 @@ public class FishingPlugin extends JavaPlugin {
     private MenuManager menuManager;
     private TierManager tierManager;
     private TotemManager totemManager;
-
-
+    private RodManager rodManager;
+    
     @Override
     public void onEnable() {
         instance = this;
@@ -40,7 +42,8 @@ public class FishingPlugin extends JavaPlugin {
         this.configLoader = new ConfigLoader();
         this.configLoader.loadConfig(Config.class, "settings");
         this.configLoader.loadConfig(PluginMessages.class, "messages");
-        this.configLoader.loadConfig(MySQLConfig.class, "database-settings");
+        this.configLoader.loadConfig(MySQLConfig.class, "database");
+        this.configLoader.loadConfig(LootConfig.class, "loot-settings");
         this.configLoader.loadConfig(TotemConfig.class, "totem-settings");
 
         // Load the plugin managers
@@ -49,6 +52,7 @@ public class FishingPlugin extends JavaPlugin {
         this.tierManager = new TierManager(this);
         this.augmentManager = new AugmentManager(this);
         this.totemManager = new TotemManager(this);
+        this.rodManager = new RodManager(this);
         this.menuManager = new MenuManager(this);
         this.reload();
 
@@ -69,6 +73,7 @@ public class FishingPlugin extends JavaPlugin {
         this.tierManager.reload(this);
         this.augmentManager.reload(this);
         this.totemManager.reload(this);
+        this.rodManager.reload(this);
         this.menuManager.reload(this);
 
         TotemUpgradeRegistry.register();
@@ -106,4 +111,7 @@ public class FishingPlugin extends JavaPlugin {
         return configLoader;
     }
 
+    public RodManager getRodManager() {
+        return rodManager;
+    }
 }

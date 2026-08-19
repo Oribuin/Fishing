@@ -1,4 +1,4 @@
-package dev.oribuin.fishing.gui.impl.user;
+package dev.oribuin.fishing.gui.impl.augment;
 
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.item.ConstructComponent;
@@ -32,13 +32,13 @@ import java.util.function.Supplier;
 import static dev.oribuin.fishing.config.item.ConstructType.TOOLTIP;
 import static dev.oribuin.fishing.storage.util.KeyRegistry.AUGMENT_TYPE;
 
-public class FishAugmentMenu extends PluginMenu<Gui, FishAugmentMenu.Config> implements GuiTickable {
+public class AugmentApplyMenu extends PluginMenu<Gui, AugmentApplyMenu.Config> implements GuiTickable {
 
     /**
      * Creates a new menu for the plugin to use
      */
-    public FishAugmentMenu(FishingPlugin plugin, Player player) {
-        super(plugin, FishAugmentMenu.Config.class);
+    public AugmentApplyMenu(FishingPlugin plugin, Player player) {
+        super(plugin, AugmentApplyMenu.Config.class);
         this.gui = this.createMenu().get();
 
         Fisher fisher = plugin.getDataManager().get(player.getUniqueId());
@@ -84,9 +84,14 @@ public class FishAugmentMenu extends PluginMenu<Gui, FishAugmentMenu.Config> imp
             if (rodStack == null || rodStack.getType() != Material.FISHING_ROD) return;
 
             ItemStack augmentStack = event.getInventory().getItem(this.config.getAugmentSlot());
-            Augment augment = manager.getAugment(augmentStack);
+            Augment augment = manager.getAugmentStack(augmentStack);
             if (augmentStack == null || augment == null) {
                 who.sendMessage("need to place an augment");
+                return;
+            }
+
+            if (augmentStack.getAmount() != 1) {
+                who.sendMessage("You can only apply one augment at a time.");
                 return;
             }
 
@@ -95,18 +100,24 @@ public class FishAugmentMenu extends PluginMenu<Gui, FishAugmentMenu.Config> imp
                 return;
             }
 
-            int level = augmentStack.getAmount();
+            int level = augment.getLevel();
             if (!augment.doesAccept(rodStack, level)) {
                 who.sendMessage("level too high for this rod :/");
                 return;
             }
 
+            if (!this.plugin.getRodManager().canAccept(rodStack, augment)) {
+                who.sendMessage("your fishing rod does not have enough slots for this augment");
+                return;
+            }
+
+
             this.gui.getInventory().clear(this.config.getAugmentSlot());
 
             // Get the augment from the argument
-            Map<Augment, Integer> augments = new HashMap<>(manager.from(augmentStack));
+            Map<Augment, Integer> augments = new HashMap<>(manager.getAugments(augmentStack));
             augments.put(augment, Math.min(level, augment.getMaxLevel()));
-            manager.save(rodStack, augments);
+            manager.applyAugments(rodStack, augments);
             who.sendMessage("Successfully applied the augment to the fishing rod.");
         });
         // endregion

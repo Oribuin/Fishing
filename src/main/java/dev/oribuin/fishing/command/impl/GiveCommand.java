@@ -6,6 +6,8 @@ import dev.oribuin.fishing.config.impl.PluginMessages;
 import dev.oribuin.fishing.config.impl.TotemConfig;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.fish.Fish;
+import dev.oribuin.fishing.model.loot.FishLoot;
+import dev.oribuin.fishing.model.loot.LootRegistry;
 import dev.oribuin.fishing.model.totem.Totem;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -74,8 +76,8 @@ public class GiveCommand implements FishCommand {
     @CommandDescription("Gives the player a specified augment")
     public void giveAugment(CommandSender sender, Player target, Augment augment, Integer amount) {
         if (amount == null || amount < 0) amount = 1;
-
-        ItemStack item = augment.getDisplayItem().create(augment.getPlaceholders());
+        
+        ItemStack item = LootRegistry.from("augment_" + augment.getName());
         if (item == null) {
             sender.sendMessage("An error occurred while creating the fish item."); // TODO: Plugin Message
             return;
@@ -123,6 +125,35 @@ public class GiveCommand implements FishCommand {
                 "amount", amount,
                 "name", itemStack.displayName(),
                 "type", "Totem"
+        );
+    }
+
+    /**
+     * Give a loot item to a specified player
+     *
+     * @param sender The sender running the command
+     * @param target The target the item
+     * @param loot   The fishing loot
+     * @param amount The amount of loot being given
+     */
+    @Command("fishing|fish give <target> loot <loot> [amount]")
+    @Permission("fishing.give")
+    @CommandDescription("Gives the player a specified augment")
+    public void giveLoot(CommandSender sender, Player target, FishLoot loot, Integer amount) {
+        if (amount == null || amount < 0) amount = 1;
+
+        ItemStack item = loot.create();
+        if (target.getInventory().firstEmpty() == -1) {
+            PluginMessages.get().getFullInventory().send(sender); // TODO: Drop items on the ground
+            return;
+        }
+
+        target.getInventory().addItem(item.asQuantity(amount));
+        PluginMessages.get().getGivenItem().send(sender,
+                "target", target.getName(),
+                "amount", amount,
+                "name", item.displayName(),
+                "type", "Loot"
         );
     }
 

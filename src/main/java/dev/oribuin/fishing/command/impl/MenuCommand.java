@@ -2,7 +2,7 @@ package dev.oribuin.fishing.command.impl;
 
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.command.FishCommand;
-import dev.oribuin.fishing.gui.impl.user.FishAugmentMenu;
+import dev.oribuin.fishing.gui.impl.augment.AugmentApplyMenu;
 import dev.oribuin.fishing.gui.impl.user.FishGutMenu;
 import dev.oribuin.fishing.gui.impl.user.FishMainMenu;
 import dev.oribuin.fishing.gui.impl.user.FishSellMenu;
@@ -74,7 +74,7 @@ public class MenuCommand implements FishCommand {
         if (target == null) return;
 
         Player finalTarget = target;
-        new FishAugmentMenu(this.plugin, finalTarget).open(finalTarget);
+        new AugmentApplyMenu(this.plugin, finalTarget).open(finalTarget);
     }
     
     /**

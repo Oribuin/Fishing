@@ -19,7 +19,7 @@ import static io.papermc.paper.datacomponent.DataComponentTypes.ENCHANTMENTS;
 import static io.papermc.paper.datacomponent.DataComponentTypes.STORED_ENCHANTMENTS;
 
 @ConfigSerializable
-@SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal", "UnstableApiUsage" })
+@SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
 public class EnchantItemType extends ConstructComponent<ItemEnchantments> {
 
     private static final Registry<Enchantment> REGISTRY = ItemConstruct.getRegistry().getRegistry(RegistryKey.ENCHANTMENT);

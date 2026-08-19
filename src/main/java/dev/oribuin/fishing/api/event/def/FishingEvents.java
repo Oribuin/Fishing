@@ -1,10 +1,12 @@
 package dev.oribuin.fishing.api.event.def;
 
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
+import dev.oribuin.fishing.api.event.impl.FishBiteEvent;
 import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.FishGutEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
+import dev.oribuin.fishing.api.event.impl.RodCastEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 
 /**
@@ -74,6 +76,13 @@ public interface FishingEvents {
      *
      * @param event The fishing event
      */
-    default void onBite(PlayerFishEvent event) {}
+    default void onFishBite(FishBiteEvent event) {}
+
+    /**
+     * The functionality provided when a fish bites the rod before it is caught
+     *
+     * @param event The fishing event
+     */
+    default void onCastRod(RodCastEvent event) {}
 
 }

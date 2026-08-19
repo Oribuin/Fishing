@@ -63,9 +63,9 @@ public class AugmentCondition extends CatchCondition {
      */
     @Override
     public boolean check(Fish fish, Player player, ItemStack rod, FishHook hook) {
-        Map<Augment, Integer> playerAugments = FishingPlugin.get().getAugmentManager().from(rod);
+        Map<Augment, Integer> playerAugments = FishingPlugin.get().getAugmentManager().getAugments(rod);
         return this.augments.entrySet().stream().allMatch(entry -> {
-            Augment augment = FishingPlugin.get().getAugmentManager().from(entry.getKey());
+            Augment augment = FishingPlugin.get().getAugmentManager().getAugment(entry.getKey());
             return playerAugments.containsKey(augment) && playerAugments.get(augment) >= entry.getValue();
         });
     }

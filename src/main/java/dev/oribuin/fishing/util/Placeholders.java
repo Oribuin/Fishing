@@ -115,6 +115,19 @@ public final class Placeholders {
         return new Builder().add(placeholder, value.toString());
     }
 
+
+    /**
+     * Creates a new builder with delimiters initially set to % and a placeholder added
+     *
+     * @param placeholders The Placeholders instance to add placeholders from
+     *
+     * @return this
+     */
+    public static Builder builder(Placeholders placeholders) {
+        return new Builder().addAll(placeholders.getAll());
+    }
+
+
     /**
      * @return the empty Placeholders instance
      */

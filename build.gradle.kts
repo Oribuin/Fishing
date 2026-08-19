@@ -55,7 +55,7 @@ dependencies {
     compileOnly("org.jetbrains:annotations:23.0.0")
 
     // External Plugins
-    compileOnly("me.clip:placeholderapi:2.11.6")
+    compileOnly("me.clip:placeholderapi:2.12.3")
     compileOnly("com.arcaniax:HeadDatabase-API:1.3.2")
     compileOnly("org.black_ixx:playerpoints:3.2.6")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
@@ -98,7 +98,7 @@ tasks {
 
     bukkit {
         this.main = "dev.oribuin.fishing.FishingPlugin"
-        this.version = project.version as String?
+        this.version = "${project.version}"
         this.author = "Oribuin"
         this.description = "hello"
         this.apiVersion = "1.21"

@@ -335,7 +335,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
         
         // Increase the experience gain by 15%
         double multiplier = TotemConfig.get().getExperienceMultiplier();
-        event.setCatchExp((int) (event.getCatchExp() + event.getCatchEntropy() * multiplier));
+        event.setCatchExp((int) (event.getCatchExp() + (event.getCatchExp() * multiplier)));
         
         // region Particle effects on catch
         Location hook = event.getHook().getLocation().clone().add(0, 1, 0);

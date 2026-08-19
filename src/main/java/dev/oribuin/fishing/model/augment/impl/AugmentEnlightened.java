@@ -12,9 +12,9 @@ import org.spongepowered.configurate.objectmapping.meta.Comment;
  */
 @ConfigSerializable
 public class AugmentEnlightened extends Augment {
-
+    
     @Comment("The required formula for the augment to trigger")
-    private String formula = "(%xp% + <level>) * 0.03";
+    private String formula = "<xp> * (<level> * 0.2";
 
     /**
      * Create a new type of augment with a name and description.
@@ -42,9 +42,9 @@ public class AugmentEnlightened extends Augment {
         );
 
         double xp = FishUtils.evaluate(plc.applyString(this.formula));
-        event.setCatchEntropy((int) (event.getCatchExp() + xp));
+        event.setCatchExp((int) (event.getCatchExp() + xp));
     }
-
+    
     /**
      * Information about the augment which will be displayed in top of the augment configuration file
      *

@@ -448,4 +448,20 @@ public final class FishUtils {
 
         return fishNames;
     }
+
+    /**
+     * Checks if a String contains any values for a yaml value that need to be quoted
+     *
+     * @param string The string to check
+     * @return true if any special characters need to be escaped, otherwise false
+     */
+    public static boolean containsConfigSpecialCharacters(String string) {
+        for (char c : string.toCharArray()) {
+            // Range taken from SnakeYAML's Emitter.java
+            if (c == 0x85 || c >= 0xA0 && c <= 0xD7FF || c >= 0xE000 && c <= 0xFFFD) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

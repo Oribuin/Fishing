@@ -47,11 +47,11 @@ public class ApplyCommand implements FishCommand {
         }
 
         // Get the augment from the argument
-        Map<Augment, Integer> augments = new HashMap<>(this.plugin.getAugmentManager().from(item));
+        Map<Augment, Integer> augments = new HashMap<>(this.plugin.getAugmentManager().getAugments(item));
         augments.put(augment, Math.min(level, augment.getMaxLevel()));
 
         // Apply the augment to the fishing rod
-        this.plugin.getAugmentManager().save(item, augments);
+        this.plugin.getAugmentManager().applyAugments(item, augments);
 
         target.sendMessage("Successfully applied the augment to the fishing rod.");
     }

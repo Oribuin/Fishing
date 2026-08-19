@@ -3,6 +3,7 @@ package dev.oribuin.fishing.model.fish;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.model.condition.CatchCondition;
+import dev.oribuin.fishing.model.loot.LootRegistry;
 import dev.oribuin.fishing.storage.util.KeyRegistry;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
@@ -34,10 +35,12 @@ public class Fish {
     private transient String tier;
 
     public Fish() {
-        this.name = "unknown-cod";
-        this.description = List.of("Example fish style");
-        this.conditions = new ArrayList<>();
-        this.construct = ItemConstruct.of(Material.COD);
+        this(
+                "unknown", 
+                List.of("Example Fish"), 
+                new ArrayList<>(), 
+                ItemConstruct.of(Material.COD)
+        );
     }
 
     /**

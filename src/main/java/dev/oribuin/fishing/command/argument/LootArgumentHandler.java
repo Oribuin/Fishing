@@ -1,7 +1,8 @@
 package dev.oribuin.fishing.command.argument;
 
-import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.model.augment.Augment;
+import dev.oribuin.fishing.model.loot.FishLoot;
+import dev.oribuin.fishing.model.loot.LootRegistry;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.caption.CaptionVariable;
@@ -19,28 +20,25 @@ import org.incendo.cloud.suggestion.SuggestionProvider;
  *
  * @see Augment The Fish class
  */
-public class AugmentArgumentHandler implements ArgumentParser<CommandSender, Augment> {
+public class LootArgumentHandler implements ArgumentParser<CommandSender, FishLoot> {
 
     @Override
-    public @NonNull ArgumentParseResult<@NonNull Augment> parse(
+    public @NonNull ArgumentParseResult<@NonNull FishLoot> parse(
             @NonNull CommandContext<@NonNull CommandSender> commandContext,
             @NonNull CommandInput commandInput
     ) {
         String input = commandInput.peekString();
-        Augment augment = FishingPlugin.get().getAugmentManager().getAugment(input);
+        FishLoot loot = LootRegistry.REGISTRY.get(input);
         commandInput.readString();
-        if (input.isEmpty() || augment == null) return ArgumentParseResult.failure(new AugmentParserException(input, commandContext));
+        if (input.isEmpty() || loot == null) return ArgumentParseResult.failure(new AugmentParserException(input, commandContext));
 
-        return ArgumentParseResult.success(augment);
+        return ArgumentParseResult.success(loot);
     }
 
     @Override
     public @NonNull SuggestionProvider<CommandSender> suggestionProvider() {
         return SuggestionProvider.blocking((context, input) ->
-                FishingPlugin.get().getAugmentManager().getAugments().values()
-                        .stream()
-                        .map(x -> Suggestion.suggestion(x.getName()))
-                        .toList()
+                LootRegistry.REGISTRY.keySet().stream().map(Suggestion::suggestion).toList()
         );
     }
 
@@ -49,7 +47,7 @@ public class AugmentArgumentHandler implements ArgumentParser<CommandSender, Aug
         private final String input;
 
         public AugmentParserException(String input, CommandContext<?> context) {
-            super(AugmentArgumentHandler.class, context, StandardCaptionKeys.EXCEPTION_INVALID_SYNTAX, CaptionVariable.of("input", input));
+            super(LootArgumentHandler.class, context, StandardCaptionKeys.EXCEPTION_INVALID_SYNTAX, CaptionVariable.of("input", input));
 
             this.input = input;
         }

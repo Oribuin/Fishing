@@ -3,6 +3,7 @@ package dev.oribuin.fishing.manager;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.command.argument.AugmentArgumentHandler;
 import dev.oribuin.fishing.command.argument.FishArgumentHandler;
+import dev.oribuin.fishing.command.argument.LootArgumentHandler;
 import dev.oribuin.fishing.command.argument.TierArgumentHandler;
 import dev.oribuin.fishing.command.impl.ApplyCommand;
 import dev.oribuin.fishing.command.impl.CodexCommand;
@@ -14,6 +15,7 @@ import dev.oribuin.fishing.config.impl.PluginMessages;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.fish.Tier;
+import dev.oribuin.fishing.model.loot.FishLoot;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.SenderMapper;
@@ -74,6 +76,7 @@ public class CommandManager extends LegacyPaperCommandManager<CommandSender> imp
         this.registerParser(Augment.class, AugmentArgumentHandler::new);
         this.registerParser(Fish.class, FishArgumentHandler::new);
         this.registerParser(Tier.class, TierArgumentHandler::new);
+        this.registerParser(FishLoot.class, LootArgumentHandler::new);
 
         // Register all the plugin commands
         this.parser.parse(

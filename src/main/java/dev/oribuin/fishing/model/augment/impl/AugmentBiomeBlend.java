@@ -42,14 +42,34 @@ public class AugmentBiomeBlend extends Augment {
      * @param event The event that was called when the fish was gutted
      */
     @Override
-    public void onConditionCheck(ConditionCheckEvent event ) {
+    public void onConditionCheck(ConditionCheckEvent event) {
         if (!(event.getCondition() instanceof BiomeCondition)) return;
 
-        Placeholders placeholders = Placeholders.of("level", level);
-        double chance = FishUtils.evaluate(placeholders.applyString(this.formula));
-        if (this.random.nextDouble(100) <= chance) return;
+        if (this.random.nextDouble(100) <= this.getChance()) return;
 
         event.result(true);
+    }
+
+    /**
+     * Get the chance of the biome being increase
+     *
+     * @return The existing
+     */
+    private double getChance() {
+        Placeholders placeholders = Placeholders.of("level", level);
+        return FishUtils.evaluate(placeholders.applyString(this.formula));
+    }
+
+    /**
+     * All the placeholders that can be used when displaying information about the augment
+     *
+     * @return The {@link Placeholders} for the augment
+     */
+    @Override
+    public Placeholders getPlaceholders() {
+        return Placeholders.builder(super.getPlaceholders())
+                .add("chance", this.getChance())
+                .build();
     }
 
     /**

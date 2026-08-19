@@ -12,6 +12,7 @@ import dev.oribuin.fishing.model.augment.impl.AugmentHotspot;
 import dev.oribuin.fishing.model.augment.impl.AugmentIndulge;
 import dev.oribuin.fishing.model.augment.impl.AugmentIntuition;
 import dev.oribuin.fishing.model.augment.impl.AugmentRainDance;
+import dev.oribuin.fishing.model.loot.LootRegistry;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.oribuin.fishing.util.math.RomanNumber;
@@ -33,6 +34,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static dev.oribuin.fishing.storage.util.KeyRegistry.AUGMENT_LEVEL;
 import static dev.oribuin.fishing.storage.util.KeyRegistry.AUGMENT_TYPE;
 
 public class AugmentManager implements Manager {
@@ -86,9 +88,17 @@ public class AugmentManager implements Manager {
      * @param <T>          The type of augment to register
      */
     public static <T extends Augment> void register(String identifier, Class<T> augmentClass) {
-        loader.loadConfig(augmentClass, identifier);
+        T augment = loader.loadConfig(augmentClass, identifier);
 
         augments.put(identifier.toLowerCase(), () -> loader.getClone(augmentClass));
+        LootRegistry.register(
+                "augment_" + identifier.toLowerCase(),
+                augment::getDisplayItem,
+                augment::getPlaceholders,
+                stack -> stack.editPersistentDataContainer(container -> {
+                    container.set(AUGMENT_TYPE.key(), AUGMENT_TYPE, augment.getName());
+                    container.set(AUGMENT_LEVEL.key(), AUGMENT_LEVEL, Math.min(augment.getLevel(), augment.getMaxLevel()));
+                }));
     }
 
     /**
@@ -99,9 +109,9 @@ public class AugmentManager implements Manager {
      * @return The augment
      */
     @SuppressWarnings("unchecked")
-    public <T extends Augment> T from(String identifier) {
+    public <T extends Augment> T getAugment(String identifier) {
         if (identifier == null) return null;
-        
+
         Supplier<? extends Augment> supplier = augments.get(identifier);
         if (supplier == null) return null;
 
@@ -121,9 +131,17 @@ public class AugmentManager implements Manager {
                         entry -> entry.getValue().get()
                 ));
     }
-    
+
+    /**
+     * Get an augment from an itemstack
+     *
+     * @param itemStack The stack to get it from
+     *
+     * @return The augment item
+     */
+
     @Nullable
-    public Augment getAugment(@Nullable ItemStack itemStack) {
+    public Augment getAugmentStack(@Nullable ItemStack itemStack) {
         if (itemStack == null) return null;
 
         ItemMeta meta = itemStack.getItemMeta();
@@ -131,8 +149,11 @@ public class AugmentManager implements Manager {
 
         PersistentDataContainer container = meta.getPersistentDataContainer();
         String identifier = container.get(AUGMENT_TYPE.key(), AUGMENT_TYPE);
-        
-        return this.plugin.getAugmentManager().from(identifier);
+        int level = container.getOrDefault(AUGMENT_LEVEL.key(), AUGMENT_LEVEL, 1);
+
+        Augment augment = this.plugin.getAugmentManager().getAugment(identifier);
+        if (augment != null) augment.setLevel(level);
+        return augment;
     }
 
 
@@ -142,7 +163,7 @@ public class AugmentManager implements Manager {
      * @param itemStack The {@link ItemStack} to save the augments to
      * @param augments  The augments and their levels
      */
-    public void save(ItemStack itemStack, Map<Augment, Integer> augments) {
+    public void applyAugments(ItemStack itemStack, Map<Augment, Integer> augments) {
         ItemMeta meta = itemStack.getItemMeta();
         if (meta == null) return;
 
@@ -187,7 +208,7 @@ public class AugmentManager implements Manager {
      * @return The augments and what level they are at
      */
     @NotNull
-    public Map<Augment, Integer> from(@Nullable ItemStack itemStack) {
+    public Map<Augment, Integer> getAugments(@Nullable ItemStack itemStack) {
         if (itemStack == null) return new HashMap<>();
 
         ItemMeta meta = itemStack.getItemMeta();
@@ -234,12 +255,11 @@ public class AugmentManager implements Manager {
     public ItemStack getStrongestRod(@NotNull Inventory inventory) {
         ItemStack contender = null;
         int strength = 0;
-        Map<Augment, Integer> contenderAugments = null;
         for (ItemStack stack : inventory.getContents()) {
             if (stack == null || stack.getType().isAir()) continue; // Ignore null/air
-            if (stack.getType() != Material.FISHING_ROD) continue; // Make sure its actually a fishing rod
+            if (stack.getType() != Material.FISHING_ROD) continue; // Make sure it's actually a fishing rod
 
-            Map<Augment, Integer> available = from(stack);
+            Map<Augment, Integer> available = getAugments(stack);
             if (available.isEmpty()) continue;
 
             int currentStr = getStrength(available);
@@ -251,5 +271,5 @@ public class AugmentManager implements Manager {
 
         return contender;
     }
-    
+
 }

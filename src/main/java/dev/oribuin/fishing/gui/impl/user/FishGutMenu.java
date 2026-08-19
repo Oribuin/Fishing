@@ -96,7 +96,7 @@ public class FishGutMenu extends PluginMenu<Gui, FishGutMenu.Config> {
                 return;
             }
 
-            Map<Augment, Integer> augments = plugin.getAugmentManager().from(strongest);
+            Map<Augment, Integer> augments = plugin.getAugmentManager().getAugments(strongest);
 
             FishGutEvent gutEvent = new FishGutEvent(
                     (Player) event.getWhoClicked(),

@@ -1,6 +1,5 @@
 package dev.oribuin.fishing.model.augment;
 
-import com.google.common.base.Supplier;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.FishEventHandler;
 import dev.oribuin.fishing.config.item.ConstructComponent;
@@ -146,7 +145,7 @@ public abstract class Augment extends FishEventHandler {
         if (stack == null || stack.getType() == Material.AIR) return false;
 
         AugmentManager manager = FishingPlugin.get().getAugmentManager();
-        Map<String, Integer> current = manager.from(stack).entrySet()
+        Map<String, Integer> current = manager.getAugments(stack).entrySet()
                 .stream()
                 .collect(Collectors.toMap(
                         x -> x.getKey().getName(),
@@ -180,7 +179,7 @@ public abstract class Augment extends FishEventHandler {
      *
      * @return The {@link Placeholders} for the augment
      */
-    public final Placeholders getPlaceholders() {
+    public Placeholders getPlaceholders() {
         return Placeholders.builder()
                 .add("enabled", this.enabled)
                 .add("id", this.name)
@@ -190,6 +189,7 @@ public abstract class Augment extends FishEventHandler {
                 .add("description", String.join("\n", this.description))
                 .add("display_line", this.displayLine)
                 .add("permission", this.permission)
+                .add("level", this.level)
                 .build();
     }
 

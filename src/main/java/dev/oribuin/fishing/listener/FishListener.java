@@ -2,23 +2,30 @@ package dev.oribuin.fishing.listener;
 
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.FishEventWrapper;
+import dev.oribuin.fishing.api.event.impl.FailCatchEvent;
+import dev.oribuin.fishing.api.event.impl.FishBiteEvent;
 import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
+import dev.oribuin.fishing.api.event.impl.RodCastEvent;
 import dev.oribuin.fishing.config.impl.PluginMessages;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.storage.Fisher;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class FishListener implements Listener {
 
@@ -33,7 +40,7 @@ public class FishListener implements Listener {
         if (event.getHand() == null) return;
 
         ItemStack hand = event.getPlayer().getInventory().getItem(event.getHand()).clone();
-        Map<Augment, Integer> augments = this.plugin.getAugmentManager().from(hand);
+        Map<Augment, Integer> augments = this.plugin.getAugmentManager().getAugments(hand);
         Totem nearby = this.plugin.getTotemManager().getClosestActive(event.getHook().getLocation());
 
         FishEventWrapper eventWrapper = new FishEventWrapper(
@@ -42,12 +49,46 @@ public class FishListener implements Listener {
                 hand,
                 augments, nearby
         );
-
+        
+        // TODO: Have rod rarity impact bites hm
         switch (event.getState()) {
+            case FISHING -> this.handleCustomEvent(
+                    () -> new RodCastEvent(event.getPlayer(), eventWrapper),
+                    eventWrapper,
+                    event
+            );
+            case BITE -> this.handleCustomEvent(
+                    () -> new FishBiteEvent(event.getPlayer(), eventWrapper),
+                    eventWrapper,
+                    event
+            );
+            case FAILED_ATTEMPT -> this.handleCustomEvent(
+                    () -> new FailCatchEvent(event.getPlayer(), eventWrapper),
+                    eventWrapper,
+                    event
+            );
             case CAUGHT_FISH -> this.catchNewFish(event, eventWrapper);
-            // todo: allow bite actual modification
         }
 
+    }
+
+    /**
+     * Handle a custom fishing event by passing it through the fish event wrapper & bukkit
+     *
+     * @param supplier  The supplier for the event
+     * @param wrapper   The event wrapper
+     * @param fishEvent The fishing event it probably stems from
+     * @param <T>       THe type of event
+     */
+    private <T extends Event> void handleCustomEvent(@NotNull Supplier<@NotNull T> supplier, @NotNull FishEventWrapper wrapper, @NotNull PlayerFishEvent fishEvent) {
+        T event = supplier.get();
+        event.callEvent();
+        wrapper.handleEvent(event);
+
+        // If the called event is cancelled
+        if (event instanceof Cancellable cancellable) {
+            fishEvent.setCancelled(cancellable.isCancelled());
+        }
     }
 
     /**

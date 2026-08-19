@@ -33,7 +33,7 @@ public record FishEventWrapper(Player player, FishHook hook, ItemStack rod, Map<
                 player,
                 hook,
                 rod,
-                FishingPlugin.get().getAugmentManager().from(rod),
+                FishingPlugin.get().getAugmentManager().getAugments(rod),
                 FishingPlugin.get().getTotemManager().getClosestActive(hook.getLocation())
         );
     }

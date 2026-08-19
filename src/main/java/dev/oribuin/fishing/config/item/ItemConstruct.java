@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -149,13 +150,7 @@ public class ItemConstruct implements Cloneable {
 
         if (this.lore != null) {
             List<Component> lines = new ArrayList<>();
-            for (String line : this.lore) {
-                Component text = FishUtils.kyorify(line, placeholders);
-                String content = MiniMessage.miniMessage().serialize(text);
-                String[] newLine = content.split("(<newline>|<br>)");
-                for (String s : newLine) lines.add(FishUtils.kyorify(s));
-            }
-
+            for (String line : this.lore) lines.add(FishUtils.kyorify(line, placeholders));
             item.setData(DataComponentTypes.LORE, ItemLore.lore(lines));
         }
         if (this.maxStackSize != null) item.setData(MAX_STACK_SIZE, maxStackSize);
@@ -235,6 +230,17 @@ public class ItemConstruct implements Cloneable {
 
     public MenuItem asMenuItem(Integer... slots) {
         return new MenuItem(this, slots);
+    }
+    
+    public ItemConstruct merge(ItemConstruct existing) {
+        ItemConstruct result = this.clone();
+        if (result.getMaterial() != existing.getMaterial()) result.setMaterial(existing.getMaterial());
+        if (!result.getName().equals(existing.getName())) result.setName(existing.getName());
+        if (!result.getLore().equals(existing.getLore())) result.setLore(existing.getLore());
+        if (!result.getCustomModelData().equals(existing.getCustomModelData())) result.setCustomModelData(existing.getCustomModelData());
+        
+        result.getProperties().putAll(existing.getProperties());
+        return result;
     }
 
     @Override
