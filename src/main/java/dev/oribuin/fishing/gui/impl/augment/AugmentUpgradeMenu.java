@@ -9,7 +9,6 @@ import dev.oribuin.fishing.gui.GuiTickable;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
 import dev.oribuin.fishing.gui.impl.codex.impl.AugmentCodexMenu;
-import dev.oribuin.fishing.manager.AugmentManager;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.scheduler.PluginScheduler;
 import dev.oribuin.fishing.storage.Fisher;
@@ -25,8 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Supplier;
 
 import static dev.oribuin.fishing.config.item.ConstructType.TOOLTIP;
@@ -34,10 +31,12 @@ import static dev.oribuin.fishing.storage.util.KeyRegistry.AUGMENT_TYPE;
 
 public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Config> implements GuiTickable {
 
+    private int increase = 0;
+
     /**
      * Creates a new menu for the plugin to use
      */
-    public AugmentUpgradeMenu(FishingPlugin plugin, Player player, Augment augment) {
+    public AugmentUpgradeMenu(FishingPlugin plugin, Player player) {
         super(plugin, AugmentUpgradeMenu.Config.class);
         this.gui = this.createMenu().get();
 
@@ -51,11 +50,106 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
 
         this.config.getAugmentInfo().place(this.gui, placeholders, event -> {
             Player who = (Player) event.getWhoClicked();
-            new AugmentCodexMenu(this.plugin).open(who);
+            new AugmentCodexMenu(this.plugin).open(who); // TODO: ?
         });
 
         this.tick();
-        // Additional stuff is added as a tickable method
+    }
+
+    public void update(@Nullable Augment augment) {
+        // Add the level increase
+        if (augment == null) {
+            this.config.getDummyItems().forEach(icon -> icon.update(this.gui, EMPTY));
+            return;
+        }
+
+        Placeholders placeholders = Placeholders.builder()
+                .add("increase", augment.getLevel() + this.increase)
+                .add("current", augment.getLevel())
+                .add("previous", augment.getLevel() - Math.min(0, this.increase))
+                .addAll(augment.getPlaceholders())
+                .build();
+
+        // Add the level increase
+        this.config.getIncreaseLevel().update(this.gui, placeholders, event -> {
+            Player who = (Player) event.getWhoClicked();
+            boolean isAlreadyMax = augment.getLevel() >= augment.getMaxLevel();
+            if (isAlreadyMax) {
+                who.sendMessage("augment is already at max level");
+                return;
+            }
+
+            boolean canIncrease = augment.getLevel() + this.increase < augment.getMaxLevel();
+            if (!canIncrease) {
+                who.sendMessage("Augment level cannot be increased further");
+                return;
+            }
+
+            this.increase++;
+            this.update(augment);
+            who.sendMessage("increased level to " + this.increase);
+            ItemStack stack = event.getCurrentItem();
+            if (stack != null) stack.setAmount(Math.min(1, this.increase));
+        });
+
+        // Add the level decrease
+        this.config.getDecreaseLevel().update(this.gui, placeholders, event -> {
+            Player who = (Player) event.getWhoClicked();
+            boolean isAlreadyMax = augment.getLevel() >= augment.getMaxLevel();
+            if (isAlreadyMax) {
+                who.sendMessage("augment is already at max level");
+                return;
+            }
+
+            if (this.increase <= 0) {
+                this.increase = 0; // make sure its 0 
+                who.sendMessage("You cannot decrease any further");
+                return;
+            }
+
+            if (this.increase > 1) this.increase--;
+            else this.increase = 0;
+
+            this.update(augment);
+            this.config.getIncreaseLevel().getSlots().forEach(slot -> {
+                ItemStack stack = event.getInventory().getItem(slot);
+                if (stack != null) stack.setAmount(Math.min(1, this.increase));
+            });
+        });
+
+        this.config.getUpgradeLevel().update(this.gui, placeholders, event -> {
+            Player who = (Player) event.getWhoClicked();
+
+            // Check whether the player is even levelling up the augment
+            if (this.increase <= 0) {
+                who.sendMessage("You have not increased the level of the augment at all");
+                return;
+            }
+
+            // Check whether the augment is already at max level
+            if (augment.getLevel() >= augment.getMaxLevel()) {
+                who.sendMessage("Augment is already at maximum capacity");
+                return;
+            }
+
+            // Check whether the increase is too much for the augment
+            if (augment.getLevel() + this.increase > augment.getMaxLevel()) {
+                who.sendMessage("Cannot level up this much");
+                return;
+            }
+
+            // TODO: Add back the canUse functionality
+            //            if (augment.canUse(who)) {
+            //                who.sendMessage("Can the player even use the augment to upgrade it?");
+            //                return;
+            //            }
+
+            // TODO: Do a cost check; can the player afford to do it
+            augment.setLevel(Math.min(augment.getLevel() + this.increase, augment.getMaxLevel()));
+            this.gui.getInventory().setItem(this.config.getAugmentSlot(), augment.getItemWithLevel());
+            gui.close(who);
+            who.sendMessage("Successfully upgraded the augment");
+        });
     }
 
     /**
@@ -63,64 +157,14 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
      */
     @Override
     public void tick() {
-        // region Place the gui items into the menu
-
-        ItemStack stackRod = this.gui.getInventory().getItem(this.config.getRodSlot());
         ItemStack stackAugment = this.gui.getInventory().getItem(this.config.getAugmentSlot());
 
-        boolean canApply = this.isRod(stackRod) && this.isAugment(stackAugment);
-        if (!canApply) {
+        Augment augment = this.plugin.getAugmentManager().getAugmentStack(stackAugment);
+        if (augment != null && augment.getLevel() == augment.getMaxLevel()) {
             this.config.getMissingPieces().update(this.gui, Placeholders.empty());
-            return;
         }
 
-        // todo: consider putting this as a tickable to check
-
-        this.config.getApplyAugment().update(this.gui, event -> {
-            AugmentManager manager = plugin.getAugmentManager();
-            Player who = (Player) event.getWhoClicked();
-
-            ItemStack rodStack = event.getInventory().getItem(this.config.getRodSlot());
-            if (rodStack == null || rodStack.getType() != Material.FISHING_ROD) return;
-
-            ItemStack augmentStack = event.getInventory().getItem(this.config.getAugmentSlot());
-            Augment augment = manager.getAugmentStack(augmentStack);
-            if (augmentStack == null || augment == null) {
-                who.sendMessage("need to place an augment");
-                return;
-            }
-
-            if (augmentStack.getAmount() != 1) {
-                who.sendMessage("You can only apply one augment at a time.");
-                return;
-            }
-
-            if (!augment.canUse(who)) {
-                who.sendMessage("player cannot use this augment");
-                return;
-            }
-
-            int level = augment.getLevel();
-            if (!augment.doesAccept(rodStack, level)) {
-                who.sendMessage("level too high for this rod :/");
-                return;
-            }
-
-            if (!this.plugin.getRodManager().canAccept(rodStack, augment)) {
-                who.sendMessage("your fishing rod does not have enough slots for this augment");
-                return;
-            }
-
-
-            this.gui.getInventory().clear(this.config.getAugmentSlot());
-
-            // Get the augment from the argument
-            Map<Augment, Integer> augments = new HashMap<>(manager.getAugments(augmentStack));
-            augments.put(augment, Math.min(level, augment.getMaxLevel()));
-            manager.applyAugments(rodStack, augments);
-            who.sendMessage("Successfully applied the augment to the fishing rod.");
-        });
-        // endregion
+        this.update(augment);
     }
 
     /**
@@ -131,17 +175,6 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
     @Override
     public Duration getTickDelay() {
         return Duration.ofMillis(250);
-    }
-
-    /**
-     * Check if an itemstack is fishing rod
-     *
-     * @param stack The stack to check
-     *
-     * @return Whether the stack is a rod or not
-     */
-    private boolean isRod(@Nullable ItemStack stack) {
-        return stack != null && stack.getType() == Material.FISHING_ROD;
     }
 
     /**
@@ -171,7 +204,7 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
 
                     // region Stop the user from clicking non sell slots
                     x.setDefaultTopClickAction(event -> {
-                        if (event.getSlot() != this.config.getRodSlot() && event.getSlot() != this.config.getAugmentSlot()) {
+                        if (event.getSlot() != this.config.getAugmentSlot()) {
                             CANCELLED.execute(event);
                         }
                     });
@@ -185,11 +218,8 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
                             CANCELLED.execute(event);
                             return;
                         }
-                        
-                        if (!this.isRod(stack) && !this.isAugment(stack)) {
-                            CANCELLED.execute(event);
 
-                        }
+                        if (!this.isAugment(stack)) CANCELLED.execute(event);
                     });
                     // endregion 
 
@@ -199,13 +229,12 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
                         Inventory inventory = event.getInventory();
                         // give augment and rod back
 
-                        ItemStack stackRod = inventory.getItem(this.config.getRodSlot());
                         ItemStack stackAugment = inventory.getItem(this.config.getAugmentSlot());
 
-                        if (stackRod != null && stackRod.getType() != Material.AIR) this.giveOrDrop(stackRod.clone(), who);
-                        if (stackAugment != null && stackAugment.getType() != Material.AIR) this.giveOrDrop(stackAugment.clone(), who);
+                        if (stackAugment != null && stackAugment.getType() != Material.AIR) {
+                            this.giveOrDrop(stackAugment.clone(), who);
+                        }
 
-                        inventory.clear(this.config.getRodSlot());
                         inventory.clear(this.config.getAugmentSlot());
                     });
                     // endregion
@@ -239,11 +268,10 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
     @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
     public static class Config extends GuiConfig {
 
-        private int rodSlot = 20;
-        private int augmentSlot = 24;
+        private int augmentSlot = 22;
 
         private MenuItem augmentInfo = ItemConstruct.of(Material.KNOWLEDGE_BOOK)
-                .setName("<white>[<#94bc80><bold>What are Augments?</bold><white>]")
+                .setName("<white>[<#94bc80><bold>What are Augments?</bold><white>]") // TODO: Augment Upgrading
                 .setLore(
                         "<gray>Augments are crafted modifications",
                         "<gray>for your fishing rod, granting them",
@@ -252,74 +280,52 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
                         " <#93bc80>Click to see all fishing augments"
                 )
                 .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
-                .asMenuItem(4);
+                .asMenuItem(13);
 
-        private MenuItem applyAugment = ItemConstruct.of(Material.LIME_CONCRETE) // TODO: Change
-                .setName("<white>[<#94bc80><bold>Apply Augments</bold><white>]")
+        private MenuItem upgradeLevel = ItemConstruct.of(Material.PLAYER_HEAD) // TODO: Change
+                .setName("<white>[<#94bc80><bold>Upgrade Augment</bold><white>]")
                 .setLore(
                         "<gray>Imagine things are listed here like cost",
                         "<gray>Required level blah blah",
                         "",
-                        " <#93bc80>Click to apply the augment"
+                        " <#93bc80>Click to upgrade the augment"
                 )
-                .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
-                .asMenuItem(22);
+                .setProperty(ConstructType.TEXTURE, x -> x.setValue("base64-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTkyZTMxZmZiNTljOTBhYjA4ZmM5ZGMxZmUyNjgwMjAzNWEzYTQ3YzQyZmVlNjM0MjNiY2RiNDI2MmVjYjliNiJ9fX0="))
+                .asMenuItem(31);
 
         private MenuItem missingPieces = ItemConstruct.of(Material.RED_CONCRETE) // TODO: Change
-                .setName("<white>[<#94bc80><bold>No Rod/Augment</bold><white>]")
+                .setName("<white>[<#94bc80><bold>Can't Upgrade</bold><white>]")
                 .setLore(
                         "<gray>Make sure that you have put a fishing rod",
                         "<gray>and a fishing augment in the menu"
                 )
                 .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
-                .asMenuItem(22);
+                .asMenuItem(31);
 
-        //        private MenuItem displayArrow = ItemConstruct.of(Material.PLAYER_HEAD)
-        //                .setProperty(ConstructType.TEXTURE, x -> x.setValue("base64-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjUyN2ViYWU5ZjE1MzE1NGE3ZWQ0OWM4OGMwMmI1YTlhOWNhN2NiMTYxOGQ5OTE0YTNkOWRmOGNjYjNjODQifX19"))
-        //                .setProperty(TOOLTIP, x -> x.setVisible(false))
-        //                .asMenuItem(13);
-
-        private MenuItem displayRod = ItemConstruct.of(Material.FISHING_ROD)
-                .setName("<white>[<#94bc80><bold>Fishing Rod</bold><white>]")
+        private MenuItem increaseLevel = ItemConstruct.of(Material.LIME_DYE)
+                .setName("<white>[<#94bc80><bold>Increase Level</bold><white>]")
                 .setLore(
-                        "<gray>Place the fishing rod that",
-                        "<gray>you want to apply an augment to",
-                        "<gray>in the empty space below"
+                        "<gray>Increases fishing level from",
+                        "<#93bc80>Level <current> <white>➡ <#93bc80><increase>"
                 )
-                .asMenuItem(11);
+                .asMenuItem(25);
 
-        private MenuItem displayBook = ItemConstruct.of(Material.BOOK)
-                .setName("<white>[<#94bc80><bold>Augment</bold><white>]")
+        private MenuItem decreaseLevel = ItemConstruct.of(Material.RED_DYE)
+                .setName("<white>[<#94bc80><bold>Decrease Level</bold><white>]")
                 .setLore(
-                        "<gray>Place the augment that",
-                        "<gray>you want to spend apply",
-                        "<gray>in the empty space below"
+                        "<gray>Increases fishing level from",
+                        "<#93bc80>Level <increase> <white>➡ <#93bc80><previous>"
                 )
-                .asMenuItem(15);
+                .asMenuItem(19);
 
         public Config() {
-            this.title = "Fishing | Apply Augments";
+            this.title = "Fishing | Upgrade Augment";
             this.rows = 5;
-            this.dummyItems.add(new MenuItem(this.border, FishUtils.parseList(
-                    "0-8",
-                    "36-44"
-            )));
-            this.dummyItems.add(new MenuItem(ItemConstruct.of(Material.GRAY_STAINED_GLASS_PANE)
+            this.dummyItems.add(new MenuItem(this.border, FishUtils.parseList("0-21", "23-44")));
+            this.dummyItems.add(new MenuItem(ItemConstruct.of(Material.GREEN_STAINED_GLASS_PANE)
                     .setProperty(TOOLTIP, x -> x.setVisible(false)),
-                    FishUtils.parseList("9-19", "21", "22", "23", "25-35")
+                    FishUtils.parseList("12-14", "21", "23", "30-32")
             ));
-
-            this.dummyItems.add(displayRod);
-            this.dummyItems.add(displayBook);
-            this.dummyItems.add(
-                    ItemConstruct.of(Material.GREEN_STAINED_GLASS_PANE)
-                            .setProperty(TOOLTIP, x -> x.setVisible(false))
-                            .asMenuItem(29, 33)
-            );
-        }
-
-        public int getRodSlot() {
-            return rodSlot;
         }
 
         public int getAugmentSlot() {
@@ -330,12 +336,20 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
             return augmentInfo;
         }
 
-        public MenuItem getApplyAugment() {
-            return applyAugment;
-        }
-
         public MenuItem getMissingPieces() {
             return missingPieces;
+        }
+
+        public MenuItem getUpgradeLevel() {
+            return upgradeLevel;
+        }
+
+        public MenuItem getIncreaseLevel() {
+            return increaseLevel;
+        }
+
+        public MenuItem getDecreaseLevel() {
+            return decreaseLevel;
         }
     }
 }

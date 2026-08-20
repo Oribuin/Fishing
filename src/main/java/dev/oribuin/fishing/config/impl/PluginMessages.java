@@ -33,6 +33,9 @@ public class PluginMessages {
 
     @Comment("The target has been given a specified item")
     private TextMessage givenItem = new TextMessage(PREFIX + "You have provided the <#94bc80><target><white> with [<#94bc80>x<amount> <type><white>]: <white><name>");
+    
+    @Comment("The target has been given a specified item")
+    private TextMessage givenAmount = new TextMessage(PREFIX + "You have provided the <#94bc80><target><white> with [<#94bc80>x<amount> <type><white>]: <white>Total: <#93bc80><total>");
 
     @Comment("The player has caught a specific fish")
     private TextMessage caughtFish = new TextMessage(PREFIX + "You have caught a <#94bc80><item><white>!");
@@ -168,6 +171,10 @@ public class PluginMessages {
 
     public TextMessage getGivenItem() {
         return givenItem;
+    }
+
+    public TextMessage getGivenAmount() {
+        return givenAmount;
     }
 
     public TextMessage getCaughtFish() {

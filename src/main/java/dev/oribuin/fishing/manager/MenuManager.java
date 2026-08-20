@@ -3,6 +3,7 @@ package dev.oribuin.fishing.manager;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.ConfigLoader;
 import dev.oribuin.fishing.gui.GuiConfig;
+import dev.oribuin.fishing.gui.impl.augment.AugmentUpgradeMenu;
 import dev.oribuin.fishing.gui.impl.codex.impl.AugmentCodexMenu;
 import dev.oribuin.fishing.gui.impl.codex.impl.FishCodexMenu;
 import dev.oribuin.fishing.gui.impl.codex.impl.TierCodexMenu;
@@ -44,7 +45,7 @@ public class MenuManager implements Manager {
         
         // Augment Menus
         register("augment/apply_menu", AugmentApplyMenu.Config.class);
-        register("augment/upgrade_menu", AugmentApplyMenu.Config.class);
+        register("augment/upgrade_menu", AugmentUpgradeMenu.Config.class);
 
         // User Menus
         register("main_menu", FishMainMenu.Config.class);

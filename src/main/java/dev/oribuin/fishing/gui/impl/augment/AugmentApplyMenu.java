@@ -106,10 +106,11 @@ public class AugmentApplyMenu extends PluginMenu<Gui, AugmentApplyMenu.Config> i
                 return;
             }
 
-            if (!this.plugin.getRodManager().canAccept(rodStack, augment)) {
-                who.sendMessage("your fishing rod does not have enough slots for this augment");
-                return;
-            }
+            // TODO: Add augment upgrading then re-enable this
+//            if (!this.plugin.getRodManager().canAccept(rodStack, augment)) {
+//                who.sendMessage("your fishing rod does not have enough slots for this augment");
+//                return;
+//            }
 
 
             this.gui.getInventory().clear(this.config.getAugmentSlot());

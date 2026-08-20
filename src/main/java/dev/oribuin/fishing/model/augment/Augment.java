@@ -17,6 +17,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import org.osgi.annotation.versioning.ProviderType;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.ArrayList;
@@ -24,10 +25,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import static dev.oribuin.fishing.storage.util.KeyRegistry.AUGMENT_LEVEL;
 import static dev.oribuin.fishing.storage.util.KeyRegistry.AUGMENT_TYPE;
 
 /**
@@ -40,10 +42,13 @@ import static dev.oribuin.fishing.storage.util.KeyRegistry.AUGMENT_TYPE;
 @ConfigSerializable
 public abstract class Augment extends FishEventHandler {
 
-    protected transient Consumer<ItemStack> augmentFunction;
+    public static final BiConsumer<Augment, ItemStack> STACK_FUNCTION = (augment, stack) ->
+            stack.editPersistentDataContainer(container -> {
+                container.set(AUGMENT_TYPE.key(), AUGMENT_TYPE, augment.getName());
+                container.set(AUGMENT_LEVEL.key(), AUGMENT_LEVEL, Math.min(augment.getLevel(), augment.getMaxLevel()));
+            });
 
     protected transient final Random random = ThreadLocalRandom.current();
-    protected transient final Logger logger;
     protected transient final String name;
     protected transient int level;
 
@@ -67,22 +72,17 @@ public abstract class Augment extends FishEventHandler {
      */
     public Augment(String name, String... description) {
         this.name = name.toLowerCase();
-        this.logger = Logger.getLogger("fishing-augment:" + this.name);
         this.enabled = true;
         this.maxLevel = 5;
         this.requiredLevel = 1;
+        this.level = 1;
         this.description = List.of(description);
         this.displayLine = "<red>" + StringUtils.capitalize(name.replace("_", " ")) + " <level_roman>";
         this.permission = "fishing.augment." + name;
         this.conflictsWith = new ArrayList<>();
         this.price = Cost.of(CurrencyRegistry.ENTROPY, 25000);
-        this.augmentFunction = stack -> stack.editPersistentDataContainer(x -> x.set(
-                AUGMENT_TYPE.key(),
-                AUGMENT_TYPE,
-                this.name
-        ));
         this.displayItem = ItemConstruct.of(Material.FIREWORK_STAR)
-                .setName("<white>[<#94bc80><bold><display_name></bold><white>]")
+                .setName("<#94bc80><bold><display_name></bold> <gray>- <white>(<level><gray>/<white><max_level>)")
                 .setLore(
                         this.description,
                         "",
@@ -92,7 +92,7 @@ public abstract class Augment extends FishEventHandler {
                         ""
                 )
                 .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
-                .setFunction(this.augmentFunction);
+                .setFunction(stack -> STACK_FUNCTION.accept(this, stack));
 
     }
 
@@ -154,6 +154,13 @@ public abstract class Augment extends FishEventHandler {
 
         int currentLevel = current.getOrDefault(this.name, 0);
         return currentLevel + level <= maxLevel;
+    }
+
+    public ItemStack getItemWithLevel() {
+        return this.displayItem.createCustom(
+                this.getPlaceholders(),
+                stack -> STACK_FUNCTION.accept(this, stack)
+        );
     }
 
     /**
@@ -244,7 +251,7 @@ public abstract class Augment extends FishEventHandler {
      * @return The display item of the augment
      */
     public final ItemConstruct getDisplayItem() {
-        return displayItem.setFunction(this.augmentFunction);
+        return displayItem.setFunction(stack -> STACK_FUNCTION.accept(this, stack));
     }
 
     /**

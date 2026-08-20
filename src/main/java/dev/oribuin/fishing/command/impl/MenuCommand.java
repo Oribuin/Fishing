@@ -3,6 +3,7 @@ package dev.oribuin.fishing.command.impl;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.command.FishCommand;
 import dev.oribuin.fishing.gui.impl.augment.AugmentApplyMenu;
+import dev.oribuin.fishing.gui.impl.augment.AugmentUpgradeMenu;
 import dev.oribuin.fishing.gui.impl.user.FishGutMenu;
 import dev.oribuin.fishing.gui.impl.user.FishMainMenu;
 import dev.oribuin.fishing.gui.impl.user.FishSellMenu;
@@ -61,20 +62,37 @@ public class MenuCommand implements FishCommand {
     }
 
     /**
-     * Open the fish gutting menu for the player
+     * Open the augment apply menu for the player
      *
      * @param sender The sender running the command
      * @param target The target that might open the menu
      */
-    @Command("fishing|fish augment [target]")
+    @Command("fishing|fish augment apply [target]")
     @Permission("fishing.augment")
     @CommandDescription("Opens the augmenting menu for the player or target")
-    public void executeAugmentMenu(CommandSender sender, Player target) {
+    public void executeAugmentApply(CommandSender sender, Player target) {
         if (target == null && sender instanceof Player player) target = player;
         if (target == null) return;
 
         Player finalTarget = target;
         new AugmentApplyMenu(this.plugin, finalTarget).open(finalTarget);
+    } 
+    
+    /**
+     * Open the augment upgrade menu for the player
+     *
+     * @param sender The sender running the command
+     * @param target The target that might open the menu
+     */
+    @Command("fishing|fish augment upgrade [target]")
+    @Permission("fishing.augment")
+    @CommandDescription("Opens the augmenting menu for the player or target")
+    public void executeAugmentUpgrade(CommandSender sender, Player target) {
+        if (target == null && sender instanceof Player player) target = player;
+        if (target == null) return;
+
+        Player finalTarget = target;
+        new AugmentUpgradeMenu(this.plugin, finalTarget).open(finalTarget);
     }
     
     /**
@@ -93,8 +111,7 @@ public class MenuCommand implements FishCommand {
         Player finalTarget = target;
         new FishGutMenu(this.plugin, finalTarget).open(finalTarget);
     }
-
-
+    
     /**
      * Open the fish selling menu for the player
      *
