@@ -1,13 +1,13 @@
 package dev.oribuin.fishing.api.event.def;
 
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
+import dev.oribuin.fishing.api.event.impl.FailCatchEvent;
 import dev.oribuin.fishing.api.event.impl.FishBiteEvent;
 import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.FishGutEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
 import dev.oribuin.fishing.api.event.impl.RodCastEvent;
-import org.bukkit.event.player.PlayerFishEvent;
 
 /**
  * A global list of methods that can be used to modify all the relevant events in the plugin
@@ -84,5 +84,13 @@ public interface FishingEvents {
      * @param event The fishing event
      */
     default void onCastRod(RodCastEvent event) {}
+
+    /**
+     * The functionality provided when a player misses a fishing rod
+     *
+     * @param event The fishing event
+     */
+    default void onFailCatch(FailCatchEvent event) {}
+
 
 }

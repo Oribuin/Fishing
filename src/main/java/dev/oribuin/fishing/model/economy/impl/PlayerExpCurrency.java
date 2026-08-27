@@ -5,6 +5,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Supplier;
+
 public class PlayerExpCurrency implements Currency<Integer> {
 
     /**
@@ -72,4 +74,14 @@ public class PlayerExpCurrency implements Currency<Integer> {
         online.giveExp(-amount);
     }
 
+    /**
+     * Get the empty value of the currency (usually 0)
+     *
+     * @return The empty value
+     */
+    @Override
+    public @NotNull Supplier<Integer> getEmpty() {
+        return () -> 0;
+    }
+    
 }

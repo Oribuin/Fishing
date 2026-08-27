@@ -1,14 +1,11 @@
 package dev.oribuin.fishing.api.event.impl;
 
-import dev.oribuin.fishing.gui.impl.user.FishGutMenu;
 import dev.oribuin.fishing.model.augment.Augment;
-import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.fish.GuttedFish;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -17,13 +14,13 @@ import java.util.Map;
 public class FishGutEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
-    private final Map<Augment, Integer> augments;
+    private final Map<String, Augment> augments;
     private final List<GuttedFish> gutted;
     private final int baseEntropy;
     private int entropy;
     private boolean cancelled;
 
-    public FishGutEvent(@NotNull Player who, @NotNull Map<Augment, Integer> augments, @NotNull List<GuttedFish> gutted) {
+    public FishGutEvent(@NotNull Player who, @NotNull Map<String, Augment> augments, @NotNull List<GuttedFish> gutted) {
         super(who, false);
 
         this.augments = augments;
@@ -34,7 +31,7 @@ public class FishGutEvent extends PlayerEvent implements Cancellable {
         this.entropy = this.baseEntropy;
     }
 
-    public Map<Augment, Integer> getAugments() {
+    public Map<String, Augment> getAugments() {
         return augments;
     }
 

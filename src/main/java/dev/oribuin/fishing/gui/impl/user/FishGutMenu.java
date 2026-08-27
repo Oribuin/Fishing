@@ -96,7 +96,7 @@ public class FishGutMenu extends PluginMenu<Gui, FishGutMenu.Config> {
                 return;
             }
 
-            Map<Augment, Integer> augments = plugin.getAugmentManager().getAugments(strongest);
+            Map<String, Augment> augments = plugin.getAugmentManager().getAugments(strongest);
 
             FishGutEvent gutEvent = new FishGutEvent(
                     (Player) event.getWhoClicked(),
@@ -105,7 +105,7 @@ public class FishGutMenu extends PluginMenu<Gui, FishGutMenu.Config> {
             );
             
             gutEvent.callEvent();
-            augments.keySet().forEach(x -> x.handleEvent(gutEvent));
+            augments.values().forEach(x -> x.handleEvent(gutEvent));
             if (gutEvent.isCancelled()) {
                 event.getWhoClicked().closeInventory(PLUGIN);
                 return;

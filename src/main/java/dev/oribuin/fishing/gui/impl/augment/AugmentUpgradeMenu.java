@@ -10,6 +10,7 @@ import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
 import dev.oribuin.fishing.gui.impl.codex.impl.AugmentCodexMenu;
 import dev.oribuin.fishing.model.augment.Augment;
+import dev.oribuin.fishing.model.economy.Cost;
 import dev.oribuin.fishing.scheduler.PluginScheduler;
 import dev.oribuin.fishing.storage.Fisher;
 import dev.oribuin.fishing.util.FishUtils;
@@ -67,6 +68,7 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
                 .add("increase", augment.getLevel() + this.increase)
                 .add("current", augment.getLevel())
                 .add("previous", augment.getLevel() - Math.min(0, this.increase))
+                .add("cost", augment.getUpgradeCost(this.increase).getFormatted())
                 .addAll(augment.getPlaceholders())
                 .build();
 
@@ -84,7 +86,10 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
                 who.sendMessage("Augment level cannot be increased further");
                 return;
             }
-
+            
+            // level = augment level
+            // target = level+increase
+            // increase = target - level
             this.increase++;
             this.update(augment);
             who.sendMessage("increased level to " + this.increase);
@@ -137,7 +142,21 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
                 who.sendMessage("Cannot level up this much");
                 return;
             }
-
+            
+            // TODO: Add back the canUse functionality
+            //            if (augment.canUse(who)) {
+            //                who.sendMessage("Can the player even use the augment to upgrade it?");
+            //                return;
+            //            }
+            
+            // entropy :) maybe make this better
+            Cost<Integer> cost = augment.getUpgradeCost(this.increase);
+            if (!cost.has(who)) {
+                who.sendMessage("ur broke (" + (cost.amount(who).intValue() - cost.getPrice()) + ")");
+                return;
+            }
+            
+            cost.take(who);
             // TODO: Add back the canUse functionality
             //            if (augment.canUse(who)) {
             //                who.sendMessage("Can the player even use the augment to upgrade it?");
@@ -148,7 +167,7 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
             augment.setLevel(Math.min(augment.getLevel() + this.increase, augment.getMaxLevel()));
             this.gui.getInventory().setItem(this.config.getAugmentSlot(), augment.getItemWithLevel());
             gui.close(who);
-            who.sendMessage("Successfully upgraded the augment");
+            who.sendMessage("Successfully upgraded the augment (Cost: " + cost + ")");
         });
     }
 
@@ -288,7 +307,9 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
                         "<gray>Imagine things are listed here like cost",
                         "<gray>Required level blah blah",
                         "",
-                        " <#93bc80>Click to upgrade the augment"
+                        "<white>Cost: <#93bc80>$<cost>",
+                        "",
+                        "<#93bc80>Click to upgrade the augment"
                 )
                 .setProperty(ConstructType.TEXTURE, x -> x.setValue("base64-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTkyZTMxZmZiNTljOTBhYjA4ZmM5ZGMxZmUyNjgwMjAzNWEzYTQ3YzQyZmVlNjM0MjNiY2RiNDI2MmVjYjliNiJ9fX0="))
                 .asMenuItem(31);

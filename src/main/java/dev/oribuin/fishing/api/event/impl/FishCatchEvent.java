@@ -59,7 +59,7 @@ public class FishCatchEvent extends PlayerEvent implements Cancellable {
      *
      * @return The list of augments and the level of the augment
      */
-    public Map<Augment, Integer> getAugments() {
+    public Map<String, Augment> getAugments() {
         return this.wrapper.augments();
     }
 

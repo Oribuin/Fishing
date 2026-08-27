@@ -1,12 +1,12 @@
 package dev.oribuin.fishing.manager;
 
-import com.jeff_media.morepersistentdatatypes.DataType;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.ConfigLoader;
+import dev.oribuin.fishing.config.impl.Config;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.augment.impl.AugmentBiomeBlend;
 import dev.oribuin.fishing.model.augment.impl.AugmentEnlightened;
-import dev.oribuin.fishing.model.augment.impl.AugmentFineSlicing;
+import dev.oribuin.fishing.model.augment.impl.AugmentFailure;import dev.oribuin.fishing.model.augment.impl.AugmentFineSlicing;
 import dev.oribuin.fishing.model.augment.impl.AugmentGenius;
 import dev.oribuin.fishing.model.augment.impl.AugmentHotspot;
 import dev.oribuin.fishing.model.augment.impl.AugmentIndulge;
@@ -21,21 +21,24 @@ import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static dev.oribuin.fishing.storage.util.KeyRegistry.AUGMENT_LEVEL;
-import static dev.oribuin.fishing.storage.util.KeyRegistry.AUGMENT_TYPE;
+import static com.jeff_media.morepersistentdatatypes.DataType.TAG_CONTAINER;
+import static dev.oribuin.fishing.storage.util.KeyRegistry.*;
 
 public class AugmentManager implements Manager {
 
@@ -56,6 +59,7 @@ public class AugmentManager implements Manager {
     @Override
     public void reload(FishingPlugin plugin) {
         loader.reload();
+        register("failure", AugmentFailure.class);
         register("biome_blend", AugmentBiomeBlend.class);
         register("enlightened", AugmentEnlightened.class);
         register("fine_slicing", AugmentFineSlicing.class);
@@ -91,14 +95,10 @@ public class AugmentManager implements Manager {
         T augment = loader.loadConfig(augmentClass, identifier);
 
         augments.put(identifier.toLowerCase(), () -> loader.getClone(augmentClass));
-        LootRegistry.register(
-                "augment_" + identifier.toLowerCase(),
-                augment::getDisplayItem,
-                augment::getPlaceholders,
-                stack -> stack.editPersistentDataContainer(container -> {
-                    container.set(AUGMENT_TYPE.key(), AUGMENT_TYPE, augment.getName());
-                    container.set(AUGMENT_LEVEL.key(), AUGMENT_LEVEL, Math.min(augment.getLevel(), augment.getMaxLevel()));
-                }));
+        LootRegistry.register("augment_" + identifier.toLowerCase(), augment::getDisplayItem, augment::getPlaceholders, stack -> stack.editPersistentDataContainer(container -> {
+            container.set(AUGMENT_TYPE.key(), AUGMENT_TYPE, augment.getName());
+            container.set(AUGMENT_LEVEL.key(), AUGMENT_LEVEL, Math.min(augment.getLevel(), augment.getMaxLevel()));
+        }));
     }
 
     /**
@@ -124,12 +124,7 @@ public class AugmentManager implements Manager {
      * @return The map of all augments in the registry
      */
     public Map<String, Augment> getAugments() {
-        return augments.entrySet().stream()
-                .map(x -> Map.entry(x.getKey(), x.getValue()))
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        entry -> entry.getValue().get()
-                ));
+        return augments.entrySet().stream().map(x -> Map.entry(x.getKey(), x.getValue())).collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().get()));
     }
 
     /**
@@ -156,47 +151,78 @@ public class AugmentManager implements Manager {
         return augment;
     }
 
-
     /**
      * Save a map of augments to an itemstack and update the lore of the itemstack
      *
      * @param itemStack The {@link ItemStack} to save the augments to
      * @param augments  The augments and their levels
      */
-    public void applyAugments(ItemStack itemStack, Map<Augment, Integer> augments) {
+    public void applyAugments(ItemStack itemStack, Map<String, Augment> augments) {
         ItemMeta meta = itemStack.getItemMeta();
         if (meta == null) return;
 
+        // Modify the lore of the item
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        augments.forEach((augment, level) -> {
-            int previousLevel = container.getOrDefault(augment.getNamespace(), PersistentDataType.INTEGER, 0);
-            int newLevel = Math.min(level, augment.getMaxLevel());
-            container.set(augment.getNamespace(), PersistentDataType.INTEGER, newLevel);
+        List<Component> lore = new ArrayList<>();
+        List<Component> itemLore = meta.lore();
+        if (itemLore != null) {
+            lore.addAll(itemLore);
+        }
 
-            Placeholders placeholders = Placeholders.of(
-                    "level", previousLevel,
-                    "level_roman", RomanNumber.toRoman(newLevel)
-            );
+        // region Add the header for the description
+        int augmentsStart = lore.isEmpty() ? 0 : lore.size() - 1;
+        Integer headerIndex = container.get(AUGMENT_HEADER.key(), AUGMENT_HEADER);
+        int footerIndex = container.getOrDefault(AUGMENT_FOOTER.key(), AUGMENT_FOOTER, 0);
+        if (headerIndex == null) headerIndex = augmentsStart;
 
-            // Modify the lore of the item
-            List<Component> lore = new ArrayList<>();
-            List<Component> itemLore = meta.lore();
-            if (itemLore != null) {
-                lore.addAll(itemLore);
+        if (footerIndex > headerIndex) {
+            lore.subList(headerIndex, footerIndex + 1).clear();
+        }
+
+        container.set(AUGMENT_HEADER.key(), AUGMENT_HEADER, headerIndex);
+        for (String headerText : Config.get().getAugmentsHeader()) {
+            lore.add(FishUtils.kyorify(headerText));
+        }
+        // endregion
+
+        AtomicInteger furthestIndex = new AtomicInteger(headerIndex);
+
+        // region Add the augments to the description
+        Comparator<Augment> augmentCompare = Comparator.comparing(Augment::getLevel)
+                .reversed()
+                .thenComparing(Augment::getName);
+        PersistentDataAdapterContext context = container.getAdapterContext();
+        PersistentDataContainer augmentsContainer = context.newPersistentDataContainer();
+        List<Augment> target = augments.values().stream().sorted(augmentCompare).toList();
+        for (Augment augment : target) {
+            // Write the augment to the container
+            PersistentDataContainer augmentContainer = context.newPersistentDataContainer();
+            augment.writeContainer(augmentContainer);
+            augmentsContainer.set(augment.getNamespace(), TAG_CONTAINER, augmentContainer);
+
+            Placeholders placeholders = Placeholders.of("level", augment.getLevel(), "level_roman", RomanNumber.toRoman(augment.getLevel()));
+
+            // region Add the augment to the description
+            lore.add(FishUtils.kyorify(augment.getDisplayLine(), placeholders));
+            furthestIndex.incrementAndGet();
+        }
+
+        container.set(ROD_AUGMENTS.key(), ROD_AUGMENTS, augmentsContainer);
+
+        // endregion
+        // region Add the footer for the description
+        List<String> footer = Config.get().getAugmentsFooter();
+        if (!footer.isEmpty()) {
+            for (String footerText : footer) {
+                lore.add(FishUtils.kyorify(footerText));
             }
 
-            Component text = FishUtils.kyorify(augment.getDisplayLine(), placeholders);
-            Integer currentIndex = container.get(augment.getLoreNamespace(), PersistentDataType.INTEGER);
-            if (currentIndex != null) {
-                lore.set(currentIndex, text);
-            } else {
-                lore.add(text);
-                container.set(augment.getLoreNamespace(), DataType.INTEGER, lore.size() - 1);
-            }
+            furthestIndex.set(lore.size() - 1);
+        }
 
-            meta.lore(lore);
-        });
-
+        // endregion
+        container.set(AUGMENT_FOOTER.key(), AUGMENT_FOOTER, furthestIndex.get());
+        meta.lore(lore);
         itemStack.setItemMeta(meta);
     }
 
@@ -208,29 +234,31 @@ public class AugmentManager implements Manager {
      * @return The augments and what level they are at
      */
     @NotNull
-    public Map<Augment, Integer> getAugments(@Nullable ItemStack itemStack) {
+    public Map<String, Augment> getAugments(@Nullable ItemStack itemStack) {
         if (itemStack == null) return new HashMap<>();
 
         ItemMeta meta = itemStack.getItemMeta();
         if (meta == null) return new HashMap<>();
 
-        PersistentDataContainer container = meta.getPersistentDataContainer();
+        PersistentDataContainer rodContainer = meta.getPersistentDataContainer();
+        PersistentDataContainer augmentsContainer = rodContainer.get(ROD_AUGMENTS.key(), ROD_AUGMENTS);
+        if (augmentsContainer == null) return new HashMap<>();
 
         // Load the augments from the item meta
-        Map<Augment, Integer> result = new HashMap<>();
-        augments.forEach((name, supplier) -> {
-            Augment augment = supplier.get();
-            if (augment == null) return;
+        return augmentsContainer.getKeys().stream().map(namespacedKey -> {
+                    Supplier<? extends Augment> augmentSupplier = augments.get(namespacedKey.value());
+                    if (augmentSupplier == null) return null;
 
-            Integer level = container.get(augment.getNamespace(), PersistentDataType.INTEGER);
-            if (level == null || level <= 0) return;
+                    Augment augment = augmentSupplier.get();
 
-            augment.setLevel(level);
+                    PersistentDataContainer augmentContainer = augmentsContainer.get(namespacedKey, TAG_CONTAINER);
+                    if (augmentContainer == null) return null;
 
-            result.put(augment, Math.min(level, augment.getMaxLevel())); // Use the maximum level of the augment
-        });
-
-        return result;
+                    augment.readContainer(augmentContainer);
+                    return augment;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(Augment::getName, augment -> augment));
     }
 
     /**
@@ -240,8 +268,8 @@ public class AugmentManager implements Manager {
      *
      * @return The strength of the augments
      */
-    public int getStrength(Map<Augment, Integer> augments) {
-        return augments.values().stream().mapToInt(i -> i).sum();
+    public int getStrength(Map<String, Augment> augments) {
+        return augments.values().stream().mapToInt(Augment::getLevel).sum();
     }
 
     /**
@@ -259,7 +287,7 @@ public class AugmentManager implements Manager {
             if (stack == null || stack.getType().isAir()) continue; // Ignore null/air
             if (stack.getType() != Material.FISHING_ROD) continue; // Make sure it's actually a fishing rod
 
-            Map<Augment, Integer> available = getAugments(stack);
+            Map<String, Augment> available = getAugments(stack);
             if (available.isEmpty()) continue;
 
             int currentStr = getStrength(available);

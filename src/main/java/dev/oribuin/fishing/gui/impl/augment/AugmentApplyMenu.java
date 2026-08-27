@@ -17,7 +17,7 @@ import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.guis.Gui;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Material;
+import net.objecthunter.exp4j.shuntingyard.ShuntingYard;import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -89,7 +89,7 @@ public class AugmentApplyMenu extends PluginMenu<Gui, AugmentApplyMenu.Config> i
                 who.sendMessage("need to place an augment");
                 return;
             }
-
+            
             if (augmentStack.getAmount() != 1) {
                 who.sendMessage("You can only apply one augment at a time.");
                 return;
@@ -116,8 +116,9 @@ public class AugmentApplyMenu extends PluginMenu<Gui, AugmentApplyMenu.Config> i
             this.gui.getInventory().clear(this.config.getAugmentSlot());
 
             // Get the augment from the argument
-            Map<Augment, Integer> augments = new HashMap<>(manager.getAugments(augmentStack));
-            augments.put(augment, Math.min(level, augment.getMaxLevel()));
+            augment.setLevel(Math.min(level, augment.getMaxLevel()));
+            Map<String, Augment> augments = manager.getAugments(rodStack.clone());
+            augments.put(augment.getName(), augment);
             manager.applyAugments(rodStack, augments);
             who.sendMessage("Successfully applied the augment to the fishing rod.");
         });

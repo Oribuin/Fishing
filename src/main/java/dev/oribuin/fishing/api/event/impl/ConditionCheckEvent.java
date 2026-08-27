@@ -42,7 +42,7 @@ public class ConditionCheckEvent extends PlayerEvent implements Cancellable {
      * @return The itemstack of the fishing rod
      */
     public ItemStack getRod() {
-        return this.wrapper.rod();
+        return this.player.getInventory().getItem(this.wrapper.handSlot());
     }
 
     /**

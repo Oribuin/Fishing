@@ -82,7 +82,7 @@ public class RodManager implements Manager {
         
         return this.plugin.getAugmentManager().getAugments(stack).values()
                 .stream()
-                .mapToInt(Integer::intValue)
+                .mapToInt(Augment::getLevel)
                 .sum();
     }
 

@@ -10,7 +10,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import javax.print.DocFlavor;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -41,7 +40,11 @@ public class KeyRegistry {
     // region Fishing Rod Values
     public static FishDataType<String, String> ROD_RARITY = register("rod_rarity", STRING);
     public static FishDataType<Integer, Integer> ROD_BASE_CAPACITY = register("rod_base_capacity", INTEGER);
-    
+    public static FishDataType<PersistentDataContainer, PersistentDataContainer> ROD_AUGMENTS = register(
+            "rod_augments",
+            TAG_CONTAINER
+    );
+
     // endregion
 
     // region Fish Data Types
@@ -50,6 +53,8 @@ public class KeyRegistry {
     // endregion
 
     // region Augment Data Types
+    public static FishDataType<Integer, Integer> AUGMENT_HEADER = register("augment_header", INTEGER);
+    public static FishDataType<Integer, Integer> AUGMENT_FOOTER = register("augment_footer", INTEGER);
     public static FishDataType<String, String> AUGMENT_TYPE = register("augment_type", STRING);
     public static FishDataType<Integer, Integer> AUGMENT_LEVEL = register("augment_level", INTEGER);
     // endregion

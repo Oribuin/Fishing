@@ -5,6 +5,8 @@ import dev.oribuin.fishing.storage.Fisher;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Supplier;
+
 /**
  * Represents a currency type in the plugin economy
  *
@@ -66,5 +68,12 @@ public interface Currency<T> {
     default Fisher getFisher(@NotNull OfflinePlayer player) {
         return FishingPlugin.get().getDataManager().get(player.getUniqueId());
     }
+
+    /**
+     * Get the empty value of the currency (usually 0)
+     *
+     * @return The empty value
+     */
+    @NotNull Supplier<T> getEmpty();
 
 }

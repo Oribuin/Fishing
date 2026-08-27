@@ -59,8 +59,10 @@ public abstract class PluginMenu<T extends BaseGui, Z extends GuiConfig> {
     public void open(Player player) {
         if (this.gui == null) return;
 
-        this.viewed = true;
-        PluginScheduler.get().runTask(() -> this.gui.open(player));
+        PluginScheduler.get().runTaskAtEntity(player, () -> {
+            this.gui.open(player);
+            this.viewed = true;
+        });
 
         // If the gui is tickable, tick the gui
         if (this instanceof GuiTickable tickable) {

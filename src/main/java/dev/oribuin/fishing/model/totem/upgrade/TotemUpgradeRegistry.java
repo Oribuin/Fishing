@@ -13,11 +13,11 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public class TotemUpgradeRegistry {
-
-
+    
     private static final Map<String, RegisteredUpgrade<?>> UPGRADES = new HashMap<>();
 
     public static void register() {
+        UPGRADES.clear();
         register("cooldown", TotemUpgradeCooldown.class);
         register("duration", TotemUpgradeDuration.class);
         register("radius", TotemUpgradeRadius.class);

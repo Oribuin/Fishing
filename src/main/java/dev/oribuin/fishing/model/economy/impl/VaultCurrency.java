@@ -7,6 +7,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Supplier;
+
 public class VaultCurrency implements Currency<Double> {
 
     private static final RegisteredServiceProvider<Economy> PROVIDER = Bukkit.getServicesManager().getRegistration(Economy.class);
@@ -66,6 +68,16 @@ public class VaultCurrency implements Currency<Double> {
     @Override
     public void take(@NotNull OfflinePlayer player, @NotNull Double amount) {
         if (API != null) API.withdrawPlayer(player, amount);
+    }
+
+    /**
+     * Get the empty value of the currency (usually 0)
+     *
+     * @return The empty value
+     */
+    @Override
+    public @NotNull Supplier<Double> getEmpty() {
+        return () -> 0.0;
     }
 
 }

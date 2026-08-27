@@ -97,14 +97,14 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
 
 
     public ItemStack getRod() {
-        return this.wrapper.rod();
+        return this.player.getInventory().getItem(this.wrapper.handSlot());
     }
 
     public FishHook getHook() {
         return this.wrapper.hook();
     }
 
-    public Map<Augment, Integer> getAugments() {
+    public Map<String, Augment> getAugments() {
         return this.wrapper.augments();
     }
 

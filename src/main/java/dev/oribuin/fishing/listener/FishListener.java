@@ -35,19 +35,21 @@ public class FishListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     public void onFish(PlayerFishEvent event) {
         if (event.getHand() == null) return;
 
-        ItemStack hand = event.getPlayer().getInventory().getItem(event.getHand()).clone();
-        Map<Augment, Integer> augments = this.plugin.getAugmentManager().getAugments(hand);
+        ItemStack hand = event.getPlayer().getInventory().getItem(event.getHand());
+        Map<String, Augment> augments = this.plugin.getAugmentManager().getAugments(hand);
         Totem nearby = this.plugin.getTotemManager().getClosestActive(event.getHook().getLocation());
 
         FishEventWrapper eventWrapper = new FishEventWrapper(
                 event.getPlayer(),
                 event.getHook(),
                 hand,
-                augments, nearby
+                event.getHand(),
+                augments, 
+                nearby
         );
         
         // TODO: Have rod rarity impact bites hm
@@ -62,11 +64,13 @@ public class FishListener implements Listener {
                     eventWrapper,
                     event
             );
-            case FAILED_ATTEMPT -> this.handleCustomEvent(
+            case FAILED_ATTEMPT, REEL_IN -> { // failed_attempt is so inconsistent, reel in means they didnt catch anything
+                this.handleCustomEvent(
                     () -> new FailCatchEvent(event.getPlayer(), eventWrapper),
                     eventWrapper,
                     event
             );
+            }
             case CAUGHT_FISH -> this.catchNewFish(event, eventWrapper);
         }
 
@@ -124,9 +128,7 @@ public class FishListener implements Listener {
             fishCatchEvent.callEvent(); // call through bukkit
 
             // Run the augments onInitialCatch method
-            if (!wrapper.augments().isEmpty()) wrapper.augments().keySet().forEach(augment -> augment.handleEvent(fishCatchEvent));
-            if (wrapper.totem() != null && wrapper.totem().isActive()) wrapper.totem().handleEvent(fishCatchEvent);
-
+            wrapper.handleEvent(fishCatchEvent);
             if (fishCatchEvent.isCancelled()) continue; // If the event is cancelled, do nothing
 
             // Use the event values because they could have been modified

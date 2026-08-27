@@ -9,6 +9,8 @@ import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Supplier;
+
 public class MaterialCurrency implements Currency<Material> {
 
     /**
@@ -124,6 +126,16 @@ public class MaterialCurrency implements Currency<Material> {
         if (player == null) return null;
 
         return player.getInventory();
+    }
+
+    /**
+     * Get the empty value of the currency (usually 0)
+     *
+     * @return The empty value
+     */
+    @Override
+    public @NotNull Supplier<Material> getEmpty() {
+        return () -> Material.AIR;
     }
 
     /**

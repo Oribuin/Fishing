@@ -1,12 +1,15 @@
 package dev.oribuin.fishing.model.economy.impl;
 
 import dev.oribuin.fishing.model.economy.Currency;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Supplier;
 
 public class ItemStackCurrency implements Currency<ItemStack> {
 
@@ -63,8 +66,7 @@ public class ItemStackCurrency implements Currency<ItemStack> {
     public void give(@NotNull OfflinePlayer player, @NotNull ItemStack item) {
         PlayerInventory inventory = this.getInventory(player);
         if (inventory == null) return;
-
-
+        
         int remaining = item.getAmount();
         for (ItemStack itemStack : inventory.getContents()) {
             if (itemStack == null || !itemStack.isSimilar(item)) continue;
@@ -120,6 +122,16 @@ public class ItemStackCurrency implements Currency<ItemStack> {
         if (player == null) return null;
 
         return player.getInventory();
+    }
+
+    /**
+     * Get the empty value of the currency (usually 0)
+     *
+     * @return The empty value
+     */
+    @Override
+    public @NotNull Supplier<ItemStack> getEmpty() {
+        return () -> ItemStack.of(Material.AIR);
     }
 
     /**

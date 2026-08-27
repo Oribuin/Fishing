@@ -350,6 +350,21 @@ public final class FishUtils {
         String noUnderscores = enumValue.name().toLowerCase().replace("_", " ");
         return StringUtils.capitalize(noUnderscores);
     }
+    
+    /**
+     * Niceify an enum value to a string
+     *
+     * @param enumValue The enum value
+     * @param <T>       The enum type
+     *
+     * @return The niceified string
+     */
+    public static String niceify(String text) {
+        String noUnderscores = text.toLowerCase().replace("_", " ");
+        return Arrays.stream(noUnderscores.split(" "))
+                .map(StringUtils::capitalize)
+                .collect(Collectors.joining(" "));
+    }
 
     public static <T extends Enum<T>> String niceify(T enumValue, String def) {
         if (enumValue == null) return def;

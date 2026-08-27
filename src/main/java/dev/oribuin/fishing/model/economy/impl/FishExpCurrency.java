@@ -6,6 +6,8 @@ import dev.oribuin.fishing.storage.Fisher;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Supplier;
+
 public class FishExpCurrency implements Currency<Integer> {
 
     /**
@@ -67,7 +69,17 @@ public class FishExpCurrency implements Currency<Integer> {
         fisher.setExperience(fisher.getExperience() - amount);
         this.saveUser(fisher);
     }
-
+    
+    /**
+     * Get the empty value of the currency (usually 0)
+     *
+     * @return The empty value
+     */
+    @Override
+    public @NotNull Supplier<Integer> getEmpty() {
+        return () -> 0;
+    }
+    
     /**
      * Save a user's fisher data to the plugin
      *

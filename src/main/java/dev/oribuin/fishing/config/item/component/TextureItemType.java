@@ -117,7 +117,7 @@ public final class TextureItemType extends ConstructComponent<ResolvableProfile>
      */
     private ResolvableProfile fromHdb(String headId) {
         String texture = HeadDbProvider.getApi().getBase64(headId);
-        if (texture != null) return this.fromBase64(headId);
+        if (texture != null) return this.fromBase64(texture);
         return null;
     }
 

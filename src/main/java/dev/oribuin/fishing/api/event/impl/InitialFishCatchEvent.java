@@ -1,7 +1,6 @@
 package dev.oribuin.fishing.api.event.impl;
 
 import dev.oribuin.fishing.api.event.FishEventWrapper;
-import dev.oribuin.fishing.api.event.def.TotemEvents;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.totem.Totem;
 import org.bukkit.entity.FishHook;
@@ -28,17 +27,17 @@ public class InitialFishCatchEvent extends PlayerEvent implements Cancellable {
     }
 
     public ItemStack getRod() {
-        return this.wrapper.rod();
+        return this.player.getInventory().getItem(this.wrapper.handSlot());
     }
 
     public FishHook getHook() {
         return this.wrapper.hook();
     }
-    
-    public Map<Augment, Integer> getAugments() {
+
+    public Map<String, Augment> getAugments() {
         return this.wrapper.augments();
-    } 
-    
+    }
+
     public Totem getTotem() {
         return this.wrapper.totem();
     }
