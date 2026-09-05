@@ -86,7 +86,7 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
                 who.sendMessage("Augment level cannot be increased further");
                 return;
             }
-            
+
             // level = augment level
             // target = level+increase
             // increase = target - level
@@ -142,20 +142,20 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
                 who.sendMessage("Cannot level up this much");
                 return;
             }
-            
+
             // TODO: Add back the canUse functionality
             //            if (augment.canUse(who)) {
             //                who.sendMessage("Can the player even use the augment to upgrade it?");
             //                return;
             //            }
-            
+
             // entropy :) maybe make this better
             Cost<Integer> cost = augment.getUpgradeCost(this.increase);
             if (!cost.has(who)) {
                 who.sendMessage("ur broke (" + (cost.amount(who).intValue() - cost.getPrice()) + ")");
                 return;
             }
-            
+
             cost.take(who);
             // TODO: Add back the canUse functionality
             //            if (augment.canUse(who)) {

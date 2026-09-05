@@ -6,6 +6,7 @@ import dev.oribuin.fishing.config.TextMessage;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.storage.persistent.FishDataType;
 import dev.oribuin.fishing.storage.util.KeyRegistry;
+import io.papermc.paper.persistence.PersistentDataContainerView;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -51,7 +52,7 @@ public class AugmentFailure extends Augment {
      * @param container The container to read from
      */
     @Override
-    public void readContainer(PersistentDataContainer container) {
+    public void readContainer(PersistentDataContainerView container) {
         super.readContainer(container);
         this.fails = container.getOrDefault(FAILS.key(), FAILS, 0);
     }

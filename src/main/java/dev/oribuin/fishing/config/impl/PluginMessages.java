@@ -33,7 +33,7 @@ public class PluginMessages {
 
     @Comment("The target has been given a specified item")
     private TextMessage givenItem = new TextMessage(PREFIX + "You have provided the <#94bc80><target><white> with [<#94bc80>x<amount> <type><white>]: <white><name>");
-    
+
     @Comment("The target has been given a specified item")
     private TextMessage givenAmount = new TextMessage(PREFIX + "You have provided the <#94bc80><target><white> with [<#94bc80>x<amount> <type><white>]: <white>Total: <#93bc80><total>");
 

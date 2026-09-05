@@ -1,7 +1,6 @@
 package dev.oribuin.fishing.model.loot;
 
 import dev.oribuin.fishing.config.item.ItemConstruct;
-import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -57,7 +56,7 @@ public record FishLoot(String identifier, Supplier<ItemConstruct> construct, Sup
         Placeholders combined = Placeholders.builder(placeholders)
                 .addAll(this.placeholders.get())
                 .build();
-        
+
         return this.construct.get().createCustom(combined, this.additional);
     }
 

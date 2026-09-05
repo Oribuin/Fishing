@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -24,7 +25,7 @@ public class TotemUpgradeDuration extends TotemUpgrade {
      */
     public TotemUpgradeDuration() {
         super();
-        this.description = "Increases the duration of the totem";
+        this.description = List.of("<gray>Increases the duration of the totem");
         this.maxLevel = 10;
     }
 

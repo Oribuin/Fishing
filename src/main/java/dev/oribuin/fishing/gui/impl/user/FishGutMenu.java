@@ -3,16 +3,18 @@ package dev.oribuin.fishing.gui.impl.user;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.impl.FishGutEvent;
 import dev.oribuin.fishing.config.impl.PluginMessages;
+import dev.oribuin.fishing.config.impl.Settings;
 import dev.oribuin.fishing.config.item.ConstructComponent;
 import dev.oribuin.fishing.config.item.ConstructType;
 import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.gui.GuiConfig;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
+import dev.oribuin.fishing.manager.TierManager;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.economy.CurrencyRegistry;
 import dev.oribuin.fishing.model.fish.Fish;
-import dev.oribuin.fishing.model.fish.GuttedFish;
+import dev.oribuin.fishing.model.fish.ProcessedFish;
 import dev.oribuin.fishing.model.fish.Tier;
 import dev.oribuin.fishing.storage.Fisher;
 import dev.oribuin.fishing.util.FishUtils;
@@ -32,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import static dev.oribuin.fishing.storage.util.KeyRegistry.STAT_ROD_GUTTED;
 import static org.bukkit.event.inventory.InventoryCloseEvent.Reason.PLUGIN;
 
 @SuppressWarnings("UnstableApiUsage")
@@ -72,8 +75,9 @@ public class FishGutMenu extends PluginMenu<Gui, FishGutMenu.Config> {
 
             Inventory inventory = this.gui.getInventory();
 
-            List<GuttedFish> target = new ArrayList<>();
-            for (ItemStack stack : inventory.getStorageContents()) {
+            List<ProcessedFish> target = new ArrayList<>();
+            for (int slot : this.config.getGuttingSlots()) {
+                ItemStack stack = inventory.getItem(slot);
                 if (stack == null || stack.getType().isAir()) continue;
 
                 Fish fish = this.plugin.getTierManager().getFish(stack);
@@ -82,7 +86,7 @@ public class FishGutMenu extends PluginMenu<Gui, FishGutMenu.Config> {
                 Tier tier = fish.getTierInstance();
                 if (tier.getGutEntropy() <= 0) continue;
 
-                target.add(new GuttedFish(
+                target.add(new ProcessedFish(
                         fish,
                         tier,
                         stack.getAmount(),
@@ -100,24 +104,38 @@ public class FishGutMenu extends PluginMenu<Gui, FishGutMenu.Config> {
 
             FishGutEvent gutEvent = new FishGutEvent(
                     (Player) event.getWhoClicked(),
+                    strongest,
                     augments,
                     target
             );
-            
+
             gutEvent.callEvent();
             augments.values().forEach(x -> x.handleEvent(gutEvent));
             if (gutEvent.isCancelled()) {
                 event.getWhoClicked().closeInventory(PLUGIN);
                 return;
             }
-            
+
             int entropy = gutEvent.getEntropy();
-            int totalFish = target.stream().mapToInt(GuttedFish::amount).sum();
-            
+            int totalFish = target.stream().mapToInt(ProcessedFish::amount).sum();
+
             // make sure that shit is GONE
+            TierManager tierManager = this.plugin.getTierManager();
             target.forEach(fish -> fish.stack().setAmount(0));
-            config.getGuttingSlots().forEach(integer -> gui.getInventory().setItem(0, null));
+            config.getGuttingSlots().forEach(integer -> {
+                ItemStack item = gui.getInventory().getItem(integer);
+                if (tierManager.isFish(item)) gui.getInventory().setItem(0, null);
+            });
             event.getWhoClicked().closeInventory(PLUGIN);
+
+            // Increase fishing rod statistics
+            if (Settings.get().isRodStatistics() && strongest != null) {
+                this.plugin.getRodManager().incrementStatistic(
+                        strongest,
+                        STAT_ROD_GUTTED,
+                        totalFish
+                );
+            }
 
             PluginMessages.get().getGuttedFish().send(player, "total", totalFish, "entropy", entropy);
             CurrencyRegistry.ENTROPY.give(player, entropy);

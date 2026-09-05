@@ -66,7 +66,7 @@ public class ItemStackCurrency implements Currency<ItemStack> {
     public void give(@NotNull OfflinePlayer player, @NotNull ItemStack item) {
         PlayerInventory inventory = this.getInventory(player);
         if (inventory == null) return;
-        
+
         int remaining = item.getAmount();
         for (ItemStack itemStack : inventory.getContents()) {
             if (itemStack == null || !itemStack.isSimilar(item)) continue;

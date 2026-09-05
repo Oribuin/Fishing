@@ -2,7 +2,7 @@ package dev.oribuin.fishing.manager;
 
 import com.google.gson.Gson;
 import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.config.impl.MySQLConfig;
+import dev.oribuin.fishing.config.impl.DatabaseSettings;
 import dev.oribuin.fishing.database.connector.DatabaseConnector;
 import dev.oribuin.fishing.database.connector.MySQLConnector;
 import dev.oribuin.fishing.database.connector.SQLiteConnector;
@@ -48,7 +48,7 @@ public class DataManager implements Manager {
     public void reload(FishingPlugin plugin) {
         this.disable(plugin);
 
-        MySQLConfig sqlConfig = MySQLConfig.get();
+        DatabaseSettings sqlConfig = DatabaseSettings.get();
         if (sqlConfig.isEnabled()) {
             String hostname = sqlConfig.getHostname();
             int port = sqlConfig.getPort();

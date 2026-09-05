@@ -2,11 +2,12 @@ package dev.oribuin.fishing.manager;
 
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.ConfigLoader;
-import dev.oribuin.fishing.config.impl.Config;
+import dev.oribuin.fishing.config.impl.Settings;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.augment.impl.AugmentBiomeBlend;
 import dev.oribuin.fishing.model.augment.impl.AugmentEnlightened;
-import dev.oribuin.fishing.model.augment.impl.AugmentFailure;import dev.oribuin.fishing.model.augment.impl.AugmentFineSlicing;
+import dev.oribuin.fishing.model.augment.impl.AugmentFailure;
+import dev.oribuin.fishing.model.augment.impl.AugmentFineSlicing;
 import dev.oribuin.fishing.model.augment.impl.AugmentGenius;
 import dev.oribuin.fishing.model.augment.impl.AugmentHotspot;
 import dev.oribuin.fishing.model.augment.impl.AugmentIndulge;
@@ -16,6 +17,7 @@ import dev.oribuin.fishing.model.loot.LootRegistry;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.oribuin.fishing.util.math.RomanNumber;
+import io.papermc.paper.persistence.PersistentDataContainerView;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -137,17 +139,11 @@ public class AugmentManager implements Manager {
 
     @Nullable
     public Augment getAugmentStack(@Nullable ItemStack itemStack) {
-        if (itemStack == null) return null;
-
-        ItemMeta meta = itemStack.getItemMeta();
-        if (meta == null) return null;
-
-        PersistentDataContainer container = meta.getPersistentDataContainer();
+        if (itemStack == null || itemStack.getType().isAir()) return null;
+        PersistentDataContainerView container = itemStack.getPersistentDataContainer();
         String identifier = container.get(AUGMENT_TYPE.key(), AUGMENT_TYPE);
-        int level = container.getOrDefault(AUGMENT_LEVEL.key(), AUGMENT_LEVEL, 1);
-
         Augment augment = this.plugin.getAugmentManager().getAugment(identifier);
-        if (augment != null) augment.setLevel(level);
+        if (augment != null) augment.readContainer(container);
         return augment;
     }
 
@@ -180,7 +176,7 @@ public class AugmentManager implements Manager {
         }
 
         container.set(AUGMENT_HEADER.key(), AUGMENT_HEADER, headerIndex);
-        for (String headerText : Config.get().getAugmentsHeader()) {
+        for (String headerText : Settings.get().getAugmentsHeader()) {
             lore.add(FishUtils.kyorify(headerText));
         }
         // endregion
@@ -211,7 +207,7 @@ public class AugmentManager implements Manager {
 
         // endregion
         // region Add the footer for the description
-        List<String> footer = Config.get().getAugmentsFooter();
+        List<String> footer = Settings.get().getAugmentsFooter();
         if (!footer.isEmpty()) {
             for (String footerText : footer) {
                 lore.add(FishUtils.kyorify(footerText));

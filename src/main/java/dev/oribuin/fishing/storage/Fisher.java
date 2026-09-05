@@ -1,6 +1,6 @@
 package dev.oribuin.fishing.storage;
 
-import dev.oribuin.fishing.config.impl.Config;
+import dev.oribuin.fishing.config.impl.Settings;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import net.kyori.adventure.audience.Audience;
@@ -67,7 +67,7 @@ public class Fisher implements ForwardingAudience.Single {
      */
     public int getRequiredExp() {
         Placeholders placeholders = Placeholders.of("level", this.level);
-        return (int) FishUtils.evaluate(placeholders.applyString(Config.get().getExperienceFormula()));
+        return (int) FishUtils.evaluate(placeholders.applyString(Settings.get().getExperienceFormula()));
     }
 
     public Placeholders getPlaceholders() {

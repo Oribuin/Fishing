@@ -16,12 +16,12 @@ public class LootConfig {
         this.put("crab_claw", ItemConstruct.of(Material.RED_DYE)
                 .setName("<#e34840><b>Crab Claw")
                 .setLore("you got crabs"));
-                
-        
+
+
         this.put("crab_scale", ItemConstruct.of(Material.ORANGE_DYE)
                 .setName("<#e34840><b>Crab Scale")
                 .setLore("you got crabs"));
-        
+
     }};
 
     public static LootConfig get() {

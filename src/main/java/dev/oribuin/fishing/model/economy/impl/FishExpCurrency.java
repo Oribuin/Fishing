@@ -69,7 +69,7 @@ public class FishExpCurrency implements Currency<Integer> {
         fisher.setExperience(fisher.getExperience() - amount);
         this.saveUser(fisher);
     }
-    
+
     /**
      * Get the empty value of the currency (usually 0)
      *
@@ -79,7 +79,7 @@ public class FishExpCurrency implements Currency<Integer> {
     public @NotNull Supplier<Integer> getEmpty() {
         return () -> 0;
     }
-    
+
     /**
      * Save a user's fisher data to the plugin
      *

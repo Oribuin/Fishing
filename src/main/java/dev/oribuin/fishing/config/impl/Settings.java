@@ -10,8 +10,9 @@ import java.util.Map;
 
 @ConfigSerializable
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
-public class Config {
+public class Settings {
 
+    private boolean rodStatistics = true;
     private String experienceFormula = "<level> * 625";
     private List<String> augmentsHeader = List.of(
             "<dark_gray><st>                                      </st>",
@@ -26,8 +27,12 @@ public class Config {
         this.put("basic", new RodRarity(5, null));
     }};
 
-    public static Config get() {
-        return FishingPlugin.get().getConfigLoader().get(Config.class);
+    public static Settings get() {
+        return FishingPlugin.get().getConfigLoader().get(Settings.class);
+    }
+
+    public boolean isRodStatistics() {
+        return rodStatistics;
     }
 
     public String getExperienceFormula() {

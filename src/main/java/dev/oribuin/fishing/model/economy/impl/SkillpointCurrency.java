@@ -79,7 +79,7 @@ public class SkillpointCurrency implements Currency<Integer> {
     public @NotNull Supplier<Integer> getEmpty() {
         return () -> 0;
     }
-    
+
     /**
      * Save a user's fisher data to the plugin
      *

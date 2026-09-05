@@ -12,7 +12,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 
 import java.io.File;
-import java.sql.Ref;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,7 +34,7 @@ public class TotemManager implements Manager {
         this.lastTick = System.currentTimeMillis();
 
         TotemUpgradeRegistry.register();
-        
+
         // Check active chunks
         this.plugin.getDataManager().loadTotems().thenAccept(this.totems::putAll);
     }
@@ -49,14 +48,14 @@ public class TotemManager implements Manager {
     public void reload(FishingPlugin plugin) {
         this.disable(plugin);
         loader.reload();
-        
+
         // When using folia, The task to ticket them is activated in Totem#activate(Player)
         // This is done to tick each individual active totem's display entity as thats how folia works....
         if (NMSUtil.isFolia()) return;
-        
+
         // Define all ticking under one task to prevent 10000000 tasks running at once.
         if (this.asyncTicker != null) this.asyncTicker.cancel();
-        
+
         this.asyncTicker = PluginScheduler.get().runTaskTimerAsync(
                 () -> this.tick(Totem::tickAsync),
                 1000, 250, TimeUnit.MILLISECONDS

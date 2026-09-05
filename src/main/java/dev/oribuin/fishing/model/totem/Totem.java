@@ -24,6 +24,7 @@ import dev.oribuin.fishing.util.NMSUtil;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.oribuin.fishing.util.math.MathL;
 import io.papermc.paper.math.Rotations;
+import io.papermc.paper.persistence.PersistentDataContainerView;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -332,11 +333,11 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
      */
     @Override
     public void onFishCatch(FishCatchEvent event) {
-        
+
         // Increase the experience gain by 15%
         double multiplier = TotemConfig.get().getExperienceMultiplier();
         event.setCatchExp((int) (event.getCatchExp() + (event.getCatchExp() * multiplier)));
-        
+
         // region Particle effects on catch
         Location hook = event.getHook().getLocation().clone().add(0, 1, 0);
         Location position = this.position.clone().add(0, 1, 0);
@@ -601,7 +602,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
      * @param container The container to read from
      */
     @Override
-    public void readContainer(PersistentDataContainer container) {
+    public void readContainer(PersistentDataContainerView container) {
         if (container == null) return;
 
         this.owner = container.get(TOTEM_OWNER.key(), TOTEM_OWNER);

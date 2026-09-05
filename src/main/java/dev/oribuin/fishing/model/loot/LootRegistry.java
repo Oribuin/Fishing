@@ -1,7 +1,6 @@
 package dev.oribuin.fishing.model.loot;
 
 import dev.oribuin.fishing.config.impl.LootConfig;
-import dev.oribuin.fishing.config.impl.TotemConfig;
 import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.util.Placeholders;
 import org.bukkit.inventory.ItemStack;
@@ -16,7 +15,7 @@ import java.util.function.Supplier;
 public class LootRegistry {
 
     public static final Map<String, FishLoot> REGISTRY = new ConcurrentHashMap<>();
-    
+
     static {
         // Register fish loot into the plugin
         LootConfig.get().getItems().forEach((s, construct) -> LootRegistry.register(s, () -> construct));
@@ -32,7 +31,7 @@ public class LootRegistry {
     public static void register(@NotNull String identifier, Supplier<@NotNull ItemConstruct> construct, Supplier<@NotNull Placeholders> placeholders, Consumer<@NotNull ItemStack> additional) {
         REGISTRY.put(identifier.toLowerCase(), new FishLoot(identifier, construct, placeholders, additional));
     }
-    
+
     /**
      * Register a new item into the plugin to get
      *
@@ -68,12 +67,12 @@ public class LootRegistry {
         if (loot == null) return null;
 
         return loot.create(placeholders);
-    } 
-    
+    }
+
     /**
      * Get an itemstack from the plugin
      *
-     * @param identifier   The identifier for the plugin
+     * @param identifier The identifier for the plugin
      *
      * @return The itemstack to create
      */

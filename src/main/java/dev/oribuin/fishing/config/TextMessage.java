@@ -78,7 +78,7 @@ public class TextMessage {
     public TextMessage(@Nullable String message, boolean placeholderapi) {
         this(message, null, null, null, null, null, placeholderapi);
     }
-    
+
     /**
      * Create a new text message with an action bar
      *

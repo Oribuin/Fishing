@@ -9,51 +9,52 @@ import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.Map;
 
-public class FishGutEvent extends PlayerEvent implements Cancellable {
+public class FishSellEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
     private final @Nullable ItemStack rod;
     private final @NotNull Map<String, Augment> augments;
-    private final @NotNull List<ProcessedFish> gutted;
-    private final int baseEntropy;
-    private int entropy;
+    private final @NotNull List<ProcessedFish> sold;
+    private final double baseMoney;
+    private double money;
     private boolean cancelled;
 
-    public FishGutEvent(@NotNull Player who, @Nullable ItemStack rod, @NotNull Map<String, Augment> augments, @NotNull List<ProcessedFish> gutted) {
+    public FishSellEvent(@NotNull Player who, @Nullable ItemStack rod, @NotNull Map<String, Augment> augments, @NotNull List<ProcessedFish> sold) {
         super(who, false);
 
         this.rod = rod;
         this.augments = augments;
-        this.gutted = gutted;
-        this.baseEntropy = this.gutted.stream()
-                .mapToInt(value -> value.tier().getGutEntropy() * value.amount())
-                .sum();
-        this.entropy = this.baseEntropy;
+        this.sold = sold;
+        this.baseMoney = this.sold.stream().mapToDouble(value -> value.tier().getSellMoney() * value.amount()).sum();
+        this.money = baseMoney;
     }
 
-    public @NonNull Map<String, Augment> getAugments() {
+    public @NotNull Map<String, Augment> getAugments() {
         return augments;
     }
 
-    public @NonNull List<ProcessedFish> getGutted() {
-        return gutted;
+    public @Nullable ItemStack getRod() {
+        return rod;
     }
 
-    public int getBaseEntropy() {
-        return baseEntropy;
+    public @NotNull List<ProcessedFish> getSold() {
+        return sold;
     }
 
-    public int getEntropy() {
-        return entropy;
+    public double getBaseMoney() {
+        return baseMoney;
     }
 
-    public void setEntropy(int entropy) {
-        this.entropy = entropy;
+    public double getMoney() {
+        return money;
+    }
+
+    public void setMoney(double money) {
+        this.money = money;
     }
 
     /**

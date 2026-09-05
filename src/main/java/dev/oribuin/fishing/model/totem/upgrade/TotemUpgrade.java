@@ -8,13 +8,16 @@ import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.storage.persistent.PDCSerializable;
 import dev.oribuin.fishing.util.Placeholders;
+import io.papermc.paper.persistence.PersistentDataContainerView;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 import static dev.oribuin.fishing.storage.util.KeyRegistry.TOTEM_UPGRADE_LEVEL;
@@ -28,35 +31,35 @@ import static dev.oribuin.fishing.storage.util.KeyRegistry.TOTEM_UPGRADE_LEVEL;
 public abstract class TotemUpgrade extends FishEventHandler implements PDCSerializable {
 
     protected transient int level;
-    protected boolean enabled; // If the upgrade is enabled
+    protected transient boolean enabled; // If the upgrade is enabled
     protected String name; // The name of the upgrade
-    protected String description; // The description of the upgrade
+    protected List<String> description; // The description of the upgrade
     protected ItemConstruct icon; // The icon of the upgrade
     protected int defaultLevel; // The default level of the upgrade
     protected int maxLevel; // The maximum level of the upgrade
     protected String permission; // The permission required to purchase the upgrade
 
-    private static final ItemConstruct BASE_UPGRADE = ItemConstruct.of(Material.HEART_OF_THE_SEA) // Upgrades will choose their own item, idgaf
-            .setName("<white>[<#94bc80><bold><name></bold><white>]")
-            .setLore(
-                    "<gray><description>",
-                    "",
-                    "<#94bc80>Information",
-                    " <#94bc80>- <white>Current: <#94bc80><level>",
-                    " <#94bc80>- <white>Max Level: <#94bc80><max_level>",
-                    ""
-            )
-            .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled);
-
     public TotemUpgrade() {
         this.enabled = true;
         this.name = StringUtils.capitalize(this.getIdentifier().get());
-        this.description = "Allows the totem to do something new";
-        this.defaultLevel = 1;
-        this.maxLevel = 1;
-        this.icon = BASE_UPGRADE.clone();
-        this.permission = "fishing.upgrade." + this.name.toLowerCase();
+        this.description = List.of("Allows the totem to do something new");
+        this.defaultLevel = 0;
         this.level = this.defaultLevel;
+        this.maxLevel = 1;
+        this.permission = "fishing.upgrade." + this.name.toLowerCase();
+        this.icon = ItemConstruct.of(Material.HEART_OF_THE_SEA) // Upgrades will choose their own item, idgaf
+                .setName("<#94bc80><bold><name></bold> <gray>- <white>(<level><gray>/<white><max_level>)")
+                .setLore(
+                        "<gray>" + this.description,
+                        "",
+                        "<#94bc80>Information",
+                        " <#94bc80>- <white>Current: <#94bc80><level>",
+                        " <#94bc80>- <white>Max Level: <#94bc80><max_level>",
+                        "",
+                        " <#94bc80>➡️ <white>Upgrade Cost: <#94bc80><cost>",
+                        ""
+                )
+                .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled);
     }
 
     /**
@@ -67,7 +70,7 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
      *
      * @return If the upgrade was successful
      */
-    public boolean increaseLevel(Player player, Totem totem) {
+    public boolean increaseLevel(@NotNull Player player, @NotNull Totem totem) {
         ArmorStand display = totem.getDisplay();
         if (display == null) {
             player.sendMessage("no totem display to upgrade todo add message for this");
@@ -131,7 +134,7 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
      * @param container The container to read from
      */
     @Override
-    public void readContainer(PersistentDataContainer container) {
+    public void readContainer(PersistentDataContainerView container) {
         this.level = container.getOrDefault(TOTEM_UPGRADE_LEVEL.key(), TOTEM_UPGRADE_LEVEL, this.defaultLevel);
     }
 
@@ -169,11 +172,11 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
         this.name = name;
     }
 
-    public String getDescription() {
+    public List<String> getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(List<String> description) {
         this.description = description;
     }
 

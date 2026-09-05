@@ -1,6 +1,5 @@
 package dev.oribuin.fishing.api.event.def;
 
-import dev.oribuin.fishing.api.event.FishEventHandler;
 import dev.oribuin.fishing.api.event.impl.TotemActivateEvent;
 
 /**

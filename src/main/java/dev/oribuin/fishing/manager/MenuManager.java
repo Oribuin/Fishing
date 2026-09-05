@@ -3,13 +3,13 @@ package dev.oribuin.fishing.manager;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.ConfigLoader;
 import dev.oribuin.fishing.gui.GuiConfig;
+import dev.oribuin.fishing.gui.impl.augment.AugmentApplyMenu;
 import dev.oribuin.fishing.gui.impl.augment.AugmentUpgradeMenu;
 import dev.oribuin.fishing.gui.impl.codex.impl.AugmentCodexMenu;
 import dev.oribuin.fishing.gui.impl.codex.impl.FishCodexMenu;
 import dev.oribuin.fishing.gui.impl.codex.impl.TierCodexMenu;
 import dev.oribuin.fishing.gui.impl.totem.TotemMainMenu;
 import dev.oribuin.fishing.gui.impl.totem.TotemUpgradeMenu;
-import dev.oribuin.fishing.gui.impl.augment.AugmentApplyMenu;
 import dev.oribuin.fishing.gui.impl.user.FishGutMenu;
 import dev.oribuin.fishing.gui.impl.user.FishMainMenu;
 import dev.oribuin.fishing.gui.impl.user.FishSellMenu;
@@ -42,7 +42,7 @@ public class MenuManager implements Manager {
         // Totem Menus
         register("totem/main_menu", TotemMainMenu.Config.class);
         register("totem/upgrades", TotemUpgradeMenu.Config.class);
-        
+
         // Augment Menus
         register("augment/apply_menu", AugmentApplyMenu.Config.class);
         register("augment/upgrade_menu", AugmentUpgradeMenu.Config.class);
@@ -68,7 +68,7 @@ public class MenuManager implements Manager {
     /**
      * Load and register a gui config into the plugin
      *
-     * @param identifier The path to the file / the name of it
+     * @param identifier  The path to the file / the name of it
      * @param configClass The class that the config will inherit
      */
     public static <T extends GuiConfig> void register(String identifier, Class<T> configClass) {

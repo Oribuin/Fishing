@@ -7,6 +7,7 @@ import dev.oribuin.fishing.util.Placeholders;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -24,7 +25,7 @@ public class TotemUpgradeRadius extends TotemUpgrade {
      */
     public TotemUpgradeRadius() {
         super();
-        this.description = "Increases the totem's range";
+        this.description = List.of("<gray>Increases the totem's range");
         this.maxLevel = 5;
     }
 

@@ -1,6 +1,5 @@
 package dev.oribuin.fishing.model.augment.impl;
 
-import aQute.bnd.annotation.metatype.Meta;
 import dev.oribuin.fishing.api.event.impl.FishCatchEvent;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
@@ -9,7 +8,6 @@ import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.condition.Weather;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
-import org.incendo.cloud.annotations.CommandDescription;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Comment;
 
@@ -23,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  */
 @ConfigSerializable
 public class AugmentHotspot extends Augment {
-    
+
     private static final Map<UUID, Long> ADDITIONAL = new HashMap<>();
 
     @Comment("The required formula for the augment to trigger")
@@ -37,7 +35,7 @@ public class AugmentHotspot extends Augment {
 
     @Comment("The message sent when a player has caught additional fish")
     private TextMessage gotAdditional = TextMessage.ofActionBar("<#93bc80>[<white>Hotspot granted you additional fish<#93bc80>]");
-    
+
     /**
      * Create a new type of augment with a name and description.
      * <p>
@@ -91,10 +89,10 @@ public class AugmentHotspot extends Augment {
         if (last == null) return;
 
         ADDITIONAL.remove(event.getPlayer().getUniqueId());
-        
+
         // require their last thing to be less than < 3 seconds ago
         if (System.currentTimeMillis() - last >= TimeUnit.SECONDS.toMillis(3)) return;
-        
+
         this.gotAdditional.send(event.getPlayer());
     }
 

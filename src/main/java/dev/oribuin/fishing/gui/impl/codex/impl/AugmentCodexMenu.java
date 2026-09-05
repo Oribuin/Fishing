@@ -7,8 +7,8 @@ import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.triumphteam.gui.guis.GuiItem;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jspecify.annotations.NonNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public class AugmentCodexMenu extends BasicCodexMenu<Augment, AugmentCodexMenu.C
      * @return The itemstack form
      */
     @Override
-    public @Nullable ItemStack getStack(@NonNull Augment value) {
+    public @Nullable ItemStack getStack(@NotNull Augment value) {
         return value.getDisplayItem().create(value.getPlaceholders());
     }
 

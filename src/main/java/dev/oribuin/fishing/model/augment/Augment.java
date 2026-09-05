@@ -12,6 +12,7 @@ import dev.oribuin.fishing.storage.Fisher;
 import dev.oribuin.fishing.storage.persistent.PDCSerializable;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
+import io.papermc.paper.persistence.PersistentDataContainerView;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -46,8 +47,7 @@ public abstract class Augment extends FishEventHandler implements PDCSerializabl
     public static final BiConsumer<Augment, ItemStack> STACK_FUNCTION = (augment, stack) ->
             stack.editPersistentDataContainer(container -> {
                 container.set(AUGMENT_TYPE.key(), AUGMENT_TYPE, augment.getName());
-                container.set(AUGMENT_LEVEL.key(), AUGMENT_LEVEL, Math.min(augment.getLevel(), augment.getMaxLevel()));
-            });
+                augment.writeContainer(container);});
 
     protected transient final Random random = ThreadLocalRandom.current();
     protected transient final String name;
@@ -126,7 +126,7 @@ public abstract class Augment extends FishEventHandler implements PDCSerializabl
      * @param container The container to read from
      */
     @Override
-    public void readContainer(PersistentDataContainer container) {
+    public void readContainer(PersistentDataContainerView container) {
         this.level = container.getOrDefault(AUGMENT_LEVEL.key(), AUGMENT_LEVEL, 1);
     }
 

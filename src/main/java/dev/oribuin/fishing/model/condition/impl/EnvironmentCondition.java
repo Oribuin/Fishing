@@ -1,5 +1,6 @@
 package dev.oribuin.fishing.model.condition.impl;
 
+import dev.oribuin.fishing.api.event.FishEventWrapper;
 import dev.oribuin.fishing.api.event.impl.ConditionCheckEvent;
 import dev.oribuin.fishing.model.condition.CatchCondition;
 import dev.oribuin.fishing.model.fish.Fish;
@@ -20,7 +21,7 @@ import java.util.List;
  * First, {@link #shouldRun(Fish)} is called to check if the fish has the condition type
  * If the fish has the condition type, {@link #check(Fish, Player, ItemStack, FishHook)} is called to check if the player meets the condition to catch the fish
  *
- * @see dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, FishEventWrapper) to see how this is used
+ * @see dev.oribuin.fishing.model.condition.ConditionRegistry#check(Fish, FishEventWrapper)  to see how this is used
  */
 @ConfigSerializable
 public class EnvironmentCondition extends CatchCondition {

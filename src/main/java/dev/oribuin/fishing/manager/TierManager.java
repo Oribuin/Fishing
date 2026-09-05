@@ -2,15 +2,13 @@ package dev.oribuin.fishing.manager;
 
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
-import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.fish.Tier;
 import dev.oribuin.fishing.model.loot.LootRegistry;
 import dev.oribuin.fishing.storage.util.KeyRegistry;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import io.papermc.paper.persistence.PersistentDataContainerView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * This class is responsible for loading all the tiers from the plugin's data folder and storing them in a map for easy access
@@ -90,7 +87,7 @@ public class TierManager implements Manager {
             Placeholders.Builder placeholders = Placeholders.builder();
             placeholders.addAll(fish.getPlaceholders());
             placeholders.addAll(fish.getTierInstance().getPlaceholders());
-            
+
             LootRegistry.register(
                     "fish_" + fish.getName().toLowerCase(),
                     () -> tier.getItem().merge(fish.getConstruct()),
@@ -98,11 +95,11 @@ public class TierManager implements Manager {
                     stack -> stack.editMeta(itemMeta -> {
                         List<String> lore = new ArrayList<>(fish.getDescription());
                         lore.addAll(tier.getItem().getLore());
-                        
+
                         itemMeta.lore(
                                 lore.stream()
-                                .map(s -> FishUtils.kyorify(s, placeholders.build()))
-                                .toList()
+                                        .map(s -> FishUtils.kyorify(s, placeholders.build()))
+                                        .toList()
                         );
 
                         // Register the fish type
@@ -182,6 +179,19 @@ public class TierManager implements Manager {
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(null);
+    }
+
+    /**
+     * Check whether an itemstack is a fish
+     *
+     * @param stack The stack to check
+     *
+     * @return Whether the item is a fish
+     */
+    public boolean isFish(@Nullable ItemStack stack) {
+        if (stack == null || stack.getType().isAir()) return false;
+        PersistentDataContainerView container = stack.getPersistentDataContainer();
+        return container.has(KeyRegistry.FISH_NAME.key());
     }
 
     /**

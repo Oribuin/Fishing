@@ -169,7 +169,7 @@ public class GiveCommand implements FishCommand {
         fisher.setExperience(fisher.getExperience() + amount);
         while (fisher.canLevelUp()) fisher.levelUp(); // level up multiple times
         this.plugin.getDataManager().saveUser(fisher);
-        
+
         PluginMessages.get().getGivenAmount().send(sender,
                 "target", target.getName(),
                 "amount", amount,
@@ -177,7 +177,7 @@ public class GiveCommand implements FishCommand {
                 "total", fisher.getExperience()
         );
     }
-    
+
     /**
      * Give the player a specified amount of entropy
      *

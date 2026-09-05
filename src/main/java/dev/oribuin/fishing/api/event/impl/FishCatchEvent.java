@@ -35,9 +35,9 @@ public class FishCatchEvent extends PlayerEvent implements Cancellable {
      * Create a new Fish Catch Event to be called when a player catches a fish. This event is used to change the rewards when a player catches a fish.
      * Use this to change how much entropy / xp is earned from the fish.
      *
-     * @param who  The {@link Player} who caught the fish
-     * @param wrapper  The fishing event stuff
-     * @param fish The {@link Fish} that was caught
+     * @param who     The {@link Player} who caught the fish
+     * @param wrapper The fishing event stuff
+     * @param fish    The {@link Fish} that was caught
      *
      * @see dev.oribuin.fishing.listener.FishListener#onFish(PlayerFishEvent) Where the event is called
      */

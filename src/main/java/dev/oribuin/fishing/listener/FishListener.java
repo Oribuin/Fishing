@@ -9,6 +9,7 @@ import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
 import dev.oribuin.fishing.api.event.impl.RodCastEvent;
 import dev.oribuin.fishing.config.impl.PluginMessages;
+import dev.oribuin.fishing.config.impl.Settings;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.totem.Totem;
@@ -26,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+
+import static dev.oribuin.fishing.storage.util.KeyRegistry.STAT_ROD_CAUGHT;
 
 public class FishListener implements Listener {
 
@@ -48,10 +51,10 @@ public class FishListener implements Listener {
                 event.getHook(),
                 hand,
                 event.getHand(),
-                augments, 
+                augments,
                 nearby
         );
-        
+
         // TODO: Have rod rarity impact bites hm
         switch (event.getState()) {
             case FISHING -> this.handleCustomEvent(
@@ -66,10 +69,10 @@ public class FishListener implements Listener {
             );
             case FAILED_ATTEMPT, REEL_IN -> { // failed_attempt is so inconsistent, reel in means they didnt catch anything
                 this.handleCustomEvent(
-                    () -> new FailCatchEvent(event.getPlayer(), eventWrapper),
-                    eventWrapper,
-                    event
-            );
+                        () -> new FailCatchEvent(event.getPlayer(), eventWrapper),
+                        eventWrapper,
+                        event
+                );
             }
             case CAUGHT_FISH -> this.catchNewFish(event, eventWrapper);
         }
@@ -158,6 +161,16 @@ public class FishListener implements Listener {
         event.setExpToDrop((int) naturalExp);
         fisher.setExperience(fisher.getExperience() + newFishExp);
         fisher.setEntropy(fisher.getEntropy() + newEntropy);
+        // TODO: increase fisher's total statistics
+
+        // Increase fishing rod statistics
+        if (Settings.get().isRodStatistics()) {
+            this.plugin.getRodManager().incrementStatistic(
+                    wrapper.rod(),
+                    STAT_ROD_CAUGHT,
+                    caught.size()
+            );
+        }
 
         // Level up the player if they have enough experience
         if (fisher.canLevelUp()) {

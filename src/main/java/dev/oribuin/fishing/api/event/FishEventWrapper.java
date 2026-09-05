@@ -3,10 +3,11 @@ package dev.oribuin.fishing.api.event;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.totem.Totem;
-import org.bukkit.block.spawner.SpawnerEntry;import org.bukkit.entity.FishHook;
+import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.inventory.EquipmentSlot;import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 
@@ -21,10 +22,10 @@ import java.util.Map;
  */
 public record FishEventWrapper(
         Player player,
-        FishHook hook, 
-        ItemStack rod, 
+        FishHook hook,
+        ItemStack rod,
         EquipmentSlot handSlot,
-        Map<String, Augment> augments, 
+        Map<String, Augment> augments,
         Totem totem
 ) {
 
@@ -35,7 +36,7 @@ public record FishEventWrapper(
      * @param hook   The hook that was bitten by the fish
      * @param rod    The rod used to catch the fish
      */
-    public FishEventWrapper(Player player, ItemStack rod, EquipmentSlot slot,  FishHook hook) {
+    public FishEventWrapper(Player player, ItemStack rod, EquipmentSlot slot, FishHook hook) {
         this(
                 player,
                 hook,

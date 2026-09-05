@@ -83,5 +83,5 @@ public class PlayerExpCurrency implements Currency<Integer> {
     public @NotNull Supplier<Integer> getEmpty() {
         return () -> 0;
     }
-    
+
 }

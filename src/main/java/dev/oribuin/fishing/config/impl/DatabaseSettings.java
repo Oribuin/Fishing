@@ -6,16 +6,15 @@ import org.spongepowered.configurate.objectmapping.meta.Comment;
 
 @ConfigSerializable
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
-public class MySQLConfig {
+public class DatabaseSettings {
 
-    public static MySQLConfig get() {
-        return FishingPlugin.get().getConfigLoader().get(MySQLConfig.class);
+    public static DatabaseSettings get() {
+        return FishingPlugin.get().getConfigLoader().get(DatabaseSettings.class);
     }
 
     @Comment("Should MySQL be enabled for database storage?")
     private boolean enabled = false;
-
-
+    
     @Comment("The MySQL Host Name")
     private String hostname = "127.0.0.1";
 

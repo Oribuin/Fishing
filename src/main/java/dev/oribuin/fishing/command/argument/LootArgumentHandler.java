@@ -4,7 +4,6 @@ import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.loot.FishLoot;
 import dev.oribuin.fishing.model.loot.LootRegistry;
 import org.bukkit.command.CommandSender;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.caption.CaptionVariable;
 import org.incendo.cloud.caption.StandardCaptionKeys;
 import org.incendo.cloud.context.CommandContext;
@@ -14,6 +13,7 @@ import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ArgumentParser;
 import org.incendo.cloud.suggestion.Suggestion;
 import org.incendo.cloud.suggestion.SuggestionProvider;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Argument handler to match player input to a Augment.
@@ -23,9 +23,9 @@ import org.incendo.cloud.suggestion.SuggestionProvider;
 public class LootArgumentHandler implements ArgumentParser<CommandSender, FishLoot> {
 
     @Override
-    public @NonNull ArgumentParseResult<@NonNull FishLoot> parse(
-            @NonNull CommandContext<@NonNull CommandSender> commandContext,
-            @NonNull CommandInput commandInput
+    public @NotNull ArgumentParseResult<@NotNull FishLoot> parse(
+            @NotNull CommandContext<@NotNull CommandSender> commandContext,
+            @NotNull CommandInput commandInput
     ) {
         String input = commandInput.peekString();
         FishLoot loot = LootRegistry.REGISTRY.get(input);
@@ -36,7 +36,7 @@ public class LootArgumentHandler implements ArgumentParser<CommandSender, FishLo
     }
 
     @Override
-    public @NonNull SuggestionProvider<CommandSender> suggestionProvider() {
+    public @NotNull SuggestionProvider<CommandSender> suggestionProvider() {
         return SuggestionProvider.blocking((context, input) ->
                 LootRegistry.REGISTRY.keySet().stream().map(Suggestion::suggestion).toList()
         );

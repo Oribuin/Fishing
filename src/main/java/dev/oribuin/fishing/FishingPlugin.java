@@ -1,10 +1,10 @@
 package dev.oribuin.fishing;
 
 import dev.oribuin.fishing.config.ConfigLoader;
-import dev.oribuin.fishing.config.impl.Config;
 import dev.oribuin.fishing.config.impl.LootConfig;
-import dev.oribuin.fishing.config.impl.MySQLConfig;
+import dev.oribuin.fishing.config.impl.DatabaseSettings;
 import dev.oribuin.fishing.config.impl.PluginMessages;
+import dev.oribuin.fishing.config.impl.Settings;
 import dev.oribuin.fishing.config.impl.TotemConfig;
 import dev.oribuin.fishing.hook.plugin.HeadDbProvider;
 import dev.oribuin.fishing.hook.plugin.PAPIProvider;
@@ -33,16 +33,16 @@ public class FishingPlugin extends JavaPlugin {
     private TierManager tierManager;
     private TotemManager totemManager;
     private RodManager rodManager;
-    
+
     @Override
     public void onEnable() {
         instance = this;
 
         // Load this plugin configs
         this.configLoader = new ConfigLoader();
-        this.configLoader.loadConfig(Config.class, "settings");
+        this.configLoader.loadConfig(Settings.class, "settings");
         this.configLoader.loadConfig(PluginMessages.class, "messages");
-        this.configLoader.loadConfig(MySQLConfig.class, "database");
+        this.configLoader.loadConfig(DatabaseSettings.class, "database");
         this.configLoader.loadConfig(LootConfig.class, "loot-settings");
         this.configLoader.loadConfig(TotemConfig.class, "totem-settings");
 
@@ -90,7 +90,7 @@ public class FishingPlugin extends JavaPlugin {
     public TierManager getTierManager() {
         return tierManager;
     }
-    
+
     public CommandManager getCommandManager() {
         return commandManager;
     }

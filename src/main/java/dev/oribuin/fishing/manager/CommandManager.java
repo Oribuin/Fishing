@@ -17,7 +17,6 @@ import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.fish.Tier;
 import dev.oribuin.fishing.model.loot.FishLoot;
 import org.bukkit.command.CommandSender;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.annotations.AnnotationParser;
 import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
@@ -29,6 +28,7 @@ import org.incendo.cloud.parser.ArgumentParser;
 import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.setting.Configurable;
 import org.incendo.cloud.setting.ManagerSetting;
+import org.jetbrains.annotations.NotNull;
 
 import javax.naming.NoPermissionException;
 import java.util.function.Supplier;
@@ -38,7 +38,7 @@ public class CommandManager extends LegacyPaperCommandManager<CommandSender> imp
     private final FishingPlugin plugin;
     private final AnnotationParser<CommandSender> parser;
 
-    public CommandManager(@NonNull FishingPlugin owningPlugin) {
+    public CommandManager(@NotNull FishingPlugin owningPlugin) {
         super(
                 owningPlugin,
                 ExecutionCoordinator.asyncCoordinator(),

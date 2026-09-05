@@ -58,7 +58,7 @@ public class MenuCommand implements FishCommand {
         if (target == null) return;
 
         Player finalTarget = target;
-//        new FishGutMenu(this.plugin, finalTarget).open(finalTarget);
+        //        new FishGutMenu(this.plugin, finalTarget).open(finalTarget);
     }
 
     /**
@@ -76,8 +76,8 @@ public class MenuCommand implements FishCommand {
 
         Player finalTarget = target;
         new AugmentApplyMenu(this.plugin, finalTarget).open(finalTarget);
-    } 
-    
+    }
+
     /**
      * Open the augment upgrade menu for the player
      *
@@ -94,7 +94,7 @@ public class MenuCommand implements FishCommand {
         Player finalTarget = target;
         new AugmentUpgradeMenu(this.plugin, finalTarget).open(finalTarget);
     }
-    
+
     /**
      * Open the fish gutting menu for the player
      *
@@ -111,7 +111,7 @@ public class MenuCommand implements FishCommand {
         Player finalTarget = target;
         new FishGutMenu(this.plugin, finalTarget).open(finalTarget);
     }
-    
+
     /**
      * Open the fish selling menu for the player
      *

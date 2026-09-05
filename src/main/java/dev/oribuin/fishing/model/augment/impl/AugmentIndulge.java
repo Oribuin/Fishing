@@ -2,7 +2,6 @@ package dev.oribuin.fishing.model.augment.impl;
 
 import dev.oribuin.fishing.api.event.impl.FishGenerateEvent;
 import dev.oribuin.fishing.api.event.impl.InitialFishCatchEvent;
-import dev.oribuin.fishing.config.TextMessage;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
@@ -21,9 +20,10 @@ public class AugmentIndulge extends Augment {
     @Comment("The amount of saturation that is given per fish caught")
     private float saturation = 5.0f;
 
-//    @Comment("The message sent when a player is fed by indulge")
-//    private TextMessage saturated = new TextMessage("<#94bc80><bold>Fish</bold> <gray>| <white>You have slightly indulged in the fish you caught");
-//    
+    //    @Comment("The message sent when a player is fed by indulge")
+    //    private TextMessage saturated = new TextMessage("<#94bc80><bold>Fish</bold> <gray>| <white>You have slightly indulged in the fish you caught");
+    //    
+
     /**
      * Create a new type of augment with a name and description.
      * <p>
@@ -54,7 +54,7 @@ public class AugmentIndulge extends Augment {
         if (this.random.nextDouble(100) <= chance) return;
 
         event.getPlayer().setSaturation(Math.min(10f, event.getPlayer().getSaturation() + this.saturation));
-//        this.saturated.send(event.getPlayer());
+        //        this.saturated.send(event.getPlayer());
     }
 
 }

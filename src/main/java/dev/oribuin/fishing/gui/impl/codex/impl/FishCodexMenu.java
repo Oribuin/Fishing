@@ -8,8 +8,8 @@ import dev.oribuin.fishing.model.fish.Tier;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.triumphteam.gui.guis.GuiItem;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jspecify.annotations.NonNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ public class FishCodexMenu extends BasicCodexMenu<Fish, FishCodexMenu.Config> {
      * @return The itemstack form
      */
     @Override
-    public @Nullable ItemStack getStack(@NonNull Fish value) {
+    public @Nullable ItemStack getStack(@NotNull Fish value) {
         return value.buildItem();
     }
 

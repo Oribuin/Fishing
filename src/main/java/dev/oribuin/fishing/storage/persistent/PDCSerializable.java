@@ -1,5 +1,6 @@
 package dev.oribuin.fishing.storage.persistent;
 
+import io.papermc.paper.persistence.PersistentDataContainerView;
 import org.bukkit.persistence.PersistentDataContainer;
 
 public interface PDCSerializable {
@@ -16,6 +17,6 @@ public interface PDCSerializable {
      *
      * @param container The container to read from
      */
-    void readContainer(PersistentDataContainer container);
+    void readContainer(PersistentDataContainerView container);
 
 }

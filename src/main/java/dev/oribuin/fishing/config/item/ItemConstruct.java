@@ -9,7 +9,6 @@ import io.papermc.paper.datacomponent.item.CustomModelData;
 import io.papermc.paper.datacomponent.item.ItemLore;
 import io.papermc.paper.registry.RegistryAccess;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -156,7 +154,7 @@ public class ItemConstruct implements Cloneable {
         if (this.maxStackSize != null) item.setData(MAX_STACK_SIZE, maxStackSize);
         if (this.customModelData != null && this.customModelData > 0) item.setData(CUSTOM_MODEL_DATA, CustomModelData.customModelData().addFloat(this.customModelData));
         this.properties.values().forEach(x -> x.apply(item));
-        
+
         if (this.function != null) this.function.accept(item);
         return item.asQuantity(Math.max(1, amount));
     }
@@ -231,14 +229,14 @@ public class ItemConstruct implements Cloneable {
     public MenuItem asMenuItem(Integer... slots) {
         return new MenuItem(this, slots);
     }
-    
+
     public ItemConstruct merge(ItemConstruct existing) {
         ItemConstruct result = this.clone();
         if (result.getMaterial() != existing.getMaterial()) result.setMaterial(existing.getMaterial());
         if (!result.getName().equals(existing.getName())) result.setName(existing.getName());
         if (!result.getLore().equals(existing.getLore())) result.setLore(existing.getLore());
         if (!result.getCustomModelData().equals(existing.getCustomModelData())) result.setCustomModelData(existing.getCustomModelData());
-        
+
         result.getProperties().putAll(existing.getProperties());
         return result;
     }
@@ -301,7 +299,7 @@ public class ItemConstruct implements Cloneable {
         this.lore = List.of(lore);
         return this;
     }
-    
+
     public ItemConstruct setLore(List<String> preLore, String... additional) {
         this.lore = new ArrayList<>(preLore);
         this.lore.addAll(List.of(additional));

@@ -3,7 +3,6 @@ package dev.oribuin.fishing.model.fish;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.model.condition.CatchCondition;
-import dev.oribuin.fishing.model.loot.LootRegistry;
 import dev.oribuin.fishing.storage.util.KeyRegistry;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
@@ -36,9 +35,9 @@ public class Fish {
 
     public Fish() {
         this(
-                "unknown", 
-                List.of("Example Fish"), 
-                new ArrayList<>(), 
+                "unknown",
+                List.of("Example Fish"),
+                new ArrayList<>(),
                 ItemConstruct.of(Material.COD)
         );
     }
@@ -86,7 +85,7 @@ public class Fish {
         List<String> lore = new ArrayList<>(this.description);
         lore.addAll(tierConstruct.getLore());
         tierConstruct.setLore(lore);
-        
+
         ItemStack fishConstruct = this.construct.create();
         this.itemStack = tierConstruct.createCustom(
                 fishConstruct,

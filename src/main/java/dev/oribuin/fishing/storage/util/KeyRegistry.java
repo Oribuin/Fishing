@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -23,6 +24,8 @@ import static com.jeff_media.morepersistentdatatypes.DataType.*;
  * Especially when another plugin wants to establish their own keys
  */
 public class KeyRegistry {
+
+    public static final Set<FishDataType<Double, Double>> STATISTICS = new HashSet<>();
 
     // region Long Data Types
     public static final MapDataType<Map<Integer, ItemStack>, Integer, ItemStack> INVENTORY = asMap(
@@ -44,7 +47,11 @@ public class KeyRegistry {
             "rod_augments",
             TAG_CONTAINER
     );
-
+    // endregion
+    // region Rod Statistics
+    public static FishDataType<Double, Double> STAT_ROD_CAUGHT = registerStat("rod_caught");
+    public static FishDataType<Double, Double> STAT_ROD_GUTTED = registerStat("rod_gutted");
+    public static FishDataType<Double, Double> STAT_ROD_SOLD = registerStat("rod_sold");
     // endregion
 
     // region Fish Data Types
@@ -87,6 +94,24 @@ public class KeyRegistry {
      */
     public static <P, C> FishDataType<P, C> register(String name, PersistentDataType<P, C> dataType) {
         return new FishDataType<>(name, dataType);
+    }
+
+    /**
+     * Creates and registers a statistic within the plugin for later use.
+     * <p>
+     * All statistics will begin with "statistic_" and return Doubles
+     *
+     * @param name The namespace to register
+     *
+     * @return The resulting namespace
+     *
+     * @see dev.oribuin.fishing.manager.RodManager#incrementStatistic(ItemStack, FishDataType, double) )
+     * @see dev.oribuin.fishing.manager.RodManager#getStatistic(ItemStack, FishDataType)
+     */
+    public static FishDataType<Double, Double> registerStat(String name) {
+        FishDataType<Double, Double> result = new FishDataType<>("statistic_" + name, DOUBLE);
+        STATISTICS.add(result);
+        return result;
     }
 
 }

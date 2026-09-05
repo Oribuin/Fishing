@@ -3,7 +3,6 @@ package dev.oribuin.fishing.command.argument;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.model.fish.Fish;
 import org.bukkit.command.CommandSender;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.caption.CaptionVariable;
 import org.incendo.cloud.caption.StandardCaptionKeys;
 import org.incendo.cloud.context.CommandContext;
@@ -13,6 +12,7 @@ import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ArgumentParser;
 import org.incendo.cloud.suggestion.Suggestion;
 import org.incendo.cloud.suggestion.SuggestionProvider;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Argument handler to match player input to a Fish.
@@ -22,9 +22,9 @@ import org.incendo.cloud.suggestion.SuggestionProvider;
 public class FishArgumentHandler implements ArgumentParser<CommandSender, Fish> {
 
     @Override
-    public @NonNull ArgumentParseResult<@NonNull Fish> parse(
-            @NonNull CommandContext<@NonNull CommandSender> commandContext,
-            @NonNull CommandInput commandInput
+    public @NotNull ArgumentParseResult<@NotNull Fish> parse(
+            @NotNull CommandContext<@NotNull CommandSender> commandContext,
+            @NotNull CommandInput commandInput
     ) {
         String input = commandInput.peekString();
         Fish fish = FishingPlugin.get().getTierManager().getFish(input);
@@ -35,7 +35,7 @@ public class FishArgumentHandler implements ArgumentParser<CommandSender, Fish> 
     }
 
     @Override
-    public @NonNull SuggestionProvider<CommandSender> suggestionProvider() {
+    public @NotNull SuggestionProvider<CommandSender> suggestionProvider() {
         return SuggestionProvider.blocking((context, input) ->
                 FishingPlugin.get().getTierManager().getAllFish()
                         .stream()

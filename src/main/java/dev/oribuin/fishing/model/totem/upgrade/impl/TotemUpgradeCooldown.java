@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -24,7 +25,7 @@ public class TotemUpgradeCooldown extends TotemUpgrade {
      */
     public TotemUpgradeCooldown() {
         super();
-        this.description = "Decreases the activation cooldown";
+        this.description = List.of("<gray>Decreases the activation cooldown");
         this.maxLevel = 25;
     }
 

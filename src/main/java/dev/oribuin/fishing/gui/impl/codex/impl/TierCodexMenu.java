@@ -8,8 +8,8 @@ import dev.oribuin.fishing.util.FishUtils;
 import dev.triumphteam.gui.guis.GuiItem;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jspecify.annotations.NonNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ public class TierCodexMenu extends BasicCodexMenu<Tier, TierCodexMenu.Config> {
      * @return The itemstack form
      */
     @Override
-    public @Nullable ItemStack getStack(@NonNull Tier value) {
+    public @Nullable ItemStack getStack(@NotNull Tier value) {
         return value.getTierDisplay().create(value.getPlaceholders());
     }
 

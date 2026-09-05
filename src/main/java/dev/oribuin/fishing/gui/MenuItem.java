@@ -48,7 +48,7 @@ public class MenuItem {
     public void place(BaseGui gui, Placeholders placeholders) {
         this.place(gui, placeholders, event -> {});
     }
-    
+
     /**
      * Place the item in the specified slot in the GUI
      *
@@ -68,7 +68,7 @@ public class MenuItem {
     public void place(BaseGui gui, GuiAction<InventoryClickEvent> function) {
         this.place(gui, Placeholders.empty(), function);
     }
-    
+
     /**
      * Place the item in the specified slot in the GUI
      *
@@ -97,7 +97,7 @@ public class MenuItem {
             gui.setItem(x, new dev.triumphteam.gui.guis.GuiItem(item, function));
         });
     }
-    
+
     public void update(BaseGui gui, Placeholders placeholders, GuiAction<InventoryClickEvent> function) {
         if (gui == null || !this.enabled) return;
 

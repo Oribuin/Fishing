@@ -7,7 +7,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
-import org.jspecify.annotations.NonNull;
 
 public record FishDataType<P, C>(NamespacedKey key, @NotNull PersistentDataType<P, C> type) implements PersistentDataType<P, C>, Namespaced {
 
@@ -51,7 +50,7 @@ public record FishDataType<P, C>(NamespacedKey key, @NotNull PersistentDataType<
      * @return the primitive value
      */
     @Override
-    public @NonNull P toPrimitive(@NonNull C complex, @NotNull PersistentDataAdapterContext context) {
+    public @NotNull P toPrimitive(@NotNull C complex, @NotNull PersistentDataAdapterContext context) {
         return this.type.toPrimitive(complex, context);
     }
 
@@ -64,7 +63,7 @@ public record FishDataType<P, C>(NamespacedKey key, @NotNull PersistentDataType<
      * @return the complex object instance
      */
     @Override
-    public @NonNull C fromPrimitive(@NonNull P primitive, @NotNull PersistentDataAdapterContext context) {
+    public @NotNull C fromPrimitive(@NotNull P primitive, @NotNull PersistentDataAdapterContext context) {
         return this.type.fromPrimitive(primitive, context);
     }
 

@@ -10,7 +10,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jspecify.annotations.NonNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.ArrayList;
@@ -86,7 +85,7 @@ public class TooltipItemType extends ConstructComponent<TooltipDisplay> {
      * @return item component type
      */
     @Override
-    public @NonNull TooltipDisplay establish() {
+    public @NotNull TooltipDisplay establish() {
         Set<DataComponentType> hiddenTypes = this.hiddenComponents.stream()
                 .map(NamespacedKey::fromString)
                 .filter(Objects::nonNull)
@@ -108,7 +107,7 @@ public class TooltipItemType extends ConstructComponent<TooltipDisplay> {
     @Override
     public void apply(@NotNull ItemStack stack) {
         if (!this.enabled) return;
-        
+
         if (!this.visible || !this.hiddenComponents.isEmpty()) {
             stack.setData(TOOLTIP_DISPLAY, this.establish());
         }

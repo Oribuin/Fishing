@@ -350,7 +350,7 @@ public final class FishUtils {
         String noUnderscores = enumValue.name().toLowerCase().replace("_", " ");
         return StringUtils.capitalize(noUnderscores);
     }
-    
+
     /**
      * Niceify an enum value to a string
      *
@@ -468,6 +468,7 @@ public final class FishUtils {
      * Checks if a String contains any values for a yaml value that need to be quoted
      *
      * @param string The string to check
+     *
      * @return true if any special characters need to be escaped, otherwise false
      */
     public static boolean containsConfigSpecialCharacters(String string) {

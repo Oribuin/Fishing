@@ -42,10 +42,10 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
      * <p>
      * The base chance is a random number between 0 and 100. Use {@link java.util.concurrent.ThreadLocalRandom#nextDouble(double)} to generate new numbers.
      *
-     * @param who  The {@link Player} who is catching the fish
+     * @param who     The {@link Player} who is catching the fish
      * @param wrapper The {@link FishEventWrapper} wrapper for the event
      */
-    public FishGenerateEvent(@NotNull Player who, @NotNull  FishEventWrapper wrapper) {
+    public FishGenerateEvent(@NotNull Player who, @NotNull FishEventWrapper wrapper) {
         super(who, !Bukkit.isPrimaryThread());
         this.wrapper = wrapper;
         this.baseChance = FishUtils.RANDOM.nextDouble(100);
@@ -64,7 +64,7 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
         this.chanceIncreases.add(increase);
         return this.baseChance + increase;
     }
-    
+
     /**
      * Generates a new {@link Fish} based on the base chance and the chance increases.
      * <p>

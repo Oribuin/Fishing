@@ -17,7 +17,7 @@ import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.guis.Gui;
 import net.kyori.adventure.text.Component;
-import net.objecthunter.exp4j.shuntingyard.ShuntingYard;import org.bukkit.Material;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -25,7 +25,6 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -89,7 +88,7 @@ public class AugmentApplyMenu extends PluginMenu<Gui, AugmentApplyMenu.Config> i
                 who.sendMessage("need to place an augment");
                 return;
             }
-            
+
             if (augmentStack.getAmount() != 1) {
                 who.sendMessage("You can only apply one augment at a time.");
                 return;
@@ -107,10 +106,10 @@ public class AugmentApplyMenu extends PluginMenu<Gui, AugmentApplyMenu.Config> i
             }
 
             // TODO: Add augment upgrading then re-enable this
-//            if (!this.plugin.getRodManager().canAccept(rodStack, augment)) {
-//                who.sendMessage("your fishing rod does not have enough slots for this augment");
-//                return;
-//            }
+            //            if (!this.plugin.getRodManager().canAccept(rodStack, augment)) {
+            //                who.sendMessage("your fishing rod does not have enough slots for this augment");
+            //                return;
+            //            }
 
 
             this.gui.getInventory().clear(this.config.getAugmentSlot());
