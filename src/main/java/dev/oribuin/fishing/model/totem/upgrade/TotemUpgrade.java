@@ -12,7 +12,6 @@ import io.papermc.paper.persistence.PersistentDataContainerView;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.function.Supplier;
 
+import static dev.oribuin.fishing.storage.util.KeyRegistry.TOTEM_UPGRADE_ACTIVATED;
 import static dev.oribuin.fishing.storage.util.KeyRegistry.TOTEM_UPGRADE_LEVEL;
 
 /**
@@ -136,6 +136,16 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
     @Override
     public void readContainer(PersistentDataContainerView container) {
         this.level = container.getOrDefault(TOTEM_UPGRADE_LEVEL.key(), TOTEM_UPGRADE_LEVEL, this.defaultLevel);
+
+        // Add the totem upgrade status if the type is toggleable
+        if (this instanceof ToggleUpgrade toggleUpgrade) {
+            toggleUpgrade.setActivated(container.getOrDefault(
+                    TOTEM_UPGRADE_ACTIVATED.key(), 
+                    TOTEM_UPGRADE_ACTIVATED, 
+                    false
+            ));
+        }
+        
     }
 
     /**
@@ -146,6 +156,11 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
     @Override
     public void writeContainer(PersistentDataContainer container) {
         container.set(TOTEM_UPGRADE_LEVEL.key(), TOTEM_UPGRADE_LEVEL, this.level);
+
+        // Add the totem upgrade status if the type is toggleable
+        if (this instanceof ToggleUpgrade toggleUpgrade) {
+            container.set(TOTEM_UPGRADE_ACTIVATED.key(), TOTEM_UPGRADE_ACTIVATED, toggleUpgrade.isActivated());
+        }
     }
 
     public int getLevel() {

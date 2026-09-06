@@ -7,50 +7,36 @@ import dev.oribuin.fishing.util.Placeholders;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.function.Supplier;
 
 /**
- * A totem upgrade that increases the effective range of the totem
+ * A totem upgrade that decreases the cooldown of the totem once deactivated
  */
 @ConfigSerializable
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
-public class TotemUpgradeRadius extends TotemUpgrade {
+public class TUpgradeCooldown extends TotemUpgrade {
 
-    private int baseRadius = 5;
-    private String radiusFormula = "<base_radius> + (<level> * 5)"; // The formula to calculate the radius of the totem (5 blocks per level)
+    private String cooldownFormula = "(3600+120) - (<level> * 120)"; // The formula to calculate the cooldown of the totem (1 hour - 2 minute per level)
 
     /**
      * Create a new totem upgrade with the name "radius"
      */
-    public TotemUpgradeRadius() {
+    public TUpgradeCooldown() {
         super();
-        this.description = List.of("<gray>Increases the totem's range");
-        this.maxLevel = 5;
+        this.description = List.of("<gray>Decreases the activation cooldown");
+        this.maxLevel = 25;
     }
 
     /**
-     * Calculate the radius of the totem based on the level of the upgrade.
-     * <p>
-     * Radius is divided by 2 so it acts as a radius instead of a diameter.
+     * Get the cooldown of the totem when it's finished
      *
      * @return The radius of the totem
      */
-    public double getRadius() {
-        Placeholders plc = Placeholders.of("level", this.level, "base_radius", this.baseRadius);
-        return FishUtils.evaluate(plc.applyString(this.radiusFormula)) / 2;
-    }
-
-    /**
-     * Calculate the radius of the totem based on the level of the upgrade.
-     * <p>
-     * Radius is divided by 2 so it acts as a radius instead of a diameter.
-     *
-     * @return The radius of the totem
-     */
-    public double getTotalRadius() {
-        Placeholders plc = Placeholders.of("level", this.level, "base_radius", this.baseRadius);
-        return FishUtils.evaluate(plc.applyString(this.radiusFormula));
+    public Duration getCooldown() {
+        Placeholders plc = Placeholders.of("level", this.level);
+        return Duration.ofMillis((long) FishUtils.evaluate(plc.applyString(this.cooldownFormula)) * 1000);
     }
 
     /**
@@ -69,7 +55,7 @@ public class TotemUpgradeRadius extends TotemUpgrade {
      * @return The upgrade supplier
      */
     public static Supplier<String> getStaticIdentifier() {
-        return () -> "radius";
+        return () -> "cooldown";
     }
 
     /**
@@ -81,10 +67,13 @@ public class TotemUpgradeRadius extends TotemUpgrade {
      */
     @Override
     public @NotNull Placeholders getPlaceholders(@NotNull Totem totem) {
-        return Placeholders.builder().addAll(super.getPlaceholders(totem))
-                .add("effective", this.getRadius())
-                .add("total", this.getTotalRadius())
-                .build();
+        long cooldown = this.getCooldown().toMillis();
+        String totalCooldown = FishUtils.formatTime(cooldown);
 
+        return Placeholders.builder().addAll(super.getPlaceholders(totem))
+                .add("total", totalCooldown)
+                .add("remaining", totem.onCooldown() ? FishUtils.formatTime(totem.getCurrentCooldown()) : totalCooldown)
+                .build();
     }
+
 }

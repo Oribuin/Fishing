@@ -16,14 +16,14 @@ import java.util.function.Supplier;
  */
 @ConfigSerializable
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
-public class TotemUpgradeDuration extends TotemUpgrade {
+public class TUpgradeDuration extends TotemUpgrade {
 
     private String durationFormula = "150 + (<level> * 30)"; // The formula to calculate the duration of the totem (60 seconds + 30 seconds per level)
 
     /**
      * Create a new totem upgrade with the name "radius"
      */
-    public TotemUpgradeDuration() {
+    public TUpgradeDuration() {
         super();
         this.description = List.of("<gray>Increases the duration of the totem");
         this.maxLevel = 10;

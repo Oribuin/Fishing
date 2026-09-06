@@ -4,6 +4,7 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.command.FishCommand;
+import dev.oribuin.fishing.config.item.ConstructType;
 import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.gui.BiPaginatedGui;
 import dev.oribuin.fishing.gui.paired.PagePair;
@@ -17,6 +18,7 @@ import dev.triumphteam.gui.guis.GuiItem;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.incendo.cloud.annotations.Command;
@@ -28,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 public class DebugCommand implements FishCommand {
 
@@ -84,38 +86,22 @@ public class DebugCommand implements FishCommand {
             BiPaginatedGui gui = BiPaginatedGui.builder()
                     .title(FishUtils.kyorify("Material Toggle"))
                     .disableAllInteractions()
+                    .rows(4)
                     .create();
 
-            //        gui.setItem(0, ItemBuilder.from(Material.BARRIER)
-            //                .name(FishUtils.kyorify("<red>Reset Toggles"))
-            //                .asGuiItem(event -> {
-            //                    this.toggledMaterials.remove(event.getWhoClicked().getUniqueId());
-            //                    event.getWhoClicked().sendMessage(FishUtils.kyorify("<red>Reset Toggle Status"));
-            //                }));
+            GuiItem border = new GuiItem(ItemConstruct.of(Material.BLACK_STAINED_GLASS_PANE)
+                    .setProperty(ConstructType.TOOLTIP, x -> x.setVisible(false))
+                    .create());
 
-            Function<Material, GuiItem> enabled = material -> new GuiItem(ItemConstruct.of(Material.GREEN_DYE)
-                    .setName("<green>Enabled")
-                    .setLore("<gray>Left Click to toggle")
+            gui.setItem(FishUtils.parseList("0-8", "27-35"), border);
+
+            gui.setItem(0, new GuiItem(ItemConstruct.of(Material.BARRIER)
+                    .setName("<red>Reset Toggles")
                     .create(), event -> {
-                UUID target = event.getWhoClicked().getUniqueId();
-                Boolean status = this.toggledMaterials.get(target, material);
-                if (status == null) status = true;
-
-                this.toggledMaterials.put(target, material, !status);
+                this.toggledMaterials.row(event.getWhoClicked().getUniqueId()).clear();
+                event.getWhoClicked().sendMessage(FishUtils.kyorify("<red>Reset Toggle Status"));
                 gui.close(event.getWhoClicked());
-            });
-
-            Function<Material, GuiItem> disabled = material -> new GuiItem(ItemConstruct.of(Material.RED_DYE)
-                    .setName("<red>Disabled")
-                    .setLore("<gray>Left Click to toggle")
-                    .create(), event -> {
-                        UUID target = event.getWhoClicked().getUniqueId();
-                        Boolean status = this.toggledMaterials.get(target, material);
-                        if (status == null) status = true;
-
-                        this.toggledMaterials.put(target, material, !status);
-                        gui.close(event.getWhoClicked());
-                    });
+            }));
 
             UUID uuid = player.getUniqueId();
             AtomicBoolean previousStatus = new AtomicBoolean(false);
@@ -126,16 +112,49 @@ public class DebugCommand implements FishCommand {
                 this.toggledMaterials.put(uuid, material, status);
 
                 // add the item
-                PagePair pair = new PagePair(
-                        PairDirection.VERTICAL_DOWN,
-                        ItemBuilder.from(material).asGuiItem(),
-                        status ? enabled.apply(material) : disabled.apply(material)
-                );
-                gui.addItem(pair);
+                gui.addItem(this.getPair(gui, material, status));
             });
-            
+
             gui.open(player);
         });
+    }
+
+    public PagePair getPair(BiPaginatedGui gui, Material material, boolean currentStatus) {
+        Consumer<InventoryClickEvent> action = event -> {
+            //                    if (!(event.getInventory().getHolder() instanceof BiPaginatedGui newGui)) return;
+
+            UUID target = event.getWhoClicked().getUniqueId();
+            Boolean status = this.toggledMaterials.get(target, material);
+            if (status == null) status = true;
+
+            Integer targetSlot = gui.getPrimarySlot(event.getSlot());
+            if (targetSlot == null) return;
+            
+            status = !status;
+            this.toggledMaterials.put(target, material, status);
+            PagePair newPair = this.getPair(gui, material, status);
+            gui.updatePageItem(targetSlot, newPair.getPrimary(), newPair.getSecondary());
+            
+            event.getWhoClicked().sendMessage(FishUtils.kyorify("<#93bc80>You have toggled the item " + FishUtils.capitalizeFully(material.name()) + " to " + (status ? "<green>Enabled" : "<red>Disabled")));
+        };
+        
+
+        GuiItem enabled = new GuiItem(ItemConstruct.of(Material.GREEN_DYE)
+                .setName("<green>Enabled")
+                .setLore("<gray>Left Click to toggle")
+                .create(), action::accept);
+
+        GuiItem disabled = new GuiItem(ItemConstruct.of(Material.RED_DYE)
+                .setName("<red>Disabled")
+                .setLore("<gray>Left Click to toggle")
+                .create(), action::accept);
+
+
+        return new PagePair(
+                PairDirection.VERTICAL_DOWN,
+                ItemBuilder.from(material).asGuiItem(),
+                currentStatus ? enabled : disabled
+        );
     }
 
     /**

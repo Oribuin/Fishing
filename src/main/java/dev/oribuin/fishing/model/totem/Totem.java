@@ -13,9 +13,9 @@ import dev.oribuin.fishing.config.impl.TotemConfig;
 import dev.oribuin.fishing.model.cosmetic.skin.TotemSkin;
 import dev.oribuin.fishing.model.totem.upgrade.TotemUpgrade;
 import dev.oribuin.fishing.model.totem.upgrade.TotemUpgradeRegistry;
-import dev.oribuin.fishing.model.totem.upgrade.impl.TotemUpgradeCooldown;
-import dev.oribuin.fishing.model.totem.upgrade.impl.TotemUpgradeDuration;
-import dev.oribuin.fishing.model.totem.upgrade.impl.TotemUpgradeRadius;
+import dev.oribuin.fishing.model.totem.upgrade.impl.TUpgradeCooldown;
+import dev.oribuin.fishing.model.totem.upgrade.impl.TUpgradeDuration;
+import dev.oribuin.fishing.model.totem.upgrade.impl.TUpgradeRadius;
 import dev.oribuin.fishing.scheduler.PluginScheduler;
 import dev.oribuin.fishing.scheduler.task.ScheduledTask;
 import dev.oribuin.fishing.storage.persistent.PDCSerializable;
@@ -148,7 +148,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
      * @return The totem radius
      */
     public double getRadius() {
-        TotemUpgradeRadius upgrade = this.getUpgrade(TotemUpgradeRadius.class);
+        TUpgradeRadius upgrade = this.getUpgrade(TUpgradeRadius.class);
         return upgrade != null ? upgrade.getRadius() : 2.5;
     }
 
@@ -158,7 +158,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
      * @return The duration of the totem
      */
     public Duration getDuration() {
-        TotemUpgradeDuration upgrade = this.getUpgrade(TotemUpgradeDuration.class);
+        TUpgradeDuration upgrade = this.getUpgrade(TUpgradeDuration.class);
         return upgrade != null ? upgrade.getDuration() : Duration.ofMinutes(5);
     }
 
@@ -168,7 +168,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
      * @return The duration of the totem
      */
     public Duration getCooldown() {
-        TotemUpgradeCooldown upgrade = this.getUpgrade(TotemUpgradeCooldown.class);
+        TUpgradeCooldown upgrade = this.getUpgrade(TUpgradeCooldown.class);
         return upgrade != null ? upgrade.getCooldown() : Duration.ofHours(1);
     }
 
@@ -453,7 +453,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
      *
      * @return If the totem is on cooldown
      *
-     * @see TotemUpgradeCooldown Calculate the cooldown from the upgrade
+     * @see TUpgradeCooldown Calculate the cooldown from the upgrade
      * @see #getCurrentCooldown() Get the current cooldown of the totem
      */
     public boolean onCooldown() {
@@ -468,7 +468,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
      *
      * @return The cooldown of the totem
      *
-     * @see TotemUpgradeCooldown Calculate the cooldown from the upgrade
+     * @see TUpgradeCooldown Calculate the cooldown from the upgrade
      * @see #onCooldown() Check if the totem is on cooldown
      */
     public long getCurrentCooldown() {
@@ -482,7 +482,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
      *
      * @return The duration of the totem
      *
-     * @see TotemUpgradeDuration Calculate the duration from the upgrade
+     * @see TUpgradeDuration Calculate the duration from the upgrade
      * @see #getCurrentDuration() Get the duration of the totem
      * @see #onCooldown() Check if the totem is on cooldown
      */

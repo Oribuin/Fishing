@@ -83,6 +83,7 @@ public class KeyRegistry {
 
     // region Totem Upgrade Keys
     public static FishDataType<Integer, Integer> TOTEM_UPGRADE_LEVEL = register("upgrade_level", INTEGER);
+    public static FishDataType<Byte, Boolean> TOTEM_UPGRADE_ACTIVATED = register("upgrade_activated", BOOLEAN);
     // endregion
 
     /**

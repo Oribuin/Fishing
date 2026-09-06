@@ -1,12 +1,14 @@
 package dev.oribuin.fishing.gui;
 
 import dev.oribuin.fishing.gui.paired.PagePair;
+import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.components.GuiContainer;
 import dev.triumphteam.gui.components.InteractionModifier;
 import dev.triumphteam.gui.guis.BaseGui;
 import dev.triumphteam.gui.guis.GuiItem;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,6 +19,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,7 +31,7 @@ public class BiPaginatedGui extends BaseGui {
     private int pageRow;
     private int pageNum;
     private int pageSize;
-    
+
     public BiPaginatedGui(@NotNull GuiContainer guiContainer, int pageRow, @NotNull Set<InteractionModifier> interactionModifiers) {
         super(guiContainer, interactionModifiers);
         this.pageItems = new ArrayList<>();
@@ -36,8 +39,21 @@ public class BiPaginatedGui extends BaseGui {
         this.pageRow = pageRow;
         this.pageNum = 1;
         this.pageSize = 9;
+        this.setDefaultClickAction(event -> {
+            ItemStack currentItem = event.getCurrentItem();
+            if (!(event.getInventory().getHolder() instanceof BiPaginatedGui gui)) return;
+
+            // Gets the gui item from the added items or the page items
+            GuiItem guiItem = gui.getPageItem(event.getSlot());
+            if (guiItem == null) guiItem = gui.getGuiItem(event.getSlot());
+            if (currentItem == null || guiItem == null) return;
+
+            // Executes the action of the item
+            final GuiAction<InventoryClickEvent> itemAction = guiItem.getAction();
+            if (itemAction != null) itemAction.execute(event);
+        });
     }
-    
+
     public static BiPaginatedBuilder builder() {
         return new BiPaginatedBuilder();
     }
@@ -166,7 +182,7 @@ public class BiPaginatedGui extends BaseGui {
             this.getInventory().setItem(entry.getKey(), entry.getValue().getItemStack());
         }
     }
-    
+
     public @NotNull Map<@NotNull Integer, @NotNull PagePair> getCurrentPageItems() {
         return Collections.unmodifiableMap(this.currentPage);
     }
@@ -207,13 +223,52 @@ public class BiPaginatedGui extends BaseGui {
         }
     }
 
-    public PagePair getPageItem(int slot) {
-        return this.currentPage.get(slot);
+    public GuiItem getPageItem(int slot) {
+        return this.currentPage.entrySet()
+                .stream()
+                .map(entry -> {
+                    boolean isPrimary = entry.getKey().equals(slot);
+                    if (isPrimary) return entry.getValue().getPrimary();
+
+                    boolean isSecondary = entry.getValue().getDirection().getOtherSlot(entry.getKey()) == slot;
+                    return isSecondary ? entry.getValue().getSecondary() : null;
+                })
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public PagePair getPagePair(int slot) {
+        return this.currentPage.entrySet()
+                .stream()
+                .filter(entry -> {
+                    boolean isPrimary = entry.getKey().equals(slot);
+                    boolean isSecondary = entry.getValue().getDirection().getOtherSlot(entry.getKey()) == slot;
+
+                    return isPrimary || isSecondary;
+                })
+                .map(Map.Entry::getValue)
+                .findFirst()
+                .orElse(null);
+    }
+    
+    public Integer getPrimarySlot(int target) {
+        return this.currentPage.entrySet()
+                .stream()
+                .filter(entry -> {
+                    boolean isPrimary = entry.getKey().equals(target);
+                    boolean isSecondary = entry.getValue().getDirection().getOtherSlot(entry.getKey()) == target;
+
+                    return isPrimary || isSecondary;
+                })
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(null);
     }
 
     private List<PagePair> getPageNum(int givenPage) {
         int page = givenPage - 1;
-        List<PagePair> guiPage = new ArrayList();
+        List<PagePair> guiPage = new ArrayList<>();
         int max = page * this.pageSize + this.pageSize;
         if (max > this.pageItems.size()) {
             max = this.pageItems.size();
@@ -232,17 +287,23 @@ public class BiPaginatedGui extends BaseGui {
 
     private void populatePage() {
         int slot = this.pageRow * 9;
+        int invSize = this.getInventory().getSize();
         Iterator<PagePair> iterator = this.getPageNum(this.pageNum).iterator();
 
         while (iterator.hasNext() && slot < this.getInventory().getSize()) {
-            if (this.getGuiItem(slot) == null && this.getInventory().getItem(slot) == null) {
-                PagePair pagePair = iterator.next();
-                int secondarySlot = pagePair.getDirection().getOtherSlot(slot);
-                this.currentPage.put(slot, pagePair);
-                this.getInventory().setItem(slot, pagePair.getPrimary().getItemStack());
-                this.getInventory().setItem(secondarySlot, pagePair.getSecondary().getItemStack());
+            if (slot >= invSize) break;
+
+            if (getGuiItem(slot) != null || getInventory().getItem(slot) != null) {
+                slot++;
+                continue;
             }
-            ++slot;
+
+            PagePair pagePair = iterator.next();
+            int secondarySlot = pagePair.getDirection().getOtherSlot(slot);
+            this.currentPage.put(slot, pagePair);
+            this.getInventory().setItem(slot, pagePair.getPrimary().getItemStack());
+            this.getInventory().setItem(secondarySlot, pagePair.getSecondary().getItemStack());
+            slot++;
         }
 
     }
@@ -288,5 +349,5 @@ public class BiPaginatedGui extends BaseGui {
         this.clearPage();
         this.populatePage();
     }
-    
+
 }
