@@ -45,11 +45,10 @@ public class BiPaginatedGui extends BaseGui {
 
             // Gets the gui item from the added items or the page items
             GuiItem guiItem = gui.getPageItem(event.getSlot());
-            if (guiItem == null) guiItem = gui.getGuiItem(event.getSlot());
             if (currentItem == null || guiItem == null) return;
 
             // Executes the action of the item
-            final GuiAction<InventoryClickEvent> itemAction = guiItem.getAction();
+            GuiAction<InventoryClickEvent> itemAction = guiItem.getAction();
             if (itemAction != null) itemAction.execute(event);
         });
     }

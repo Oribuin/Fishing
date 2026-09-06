@@ -29,7 +29,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public class DebugCommand implements FishCommand {
@@ -40,28 +39,6 @@ public class DebugCommand implements FishCommand {
     private static final List<Material> AVAILABLE = Arrays.stream(Material.values())
             .filter(x -> x.isItem() && !x.isAir())
             .toList();
-
-    public static class ToggledMaterial {
-        private final Material material;
-        private boolean status;
-
-        public ToggledMaterial(Material material) {
-            this.material = material;
-            this.status = true;
-        }
-
-        public Material getMaterial() {
-            return material;
-        }
-
-        public boolean isStatus() {
-            return status;
-        }
-
-        public void setStatus(boolean status) {
-            this.status = status;
-        }
-    }
 
     /**
      * Create a new command instance with the provided plugin instance.
@@ -95,21 +72,45 @@ public class DebugCommand implements FishCommand {
 
             gui.setItem(FishUtils.parseList("0-8", "27-35"), border);
 
-            gui.setItem(0, new GuiItem(ItemConstruct.of(Material.BARRIER)
+            gui.setItem(0, new GuiItem(ItemConstruct.of(Material.ARROW)
+                    .setName("<#93bc80>Previous Page")
+                    .setLore("<gray>Click to change the page")
+                    .create(), event -> gui.previous()));
+
+
+            gui.setItem(4, new GuiItem(ItemConstruct.of(Material.BARRIER)
                     .setName("<red>Reset Toggles")
+                    .setLore("<gray>Resets the player's current toggles")
                     .create(), event -> {
                 this.toggledMaterials.row(event.getWhoClicked().getUniqueId()).clear();
                 event.getWhoClicked().sendMessage(FishUtils.kyorify("<red>Reset Toggle Status"));
                 gui.close(event.getWhoClicked());
             }));
 
+            gui.setItem(3, new GuiItem(ItemConstruct.of(Material.COMPARATOR)
+                    .setName("<red>Invert Toggles")
+                    .setLore("<gray>Resets the player's current toggles")
+                    .create(), event -> {
+                
+                Map<Material, Boolean> toggles = this.toggledMaterials.row(event.getWhoClicked().getUniqueId());
+                AVAILABLE.forEach(material -> {
+                    boolean current = toggles.getOrDefault(material, false);
+                    toggles.put(material, !current);
+                });
+                
+                event.getWhoClicked().sendMessage(FishUtils.kyorify("<red>Inverted Toggle Status"));
+                gui.close(event.getWhoClicked());
+            }));
+            
+            gui.setItem(8, new GuiItem(ItemConstruct.of(Material.ARROW)
+                    .setName("<#93bc80>Next Page")
+                    .setLore("<gray>Click to change the page")
+                    .create(), event -> gui.next()));
+
             UUID uuid = player.getUniqueId();
-            AtomicBoolean previousStatus = new AtomicBoolean(false);
             AVAILABLE.forEach(material -> {
                 Boolean status = this.toggledMaterials.get(uuid, material);
-                if (status == null) status = !previousStatus.get();
-                previousStatus.set(status);
-                this.toggledMaterials.put(uuid, material, status);
+                if (status == null) status = false;
 
                 // add the item
                 gui.addItem(this.getPair(gui, material, status));
@@ -125,19 +126,19 @@ public class DebugCommand implements FishCommand {
 
             UUID target = event.getWhoClicked().getUniqueId();
             Boolean status = this.toggledMaterials.get(target, material);
-            if (status == null) status = true;
+            if (status == null) status = currentStatus;
 
             Integer targetSlot = gui.getPrimarySlot(event.getSlot());
             if (targetSlot == null) return;
-            
+
             status = !status;
             this.toggledMaterials.put(target, material, status);
             PagePair newPair = this.getPair(gui, material, status);
             gui.updatePageItem(targetSlot, newPair.getPrimary(), newPair.getSecondary());
-            
+
             event.getWhoClicked().sendMessage(FishUtils.kyorify("<#93bc80>You have toggled the item " + FishUtils.capitalizeFully(material.name()) + " to " + (status ? "<green>Enabled" : "<red>Disabled")));
         };
-        
+
 
         GuiItem enabled = new GuiItem(ItemConstruct.of(Material.GREEN_DYE)
                 .setName("<green>Enabled")

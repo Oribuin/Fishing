@@ -50,7 +50,7 @@ public class TUpgradeCooldown extends TotemUpgrade {
     }
 
     /**
-     * Get the identifier for the totem upgrade
+     * Get the identifier for the totem upgr ade
      *
      * @return The upgrade supplier
      */
