@@ -25,8 +25,10 @@ public class TUpgradeRadius extends TotemUpgrade {
      */
     public TUpgradeRadius() {
         super();
-        this.description = List.of("<gray>Increases the totem's range");
+        this.defaultLevel = 1;
+        this.level = 1;
         this.maxLevel = 5;
+        this.description = List.of("<gray>Increases the totem's range");
     }
 
     /**

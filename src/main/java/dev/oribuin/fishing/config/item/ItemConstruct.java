@@ -229,6 +229,10 @@ public class ItemConstruct implements Cloneable {
     public MenuItem asMenuItem(Integer... slots) {
         return new MenuItem(this, slots);
     }
+    
+    public MenuItem asMenuItem(List<Integer> slots) {
+        return new MenuItem(this, slots);
+    }
 
     public ItemConstruct merge(ItemConstruct existing) {
         ItemConstruct result = this.clone();

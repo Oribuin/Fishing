@@ -7,10 +7,13 @@ import dev.oribuin.fishing.config.item.ItemConstruct;
 import org.bukkit.Material;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
+import java.time.Duration;
+
 @ConfigSerializable
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
 public class TotemConfig {
-
+    
+    private long tickDelay = 350;
     private double experienceMultiplier = 0.15;
     private ItemConstruct totemItem = ItemConstruct.of(Material.PLAYER_HEAD)
             .setName("<white>[<#94bc80><bold>Fishing Totem</bold><white>]")
@@ -33,6 +36,10 @@ public class TotemConfig {
 
     public static TotemConfig get() {
         return FishingPlugin.get().getConfigLoader().get(TotemConfig.class);
+    }
+
+    public Duration getTickDelay() {
+        return Duration.ofMillis(this.tickDelay);
     }
 
     public double getExperienceMultiplier() {

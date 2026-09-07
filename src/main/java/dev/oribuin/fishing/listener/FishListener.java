@@ -14,6 +14,8 @@ import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.storage.Fisher;
+import org.bukkit.Location;
+import org.bukkit.entity.Item;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -21,6 +23,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -145,13 +148,24 @@ public class FishListener implements Listener {
             PluginMessages.get().getCaughtFish().send(event.getPlayer(), "item", resultItem.displayName());
 
             // Give the fish to the player
-            PlayerInventory inv = event.getPlayer().getInventory();
-            if (inv.firstEmpty() == -1) {
-                event.getPlayer().getWorld().dropItem(event.getPlayer().getLocation(), resultItem);
-                continue;
-            }
+            if (Settings.get().isInstantLootPickup()) {
+                PlayerInventory inv = event.getPlayer().getInventory();
+                if (inv.firstEmpty() == -1) {
+                    event.getPlayer().getWorld().dropItem(event.getPlayer().getLocation(), resultItem);
+                    continue;
+                }
 
-            inv.addItem(resultItem);
+                inv.addItem(resultItem);
+            } else {
+                Item item = event.getPlayer().getWorld().dropItem(event.getHook().getLocation(), resultItem);
+                Location playerLoc = event.getPlayer().getLocation().toCenterLocation();
+                double x = playerLoc.getX() - item.getLocation().getX();
+                double y = playerLoc.getY() - item.getLocation().getY();
+                double z = playerLoc.getZ() - item.getLocation().getZ();
+                Vector motion = new Vector(x * 0.1, y * 0.1 + Math.sqrt(Math.sqrt(x * x + y * y + z * z)) * 0.08, z * 0.1);
+                item.setPickupDelay(10); // totems might want to intercept this :)
+                item.setVelocity(motion);
+            }
         }
 
         Fisher fisher = this.plugin.getDataManager().get(event.getPlayer().getUniqueId());

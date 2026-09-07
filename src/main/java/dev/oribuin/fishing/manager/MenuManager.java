@@ -8,6 +8,7 @@ import dev.oribuin.fishing.gui.impl.augment.AugmentUpgradeMenu;
 import dev.oribuin.fishing.gui.impl.codex.impl.AugmentCodexMenu;
 import dev.oribuin.fishing.gui.impl.codex.impl.FishCodexMenu;
 import dev.oribuin.fishing.gui.impl.codex.impl.TierCodexMenu;
+import dev.oribuin.fishing.gui.impl.totem.TotemBagMenu;
 import dev.oribuin.fishing.gui.impl.totem.TotemMainMenu;
 import dev.oribuin.fishing.gui.impl.totem.TotemUpgradeMenu;
 import dev.oribuin.fishing.gui.impl.user.FishGutMenu;
@@ -42,6 +43,7 @@ public class MenuManager implements Manager {
         // Totem Menus
         register("totem/main_menu", TotemMainMenu.Config.class);
         register("totem/upgrades", TotemUpgradeMenu.Config.class);
+        register("totem/bag", TotemBagMenu.Config.class);
 
         // Augment Menus
         register("augment/apply_menu", AugmentApplyMenu.Config.class);

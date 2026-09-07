@@ -11,6 +11,7 @@ import dev.oribuin.fishing.api.task.AsyncTicker;
 import dev.oribuin.fishing.config.impl.PluginMessages;
 import dev.oribuin.fishing.config.impl.TotemConfig;
 import dev.oribuin.fishing.model.cosmetic.skin.TotemSkin;
+import dev.oribuin.fishing.model.totem.upgrade.TotemTickable;
 import dev.oribuin.fishing.model.totem.upgrade.TotemUpgrade;
 import dev.oribuin.fishing.model.totem.upgrade.TotemUpgradeRegistry;
 import dev.oribuin.fishing.model.totem.upgrade.impl.TUpgradeCooldown;
@@ -53,6 +54,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static com.jeff_media.morepersistentdatatypes.DataType.TAG_CONTAINER;
@@ -76,6 +78,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
     private boolean confirmedActivate;
     private ArmorStand display;
     private ScheduledTask foliaTask;
+    private int bagCapacity;
 
     /**
      * Create a new totem from an armor stand with a container
@@ -134,6 +137,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
         this.ownerName = "N/A";
         this.displayName = null;
         this.bag = new HashMap<>();
+        this.bagCapacity = 9;
         this.users = new HashSet<>();
         this.upgrades = new LinkedHashMap<>(TotemUpgradeRegistry.getDefault());
         this.confirmedActivate = false;
@@ -197,12 +201,17 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
     @Override
     public void tickAsync() {
 
+        // display doesnt exist, stop ticking
+        if (this.display == null || !this.display.isValid() || this.display.isDead()) {
+            if (this.foliaTask != null) PluginScheduler.cancelNull(this.foliaTask);
+        }
+
         // Deactivate the totem when unused
         long duration = this.getDuration().toMillis();
         if (this.active && System.currentTimeMillis() - this.lastActive > duration) {
             this.active = false;
             this.lastActive = System.currentTimeMillis();
-            this.writeContainer(this.display.getPersistentDataContainer()); // Update the totem
+            if (this.display != null) this.writeContainer(this.display.getPersistentDataContainer()); // Update the totem
             if (this.foliaTask != null) this.foliaTask = PluginScheduler.cancelNull(this.foliaTask);
 
             // Call the totem activate event on upgrades
@@ -235,6 +244,13 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
             Rotations rotations = this.display.getHeadRotations();
             double y = rotations.y() >= 360 ? 0 : rotations.y() + 2;
             this.display.setHeadRotations(Rotations.ofDegrees(0, y, 0));
+
+            this.upgrades.values().forEach(totemUpgrade -> {
+                // TODO: Add back Totem Toggles
+                //                 if (totemUpgrade instanceof Toggleable toggleable && !toggleable.isActivated()) return;
+
+                if (totemUpgrade instanceof TotemTickable tickable) tickable.tick(this);
+            });
         }
     }
 
@@ -272,14 +288,14 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
         if (NMSUtil.isFolia()) {
             if (this.foliaTask != null) this.foliaTask = PluginScheduler.cancelNull(this.foliaTask);
 
-            this.foliaTask = PluginScheduler.get().runTaskTimerAtEntity(this.display, () -> {
+            this.foliaTask = PluginScheduler.get().runTaskTimerAtLocation(this.display.getLocation(), () -> {
                 if (!this.active || this.display == null) {
                     this.foliaTask = PluginScheduler.cancelNull(this.foliaTask);
                     return;
                 }
 
                 if (this.position.isChunkLoaded()) this.tickAsync();
-            }, 250, 250, TimeUnit.MILLISECONDS);
+            }, this.getTickDelay().toMillis(), this.getTickDelay().toMillis(), TimeUnit.MILLISECONDS);
         }
 
 
@@ -287,6 +303,65 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
         PluginMessages.get().getTotem().getActivated().send(player, "time", FishUtils.formatTime(this.getDuration().toMillis()));
 
         new TotemActivateEvent(this, player).callEvent();
+    }
+
+    /**
+     * Deposit an itemstack into the totem
+     *
+     * @param stack The stack to deposit
+     */
+    public void depositBag(@NotNull ItemStack stack) {
+        if (this.display == null || this.display.isDead()) return;
+
+        int left = stack.getAmount();
+        for (int i = 0; i < this.bagCapacity; i++) {
+            if (left <= 0) break;
+
+            // Slot is empty, put the itemstack
+            ItemStack current = this.bag.get(i);
+            if (current == null || current.getType().isAir()) {
+                this.bag.put(i, stack);
+                stack.setAmount(0);
+                break;
+            }
+
+            // Check additional slots
+            if (current.getAmount() == current.getMaxStackSize()) continue; // Is the current item already at max capacity
+            if (current.getType() != stack.getType()) continue; // Are the items the same type
+            if (!current.isSimilar(stack)) continue; // Do the items match
+
+            int combined = stack.getAmount() + current.getAmount();
+            if (combined > stack.getMaxStackSize()) {
+                current.setAmount(stack.getMaxStackSize());
+                left = combined - stack.getMaxStackSize();
+            } else {
+                current.setAmount(combined);
+                left -= current.getAmount();
+            }
+
+            this.bag.put(i, current);
+        }
+
+        stack.setAmount(left);
+        this.writeContainer(this.getDisplay().getPersistentDataContainer());
+    }
+
+    /**
+     * Withdraw an itemstack from the totem's bag
+     *
+     * @param slot The stack to withdraw
+     *
+     * @return The resulting itemstack
+     */
+    @Nullable
+    public ItemStack withdrawBag(int slot) {
+        if (this.display == null || this.display.isDead()) return null;
+
+        ItemStack current = this.bag.get(slot);
+        if (current == null || current.getType().isAir()) return null; // Are the items the same type
+        ItemStack result = this.bag.remove(slot);
+        this.writeContainer(this.getDisplay().getPersistentDataContainer());
+        return result;
     }
 
     /**
@@ -369,17 +444,12 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
     }
 
     /**
-     * Spawn in the totem in the world at a location
+     * Update the armourstand in the plugin
      *
-     * @param location The block location to spawn the totem
+     * @return The stand to update
      */
-    public void spawn(Location location) {
-        if (this.displayName == null) {
-            this.displayName = this.ownerName + "'s Totem";
-        }
-
-        this.position = location.toBlockLocation().add(0.5, -0.3, 0.5);
-        ArmorStand stand = this.position.getWorld().spawn(this.position, ArmorStand.class, CreatureSpawnEvent.SpawnReason.CUSTOM, result -> {
+    public Consumer<ArmorStand> updateStand() {
+        return result -> {
             result.setInvisible(false);
             result.setCanTick(false);
             result.setGravity(false);
@@ -396,8 +466,23 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
                 result.addEquipmentLock(slot, ArmorStand.LockType.ADDING_OR_CHANGING);
                 result.addEquipmentLock(slot, ArmorStand.LockType.REMOVING_OR_CHANGING);
             }
+        };
+    }
 
+    /**
+     * Spawn in the totem in the world at a location
+     *
+     * @param location The block location to spawn the totem
+     */
+    public void spawn(Location location) {
+        if (this.displayName == null) {
+            this.displayName = this.ownerName + "'s Totem";
+        }
+
+        this.position = location.toBlockLocation().add(0.5, -0.3, 0.5);
+        ArmorStand stand = this.position.getWorld().spawn(this.position, ArmorStand.class, CreatureSpawnEvent.SpawnReason.CUSTOM, result -> {
             // Save the properties to the entity
+            this.updateStand().accept(result);
             this.displayId = result.getUniqueId();
             this.writeContainer(result.getPersistentDataContainer());
         });
@@ -542,13 +627,28 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
     @Override
     public <T extends Event> void handleEvent(T event) {
         super.handleEvent(event);
-        this.upgrades.values().forEach(x -> x.handleEvent(event));
+        this.upgrades.values().forEach(x -> {
+            if (x.getLevel() <= 0) return;
+            //            if (x instanceof Toggleable toggleable && !toggleable.isActivated()) return; // TODO: Add back Totem Toggles
+
+            x.handleEvent(event);
+        });
     }
 
     public Map<TotemUpgrade, Integer> getUpgradeLevelMapping() {
         return this.upgrades.values().stream().collect(
                 Collectors.toMap(x -> x, TotemUpgrade::getLevel)
         );
+    }
+
+    /**
+     * The delay between each time the task is run
+     *
+     * @return The delay between each task
+     */
+    @Override
+    public Duration getTickDelay() {
+        return TotemConfig.get().getTickDelay();
     }
 
     /**
@@ -567,6 +667,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
         container.set(TOTEM_PRIVACY.key(), TOTEM_PRIVACY, this.privacy);
         container.set(TOTEM_USERS.key(), TOTEM_USERS, this.users);
         container.set(TOTEM_BAG.key(), TOTEM_BAG, this.bag);
+        container.set(TOTEM_BAG_CAPACITY.key(), TOTEM_BAG_CAPACITY, this.bagCapacity);
         container.set(TOTEM_OWNER_NAME.key(), TOTEM_OWNER_NAME, this.ownerName);
 
         if (this.displayName != null) container.set(TOTEM_DISPLAY_NAME.key(), TOTEM_DISPLAY_NAME, this.displayName);
@@ -757,6 +858,14 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
 
     public void setBag(Map<Integer, ItemStack> bag) {
         this.bag = bag;
+    }
+
+    public int getBagCapacity() {
+        return bagCapacity;
+    }
+
+    public void setBagCapacity(int bagCapacity) {
+        this.bagCapacity = bagCapacity;
     }
 
     public Set<UUID> getUsers() {

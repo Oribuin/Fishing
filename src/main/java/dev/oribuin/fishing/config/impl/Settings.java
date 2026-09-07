@@ -12,6 +12,7 @@ import java.util.Map;
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
 public class Settings {
 
+    private boolean instantLootPickup = false;
     private boolean rodStatistics = true;
     private String experienceFormula = "<level> * 625";
     private List<String> augmentsHeader = List.of(
@@ -29,6 +30,10 @@ public class Settings {
 
     public static Settings get() {
         return FishingPlugin.get().getConfigLoader().get(Settings.class);
+    }
+
+    public boolean isInstantLootPickup() {
+        return instantLootPickup;
     }
 
     public boolean isRodStatistics() {

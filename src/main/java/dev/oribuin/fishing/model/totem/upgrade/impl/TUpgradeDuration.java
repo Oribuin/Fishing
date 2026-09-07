@@ -26,6 +26,8 @@ public class TUpgradeDuration extends TotemUpgrade {
     public TUpgradeDuration() {
         super();
         this.description = List.of("<gray>Increases the duration of the totem");
+        this.defaultLevel = 1;
+        this.level = 1;
         this.maxLevel = 10;
     }
 

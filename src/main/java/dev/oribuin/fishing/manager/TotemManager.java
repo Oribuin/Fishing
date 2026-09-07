@@ -2,6 +2,7 @@ package dev.oribuin.fishing.manager;
 
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.ConfigLoader;
+import dev.oribuin.fishing.config.impl.TotemConfig;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.model.totem.upgrade.TotemUpgradeRegistry;
 import dev.oribuin.fishing.scheduler.PluginScheduler;
@@ -12,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 
 import java.io.File;
+import java.time.Duration;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -56,9 +58,10 @@ public class TotemManager implements Manager {
         // Define all ticking under one task to prevent 10000000 tasks running at once.
         if (this.asyncTicker != null) this.asyncTicker.cancel();
 
+        Duration delay = TotemConfig.get().getTickDelay();
         this.asyncTicker = PluginScheduler.get().runTaskTimerAsync(
                 () -> this.tick(Totem::tickAsync),
-                1000, 250, TimeUnit.MILLISECONDS
+                delay.toMillis(), delay.toMillis(), TimeUnit.MILLISECONDS
         );
     }
 

@@ -7,7 +7,7 @@ import dev.oribuin.fishing.config.item.ConstructType;
 import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.storage.persistent.PDCSerializable;
-import dev.oribuin.fishing.util.Placeholders;
+import dev.oribuin.fishing.util.FishUtils;import dev.oribuin.fishing.util.Placeholders;
 import io.papermc.paper.persistence.PersistentDataContainerView;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
@@ -41,7 +41,7 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
 
     public TotemUpgrade() {
         this.enabled = true;
-        this.name = StringUtils.capitalize(this.getIdentifier().get());
+        this.name = FishUtils.capitalizeFully(this.getIdentifier().get().replace("_", " "));
         this.description = List.of("Allows the totem to do something new");
         this.defaultLevel = 0;
         this.level = this.defaultLevel;
@@ -56,7 +56,7 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
                         " <#94bc80>- <white>Current: <#94bc80><level>",
                         " <#94bc80>- <white>Max Level: <#94bc80><max_level>",
                         "",
-                        " <#94bc80>➡️ <white>Upgrade Cost: <#94bc80><cost>",
+                        " <#94bc80>➡ <white>Upgrade Cost: <#94bc80><cost>",
                         ""
                 )
                 .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled);
@@ -138,8 +138,8 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
         this.level = container.getOrDefault(TOTEM_UPGRADE_LEVEL.key(), TOTEM_UPGRADE_LEVEL, this.defaultLevel);
 
         // Add the totem upgrade status if the type is toggleable
-        if (this instanceof ToggleUpgrade toggleUpgrade) {
-            toggleUpgrade.setActivated(container.getOrDefault(
+        if (this instanceof Toggleable toggleable) {
+            toggleable.setActivated(container.getOrDefault(
                     TOTEM_UPGRADE_ACTIVATED.key(), 
                     TOTEM_UPGRADE_ACTIVATED, 
                     false
@@ -158,8 +158,8 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
         container.set(TOTEM_UPGRADE_LEVEL.key(), TOTEM_UPGRADE_LEVEL, this.level);
 
         // Add the totem upgrade status if the type is toggleable
-        if (this instanceof ToggleUpgrade toggleUpgrade) {
-            container.set(TOTEM_UPGRADE_ACTIVATED.key(), TOTEM_UPGRADE_ACTIVATED, toggleUpgrade.isActivated());
+        if (this instanceof Toggleable toggleable) {
+            container.set(TOTEM_UPGRADE_ACTIVATED.key(), TOTEM_UPGRADE_ACTIVATED, toggleable.isActivated());
         }
     }
 

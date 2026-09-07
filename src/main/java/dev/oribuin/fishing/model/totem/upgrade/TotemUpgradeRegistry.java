@@ -5,6 +5,8 @@ import dev.oribuin.fishing.manager.TotemManager;
 import dev.oribuin.fishing.model.totem.upgrade.impl.TUpgradeCooldown;
 import dev.oribuin.fishing.model.totem.upgrade.impl.TUpgradeDuration;
 import dev.oribuin.fishing.model.totem.upgrade.impl.TUpgradeRadius;
+import dev.oribuin.fishing.model.totem.upgrade.impl.TUpgradeGravityWell;
+import dev.oribuin.fishing.model.totem.upgrade.impl.TUpgradeVacuum;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +22,9 @@ public class TotemUpgradeRegistry {
         UPGRADES.clear();
         register("cooldown", TUpgradeCooldown.class);
         register("duration", TUpgradeDuration.class);
+        register("gravity_well", TUpgradeGravityWell.class);
         register("radius", TUpgradeRadius.class);
+        register("vacuum", TUpgradeVacuum.class);
     }
 
     /**
@@ -42,8 +46,11 @@ public class TotemUpgradeRegistry {
             return;
         }
 
-        TotemManager.getLoader().loadConfig(upgradeClass, identifier);
-        UPGRADES.put(identifier, new RegisteredUpgrade<>(identifier, upgradeClass, () -> TotemManager.getLoader().getClone(upgradeClass)));
+        try {
+            TotemManager.getLoader().loadConfig(upgradeClass, identifier);
+            UPGRADES.put(identifier, new RegisteredUpgrade<>(identifier, upgradeClass, () -> TotemManager.getLoader().getClone(upgradeClass)));
+        } catch (Exception ignored) {
+        }
     }
 
     /**

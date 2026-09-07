@@ -77,8 +77,9 @@ public class KeyRegistry {
     public static FishDataType<Integer, Integer> TOTEM_LEVEL = register("totem_level", INTEGER);
     public static FishDataType<String, TotemPrivacy> TOTEM_PRIVACY = register("totem_privacy", asEnum(TotemPrivacy.class));
     public static FishDataType<PersistentDataContainer, PersistentDataContainer> TOTEM_UPGRADES = register("totem_upgrades", TAG_CONTAINER);
-    public static FishDataType<PersistentDataContainer, Map<Integer, ItemStack>> TOTEM_BAG = register("totem_bag", INVENTORY);
     public static FishDataType<PersistentDataContainer, Set<UUID>> TOTEM_USERS = register("totem_users", asSet(DataType.UUID));
+    public static FishDataType<PersistentDataContainer, Map<Integer, ItemStack>> TOTEM_BAG = register("totem_bag", INVENTORY);
+    public static FishDataType<Integer, Integer> TOTEM_BAG_CAPACITY = register("totem_bag_capacity", INTEGER);
     // endregion
 
     // region Totem Upgrade Keys

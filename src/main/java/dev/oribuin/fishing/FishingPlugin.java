@@ -10,7 +10,7 @@ import dev.oribuin.fishing.hook.plugin.HeadDbProvider;
 import dev.oribuin.fishing.hook.plugin.PAPIProvider;
 import dev.oribuin.fishing.listener.FishListener;
 import dev.oribuin.fishing.listener.PlayerListeners;
-import dev.oribuin.fishing.listener.TotemListeners;
+import dev.oribuin.fishing.listener.TextInputHandler;import dev.oribuin.fishing.listener.TotemListeners;
 import dev.oribuin.fishing.manager.AugmentManager;
 import dev.oribuin.fishing.manager.CommandManager;
 import dev.oribuin.fishing.manager.DataManager;
@@ -59,6 +59,7 @@ public class FishingPlugin extends JavaPlugin {
         PluginManager manager = this.getServer().getPluginManager();
         manager.registerEvents(new FishListener(this), this);
         manager.registerEvents(new PlayerListeners(this), this);
+        manager.registerEvents(new TextInputHandler(this), this);
         manager.registerEvents(new TotemListeners(this), this);
 
         // register plugin hooks

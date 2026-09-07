@@ -25,8 +25,10 @@ public class TUpgradeCooldown extends TotemUpgrade {
      */
     public TUpgradeCooldown() {
         super();
+        this.defaultLevel = 1;
+        this.level = 1;
         this.description = List.of("<gray>Decreases the activation cooldown");
-        this.maxLevel = 25;
+        this.maxLevel = 10;
     }
 
     /**

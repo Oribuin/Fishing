@@ -87,6 +87,20 @@ public abstract class PluginMenu<T extends BaseGui, Z extends GuiConfig> {
     }
 
     /**
+     * Convert a slot to the required rows
+     *
+     * @param slot The slot 
+     *
+     * @return The rows 
+     */
+    public final int slotToRows(int slot) {
+        int size = 9;
+        
+        while (slot > size) size += 9;
+        return size / 9;
+    }
+
+    /**
      * Creates the menu for the plugin
      *
      * @return the resulting menu

@@ -1,8 +1,6 @@
 package dev.oribuin.fishing.model.totem.upgrade;
 
-import dev.oribuin.fishing.model.totem.Totem;
-
-public interface ToggleUpgrade {
+public interface Toggleable {
 
     /**
      * Check whether a totem upgrade has been toggled on
