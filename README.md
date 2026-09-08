@@ -16,8 +16,6 @@ This is one of my biggest projects to date, and I was very excited to create som
 
 ### What were these frustrations?
 
-**An open sourced plugin with a good API and trust for your community can fix these issues, bring a sense of community within the group of people who have supported your project.**
-
 - PyroFishingPro is a closed source with little to no api availability
 - Several features that are not finished would be pushed into production builds
     - If your plugin is on several large servers/networks, You should be utilising branches and not publishing unfinished content onto official releases with no warning. Git has branches for a reason... use them
@@ -45,6 +43,7 @@ This is one of my biggest projects to date, and I was very excited to create som
 This plugin will always be compiled against the latest Paper API Versions (as of writing, its 26.2) with no goal in supporting anything lower than latest. this is because i want to be stubborn and defiant, and because their api changes go hard.
 
 Folia is also supported too :)
+
 ## Resource Pack
 
 This plugin has a resource pack available within the `/resources/` folder within the plugin. This resource pack does not apply by default.
