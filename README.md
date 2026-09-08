@@ -22,7 +22,7 @@ This is one of my biggest projects to date, and I was very excited to create som
 - Several features that are not finished would be pushed into production builds
     - If your plugin is on several large servers/networks, You should be utilising branches and not publishing unfinished content onto official releases with no warning. Git has branches for a reason... use them
 - Certain augments are not available outside seasonal events which makes refunding lost/broken fishing rods difficult (This is due to the developer not wishing for servers to sell them outside Crabmas)
-    - Buyers of the plugin would sell "Crabmas" Augments outside of the event, A decision was made to where this is no longer possible, Allegedly due to pyro personally disliking people doing that.
+    - Buyers of the plugin would sell "Crabmas" Augments outside the event, A decision was made to where this is no longer possible, Allegedly due to pyro personally disliking people doing that.
     - If it's true, I don't agree with policing how features of your plugin is utilised
     - **Admin Note** - Run the command below, apply the firework star to a basic rod & then strip augments. You should now have a regular snow globe augment that you should probably keep in supply somewhere in case you need it.
     - `/minecraft:give @p firework_star[custom_data={PublicBukkitValues:{"pyrofishingpro:augment":"SNOW_GLOBE"}}]`
@@ -30,12 +30,11 @@ This is one of my biggest projects to date, and I was very excited to create som
     - What If I want new augments, skills, totem upgrades?
     - What if I want a community totem for use?
     - What if I want new rarities for each fish and more conditions?
-    - What if I wanted to make the process of catching fish into a minigame
-    - What if I wanted to add additional loot and mobs within the plugin
-    - What if I wanted to add more seasonal events aside from Crabmas
-    - What if I want to do complete overhaul of \<insert feature here>
-- `"This purchase is for one server or network and cannot be used on multiple servers."` is cringe!
-- I said how I didn't like the event cause it took hours n got banned from Pyro's discord lol
+    - What if I wanted to make the process of catching fish into a minigame?
+    - What if I wanted to add additional loot and mobs within the plugin?
+    - What if I wanted to add more seasonal events aside from Crabmas?
+    - What if I want to do complete overhaul of \<insert feature here>?
+- `"This purchase is for one server or network and cannot be used on multiple servers."` is cringe lol
 
 **On a more direct note: Pyro, You've got a wonderful plugin here, but for whatever reason, you do not grant space for your project to grow beyond your own ability and ideas. I understand having your own vision for something you've dedicated a lot of time into, but you have to place trust in your community to be able to help your vision or their own.**
 
