@@ -14,7 +14,7 @@ public class DatabaseSettings {
 
     @Comment("Should MySQL be enabled for database storage?")
     private boolean enabled = false;
-    
+
     @Comment("The MySQL Host Name")
     private String hostname = "127.0.0.1";
 

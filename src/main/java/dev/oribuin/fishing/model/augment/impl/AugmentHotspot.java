@@ -25,16 +25,16 @@ public class AugmentHotspot extends Augment {
     private static final Map<UUID, Long> ADDITIONAL = new HashMap<>();
 
     @Comment("The required formula for the augment to trigger")
-    private String formula = "<level> * 0.05"; // 5% per level
+    private final String formula = "<level> * 0.05"; // 5% per level
 
     @Comment("The minimum fish to be spawned in")
-    private int minimumFish = 1;
+    private final int minimumFish = 1;
 
     @Comment("The maximum fish to be spawned in")
-    private int maximumFish = 3;
+    private final int maximumFish = 3;
 
     @Comment("The message sent when a player has caught additional fish")
-    private TextMessage gotAdditional = TextMessage.ofActionBar("<#93bc80>[<white>Hotspot granted you additional fish<#93bc80>]");
+    private final TextMessage gotAdditional = TextMessage.ofActionBar("<#93bc80>[<white>Hotspot granted you additional fish<#93bc80>]");
 
     /**
      * Create a new type of augment with a name and description.

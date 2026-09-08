@@ -1,7 +1,5 @@
 package dev.oribuin.fishing.gui.impl.totem;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.TextMessage;
 import dev.oribuin.fishing.config.impl.PluginMessages;
@@ -27,16 +25,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> implements GuiTickable {
+import static dev.oribuin.fishing.config.item.component.TooltipItemType.HIDDEN;
 
-    private static final Cache<UUID, Totem> pendingHologram = CacheBuilder.newBuilder()
-            .expireAfterWrite(5, TimeUnit.MINUTES)
-            .build();
+public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> implements GuiTickable {
 
     private final Supplier<Totem> totemSupplier;
 
@@ -307,15 +301,15 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
                 .asMenuItem(13);
 
         private MenuItem activateGlass = ItemConstruct.of(Material.LIME_STAINED_GLASS_PANE)
-                .setProperty(ConstructType.TOOLTIP, x -> x.setVisible(false))
+                .setProperty(ConstructType.TOOLTIP, HIDDEN)
                 .asMenuItem(FishUtils.parseList("10-12", "14-16"));
 
         private MenuItem cooldownGlass = ItemConstruct.of(Material.RED_STAINED_GLASS_PANE)
-                .setProperty(ConstructType.TOOLTIP, x -> x.setVisible(false))
+                .setProperty(ConstructType.TOOLTIP, HIDDEN)
                 .asMenuItem(FishUtils.parseList("10-12", "14-16"));
 
         private MenuItem activeGlass = ItemConstruct.of(Material.ORANGE_STAINED_GLASS_PANE)
-                .setProperty(ConstructType.TOOLTIP, x -> x.setVisible(false))
+                .setProperty(ConstructType.TOOLTIP, HIDDEN)
                 .asMenuItem(FishUtils.parseList("10-12", "14-16"));
 
         public Config() {

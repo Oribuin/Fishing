@@ -6,6 +6,7 @@ import dev.oribuin.fishing.model.totem.upgrade.Toggleable;
 import dev.oribuin.fishing.model.totem.upgrade.TotemTickable;
 import dev.oribuin.fishing.model.totem.upgrade.TotemUpgrade;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +28,8 @@ public class TUpgradeVacuum extends TotemUpgrade implements Toggleable, TotemTic
         super();
         this.activated = false;
         this.description = List.of("<gray>Pulls entities into the upgrade");
+        this.upgradeIcon.setMaterial(Material.HOPPER);
+        this.upgradeIcon.setLore(this.description, this.upgradeIcon.getLore());
     }
 
     /**

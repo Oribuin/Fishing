@@ -50,7 +50,7 @@ public final class TextureItemType extends ConstructComponent<ResolvableProfile>
         if (this.value == null) return null;
 
         String[] type = placeholders.applyString(this.value).split("-");
-        if (type.length == 1) return null;
+        if (type.length == 1) return this.fromBase64(type[0]);
         return switch (type[0].toLowerCase()) {
             case "base64" -> this.fromBase64(type[1]);
             case "hdb" -> this.fromHdb(type[1]);

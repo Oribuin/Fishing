@@ -12,7 +12,7 @@ import java.time.Duration;
 @ConfigSerializable
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
 public class TotemConfig {
-    
+
     private long tickDelay = 350;
     private double experienceMultiplier = 0.15;
     private ItemConstruct totemItem = ItemConstruct.of(Material.PLAYER_HEAD)
@@ -31,7 +31,7 @@ public class TotemConfig {
             )
             .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
             .setProperty(ConstructType.TEXTURE, x -> x.setValue(
-                    "base64-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmRkMDdkYzE0MTBiMzQzODg0MTQ0NmNkY2UyYmFmYmE0ZmM2MTk5NTQ0NWZlMzA4NGY1YjA3NWY5MjZlYmNhMSJ9fX0="
+                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmRkMDdkYzE0MTBiMzQzODg0MTQ0NmNkY2UyYmFmYmE0ZmM2MTk5NTQ0NWZlMzA4NGY1YjA3NWY5MjZlYmNhMSJ9fX0="
             ));
 
     public static TotemConfig get() {

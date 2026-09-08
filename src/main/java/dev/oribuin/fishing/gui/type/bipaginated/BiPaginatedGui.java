@@ -1,6 +1,5 @@
-package dev.oribuin.fishing.gui;
+package dev.oribuin.fishing.gui.type.bipaginated;
 
-import dev.oribuin.fishing.gui.paired.PagePair;
 import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.components.GuiContainer;
 import dev.triumphteam.gui.components.InteractionModifier;
@@ -24,21 +23,23 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static dev.oribuin.fishing.gui.PluginMenu.slotToRows;
+
 public class BiPaginatedGui extends BaseGui {
 
     private final List<PagePair> pageItems;
     private final Map<Integer, PagePair> currentPage;
-    private int pageRow;
+    private BiPageRow pageRow;
     private int pageNum;
     private int pageSize;
 
-    public BiPaginatedGui(@NotNull GuiContainer guiContainer, int pageRow, @NotNull Set<InteractionModifier> interactionModifiers) {
+    public BiPaginatedGui(@NotNull GuiContainer guiContainer, BiPageRow pageRow, @NotNull Set<InteractionModifier> interactionModifiers) {
         super(guiContainer, interactionModifiers);
         this.pageItems = new ArrayList<>();
         this.currentPage = new ConcurrentHashMap<>(9);
         this.pageRow = pageRow;
         this.pageNum = 1;
-        this.pageSize = 9;
+        this.pageSize = pageRow.end() - pageRow.start();
         this.setDefaultClickAction(event -> {
             ItemStack currentItem = event.getCurrentItem();
             if (!(event.getInventory().getHolder() instanceof BiPaginatedGui gui)) return;
@@ -57,13 +58,21 @@ public class BiPaginatedGui extends BaseGui {
         return new BiPaginatedBuilder();
     }
 
-    public BiPaginatedGui setPageRow(int pageRow) {
-        this.pageRow = pageRow;
+    public BiPaginatedGui pageRow(final int pageRow) {
+        this.pageRow = new BiPageRow(pageRow);
+        this.pageSize = this.pageRow.end() - this.pageRow.start();
         return this;
     }
 
-    public BiPaginatedGui setPageSize(int pageSize) {
-        this.pageSize = pageSize;
+    public BiPaginatedGui pageRow(final BiPageRow pageRow) {
+        this.pageRow = pageRow;
+        this.pageSize = this.pageRow.end() - this.pageRow.start();
+        return this;
+    }
+
+    public BiPaginatedGui pageRow(int start, int end) {
+        this.pageRow = new BiPageRow(slotToRows(start), start, end);
+        this.pageSize = this.pageRow.end() - this.pageRow.start();
         return this;
     }
 
@@ -163,7 +172,7 @@ public class BiPaginatedGui extends BaseGui {
 
     public @NotNull BaseGui updateTitle(@NotNull Component title) {
         this.setUpdating(true);
-        List<HumanEntity> viewers = new ArrayList(this.getInventory().getViewers());
+        List<HumanEntity> viewers = new ArrayList<>(this.getInventory().getViewers());
         GuiContainer guiContainer = this.guiContainer();
         guiContainer.title(title);
         this.setInventory(guiContainer.createInventory(this));
@@ -250,7 +259,7 @@ public class BiPaginatedGui extends BaseGui {
                 .findFirst()
                 .orElse(null);
     }
-    
+
     public Integer getPrimarySlot(int target) {
         return this.currentPage.entrySet()
                 .stream()
@@ -285,16 +294,15 @@ public class BiPaginatedGui extends BaseGui {
     }
 
     private void populatePage() {
-        int slot = this.pageRow * 9;
-        int invSize = this.getInventory().getSize();
+        int slot = this.pageRow.start();
+        int invSize = this.pageRow.end();
         Iterator<PagePair> iterator = this.getPageNum(this.pageNum).iterator();
 
         while (iterator.hasNext() && slot < this.getInventory().getSize()) {
             if (slot >= invSize) break;
 
             if (getGuiItem(slot) != null || getInventory().getItem(slot) != null) {
-                slot++;
-                continue;
+                this.removeItem(slot);
             }
 
             PagePair pagePair = iterator.next();

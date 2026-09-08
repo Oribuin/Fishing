@@ -47,7 +47,8 @@ public abstract class Augment extends FishEventHandler implements PDCSerializabl
     public static final BiConsumer<Augment, ItemStack> STACK_FUNCTION = (augment, stack) ->
             stack.editPersistentDataContainer(container -> {
                 container.set(AUGMENT_TYPE.key(), AUGMENT_TYPE, augment.getName());
-                augment.writeContainer(container);});
+                augment.writeContainer(container);
+            });
 
     protected transient final Random random = ThreadLocalRandom.current();
     protected transient final String name;

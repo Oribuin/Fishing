@@ -1,4 +1,4 @@
-package dev.oribuin.fishing.gui.paired;
+package dev.oribuin.fishing.gui.type.bipaginated;
 
 import dev.triumphteam.gui.guis.GuiItem;
 
@@ -13,6 +13,7 @@ public class PagePair {
         this.primary = primary;
         this.secondary = secondary;
     }
+
     public PairDirection getDirection() {
         return direction;
     }

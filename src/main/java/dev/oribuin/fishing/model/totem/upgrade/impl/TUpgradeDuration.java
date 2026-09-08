@@ -1,6 +1,7 @@
 package dev.oribuin.fishing.model.totem.upgrade.impl;
 
 import dev.oribuin.fishing.model.totem.Totem;
+import dev.oribuin.fishing.model.totem.upgrade.DefaultUpgrade;
 import dev.oribuin.fishing.model.totem.upgrade.TotemUpgrade;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
@@ -16,7 +17,7 @@ import java.util.function.Supplier;
  */
 @ConfigSerializable
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
-public class TUpgradeDuration extends TotemUpgrade {
+public class TUpgradeDuration extends TotemUpgrade implements DefaultUpgrade {
 
     private String durationFormula = "150 + (<level> * 30)"; // The formula to calculate the duration of the totem (60 seconds + 30 seconds per level)
 

@@ -3,6 +3,7 @@ package dev.oribuin.fishing.gui;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.item.ConstructType;
 import dev.oribuin.fishing.config.item.ItemConstruct;
+import dev.oribuin.fishing.config.item.component.TooltipItemType;
 import dev.oribuin.fishing.manager.MenuManager;
 import dev.oribuin.fishing.scheduler.PluginScheduler;
 import dev.oribuin.fishing.scheduler.task.ScheduledTask;
@@ -23,7 +24,7 @@ import java.util.function.Supplier;
 public abstract class PluginMenu<T extends BaseGui, Z extends GuiConfig> {
 
     public static final ItemConstruct BORDER = ItemConstruct.of(Material.BLACK_STAINED_GLASS_PANE)
-            .setProperty(ConstructType.TOOLTIP, x -> x.setVisible(false));
+            .setProperty(ConstructType.TOOLTIP, TooltipItemType.HIDDEN);
 
     protected final FishingPlugin plugin;
     protected final Class<Z> configClass;
@@ -89,13 +90,13 @@ public abstract class PluginMenu<T extends BaseGui, Z extends GuiConfig> {
     /**
      * Convert a slot to the required rows
      *
-     * @param slot The slot 
+     * @param slot The slot
      *
-     * @return The rows 
+     * @return The rows
      */
-    public final int slotToRows(int slot) {
+    public static int slotToRows(int slot) {
         int size = 9;
-        
+
         while (slot > size) size += 9;
         return size / 9;
     }

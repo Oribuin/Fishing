@@ -11,6 +11,7 @@ import dev.oribuin.fishing.api.task.AsyncTicker;
 import dev.oribuin.fishing.config.impl.PluginMessages;
 import dev.oribuin.fishing.config.impl.TotemConfig;
 import dev.oribuin.fishing.model.cosmetic.skin.TotemSkin;
+import dev.oribuin.fishing.model.totem.upgrade.Toggleable;
 import dev.oribuin.fishing.model.totem.upgrade.TotemTickable;
 import dev.oribuin.fishing.model.totem.upgrade.TotemUpgrade;
 import dev.oribuin.fishing.model.totem.upgrade.TotemUpgradeRegistry;
@@ -55,7 +56,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static com.jeff_media.morepersistentdatatypes.DataType.TAG_CONTAINER;
 import static dev.oribuin.fishing.storage.util.KeyRegistry.*;
@@ -246,9 +246,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
             this.display.setHeadRotations(Rotations.ofDegrees(0, y, 0));
 
             this.upgrades.values().forEach(totemUpgrade -> {
-                // TODO: Add back Totem Toggles
-                //                 if (totemUpgrade instanceof Toggleable toggleable && !toggleable.isActivated()) return;
-
+                if (totemUpgrade instanceof Toggleable toggleable && !toggleable.isActivated()) return;
                 if (totemUpgrade instanceof TotemTickable tickable) tickable.tick(this);
             });
         }
@@ -487,6 +485,22 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
             this.writeContainer(result.getPersistentDataContainer());
         });
 
+        // If the totem is active then actiate the task
+        if (this.isActive() && NMSUtil.isFolia()) {
+            if (this.foliaTask != null) this.foliaTask = PluginScheduler.cancelNull(this.foliaTask);
+
+            this.foliaTask = PluginScheduler.get().runTaskTimerAtLocation(this.display.getLocation(), () -> {
+                if (!this.active || this.display == null) {
+                    this.foliaTask = PluginScheduler.cancelNull(this.foliaTask);
+                    return;
+                }
+
+                if (this.position.isChunkLoaded()) this.tickAsync();
+            }, this.getTickDelay().toMillis(), this.getTickDelay().toMillis(), TimeUnit.MILLISECONDS);
+
+            return;
+        }
+
         // Create spawning particles around the totem
         List<Location> bounds = this.getBounds();
         ScheduledTask repeating = PluginScheduler.get().runTaskTimerAsync(() -> {
@@ -629,16 +643,9 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
         super.handleEvent(event);
         this.upgrades.values().forEach(x -> {
             if (x.getLevel() <= 0) return;
-            //            if (x instanceof Toggleable toggleable && !toggleable.isActivated()) return; // TODO: Add back Totem Toggles
-
+            if (x instanceof Toggleable toggleable && !toggleable.isActivated()) return;
             x.handleEvent(event);
         });
-    }
-
-    public Map<TotemUpgrade, Integer> getUpgradeLevelMapping() {
-        return this.upgrades.values().stream().collect(
-                Collectors.toMap(x -> x, TotemUpgrade::getLevel)
-        );
     }
 
     /**
@@ -886,7 +893,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
 
     public ArmorStand getDisplay() {
         if (this.displayId == null) return null;
-        if (this.display != null && !this.display.isDead()) {
+        if (this.display != null && !this.display.isDead() && this.display.isValid()) {
             return this.display;
         }
 
@@ -916,316 +923,5 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
     public void setFoliaTask(ScheduledTask foliaTask) {
         this.foliaTask = foliaTask;
     }
-
-    //
-    //    private static final Duration PARTICLE_DELAY = Duration.ofSeconds(1);
-    //    private Location center; // The center of the totem
-    //    private Map<TotemUpgrade, Integer> upgrades; // The upgrades of the totem
-    //
-    //    private ArmorStand entity; // The entity that will be spawned.
-    //    private long lastTick; // The last time the totem was ticked
-    //    private List<Location> bounds; // The bounds of the totem
-    //    private int rotation; // The rotation of the totem
-    //
-    //    /**
-    //     * Create a new totem owner with all the required values
-    //     *
-    //     * @param owner  The owner of the totem
-    //     * @param center The block the totem lives
-    //     */
-    //    public Totem(@Nullable Location center, @Nullable Player owner) {
-    //        // load the basic properties
-    //        this.applyProperty(BOOLEAN, TOTEM_ACTIVE, false);
-    //        this.applyProperty(LONG, TOTEM_LAST_ACTIVE, 0L);
-    //        this.applyProperty(UUID, TOTEM_OWNER, owner == null ? null : owner.getUniqueId());
-    //        this.applyProperty(STRING, TOTEM_OWNER_NAME, owner == null ? "Unknown" : owner.getName());
-    //        this.applyProperty(STRING, TOTEM_PRIVACY, );
-    //
-    //        // Load the upgrades
-    //        this.upgrades = UpgradeRegistry.from(this);
-    //
-    //        // Load the center location
-    //        if (center != null) {
-    //            this.center = center.toBlockLocation().add(0.5, -0.3, 0.5);
-    //            this.bounds = this.getBounds();
-    //        }
-    //    }
-    //
-    //    /**
-    //     * The method that should run everytime the task is ticked,
-    //     * this method will be ran asynchronously
-    //     */
-    //    @Override
-    //    public void tickAsync() {
-    //        if (!this.center.isChunkLoaded()) return;
-    //        if (this.entity == null) return;
-    //
-    //        boolean active = this.getProperty(TOTEM_ACTIVE, false);
-    //
-    //        // Spawn particles around the totem 
-    //        // TODO: Move this to an animation API
-    //        if (System.currentTimeMillis() - this.lastTick > PARTICLE_DELAY.toMillis()) {
-    //
-    //            Color color = Color.RED;
-    //            if (active) color = Color.LIME;
-    //            if (!active && this.onCooldown()) color = Color.YELLOW;
-    //
-    //            new ParticleBuilder(Particle.DUST)
-    //                    .location(this.entity.getEyeLocation().toCenterLocation())
-    //                    .offset(0.5, 0.5, 0.5)
-    //                    .count(10)
-    //                    .extra(0)
-    //                    .color(color)
-    //                    .spawn();
-    //
-    //            // Spawn additional particles around the totem bounds while active
-    //            if (active) {
-    //                ParticleBuilder dust = this.getDust(Color.LIME);
-    //                this.bounds = this.getBounds(); // regularly update the bounds of the totem
-    //                this.bounds.forEach(x -> dust.clone().location(x.clone().add(0, 1.5, 0)).spawn());
-    //            }
-    //
-    //            this.lastTick = System.currentTimeMillis();
-    //        }
-    //
-    //        // Make the totem rotate it's head
-    //        if (active && this.entity != null) {
-    //            if (this.rotation >= 360) this.rotation = -1;
-    //            this.rotation += 2;
-    //
-    //            this.entity.setHeadRotations(Rotations.ofDegrees(0, this.rotation, 0));
-    //        }
-    //
-    //        // Check if the totem should be disabled
-    //        // TODO: Move this to a disabled state
-    //        long duration = UpgradeRegistry.DURATION_UPGRADE.calculateDuration(this).toMillis();
-    //        long lastActive = this.getProperty(TOTEM_LAST_ACTIVE, 0L);
-    //        if (active && System.currentTimeMillis() - lastActive > duration) {
-    //            this.setProperty(TOTEM_ACTIVE, false);
-    //            this.setProperty(TOTEM_LAST_ACTIVE, System.currentTimeMillis());
-    //
-    //            this.rotation = 0;
-    //            this.entity.setHeadRotations(Rotations.ZERO);
-    //            this.update(); // Update the totem
-    //
-    //            // Call the totem activate event on upgrades
-    //            FishEventHandler.callEvents(this.upgrades, new TotemDeactivateEvent(this));
-    //        }
-    //    }
-    //
-    //
-    //    /**
-    //     * Create a new totem from an entity
-    //     *
-    //     * @param stand The armor stand to get the values from
-    //     *
-    //     * @return The totem object
-    //     */
-    //    @Nullable
-    //    public static Totem fromEntity(@NotNull ArmorStand stand) {
-    //        PersistentDataContainer container = stand.getPersistentDataContainer();
-    //        if (!container.has(TOTEM_ACTIVE)) return null;
-    //
-    //        Totem totem = new Totem(stand.getLocation().toCenterLocation(), null);
-    //        totem.loadProperties(container);
-    //        totem.setEntity(stand);
-    //        return totem;
-    //    }
-    //
-    //    /**
-    //     * Get all the placeholders for the totem
-    //     *
-    //     * @return The placeholders for the totem
-    //     */
-    //    public Placeholders placeholders() {
-    //        Placeholders.Builder builder = Placeholders.builder();
-    //        builder.add("owner", this.getProperty(TOTEM_OWNER_NAME, "Unknown"));
-    //        builder.add("active", this.getProperty(TOTEM_ACTIVE, false) ? "Active" : "Inactive");
-    //
-    //        // Add the upgrade placeholders
-    //        this.upgrades.forEach((upgrade, level) -> {
-    //            builder.add("upgrade_" + upgrade.getName(), level);
-    //
-    //            // Add all the placeholders for the upgrade
-    //            upgrade.getPlaceholders(this)
-    //                    .getPlaceholders()
-    //                    .forEach((key, value) ->
-    //                            builder.add(String.format("upgrade_%s_%s", upgrade.getName(), key), value)
-    //                    );
-    //        });
-    //
-    //        return builder.build();
-    //    }
-    //
-    //    /**
-    //     * Create a new particle builder with the dust particle
-    //     *
-    //     * @param color The color of the dust
-    //     *
-    //     * @return The particle builder
-    //     */
-    //    private ParticleBuilder getDust(Color color) {
-    //        return new ParticleBuilder(Particle.DUST)
-    //                .count(1)
-    //                .extra(0)
-    //                .offset(0, 0, 0.)
-    //                .color(color)
-    //                .clone();
-    //    }
-    //
-    //    /**
-    //     * Check if the totem is currently on cooldown
-    //     *
-    //     * @return If the totem is on cooldown
-    //     *
-    //     * @see UpgradeRegistry#COOLDOWN_UPGRADE Calculate the cooldown from the upgrade
-    //     * @see #getCurrentCooldown() Get the current cooldown of the totem
-    //     */
-    //    public boolean onCooldown() {
-    //        long lastActive = this.getProperty(TOTEM_LAST_ACTIVE, 0L);
-    //        if (lastActive <= 0) return false;
-    //
-    //        Duration cooldown = UpgradeRegistry.COOLDOWN_UPGRADE.calculateCooldown(this); // Get the cooldown from the upgrade
-    //        return System.currentTimeMillis() - lastActive < cooldown.toMillis();
-    //    }
-    //
-    //    /**
-    //     * Get the current cooldown timer of the totem in milliseconds
-    //     * <p>
-    //     *
-    //     * @return The cooldown of the totem
-    //     *
-    //     * @see UpgradeRegistry#COOLDOWN_UPGRADE Calculate the cooldown from the upgrade
-    //     * @see #onCooldown() Check if the totem is on cooldown
-    //     */
-    //    public long getCurrentCooldown() {
-    //        long lastActive = this.getProperty(TOTEM_LAST_ACTIVE, 0L);
-    //        if (lastActive <= 0) return 0;
-    //
-    //        Duration cooldown = UpgradeRegistry.COOLDOWN_UPGRADE.calculateCooldown(this); // Get the cooldown from the upgrade
-    //        return cooldown.toMillis() - (System.currentTimeMillis() - lastActive);
-    //    }
-    //
-    //    /**
-    //     * Get the current duration of the totem in milliseconds
-    //     *
-    //     * @return The duration of the totem
-    //     *
-    //     * @see UpgradeRegistry#DURATION_UPGRADE Calculate the duration from the upgrade
-    //     * @see #getCurrentDuration() Get the duration of the totem
-    //     * @see #onCooldown() Check if the totem is on cooldown
-    //     */
-    //    public long getCurrentDuration() {
-    //        if (!this.getProperty(TOTEM_ACTIVE, false)) return 0;
-    //
-    //        long lastActive = this.getProperty(TOTEM_LAST_ACTIVE, 0L);
-    //        if (lastActive <= 0) return 0;
-    //
-    //        Duration duration = UpgradeRegistry.DURATION_UPGRADE.calculateDuration(this); // Get the duration from the upgrade
-    //        return duration.toMillis() - (System.currentTimeMillis() - lastActive);
-    //    }
-    //
-    //    /**
-    //     * Test if the location is within the radius of the totem
-    //     *
-    //     * @param location The location to test
-    //     *
-    //     * @return If the location is within the radius of the totem
-    //     */
-    //    public boolean isWithinRadius(Location location) {
-    //        // Radius will be in a circle around the center
-    //        if (location.getWorld() != this.center.getWorld()) return false;
-    //
-    //        return location.distance(this.center) <= UpgradeRegistry.RADIUS_UPGRADE.calculateRadius(this);
-    //    }
-    //
-    //    /**
-    //     * Get the outer bounds of the totem in a circle
-    //     *
-    //     * @return The outer bounds of the totem
-    //     */
-    //    public List<Location> getBounds() {
-    //        if (this.center == null) return new ArrayList<>();
-    //
-    //        int radius = UpgradeRegistry.RADIUS_UPGRADE.calculateRadius(this);
-    //
-    //        List<Location> results = new ArrayList<>();
-    //        int numSteps = 120;
-    //        for (int i = 0; i < numSteps; i++) {
-    //            double dx = MathL.cos(Math.PI * 2 * ((double) i / numSteps)) * radius;
-    //            double dz = MathL.sin(Math.PI * 2 * ((double) i / numSteps)) * radius;
-    //
-    //            results.add(this.center.clone().add(dx, 0, dz));
-    //        }
-    //
-    //        return results;
-    //    }
-    //
-    //    public Location getCenter() {
-    //        return center;
-    //    }
-    //
-    //    public void setCenter(Location center) {
-    //        this.center = center;
-    //        this.bounds = this.getBounds();
-    //    }
-    //
-    //    public ArmorStand getEntity() {
-    //        return this.entity;
-    //    }
-    //
-    //    public void setEntity(ArmorStand entity) {
-    //        this.entity = entity;
-    //        if (entity != null) {
-    //            this.setCenter(entity.getLocation());
-    //        }
-    //    }
-    //
-    //    /**
-    //     * Get the upgrades of the totem
-    //     *
-    //     * @return The upgrades of the totem
-    //     */
-    //    public Map<TotemUpgrade, Integer> getUpgrades() {
-    //        return upgrades;
-    //    }
-    //
-    //    /**
-    //     * Set the upgrades of the totem
-    //     *
-    //     * @param upgrades The upgrades of the totem
-    //     */
-    //    public void setUpgrades(Map<TotemUpgrade, Integer> upgrades) {
-    //        this.upgrades = upgrades;
-    //    }
-    //
-    //    /**
-    //     * The delay between each tick, Set to Duration#ZERO for no delay
-    //     *
-    //     * @return The delay between each tick
-    //     */
-    //    public Duration getDelay() {
-    //        return Duration.ofMillis(500);
-    //    }
-    //
-    //    /**
-    //     * Create a list of animations to be used in the module
-    //     *
-    //     * @return A list of animations
-    //     */
-    //    @Override
-    //    public @NotNull List<Supplier<Animation>> createAnimations() {
-    //        return new ArrayList<>();
-    //    }
-    //
-    //    /**
-    //     * Get the source location of the animation to be used
-    //     *
-    //     * @return The source location
-    //     */
-    //    @Override
-    //    public @NotNull Supplier<Location> getSource() {
-    //        return this::getCenter;
-    //    }
 
 }

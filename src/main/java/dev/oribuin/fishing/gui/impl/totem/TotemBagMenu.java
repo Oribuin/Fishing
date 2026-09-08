@@ -13,7 +13,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.checkerframework.common.returnsreceiver.qual.This;import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.List;
 import java.util.Map;
@@ -41,7 +41,7 @@ public class TotemBagMenu extends PluginMenu<Gui, TotemBagMenu.Config> {
 
     public void placeBagContent(Placeholders placeholders) {
         this.gui.clearItems();
-        
+
         int capacity = (this.gui.getRows() * 9) - 1;
         List<Integer> menuSlots = FishUtils.parseList("0-" + capacity);
         this.gui.setItem(menuSlots, new GuiItem(BORDER.create()));
@@ -72,7 +72,7 @@ public class TotemBagMenu extends PluginMenu<Gui, TotemBagMenu.Config> {
                 this.placeBagContent(placeholders);
             }));
         }
-        
+
         this.gui.update();
     }
 
@@ -85,7 +85,7 @@ public class TotemBagMenu extends PluginMenu<Gui, TotemBagMenu.Config> {
     public Supplier<Gui> createMenu() {
         return () -> Gui.gui()
                 .title(Component.text(this.config.getTitle()))
-                .rows(this.slotToRows(this.totemSupplier.get().getBagCapacity()))
+                .rows(slotToRows(this.totemSupplier.get().getBagCapacity()))
                 .disableAllInteractions()
                 .create();
     }

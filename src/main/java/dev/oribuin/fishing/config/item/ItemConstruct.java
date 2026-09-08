@@ -229,7 +229,7 @@ public class ItemConstruct implements Cloneable {
     public MenuItem asMenuItem(Integer... slots) {
         return new MenuItem(this, slots);
     }
-    
+
     public MenuItem asMenuItem(List<Integer> slots) {
         return new MenuItem(this, slots);
     }
@@ -307,6 +307,12 @@ public class ItemConstruct implements Cloneable {
     public ItemConstruct setLore(List<String> preLore, String... additional) {
         this.lore = new ArrayList<>(preLore);
         this.lore.addAll(List.of(additional));
+        return this;
+    }
+
+    public ItemConstruct setLore(List<String> preLore, List<String> additional) {
+        this.lore = new ArrayList<>(preLore);
+        this.lore.addAll(additional);
         return this;
     }
 

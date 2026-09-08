@@ -276,7 +276,7 @@ public class AugmentApplyMenu extends PluginMenu<Gui, AugmentApplyMenu.Config> i
                 .asMenuItem(22);
 
         //        private MenuItem displayArrow = ItemConstruct.of(Material.PLAYER_HEAD)
-        //                .setProperty(ConstructType.TEXTURE, x -> x.setValue("base64-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjUyN2ViYWU5ZjE1MzE1NGE3ZWQ0OWM4OGMwMmI1YTlhOWNhN2NiMTYxOGQ5OTE0YTNkOWRmOGNjYjNjODQifX19"))
+        //                .setProperty(ConstructType.TEXTURE, x -> x.setValue("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjUyN2ViYWU5ZjE1MzE1NGE3ZWQ0OWM4OGMwMmI1YTlhOWNhN2NiMTYxOGQ5OTE0YTNkOWRmOGNjYjNjODQifX19"))
         //                .setProperty(TOOLTIP, x -> x.setVisible(false))
         //                .asMenuItem(13);
 

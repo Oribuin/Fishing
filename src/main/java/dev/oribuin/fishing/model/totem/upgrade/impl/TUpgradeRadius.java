@@ -1,6 +1,7 @@
 package dev.oribuin.fishing.model.totem.upgrade.impl;
 
 import dev.oribuin.fishing.model.totem.Totem;
+import dev.oribuin.fishing.model.totem.upgrade.DefaultUpgrade;
 import dev.oribuin.fishing.model.totem.upgrade.TotemUpgrade;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
@@ -15,7 +16,7 @@ import java.util.function.Supplier;
  */
 @ConfigSerializable
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
-public class TUpgradeRadius extends TotemUpgrade {
+public class TUpgradeRadius extends TotemUpgrade implements DefaultUpgrade {
 
     private int baseRadius = 5;
     private String radiusFormula = "<base_radius> + (<level> * 5)"; // The formula to calculate the radius of the totem (5 blocks per level)

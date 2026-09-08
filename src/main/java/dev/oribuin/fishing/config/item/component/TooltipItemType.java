@@ -16,15 +16,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static io.papermc.paper.datacomponent.DataComponentTypes.TOOLTIP_DISPLAY;
 import static io.papermc.paper.datacomponent.DataComponentTypes.TOOLTIP_STYLE;
 
 @ConfigSerializable
-@SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal", "UnstableApiUsage" })
+@SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
 public class TooltipItemType extends ConstructComponent<TooltipDisplay> {
 
+    public static final Consumer<TooltipItemType> HIDDEN = x -> x.setVisible(false);
     private static final Registry<DataComponentType> REGISTRY = ItemConstruct.getRegistry().getRegistry(RegistryKey.DATA_COMPONENT_TYPE);
 
     private boolean visible;

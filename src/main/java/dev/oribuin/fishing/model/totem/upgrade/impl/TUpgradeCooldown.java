@@ -1,6 +1,7 @@
 package dev.oribuin.fishing.model.totem.upgrade.impl;
 
 import dev.oribuin.fishing.model.totem.Totem;
+import dev.oribuin.fishing.model.totem.upgrade.DefaultUpgrade;
 import dev.oribuin.fishing.model.totem.upgrade.TotemUpgrade;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
@@ -16,7 +17,7 @@ import java.util.function.Supplier;
  */
 @ConfigSerializable
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
-public class TUpgradeCooldown extends TotemUpgrade {
+public class TUpgradeCooldown extends TotemUpgrade implements DefaultUpgrade {
 
     private String cooldownFormula = "(3600+120) - (<level> * 120)"; // The formula to calculate the cooldown of the totem (1 hour - 2 minute per level)
 

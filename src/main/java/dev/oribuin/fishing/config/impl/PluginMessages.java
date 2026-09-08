@@ -88,6 +88,12 @@ public class PluginMessages {
         @Comment("Player has levelled up an upgrade on the totem")
         private TextMessage upgradeLevelUp = new TextMessage(PREFIX + "You have increased the level of <#93bc80><upgrade> <white>to <#93bc80><level><white>/<#93bc80><max>");
 
+        @Comment("Upgrade has been toggled on")
+        private TextMessage upgradeToggleOn = new TextMessage(PREFIX + "You have toggled the upgrade <#93bc80><upgrade> <white>On");
+
+        @Comment("Upgrade has been toggled off")
+        private TextMessage upgradeToggleOff = new TextMessage(PREFIX + "You have toggled the upgrade <#93bc80><upgrade> <white>Off");
+
         @Comment("Player cannot access the totems menu")
         private TextMessage cannotAccess = new TextMessage(PREFIX + "You cannot interact with this totem as it belongs to someone else.");
 
@@ -126,6 +132,14 @@ public class PluginMessages {
 
         public TextMessage getUpgradeLevelUp() {
             return upgradeLevelUp;
+        }
+
+        public TextMessage getUpgradeToggleOn() {
+            return upgradeToggleOn;
+        }
+
+        public TextMessage getUpgradeToggleOff() {
+            return upgradeToggleOff;
         }
 
         public TextMessage getCannotAccess() {

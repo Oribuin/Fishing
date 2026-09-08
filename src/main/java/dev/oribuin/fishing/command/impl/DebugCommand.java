@@ -6,9 +6,9 @@ import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.command.FishCommand;
 import dev.oribuin.fishing.config.item.ConstructType;
 import dev.oribuin.fishing.config.item.ItemConstruct;
-import dev.oribuin.fishing.gui.BiPaginatedGui;
-import dev.oribuin.fishing.gui.paired.PagePair;
-import dev.oribuin.fishing.gui.paired.PairDirection;
+import dev.oribuin.fishing.gui.type.bipaginated.BiPaginatedGui;
+import dev.oribuin.fishing.gui.type.bipaginated.PagePair;
+import dev.oribuin.fishing.gui.type.bipaginated.PairDirection;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.scheduler.PluginScheduler;
 import dev.oribuin.fishing.storage.util.KeyRegistry;
@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
+
+import static dev.oribuin.fishing.config.item.component.TooltipItemType.HIDDEN;
 
 public class DebugCommand implements FishCommand {
 
@@ -67,7 +69,7 @@ public class DebugCommand implements FishCommand {
                     .create();
 
             GuiItem border = new GuiItem(ItemConstruct.of(Material.BLACK_STAINED_GLASS_PANE)
-                    .setProperty(ConstructType.TOOLTIP, x -> x.setVisible(false))
+                    .setProperty(ConstructType.TOOLTIP, HIDDEN)
                     .create());
 
             gui.setItem(FishUtils.parseList("0-8", "27-35"), border);
@@ -91,17 +93,17 @@ public class DebugCommand implements FishCommand {
                     .setName("<red>Invert Toggles")
                     .setLore("<gray>Resets the player's current toggles")
                     .create(), event -> {
-                
+
                 Map<Material, Boolean> toggles = this.toggledMaterials.row(event.getWhoClicked().getUniqueId());
                 AVAILABLE.forEach(material -> {
                     boolean current = toggles.getOrDefault(material, false);
                     toggles.put(material, !current);
                 });
-                
+
                 event.getWhoClicked().sendMessage(FishUtils.kyorify("<red>Inverted Toggle Status"));
                 gui.close(event.getWhoClicked());
             }));
-            
+
             gui.setItem(8, new GuiItem(ItemConstruct.of(Material.ARROW)
                     .setName("<#93bc80>Next Page")
                     .setLore("<gray>Click to change the page")

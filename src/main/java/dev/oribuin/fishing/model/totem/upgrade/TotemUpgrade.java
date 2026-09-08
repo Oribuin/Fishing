@@ -7,9 +7,9 @@ import dev.oribuin.fishing.config.item.ConstructType;
 import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.storage.persistent.PDCSerializable;
-import dev.oribuin.fishing.util.FishUtils;import dev.oribuin.fishing.util.Placeholders;
+import dev.oribuin.fishing.util.FishUtils;
+import dev.oribuin.fishing.util.Placeholders;
 import io.papermc.paper.persistence.PersistentDataContainerView;
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -34,7 +34,7 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
     protected transient boolean enabled; // If the upgrade is enabled
     protected String name; // The name of the upgrade
     protected List<String> description; // The description of the upgrade
-    protected ItemConstruct icon; // The icon of the upgrade
+    protected ItemConstruct upgradeIcon; // The icon of the upgrade
     protected int defaultLevel; // The default level of the upgrade
     protected int maxLevel; // The maximum level of the upgrade
     protected String permission; // The permission required to purchase the upgrade
@@ -42,22 +42,21 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
     public TotemUpgrade() {
         this.enabled = true;
         this.name = FishUtils.capitalizeFully(this.getIdentifier().get().replace("_", " "));
-        this.description = List.of("Allows the totem to do something new");
+        this.description = List.of("<gray>Allows the totem to do something new");
         this.defaultLevel = 0;
         this.level = this.defaultLevel;
         this.maxLevel = 1;
         this.permission = "fishing.upgrade." + this.name.toLowerCase();
-        this.icon = ItemConstruct.of(Material.HEART_OF_THE_SEA) // Upgrades will choose their own item, idgaf
+        this.upgradeIcon = ItemConstruct.of(Material.HEART_OF_THE_SEA) // Upgrades will choose their own item, idgaf
                 .setName("<#94bc80><bold><name></bold> <gray>- <white>(<level><gray>/<white><max_level>)")
                 .setLore(
-                        "<gray>" + this.description,
                         "",
-                        "<#94bc80>Information",
-                        " <#94bc80>- <white>Current: <#94bc80><level>",
-                        " <#94bc80>- <white>Max Level: <#94bc80><max_level>",
+                        "<#93bc80>Current Stats:",
+                        " <#93bc80>➡ <white>Level: <#93bc80><level>",
+                        " <#93bc80>➡ <white>Level Up Cost: <#93bc80><cost>",
+                        " <#93bc80>➡ <white>Max Level : <#93bc80><max_level>",
                         "",
-                        " <#94bc80>➡ <white>Upgrade Cost: <#94bc80><cost>",
-                        ""
+                        "<#93bc80>⏩ <white>Left Click to Upgrade"
                 )
                 .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled);
     }
@@ -140,12 +139,12 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
         // Add the totem upgrade status if the type is toggleable
         if (this instanceof Toggleable toggleable) {
             toggleable.setActivated(container.getOrDefault(
-                    TOTEM_UPGRADE_ACTIVATED.key(), 
-                    TOTEM_UPGRADE_ACTIVATED, 
+                    TOTEM_UPGRADE_ACTIVATED.key(),
+                    TOTEM_UPGRADE_ACTIVATED,
                     false
             ));
         }
-        
+
     }
 
     /**
@@ -196,11 +195,11 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
     }
 
     public ItemConstruct getIcon() {
-        return icon;
+        return upgradeIcon;
     }
 
     public void setIcon(ItemConstruct icon) {
-        this.icon = icon;
+        this.upgradeIcon = icon;
     }
 
     public int getDefaultLevel() {

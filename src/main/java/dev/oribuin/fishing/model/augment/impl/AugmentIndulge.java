@@ -15,10 +15,10 @@ import org.spongepowered.configurate.objectmapping.meta.Comment;
 public class AugmentIndulge extends Augment {
 
     @Comment("The required formula for the augment to trigger")
-    private String formula = "<level> * 0.15"; // 15% per level
+    private final String formula = "<level> * 0.15"; // 15% per level
 
     @Comment("The amount of saturation that is given per fish caught")
-    private float saturation = 5.0f;
+    private final float saturation = 5.0f;
 
     //    @Comment("The message sent when a player is fed by indulge")
     //    private TextMessage saturated = new TextMessage("<#94bc80><bold>Fish</bold> <gray>| <white>You have slightly indulged in the fish you caught");

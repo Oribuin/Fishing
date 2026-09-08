@@ -311,7 +311,7 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
                         "",
                         "<#93bc80>Click to upgrade the augment"
                 )
-                .setProperty(ConstructType.TEXTURE, x -> x.setValue("base64-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTkyZTMxZmZiNTljOTBhYjA4ZmM5ZGMxZmUyNjgwMjAzNWEzYTQ3YzQyZmVlNjM0MjNiY2RiNDI2MmVjYjliNiJ9fX0="))
+                .setProperty(ConstructType.TEXTURE, x -> x.setValue("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTkyZTMxZmZiNTljOTBhYjA4ZmM5ZGMxZmUyNjgwMjAzNWEzYTQ3YzQyZmVlNjM0MjNiY2RiNDI2MmVjYjliNiJ9fX0="))
                 .asMenuItem(31);
 
         private MenuItem missingPieces = ItemConstruct.of(Material.RED_CONCRETE) // TODO: Change

@@ -194,7 +194,7 @@ public class TextMessage {
         if (message == null) return Component.empty();
         if (Placeholders == null) Placeholders = dev.oribuin.fishing.util.Placeholders.empty();
 
-        boolean usePapi = this.placeholderapi != null ? this.placeholderapi : false;
+        boolean usePapi = this.placeholderapi != null && this.placeholderapi;
 
         return usePapi
                 ? Placeholders.apply(PAPIProvider.apply(target, message))

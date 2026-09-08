@@ -1,11 +1,11 @@
-package dev.oribuin.fishing.gui.paired;
+package dev.oribuin.fishing.gui.type.bipaginated;
 
 import java.util.function.Function;
 
 /**
  * Establish the directional gap between two paged items
  *
- * @see dev.oribuin.fishing.gui.BiPaginatedGui For where this is applicable
+ * @see BiPaginatedGui For where this is applicable
  * @see PagePair For creating a pair of page items
  */
 public enum PairDirection {

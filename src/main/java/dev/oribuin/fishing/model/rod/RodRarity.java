@@ -5,8 +5,8 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 @ConfigSerializable
 public class RodRarity {
 
-    private int capacity;
-    private String requiredRarity;
+    private final int capacity;
+    private final String requiredRarity;
     // TODO: Recipe 
 
     public RodRarity() {

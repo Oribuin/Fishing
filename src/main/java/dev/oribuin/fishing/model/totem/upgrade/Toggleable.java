@@ -15,5 +15,5 @@ public interface Toggleable {
      * @param activated Whether the totem upgrade is activated
      */
     void setActivated(boolean activated);
-    
+
 }

@@ -6,6 +6,7 @@ import dev.oribuin.fishing.model.totem.upgrade.Toggleable;
 import dev.oribuin.fishing.model.totem.upgrade.TotemTickable;
 import dev.oribuin.fishing.model.totem.upgrade.TotemUpgrade;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Item;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +20,7 @@ import java.util.function.Supplier;
 public class TUpgradeGravityWell extends TotemUpgrade implements Toggleable, TotemTickable {
 
     private transient boolean activated;
-    private boolean onlyCustomFish;
+    private final boolean onlyCustomFish;
 
     /**
      * Create a new totem upgrade with the name "radius"
@@ -29,6 +30,8 @@ public class TUpgradeGravityWell extends TotemUpgrade implements Toggleable, Tot
         this.activated = false;
         this.onlyCustomFish = true;
         this.description = List.of("<gray>Pulls entities into the upgrade");
+        this.upgradeIcon.setMaterial(Material.ENDER_PEARL);
+        this.upgradeIcon.setLore(this.description, this.upgradeIcon.getLore());
     }
 
     /**
@@ -46,7 +49,7 @@ public class TUpgradeGravityWell extends TotemUpgrade implements Toggleable, Tot
 
             return FishingPlugin.get().getTierManager().isFish(item.getItemStack());
         });
-        
+
         for (Item next : nearbyItems) {
             if (!next.isValid() || next.isDead() || next.getOwner() != null) continue; // entity doesnt exist / shouldn't be picked up
 
