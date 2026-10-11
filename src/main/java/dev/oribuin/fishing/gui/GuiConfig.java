@@ -21,7 +21,7 @@ public abstract class GuiConfig {
 
     protected int rows = 5;
     protected List<MenuItem> dummyItems = new ArrayList<>();
-   
+
     public ItemConstruct border(Material material) {
         return ItemConstruct.of(material).setProperty(ConstructType.TOOLTIP, HIDDEN);
     }

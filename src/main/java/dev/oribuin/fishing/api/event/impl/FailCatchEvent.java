@@ -53,7 +53,7 @@ public class FailCatchEvent extends PlayerEvent implements Cancellable {
     public FishEventWrapper getWrapper() {
         return wrapper;
     }
-    
+
     /**
      * Get the handlers for this event class
      *

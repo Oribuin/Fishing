@@ -120,7 +120,7 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
     public FishEventWrapper getWrapper() {
         return wrapper;
     }
-    
+
 
     /**
      * The base chance of the fish, this was the original rarity chance of the fish

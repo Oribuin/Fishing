@@ -250,8 +250,8 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
     }
 
     /**
-     * Tick the totem sync, This will only apply on paper servers 
-     * <p> 
+     * Tick the totem sync, This will only apply on paper servers
+     * <p>
      * This is to be used on tasks that need to be run synchronously
      */
     public void tickSync() {
@@ -259,11 +259,11 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
         this.upgrades.values().forEach(totemUpgrade -> {
             if (totemUpgrade instanceof Toggleable toggleable && !toggleable.isActivated()) return;
             if (!(totemUpgrade instanceof TotemTickable tickable)) return;
-            if (!tickable.isAsync()) tickable.tick(this); 
+            if (!tickable.isAsync()) tickable.tick(this);
         });
-        
+
     }
-    
+
 
     /**
      * Activate the totem for the player to use
@@ -316,66 +316,66 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
         new TotemActivateEvent(this, player).callEvent();
     }
 
-//    /**
-//     * Deposit an itemstack into the totem
-//     *
-//     * @param stack The stack to deposit
-//     */
-//    @Deprecated
-//    public void depositBag(@NotNull ItemStack stack) {
-//        if (this.display == null || this.display.isDead()) return;
-//
-//        int left = stack.getAmount();
-//        for (int i = 0; i < this.bagCapacity; i++) {
-//            if (left <= 0) break;
-//
-//            // Slot is empty, put the itemstack
-//            ItemStack current = this.bag.get(i);
-//            if (current == null || current.getType().isAir()) {
-//                this.bag.put(i, stack);
-//                stack.setAmount(0);
-//                break;
-//            }
-//
-//            // Check additional slots
-//            if (current.getAmount() == current.getMaxStackSize()) continue; // Is the current item already at max capacity
-//            if (current.getType() != stack.getType()) continue; // Are the items the same type
-//            if (!current.isSimilar(stack)) continue; // Do the items match
-//
-//            int combined = stack.getAmount() + current.getAmount();
-//            if (combined > stack.getMaxStackSize()) {
-//                current.setAmount(stack.getMaxStackSize());
-//                left = combined - stack.getMaxStackSize();
-//            } else {
-//                current.setAmount(combined);
-//                left -= current.getAmount();
-//            }
-//
-//            this.bag.put(i, current);
-//        }
-//
-//        stack.setAmount(left);
-//        this.writeContainer(this.getDisplay().getPersistentDataContainer());
-//    }
+    //    /**
+    //     * Deposit an itemstack into the totem
+    //     *
+    //     * @param stack The stack to deposit
+    //     */
+    //    @Deprecated
+    //    public void depositBag(@NotNull ItemStack stack) {
+    //        if (this.display == null || this.display.isDead()) return;
+    //
+    //        int left = stack.getAmount();
+    //        for (int i = 0; i < this.bagCapacity; i++) {
+    //            if (left <= 0) break;
+    //
+    //            // Slot is empty, put the itemstack
+    //            ItemStack current = this.bag.get(i);
+    //            if (current == null || current.getType().isAir()) {
+    //                this.bag.put(i, stack);
+    //                stack.setAmount(0);
+    //                break;
+    //            }
+    //
+    //            // Check additional slots
+    //            if (current.getAmount() == current.getMaxStackSize()) continue; // Is the current item already at max capacity
+    //            if (current.getType() != stack.getType()) continue; // Are the items the same type
+    //            if (!current.isSimilar(stack)) continue; // Do the items match
+    //
+    //            int combined = stack.getAmount() + current.getAmount();
+    //            if (combined > stack.getMaxStackSize()) {
+    //                current.setAmount(stack.getMaxStackSize());
+    //                left = combined - stack.getMaxStackSize();
+    //            } else {
+    //                current.setAmount(combined);
+    //                left -= current.getAmount();
+    //            }
+    //
+    //            this.bag.put(i, current);
+    //        }
+    //
+    //        stack.setAmount(left);
+    //        this.writeContainer(this.getDisplay().getPersistentDataContainer());
+    //    }
 
-//    /**
-//     * Withdraw an itemstack from the totem's bag
-//     *
-//     * @param slot The stack to withdraw
-//     *
-//     * @return The resulting itemstack
-//     */
-//    @Deprecated
-//    @Nullable
-//    private ItemStack withdrawBag(int slot) {
-//        if (this.display == null || this.display.isDead()) return null;
-//
-//        ItemStack current = this.bag.get(slot);
-//        if (current == null || current.getType().isAir()) return null; // Are the items the same type
-//        ItemStack result = this.bag.remove(slot);
-//        this.writeContainer(this.getDisplay().getPersistentDataContainer());
-//        return result;
-//    }
+    //    /**
+    //     * Withdraw an itemstack from the totem's bag
+    //     *
+    //     * @param slot The stack to withdraw
+    //     *
+    //     * @return The resulting itemstack
+    //     */
+    //    @Deprecated
+    //    @Nullable
+    //    private ItemStack withdrawBag(int slot) {
+    //        if (this.display == null || this.display.isDead()) return null;
+    //
+    //        ItemStack current = this.bag.get(slot);
+    //        if (current == null || current.getType().isAir()) return null; // Are the items the same type
+    //        ItemStack result = this.bag.remove(slot);
+    //        this.writeContainer(this.getDisplay().getPersistentDataContainer());
+    //        return result;
+    //    }
 
     /**
      * The functionality provided when a player is first starting to catch a fish, Use this to determine how many fish should be generated.
@@ -544,7 +544,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
         }
 
         itemStack.editMeta(itemMeta -> this.writeContainer(itemMeta.getPersistentDataContainer()));
-     }
+    }
 
     /**
      * Create a new particle builder with the dust particle
@@ -870,7 +870,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
-    
+
     public int getBagCapacity() {
         return bagCapacity;
     }

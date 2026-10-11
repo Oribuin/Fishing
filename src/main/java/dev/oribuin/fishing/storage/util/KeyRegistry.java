@@ -124,7 +124,7 @@ public class KeyRegistry {
      * @return The resulting namespace
      *
      * @see dev.oribuin.fishing.manager.RodManager#incrementStatistic(ItemStack, PersistentDataKey, double) )
-     * @see dev.oribuin.fishing.manager.RodManager#getStatistic(ItemStack, FishDataType) 
+     * @see dev.oribuin.fishing.manager.RodManager#getStatistic(ItemStack, FishDataType)
      */
     public static PersistentDataKey<Double> registerStat(String name) {
         PersistentDataKey<Double> result = register("statistic_" + name, PersistentDataType.DOUBLE);

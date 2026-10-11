@@ -11,7 +11,6 @@ import dev.oribuin.fishing.gui.type.bipaginated.PagePair;
 import dev.oribuin.fishing.gui.type.bipaginated.PairDirection;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.scheduler.PluginScheduler;
-import dev.oribuin.fishing.storage.util.KeyRegistry;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.GuiItem;
@@ -32,7 +31,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static dev.oribuin.fishing.config.item.component.TooltipItemType.HIDDEN;
-import static dev.oribuin.fishing.storage.util.KeyRegistry.*;
+import static dev.oribuin.fishing.storage.util.KeyRegistry.TOTEM_ACTIVE;
 
 public class DebugCommand implements FishCommand {
 

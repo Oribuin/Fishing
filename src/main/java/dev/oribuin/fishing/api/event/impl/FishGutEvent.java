@@ -1,6 +1,5 @@
 package dev.oribuin.fishing.api.event.impl;
 
-import dev.oribuin.fishing.api.event.FishEventWrapper;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.fish.ProcessedFish;
 import org.bukkit.entity.Player;

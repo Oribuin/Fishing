@@ -14,6 +14,7 @@ import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.storage.Fisher;
+import dev.oribuin.fishing.storage.util.KeyRegistry;
 import org.bukkit.Location;
 import org.bukkit.entity.Item;
 import org.bukkit.event.Cancellable;

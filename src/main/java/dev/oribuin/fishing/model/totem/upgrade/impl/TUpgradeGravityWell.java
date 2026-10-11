@@ -66,7 +66,7 @@ public class TUpgradeGravityWell extends TotemUpgrade implements Toggleable, Tot
             ));
         }
     }
-    
+
     /**
      * Whether the task should be run asynchronously, If the server is running folia this is ignored
      *
@@ -76,7 +76,7 @@ public class TUpgradeGravityWell extends TotemUpgrade implements Toggleable, Tot
     public boolean isAsync() {
         return false;
     }
-    
+
     /**
      * Get the identifier for the totem upgrade
      *

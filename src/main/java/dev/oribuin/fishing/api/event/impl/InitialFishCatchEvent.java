@@ -42,7 +42,7 @@ public class InitialFishCatchEvent extends PlayerEvent implements Cancellable {
     public FishHook getHook() {
         return this.wrapper.hook();
     }
-    
+
     public Map<String, Augment> getAugments() {
         return this.wrapper.augments();
     }

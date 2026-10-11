@@ -177,7 +177,7 @@ public class RodManager implements Manager {
         if (rarity == null) return 0;
 
         Integer baseCapacity = container.getOrDefault(ROD_BASE_CAPACITY, 0);
-        return baseCapacity + rarity.getCapacity();
+        return baseCapacity + rarity.capacity();
     }
 
     /**

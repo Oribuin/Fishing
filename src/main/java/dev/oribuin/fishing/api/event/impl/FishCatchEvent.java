@@ -62,7 +62,7 @@ public class FishCatchEvent extends PlayerEvent implements Cancellable {
     public FishEventWrapper getWrapper() {
         return wrapper;
     }
-    
+
     /**
      * The list of every {@link Augment} used on the fishing rod used to catch the fish.
      *

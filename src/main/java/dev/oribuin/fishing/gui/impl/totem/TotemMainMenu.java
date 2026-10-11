@@ -73,10 +73,10 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
             }, failure);
         });
 
-//        this.config.getTotemBag().place(this.gui, placeholders, event -> {
-//            TotemBagMenu bagMenu = new TotemBagMenu(plugin, this.totemSupplier);
-//            bagMenu.open((Player) event.getWhoClicked());
-//        });
+        //        this.config.getTotemBag().place(this.gui, placeholders, event -> {
+        //            TotemBagMenu bagMenu = new TotemBagMenu(plugin, this.totemSupplier);
+        //            bagMenu.open((Player) event.getWhoClicked());
+        //        });
         this.config.getTotemUpgrades().place(this.gui, placeholders, event -> {
             TotemUpgradeMenu upgradeMenu = new TotemUpgradeMenu(plugin, this.totemSupplier);
             upgradeMenu.open((Player) event.getWhoClicked());
@@ -209,13 +209,13 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
                 )
                 .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
                 .asMenuItem(20);
-        
-//        private MenuItem totemBag = ItemConstruct.of(Material.PAPER)
-//                .setName("<white>[<#94bc80><bold>Totem Bag</bold><white>]")
-//                .setLore("<gray>View & Withdraw items from the totem bag")
-//                .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
-//                .setProperty(ConstructType.MODEL, x -> x.setValue("minecraft:green_bundle"))
-//                .asMenuItem(21);
+
+        //        private MenuItem totemBag = ItemConstruct.of(Material.PAPER)
+        //                .setName("<white>[<#94bc80><bold>Totem Bag</bold><white>]")
+        //                .setLore("<gray>View & Withdraw items from the totem bag")
+        //                .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
+        //                .setProperty(ConstructType.MODEL, x -> x.setValue("minecraft:green_bundle"))
+        //                .asMenuItem(21);
 
         private MenuItem totemUpgrades = ItemConstruct.of(Material.PAPER)
                 .setName("<white>[<#94bc80><bold>Totem Upgrades</bold><white>]")
@@ -332,7 +332,7 @@ public class TotemMainMenu extends PluginMenu<Gui, TotemMainMenu.Config> impleme
         public MenuItem getTotemName() {
             return totemName;
         }
-        
+
         public MenuItem getTotemUpgrades() {
             return totemUpgrades;
         }
