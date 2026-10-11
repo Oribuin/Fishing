@@ -62,7 +62,7 @@ public class AugmentRainDance extends Augment {
      */
     @Override
     public void onInitialCatch(InitialFishCatchEvent event) {
-        if (Weather.CLEAR.isState(event.getHook().getLocation())) return;
+        if (Weather.CLEAR.isState(event.getHook().getLocation()) || event.getHook().isRainInfluenced()) return;
 
         Placeholders plc = Placeholders.of("level", level);
         double chance = FishUtils.evaluate(plc.applyString(this.formula));

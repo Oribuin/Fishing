@@ -32,6 +32,7 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
+import org.bukkit.PortalType;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -71,7 +72,6 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
     private TotemSkin skin;
     private String ownerName;
     private String displayName;
-    private Map<Integer, ItemStack> bag;
     private Set<UUID> users;
     private Map<String, TotemUpgrade> upgrades;
     private UUID displayId;
@@ -136,8 +136,6 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
         this.privacy = TotemPrivacy.FRIENDS_ONLY;
         this.ownerName = "N/A";
         this.displayName = null;
-        this.bag = new HashMap<>();
-        this.bagCapacity = 9;
         this.users = new HashSet<>();
         this.upgrades = new LinkedHashMap<>(TotemUpgradeRegistry.getDefault());
         this.confirmedActivate = false;
@@ -247,10 +245,27 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
 
             this.upgrades.values().forEach(totemUpgrade -> {
                 if (totemUpgrade instanceof Toggleable toggleable && !toggleable.isActivated()) return;
-                if (totemUpgrade instanceof TotemTickable tickable) tickable.tick(this);
+                if (!(totemUpgrade instanceof TotemTickable tickable)) return;
+                if (tickable.isAsync()) tickable.tick(this);
             });
         }
     }
+
+    /**
+     * Tick the totem sync, This will only apply on paper servers 
+     * <p> 
+     * This is to be used on tasks that need to be run synchronously
+     */
+    public void tickSync() {
+        if (!this.active) return;
+        this.upgrades.values().forEach(totemUpgrade -> {
+            if (totemUpgrade instanceof Toggleable toggleable && !toggleable.isActivated()) return;
+            if (!(totemUpgrade instanceof TotemTickable tickable)) return;
+            if (!tickable.isAsync()) tickable.tick(this); 
+        });
+        
+    }
+    
 
     /**
      * Activate the totem for the player to use
@@ -303,64 +318,66 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
         new TotemActivateEvent(this, player).callEvent();
     }
 
-    /**
-     * Deposit an itemstack into the totem
-     *
-     * @param stack The stack to deposit
-     */
-    public void depositBag(@NotNull ItemStack stack) {
-        if (this.display == null || this.display.isDead()) return;
+//    /**
+//     * Deposit an itemstack into the totem
+//     *
+//     * @param stack The stack to deposit
+//     */
+//    @Deprecated
+//    public void depositBag(@NotNull ItemStack stack) {
+//        if (this.display == null || this.display.isDead()) return;
+//
+//        int left = stack.getAmount();
+//        for (int i = 0; i < this.bagCapacity; i++) {
+//            if (left <= 0) break;
+//
+//            // Slot is empty, put the itemstack
+//            ItemStack current = this.bag.get(i);
+//            if (current == null || current.getType().isAir()) {
+//                this.bag.put(i, stack);
+//                stack.setAmount(0);
+//                break;
+//            }
+//
+//            // Check additional slots
+//            if (current.getAmount() == current.getMaxStackSize()) continue; // Is the current item already at max capacity
+//            if (current.getType() != stack.getType()) continue; // Are the items the same type
+//            if (!current.isSimilar(stack)) continue; // Do the items match
+//
+//            int combined = stack.getAmount() + current.getAmount();
+//            if (combined > stack.getMaxStackSize()) {
+//                current.setAmount(stack.getMaxStackSize());
+//                left = combined - stack.getMaxStackSize();
+//            } else {
+//                current.setAmount(combined);
+//                left -= current.getAmount();
+//            }
+//
+//            this.bag.put(i, current);
+//        }
+//
+//        stack.setAmount(left);
+//        this.writeContainer(this.getDisplay().getPersistentDataContainer());
+//    }
 
-        int left = stack.getAmount();
-        for (int i = 0; i < this.bagCapacity; i++) {
-            if (left <= 0) break;
-
-            // Slot is empty, put the itemstack
-            ItemStack current = this.bag.get(i);
-            if (current == null || current.getType().isAir()) {
-                this.bag.put(i, stack);
-                stack.setAmount(0);
-                break;
-            }
-
-            // Check additional slots
-            if (current.getAmount() == current.getMaxStackSize()) continue; // Is the current item already at max capacity
-            if (current.getType() != stack.getType()) continue; // Are the items the same type
-            if (!current.isSimilar(stack)) continue; // Do the items match
-
-            int combined = stack.getAmount() + current.getAmount();
-            if (combined > stack.getMaxStackSize()) {
-                current.setAmount(stack.getMaxStackSize());
-                left = combined - stack.getMaxStackSize();
-            } else {
-                current.setAmount(combined);
-                left -= current.getAmount();
-            }
-
-            this.bag.put(i, current);
-        }
-
-        stack.setAmount(left);
-        this.writeContainer(this.getDisplay().getPersistentDataContainer());
-    }
-
-    /**
-     * Withdraw an itemstack from the totem's bag
-     *
-     * @param slot The stack to withdraw
-     *
-     * @return The resulting itemstack
-     */
-    @Nullable
-    public ItemStack withdrawBag(int slot) {
-        if (this.display == null || this.display.isDead()) return null;
-
-        ItemStack current = this.bag.get(slot);
-        if (current == null || current.getType().isAir()) return null; // Are the items the same type
-        ItemStack result = this.bag.remove(slot);
-        this.writeContainer(this.getDisplay().getPersistentDataContainer());
-        return result;
-    }
+//    /**
+//     * Withdraw an itemstack from the totem's bag
+//     *
+//     * @param slot The stack to withdraw
+//     *
+//     * @return The resulting itemstack
+//     */
+//    @Deprecated
+//    @Nullable
+//    private ItemStack withdrawBag(int slot) {
+//        if (this.display == null || this.display.isDead()) return null;
+//
+//        ItemStack current = this.bag.get(slot);
+//        if (current == null || current.getType().isAir()) return null; // Are the items the same type
+//        ItemStack result = this.bag.remove(slot);
+//        this.writeContainer(this.getDisplay().getPersistentDataContainer());
+//        return result;
+//    }
 
     /**
      * The functionality provided when a player is first starting to catch a fish, Use this to determine how many fish should be generated.
@@ -673,7 +690,6 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
         container.set(TOTEM_LEVEL.key(), TOTEM_LEVEL, this.level);
         container.set(TOTEM_PRIVACY.key(), TOTEM_PRIVACY, this.privacy);
         container.set(TOTEM_USERS.key(), TOTEM_USERS, this.users);
-        container.set(TOTEM_BAG.key(), TOTEM_BAG, this.bag);
         container.set(TOTEM_BAG_CAPACITY.key(), TOTEM_BAG_CAPACITY, this.bagCapacity);
         container.set(TOTEM_OWNER_NAME.key(), TOTEM_OWNER_NAME, this.ownerName);
 
@@ -719,7 +735,6 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
         this.level = container.getOrDefault(TOTEM_LEVEL.key(), TOTEM_LEVEL, 1);
         this.privacy = container.get(TOTEM_PRIVACY.key(), TOTEM_PRIVACY);
         this.users = container.get(TOTEM_USERS.key(), TOTEM_USERS);
-        this.bag = container.get(TOTEM_BAG.key(), TOTEM_BAG);
         this.ownerName = container.get(TOTEM_OWNER_NAME.key(), TOTEM_OWNER_NAME);
         this.displayName = container.get(TOTEM_DISPLAY_NAME.key(), TOTEM_DISPLAY_NAME);
 
@@ -779,7 +794,6 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
                ", skin=" + skin +
                ", ownerName='" + ownerName + '\'' +
                ", displayName='" + displayName + '\'' +
-               ", bag=" + bag +
                ", users=" + users +
                ", upgrades=" + upgrades +
                ", displayId=" + displayId +
@@ -858,15 +872,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
-
-    public Map<Integer, ItemStack> getBag() {
-        return bag;
-    }
-
-    public void setBag(Map<Integer, ItemStack> bag) {
-        this.bag = bag;
-    }
-
+    
     public int getBagCapacity() {
         return bagCapacity;
     }

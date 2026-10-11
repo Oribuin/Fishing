@@ -9,8 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.concurrent.CompletableFuture;
-
 public class PlayerListeners implements Listener {
 
     private final FishingPlugin plugin;
@@ -27,13 +25,7 @@ public class PlayerListeners implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onJoin(PlayerJoinEvent event) {
         DataManager manager = this.plugin.getDataManager();
-
-        CompletableFuture.runAsync(() -> manager.loadUser(event.getPlayer().getUniqueId()))
-                .thenRun(() -> {
-                    // create a new Fisher object if the player is not found
-                    Fisher fisher = manager.get(event.getPlayer().getUniqueId());
-                    if (fisher == null) manager.saveUser(new Fisher(event.getPlayer().getUniqueId()));
-                });
+        manager.loadUser(event.getPlayer().getUniqueId());
     }
 
     /**

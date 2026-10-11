@@ -23,7 +23,7 @@ public class TUpgradeGravityWell extends TotemUpgrade implements Toggleable, Tot
     private final boolean onlyCustomFish;
 
     /**
-     * Create a new totem upgrade with the name "radius"
+     * Create a new totem upgrade with the name "gravity well"
      */
     public TUpgradeGravityWell() {
         super();
@@ -66,8 +66,17 @@ public class TUpgradeGravityWell extends TotemUpgrade implements Toggleable, Tot
             ));
         }
     }
-
-
+    
+    /**
+     * Whether the task should be run asynchronously, If the server is running folia this is ignored
+     *
+     * @return Whether the task needs to be run synchronously
+     */
+    @Override
+    public boolean isAsync() {
+        return false;
+    }
+    
     /**
      * Get the identifier for the totem upgrade
      *

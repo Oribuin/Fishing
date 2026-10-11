@@ -5,6 +5,8 @@ import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.model.totem.upgrade.Toggleable;
 import dev.oribuin.fishing.model.totem.upgrade.TotemTickable;
 import dev.oribuin.fishing.model.totem.upgrade.TotemUpgrade;
+import dev.oribuin.fishing.util.model.Cooldown;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Item;
@@ -12,10 +14,16 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
+/**
+ * I really like the idea for this, but I think it's just too like risk-prone w/ dupe bugs... so no go
+ */
+@Deprecated
 @ConfigSerializable
 public class TUpgradeVacuum extends TotemUpgrade implements Toggleable, TotemTickable {
 
@@ -44,12 +52,13 @@ public class TUpgradeVacuum extends TotemUpgrade implements Toggleable, TotemTic
                 Item.class, 3, 3, 3,
                 item -> FishingPlugin.get().getTierManager().isFish(item.getItemStack())
         );
+        
 
         for (Item next : nearbyItems) {
             if (!next.isValid() || next.isDead() || next.getOwner() != null) continue; // entity doesn't exist / shouldn't be picked up
 
             ItemStack toDeposit = next.getItemStack();
-            totem.depositBag(toDeposit);
+//            totem.depositBag(toDeposit);
             if (toDeposit.getAmount() <= 0) {
                 next.remove();
             } else {
@@ -57,7 +66,16 @@ public class TUpgradeVacuum extends TotemUpgrade implements Toggleable, TotemTic
             }
         }
     }
-
+    
+    /**
+     * Whether the task should be run asynchronously, If the server is running folia this is ignored
+     *
+     * @return Whether the task needs to be run synchronously
+     */
+    @Override
+    public boolean isAsync() {
+        return false;
+    }
 
     /**
      * Get the identifier for the totem upgrade

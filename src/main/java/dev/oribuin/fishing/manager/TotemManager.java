@@ -27,12 +27,14 @@ public class TotemManager implements Manager {
     private final FishingPlugin plugin;
     private final Map<UUID, Totem> totems;
     private ScheduledTask asyncTicker;
+    private ScheduledTask syncTicker;
     private final long lastTick;
 
     public TotemManager(FishingPlugin plugin) {
         this.plugin = plugin;
         this.totems = new ConcurrentHashMap<>();
         this.asyncTicker = null;
+        this.syncTicker = null;
         this.lastTick = System.currentTimeMillis();
 
         TotemUpgradeRegistry.register();
@@ -57,10 +59,16 @@ public class TotemManager implements Manager {
 
         // Define all ticking under one task to prevent 10000000 tasks running at once.
         if (this.asyncTicker != null) this.asyncTicker.cancel();
+        if (this.syncTicker != null) this.syncTicker.cancel();
 
         Duration delay = TotemConfig.get().getTickDelay();
         this.asyncTicker = PluginScheduler.get().runTaskTimerAsync(
                 () -> this.tick(Totem::tickAsync),
+                delay.toMillis(), delay.toMillis(), TimeUnit.MILLISECONDS
+        );
+
+        this.syncTicker = PluginScheduler.get().runTaskTimer(
+                () -> this.tick(Totem::tickSync),
                 delay.toMillis(), delay.toMillis(), TimeUnit.MILLISECONDS
         );
     }
@@ -75,6 +83,11 @@ public class TotemManager implements Manager {
         if (this.asyncTicker != null) {
             this.asyncTicker.cancel();
             this.asyncTicker = null;
+        }
+
+        if (this.syncTicker != null) {
+            this.syncTicker.cancel();
+            this.syncTicker = null;
         }
     }
 

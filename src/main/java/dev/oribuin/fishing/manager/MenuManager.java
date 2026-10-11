@@ -43,7 +43,7 @@ public class MenuManager implements Manager {
         // Totem Menus
         register("totem/main_menu", TotemMainMenu.Config.class);
         register("totem/upgrades", TotemUpgradeMenu.Config.class);
-        register("totem/bag", TotemBagMenu.Config.class);
+//        register("totem/bag", TotemBagMenu.Config.class);
 
         // Augment Menus
         register("augment/apply_menu", AugmentApplyMenu.Config.class);

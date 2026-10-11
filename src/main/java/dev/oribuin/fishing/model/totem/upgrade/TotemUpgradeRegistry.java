@@ -4,9 +4,9 @@ import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.manager.TotemManager;
 import dev.oribuin.fishing.model.totem.upgrade.impl.TUpgradeCooldown;
 import dev.oribuin.fishing.model.totem.upgrade.impl.TUpgradeDuration;
+import dev.oribuin.fishing.model.totem.upgrade.impl.TUpgradeTorrent;
 import dev.oribuin.fishing.model.totem.upgrade.impl.TUpgradeGravityWell;
 import dev.oribuin.fishing.model.totem.upgrade.impl.TUpgradeRadius;
-import dev.oribuin.fishing.model.totem.upgrade.impl.TUpgradeVacuum;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,9 +22,9 @@ public class TotemUpgradeRegistry {
         UPGRADES.clear();
         register("cooldown", TUpgradeCooldown.class);
         register("duration", TUpgradeDuration.class);
+        register("torrent", TUpgradeTorrent.class);
         register("gravity_well", TUpgradeGravityWell.class);
         register("radius", TUpgradeRadius.class);
-        register("vacuum", TUpgradeVacuum.class);
     }
 
     /**
