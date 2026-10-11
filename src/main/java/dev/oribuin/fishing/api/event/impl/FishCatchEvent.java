@@ -55,6 +55,15 @@ public class FishCatchEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
+     * Get the overarching fish event wrapper for all custom fish events
+     *
+     * @return The fish event wrapper
+     */
+    public FishEventWrapper getWrapper() {
+        return wrapper;
+    }
+    
+    /**
      * The list of every {@link Augment} used on the fishing rod used to catch the fish.
      *
      * @return The list of augments and the level of the augment

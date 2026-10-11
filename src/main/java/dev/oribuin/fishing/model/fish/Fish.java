@@ -92,8 +92,8 @@ public class Fish {
                 placeholders.build(),
                 stack -> stack.editMeta(itemMeta -> {
                     PersistentDataContainer container = itemMeta.getPersistentDataContainer();
-                    container.set(KeyRegistry.FISH_NAME.key(), KeyRegistry.FISH_TYPE, this.name);
-                    container.set(KeyRegistry.FISH_TYPE.key(), KeyRegistry.FISH_NAME, this.tier);
+                    container.set(KeyRegistry.FISH_NAME, this.name);
+                    container.set(KeyRegistry.FISH_TYPE, this.tier);
                 }));
 
         return this.itemStack.clone(); // Clone the item stack to prevent any changes

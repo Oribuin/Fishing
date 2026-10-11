@@ -26,6 +26,15 @@ public class InitialFishCatchEvent extends PlayerEvent implements Cancellable {
         this.amountToCatch = 1;
     }
 
+    /**
+     * Get the overarching fish event wrapper for all custom fish events
+     *
+     * @return The fish event wrapper
+     */
+    public FishEventWrapper getWrapper() {
+        return wrapper;
+    }
+
     public ItemStack getRod() {
         return this.player.getInventory().getItem(this.wrapper.handSlot());
     }
@@ -33,7 +42,7 @@ public class InitialFishCatchEvent extends PlayerEvent implements Cancellable {
     public FishHook getHook() {
         return this.wrapper.hook();
     }
-
+    
     public Map<String, Augment> getAugments() {
         return this.wrapper.augments();
     }

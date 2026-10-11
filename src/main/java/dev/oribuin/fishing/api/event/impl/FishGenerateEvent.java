@@ -112,13 +112,22 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
         return this.wrapper.totem();
     }
 
+    /**
+     * Get the overarching fish event wrapper for all custom fish events
+     *
+     * @return The fish event wrapper
+     */
+    public FishEventWrapper getWrapper() {
+        return wrapper;
+    }
+    
 
     /**
      * The base chance of the fish, this was the original rarity chance of the fish
      *
      * @return The base chance of the fish
      */
-    public double baseChance() {
+    public double getBaseChance() {
         return baseChance;
     }
 
@@ -127,7 +136,7 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
      *
      * @return The chance increases
      */
-    public List<Double> chanceIncreases() {
+    public List<Double> getChanceIncrease() {
         return chanceIncreases;
     }
 
@@ -136,7 +145,7 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
      *
      * @return The fish that was generated
      */
-    public @Nullable Fish fish() {
+    public @Nullable Fish getFish() {
         return fish;
     }
 
@@ -145,7 +154,7 @@ public class FishGenerateEvent extends PlayerEvent implements Cancellable {
      *
      * @param fish The fish that was generated
      */
-    public void fish(@Nullable Fish fish) {
+    public void setFish(@Nullable Fish fish) {
         this.fish = fish;
     }
 

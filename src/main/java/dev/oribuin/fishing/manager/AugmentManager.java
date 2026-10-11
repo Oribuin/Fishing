@@ -98,8 +98,8 @@ public class AugmentManager implements Manager {
 
         augments.put(identifier.toLowerCase(), () -> loader.getClone(augmentClass));
         LootRegistry.register("augment_" + identifier.toLowerCase(), augment::getDisplayItem, augment::getPlaceholders, stack -> stack.editPersistentDataContainer(container -> {
-            container.set(AUGMENT_TYPE.key(), AUGMENT_TYPE, augment.getName());
-            container.set(AUGMENT_LEVEL.key(), AUGMENT_LEVEL, Math.min(augment.getLevel(), augment.getMaxLevel()));
+            container.set(AUGMENT_TYPE, augment.getName());
+            container.set(AUGMENT_LEVEL, Math.min(augment.getLevel(), augment.getMaxLevel()));
         }));
     }
 
@@ -141,7 +141,7 @@ public class AugmentManager implements Manager {
     public Augment getAugmentStack(@Nullable ItemStack itemStack) {
         if (itemStack == null || itemStack.getType().isAir()) return null;
         PersistentDataContainerView container = itemStack.getPersistentDataContainer();
-        String identifier = container.get(AUGMENT_TYPE.key(), AUGMENT_TYPE);
+        String identifier = container.get(AUGMENT_TYPE);
         Augment augment = this.plugin.getAugmentManager().getAugment(identifier);
         if (augment != null) augment.readContainer(container);
         return augment;
@@ -167,15 +167,15 @@ public class AugmentManager implements Manager {
 
         // region Add the header for the description
         int augmentsStart = lore.isEmpty() ? 0 : lore.size() - 1;
-        Integer headerIndex = container.get(AUGMENT_HEADER.key(), AUGMENT_HEADER);
-        int footerIndex = container.getOrDefault(AUGMENT_FOOTER.key(), AUGMENT_FOOTER, 0);
+        Integer headerIndex = container.get(AUGMENT_HEADER);
+        int footerIndex = container.getOrDefault(AUGMENT_FOOTER, 0);
         if (headerIndex == null) headerIndex = augmentsStart;
 
         if (footerIndex > headerIndex) {
             lore.subList(headerIndex, footerIndex + 1).clear();
         }
 
-        container.set(AUGMENT_HEADER.key(), AUGMENT_HEADER, headerIndex);
+        container.set(AUGMENT_HEADER, headerIndex);
         for (String headerText : Settings.get().getAugmentsHeader()) {
             lore.add(FishUtils.kyorify(headerText));
         }
@@ -203,7 +203,7 @@ public class AugmentManager implements Manager {
             furthestIndex.incrementAndGet();
         }
 
-        container.set(ROD_AUGMENTS.key(), ROD_AUGMENTS, augmentsContainer);
+        container.set(ROD_AUGMENTS, augmentsContainer);
 
         // endregion
         // region Add the footer for the description
@@ -217,7 +217,7 @@ public class AugmentManager implements Manager {
         }
 
         // endregion
-        container.set(AUGMENT_FOOTER.key(), AUGMENT_FOOTER, furthestIndex.get());
+        container.set(AUGMENT_FOOTER, furthestIndex.get());
         meta.lore(lore);
         itemStack.setItemMeta(meta);
     }
@@ -237,7 +237,7 @@ public class AugmentManager implements Manager {
         if (meta == null) return new HashMap<>();
 
         PersistentDataContainer rodContainer = meta.getPersistentDataContainer();
-        PersistentDataContainer augmentsContainer = rodContainer.get(ROD_AUGMENTS.key(), ROD_AUGMENTS);
+        PersistentDataContainer augmentsContainer = rodContainer.get(ROD_AUGMENTS);
         if (augmentsContainer == null) return new HashMap<>();
 
         // Load the augments from the item meta

@@ -22,9 +22,9 @@ public class TotemUpgradeRegistry {
         UPGRADES.clear();
         register("cooldown", TUpgradeCooldown.class);
         register("duration", TUpgradeDuration.class);
-        register("torrent", TUpgradeTorrent.class);
         register("gravity_well", TUpgradeGravityWell.class);
         register("radius", TUpgradeRadius.class);
+        register("torrent", TUpgradeTorrent.class);
     }
 
     /**

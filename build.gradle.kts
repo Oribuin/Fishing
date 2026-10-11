@@ -5,14 +5,15 @@ plugins {
     `maven-publish`
     id("com.gradleup.shadow") version "9.4.1"
     id("de.eldoria.plugin-yml.bukkit") version "0.8.0"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.24"
 }
 
 group = "dev.oribuin"
 version = "1.0"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 
     disableAutoTargetJvm()
     toolchain {
@@ -24,7 +25,7 @@ repositories {
     mavenCentral()
     mavenLocal()
 
-    maven("https://repo.oribuin.dev/repository/maven-public/")
+//    maven("https://repo.oribuin.dev/repository/maven-public/")
     maven("https://repo.rosewooddev.io/repository/public/")
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
@@ -51,7 +52,7 @@ dependencies {
     api("com.jeff-media:MorePersistentDataTypes:2.4.0")
 
     // Spigot
-    compileOnly("io.papermc.paper:paper-api:26.2.build.+")
+    paperweight.paperDevBundle("26.3.build.+")
     compileOnly("org.jetbrains:annotations:23.0.0")
 
     // External Plugins

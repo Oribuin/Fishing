@@ -8,6 +8,7 @@ import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.condition.Weather;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
+import org.bukkit.entity.FishHook;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Comment;
 
@@ -62,15 +63,19 @@ public class AugmentRainDance extends Augment {
      */
     @Override
     public void onInitialCatch(InitialFishCatchEvent event) {
-        if (Weather.CLEAR.isState(event.getHook().getLocation()) || event.getHook().isRainInfluenced()) return;
+        Weather state = Weather.test(event.getHook().getLocation());
+        boolean isRaining = state == Weather.RAIN || state == Weather.STORM;
+        boolean isInfluenced = event.getHook().isInRain();
 
-        Placeholders plc = Placeholders.of("level", level);
-        double chance = FishUtils.evaluate(plc.applyString(this.formula));
-        if (this.random.nextDouble(100) <= chance) return;
+        if (isRaining || isInfluenced) {
+            Placeholders plc = Placeholders.of("level", level);
+            double chance = FishUtils.evaluate(plc.applyString(this.formula));
+            if (this.random.nextDouble(100) <= chance) return;
 
-        int fishCaught = this.minimumFish + (int) (Math.random() * (this.maximumFish - this.minimumFish));
-        event.setAmountToCatch(event.getAmountToCatch() + fishCaught);
-        ADDITIONAL.put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
+            int fishCaught = this.minimumFish + (int) (Math.random() * (this.maximumFish - this.minimumFish));
+            event.setAmountToCatch(event.getAmountToCatch() + fishCaught);
+            ADDITIONAL.put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
+        }
     }
 
 
@@ -87,14 +92,13 @@ public class AugmentRainDance extends Augment {
      */
     @Override
     public void onFishCatch(FishCatchEvent event) {
-        if (Weather.CLEAR.isState(event.getHook().getLocation())) return;
         Long last = ADDITIONAL.get(event.getPlayer().getUniqueId());
         if (last == null) return;
 
         ADDITIONAL.remove(event.getPlayer().getUniqueId());
 
         // require their last thing to be less than < 3 seconds ago
-        if (System.currentTimeMillis() - last >= TimeUnit.SECONDS.toMillis(3)) return;
+        if (System.currentTimeMillis() - last >= TimeUnit.SECONDS.toMillis(1)) return;
 
         this.gotAdditional.send(event.getPlayer());
     }

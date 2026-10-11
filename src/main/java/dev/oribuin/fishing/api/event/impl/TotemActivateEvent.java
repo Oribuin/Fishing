@@ -1,5 +1,6 @@
 package dev.oribuin.fishing.api.event.impl;
 
+import dev.oribuin.fishing.api.event.FishEventWrapper;
 import dev.oribuin.fishing.model.totem.Totem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -36,7 +37,7 @@ public class TotemActivateEvent extends PlayerEvent implements Cancellable {
      *
      * @return The totem that is being activated
      */
-    public @NotNull Totem totem() {
+    public @NotNull Totem getTotem() {
         return this.totem;
     }
 
@@ -45,10 +46,10 @@ public class TotemActivateEvent extends PlayerEvent implements Cancellable {
      *
      * @return The player who is activating the totem
      */
-    public @NotNull Player activator() {
+    public @NotNull Player getActivator() {
         return this.activator;
     }
-
+    
     /**
      * Get the handlers for this event class
      *

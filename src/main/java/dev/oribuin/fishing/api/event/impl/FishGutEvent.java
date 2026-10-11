@@ -1,5 +1,6 @@
 package dev.oribuin.fishing.api.event.impl;
 
+import dev.oribuin.fishing.api.event.FishEventWrapper;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.fish.ProcessedFish;
 import org.bukkit.entity.Player;
@@ -54,6 +55,10 @@ public class FishGutEvent extends PlayerEvent implements Cancellable {
 
     public void setEntropy(int entropy) {
         this.entropy = entropy;
+    }
+
+    public @Nullable ItemStack getRod() {
+        return rod;
     }
 
     /**

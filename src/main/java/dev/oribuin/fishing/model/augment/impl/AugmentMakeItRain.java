@@ -52,7 +52,7 @@ public class AugmentMakeItRain {
     //        ParticleBuilder rainCloud = new ParticleBuilder(Particle.FALLING_DUST) // falling dust looks better than cloud
     //                .data(Material.WHITE_CONCRETE.createBlockData())
     //                .count(20)
-    //                .extra(0)
+    //                .speed(0)
     //                .offset(0.5, 0.5, 0.5);
     //
     //        result.forEach(fish -> {

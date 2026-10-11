@@ -33,6 +33,7 @@ public class TUpgradeTorrent extends TotemUpgrade implements Toggleable {
      */
     @Override
     public void onCastRod(RodCastEvent event) {
+        System.out.println("Applying rain influence to the rod");
         event.getHook().setRainInfluenced(true); // Apply rain influence buff
     }
 

@@ -64,6 +64,15 @@ public class ConditionCheckEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
+     * Get the overarching fish event wrapper for all custom fish events
+     *
+     * @return The fish event wrapper
+     */
+    public FishEventWrapper getWrapper() {
+        return wrapper;
+    }
+
+    /**
      * The result of the condition check
      *
      * @return The result of the condition check

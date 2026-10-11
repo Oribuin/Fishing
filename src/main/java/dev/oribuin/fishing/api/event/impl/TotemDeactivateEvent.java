@@ -32,7 +32,7 @@ public class TotemDeactivateEvent extends Event implements Cancellable {
      *
      * @return The totem that is being deactivated
      */
-    public @NotNull Totem totem() {
+    public @NotNull Totem getTotem() {
         return this.totem;
     }
 

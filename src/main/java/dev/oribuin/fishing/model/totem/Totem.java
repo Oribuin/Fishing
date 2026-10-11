@@ -20,7 +20,7 @@ import dev.oribuin.fishing.model.totem.upgrade.impl.TUpgradeDuration;
 import dev.oribuin.fishing.model.totem.upgrade.impl.TUpgradeRadius;
 import dev.oribuin.fishing.scheduler.PluginScheduler;
 import dev.oribuin.fishing.scheduler.task.ScheduledTask;
-import dev.oribuin.fishing.storage.persistent.PDCSerializable;
+import dev.oribuin.fishing.storage.util.PDCSerializable;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.NMSUtil;
 import dev.oribuin.fishing.util.Placeholders;
@@ -32,7 +32,6 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
-import org.bukkit.PortalType;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -47,7 +46,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -229,7 +227,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
                 .location(this.position.clone().add(0, 1, 0))
                 .offset(0.5, 0.5, 0.5)
                 .count(10)
-                .extra(0)
+                .speed(0)
                 .color(color)
                 .spawn();
 
@@ -405,7 +403,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
                         Color.fromRGB(162, 191, 254),
                         Color.fromRGB(193, 225, 193)
                 )
-                .extra(0);
+                .speed(0);
 
         line.forEach(location -> builder.clone().location(location).spawn());
     }
@@ -446,7 +444,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
                         Color.fromRGB(162, 191, 254),
                         Color.fromRGB(193, 225, 193)
                 )
-                .extra(0);
+                .speed(0);
 
         ScheduledTask task = PluginScheduler.get().runTaskTimerAsync(() -> line.forEach(location -> builder
                 .clone()
@@ -546,7 +544,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
         }
 
         itemStack.editMeta(itemMeta -> this.writeContainer(itemMeta.getPersistentDataContainer()));
-    }
+     }
 
     /**
      * Create a new particle builder with the dust particle
@@ -558,7 +556,7 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
     private ParticleBuilder getDust(Color color) {
         return new ParticleBuilder(Particle.DUST)
                 .count(1)
-                .extra(0)
+                .speed(0)
                 .offset(0, 0, 0.)
                 .color(color)
                 .clone();
@@ -684,16 +682,16 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
     public void writeContainer(PersistentDataContainer container) {
         if (container == null) return;
 
-        container.set(TOTEM_OWNER.key(), TOTEM_OWNER, this.owner);
-        container.set(TOTEM_ACTIVE.key(), TOTEM_ACTIVE, this.active);
-        container.set(TOTEM_LAST_ACTIVE.key(), TOTEM_LAST_ACTIVE, this.lastActive);
-        container.set(TOTEM_LEVEL.key(), TOTEM_LEVEL, this.level);
-        container.set(TOTEM_PRIVACY.key(), TOTEM_PRIVACY, this.privacy);
-        container.set(TOTEM_USERS.key(), TOTEM_USERS, this.users);
-        container.set(TOTEM_BAG_CAPACITY.key(), TOTEM_BAG_CAPACITY, this.bagCapacity);
-        container.set(TOTEM_OWNER_NAME.key(), TOTEM_OWNER_NAME, this.ownerName);
+        container.set(TOTEM_OWNER, this.owner);
+        container.set(TOTEM_ACTIVE, this.active);
+        container.set(TOTEM_LAST_ACTIVE, this.lastActive);
+        container.set(TOTEM_LEVEL, this.level);
+        container.set(TOTEM_PRIVACY, this.privacy);
+        container.set(TOTEM_USERS, this.users);
+        container.set(TOTEM_BAG_CAPACITY, this.bagCapacity);
+        container.set(TOTEM_OWNER_NAME, this.ownerName);
 
-        if (this.displayName != null) container.set(TOTEM_DISPLAY_NAME.key(), TOTEM_DISPLAY_NAME, this.displayName);
+        if (this.displayName != null) container.set(TOTEM_DISPLAY_NAME, this.displayName);
 
         //        if (this.skin != null) container.set(TOTEM_SKIN.key(), TOTEM_SKIN, this.skin.id()); // TODO: Totem Skin
 
@@ -729,14 +727,14 @@ public class Totem extends FishEventHandler implements PDCSerializable, AsyncTic
     public void readContainer(PersistentDataContainerView container) {
         if (container == null) return;
 
-        this.owner = container.get(TOTEM_OWNER.key(), TOTEM_OWNER);
-        this.active = container.getOrDefault(TOTEM_ACTIVE.key(), TOTEM_ACTIVE, false);
-        this.lastActive = container.getOrDefault(TOTEM_LAST_ACTIVE.key(), TOTEM_LAST_ACTIVE, 0L);
-        this.level = container.getOrDefault(TOTEM_LEVEL.key(), TOTEM_LEVEL, 1);
-        this.privacy = container.get(TOTEM_PRIVACY.key(), TOTEM_PRIVACY);
-        this.users = container.get(TOTEM_USERS.key(), TOTEM_USERS);
-        this.ownerName = container.get(TOTEM_OWNER_NAME.key(), TOTEM_OWNER_NAME);
-        this.displayName = container.get(TOTEM_DISPLAY_NAME.key(), TOTEM_DISPLAY_NAME);
+        this.owner = container.get(TOTEM_OWNER);
+        this.active = container.getOrDefault(TOTEM_ACTIVE, false);
+        this.lastActive = container.getOrDefault(TOTEM_LAST_ACTIVE, 0L);
+        this.level = container.getOrDefault(TOTEM_LEVEL, 1);
+        this.privacy = container.get(TOTEM_PRIVACY);
+        this.users = container.get(TOTEM_USERS);
+        this.ownerName = container.get(TOTEM_OWNER_NAME);
+        this.displayName = container.get(TOTEM_DISPLAY_NAME);
 
         // TODO: Load skin individually
         // this.skin = container.get(TOTEM_SKIN.key(), TOTEM_SKIN);

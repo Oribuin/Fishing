@@ -9,7 +9,7 @@ import dev.oribuin.fishing.manager.AugmentManager;
 import dev.oribuin.fishing.model.economy.Cost;
 import dev.oribuin.fishing.model.economy.CurrencyRegistry;
 import dev.oribuin.fishing.storage.Fisher;
-import dev.oribuin.fishing.storage.persistent.PDCSerializable;
+import dev.oribuin.fishing.storage.util.PDCSerializable;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import io.papermc.paper.persistence.PersistentDataContainerView;
@@ -46,7 +46,7 @@ public abstract class Augment extends FishEventHandler implements PDCSerializabl
 
     public static final BiConsumer<Augment, ItemStack> STACK_FUNCTION = (augment, stack) ->
             stack.editPersistentDataContainer(container -> {
-                container.set(AUGMENT_TYPE.key(), AUGMENT_TYPE, augment.getName());
+                container.set(AUGMENT_TYPE, augment.getName());
                 augment.writeContainer(container);
             });
 
@@ -128,7 +128,7 @@ public abstract class Augment extends FishEventHandler implements PDCSerializabl
      */
     @Override
     public void readContainer(PersistentDataContainerView container) {
-        this.level = container.getOrDefault(AUGMENT_LEVEL.key(), AUGMENT_LEVEL, 1);
+        this.level = container.getOrDefault(AUGMENT_LEVEL, 1);
     }
 
     /**
@@ -138,7 +138,7 @@ public abstract class Augment extends FishEventHandler implements PDCSerializabl
      */
     @Override
     public void writeContainer(PersistentDataContainer container) {
-        container.set(AUGMENT_LEVEL.key(), AUGMENT_LEVEL, Math.min(this.getLevel(), this.getMaxLevel()));
+        container.set(AUGMENT_LEVEL, Math.min(this.getLevel(), this.getMaxLevel()));
     }
 
     /**
@@ -153,7 +153,7 @@ public abstract class Augment extends FishEventHandler implements PDCSerializabl
             PersistentDataContainer augmentContainer = context.newPersistentDataContainer();
             this.writeContainer(augmentContainer);
             augmentsContainer.set(this.getNamespace(), TAG_CONTAINER, augmentContainer);
-            container.set(ROD_AUGMENTS.key(), ROD_AUGMENTS, augmentsContainer);
+            container.set(ROD_AUGMENTS, augmentsContainer);
         });
     }
 

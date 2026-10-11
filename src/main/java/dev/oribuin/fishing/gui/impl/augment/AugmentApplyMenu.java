@@ -155,7 +155,7 @@ public class AugmentApplyMenu extends PluginMenu<Gui, AugmentApplyMenu.Config> i
     private boolean isAugment(@Nullable ItemStack stack) {
         if (stack == null || stack.getType() == Material.AIR) return false;
 
-        return stack.getPersistentDataContainer().has(AUGMENT_TYPE.key(), AUGMENT_TYPE);
+        return stack.getPersistentDataContainer().has(AUGMENT_TYPE);
     }
 
     /**

@@ -3,6 +3,7 @@ package dev.oribuin.fishing.api.event;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.totem.Totem;
+import dev.oribuin.fishing.storage.util.KeyRegistry;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -45,6 +46,28 @@ public record FishEventWrapper(
                 FishingPlugin.get().getAugmentManager().getAugments(rod),
                 FishingPlugin.get().getTotemManager().getClosestActive(hook.getLocation())
         );
+    }
+
+
+    /**
+     * Check whether a hook is in rain
+     *
+     * @return Whether the hook is in rain or rain influenced
+     */
+    public boolean isHookInRain() {
+        boolean isInRain = this.hook.isInRain();
+        if (isInRain) return true;
+
+        return this.hook.getPersistentDataContainer().getOrDefault(KeyRegistry.RAIN_INFLUENCED, false);
+    }
+
+    /**
+     * Set whether the hook should be considered in rain
+     *
+     * @param hookInRain Whether the hook is in rain
+     */
+    public void setHookInRain(boolean hookInRain) {
+        this.hook.getPersistentDataContainer().set(KeyRegistry.RAIN_INFLUENCED, hookInRain);
     }
 
     /**

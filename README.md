@@ -40,7 +40,7 @@ This is one of my biggest projects to date, and I was very excited to create som
 
 ## Plugin Requirements
 
-This plugin will always be compiled against the latest Paper API Versions (as of writing, its 26.2) with no goal in supporting anything lower than latest. this is because i want to be stubborn and defiant, and because their api changes go hard.
+This plugin will always be compiled against the latest Paper API Versions (as of writing, its 26.3) with no goal in supporting anything lower than latest. this is because i want to be stubborn and defiant, and because their api changes go hard.
 
 Folia is also supported too :)
 

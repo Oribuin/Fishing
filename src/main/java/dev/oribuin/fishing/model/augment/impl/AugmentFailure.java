@@ -4,12 +4,13 @@ import com.jeff_media.morepersistentdatatypes.DataType;
 import dev.oribuin.fishing.api.event.impl.FailCatchEvent;
 import dev.oribuin.fishing.config.TextMessage;
 import dev.oribuin.fishing.model.augment.Augment;
-import dev.oribuin.fishing.storage.persistent.FishDataType;
 import dev.oribuin.fishing.storage.util.KeyRegistry;
 import io.papermc.paper.persistence.PersistentDataContainerView;
+import io.papermc.paper.persistence.PersistentDataKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
@@ -54,7 +55,7 @@ public class AugmentFailure extends Augment {
     @Override
     public void readContainer(PersistentDataContainerView container) {
         super.readContainer(container);
-        this.fails = container.getOrDefault(FAILS.key(), FAILS, 0);
+        this.fails = container.getOrDefault(FAILS, 0);
     }
 
     /**
@@ -65,9 +66,9 @@ public class AugmentFailure extends Augment {
     @Override
     public void writeContainer(PersistentDataContainer container) {
         super.writeContainer(container);
-        container.set(FAILS.key(), FAILS, this.fails);
+        container.set(FAILS, this.fails);
     }
 
-    private static final FishDataType<Integer, Integer> FAILS = KeyRegistry.register("fails", DataType.INTEGER);
+    private static final @NotNull PersistentDataKey<Integer> FAILS = KeyRegistry.register("fails", DataType.INTEGER);
 }
 

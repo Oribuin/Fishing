@@ -211,7 +211,7 @@ public class FishListener implements Listener {
         if (event.isCancelled()) return null;
 
         event.generate();
-        return event.fish();
+        return event.getFish();
     }
 
 }

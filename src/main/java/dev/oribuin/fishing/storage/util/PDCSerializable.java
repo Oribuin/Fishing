@@ -1,4 +1,4 @@
-package dev.oribuin.fishing.storage.persistent;
+package dev.oribuin.fishing.storage.util;
 
 import io.papermc.paper.persistence.PersistentDataContainerView;
 import org.bukkit.persistence.PersistentDataContainer;

@@ -4,10 +4,10 @@ import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.impl.Settings;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.rod.RodRarity;
-import dev.oribuin.fishing.storage.persistent.FishDataType;
 import dev.oribuin.fishing.storage.util.KeyRegistry;
 import dev.oribuin.fishing.util.Placeholders;
 import io.papermc.paper.persistence.PersistentDataContainerView;
+import io.papermc.paper.persistence.PersistentDataKey;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +52,7 @@ public class RodManager implements Manager {
      * @param rod       The rod to increase the statistic of
      * @param statistic The statistic to increase
      */
-    public void incrementStatistic(@NotNull ItemStack rod, @NotNull FishDataType<Double, Double> statistic) {
+    public void incrementStatistic(@NotNull ItemStack rod, @NotNull PersistentDataKey<Double> statistic) {
         this.incrementStatistic(rod, statistic, 1);
     }
 
@@ -63,10 +63,10 @@ public class RodManager implements Manager {
      * @param statistic The statistic to increase
      * @param amount    The amount to increase the statistic by
      */
-    public void incrementStatistic(@NotNull ItemStack rod, @NotNull FishDataType<Double, Double> statistic, double amount) {
+    public void incrementStatistic(@NotNull ItemStack rod, @NotNull PersistentDataKey<Double> statistic, double amount) {
         rod.editPersistentDataContainer(container -> {
-            double current = container.getOrDefault(statistic.key(), statistic, 0.0);
-            container.set(statistic.key(), statistic, current + amount);
+            double current = container.getOrDefault(statistic, 0.0);
+            container.set(statistic, current + amount);
         });
     }
 
@@ -78,9 +78,9 @@ public class RodManager implements Manager {
      *
      * @return The resulting statistic
      */
-    public double getStatistic(@NotNull ItemStack rod, @NotNull FishDataType<Double, Double> statistic) {
+    public double getStatistic(@NotNull ItemStack rod, @NotNull PersistentDataKey<Double> statistic) {
         PersistentDataContainerView container = rod.getPersistentDataContainer();
-        return container.getOrDefault(statistic.key(), statistic, 0.0);
+        return container.getOrDefault(statistic, 0.0);
     }
 
     /**
@@ -95,7 +95,7 @@ public class RodManager implements Manager {
         return new HashMap<>() {{
             KeyRegistry.STATISTICS.forEach(stat -> {
                 String key = stat.key().value().replace("statistic_", "");
-                double value = container.getOrDefault(stat.key(), stat, 0.0);
+                double value = container.getOrDefault(stat, 0.0);
                 this.put(key, value);
             });
         }};
@@ -173,10 +173,10 @@ public class RodManager implements Manager {
         if (stack == null || stack.getType() != Material.FISHING_ROD) return 0;
 
         PersistentDataContainerView container = stack.getPersistentDataContainer();
-        RodRarity rarity = this.getRarity(container.get(ROD_RARITY.key(), ROD_RARITY));
+        RodRarity rarity = this.getRarity(container.get(ROD_RARITY));
         if (rarity == null) return 0;
 
-        Integer baseCapacity = container.getOrDefault(ROD_BASE_CAPACITY.key(), ROD_BASE_CAPACITY, 0);
+        Integer baseCapacity = container.getOrDefault(ROD_BASE_CAPACITY, 0);
         return baseCapacity + rarity.getCapacity();
     }
 
@@ -205,7 +205,7 @@ public class RodManager implements Manager {
         if (stack == null || stack.getType() != Material.FISHING_ROD) return null;
 
         PersistentDataContainerView container = stack.getPersistentDataContainer();
-        return this.getRarity(container.get(ROD_RARITY.key(), ROD_RARITY));
+        return this.getRarity(container.get(ROD_RARITY));
     }
 
 

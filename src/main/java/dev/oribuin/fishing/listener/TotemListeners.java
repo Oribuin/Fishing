@@ -46,7 +46,7 @@ public class TotemListeners implements Listener {
         ItemStack item = event.getItem();
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;
-        if (!meta.getPersistentDataContainer().has(KeyRegistry.TOTEM_ACTIVE.key(), KeyRegistry.TOTEM_ACTIVE)) return;
+        if (!meta.getPersistentDataContainer().has(KeyRegistry.TOTEM_ACTIVE)) return;
 
         event.setCancelled(true);
         event.setUseItemInHand(Event.Result.DENY);

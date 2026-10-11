@@ -32,6 +32,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static dev.oribuin.fishing.config.item.component.TooltipItemType.HIDDEN;
+import static dev.oribuin.fishing.storage.util.KeyRegistry.*;
 
 public class DebugCommand implements FishCommand {
 
@@ -177,7 +178,7 @@ public class DebugCommand implements FishCommand {
         }
 
 
-        if (!meta.getPersistentDataContainer().has(KeyRegistry.TOTEM_ACTIVE.key(), KeyRegistry.TOTEM_ACTIVE)) {
+        if (!meta.getPersistentDataContainer().has(TOTEM_ACTIVE)) {
             player.sendMessage("no totem :(");
             return;
         }

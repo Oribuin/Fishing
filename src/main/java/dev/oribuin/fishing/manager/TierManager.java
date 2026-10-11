@@ -104,8 +104,8 @@ public class TierManager implements Manager {
 
                         // Register the fish type
                         PersistentDataContainer container = itemMeta.getPersistentDataContainer();
-                        container.set(KeyRegistry.FISH_NAME.key(), KeyRegistry.FISH_TYPE, fish.getName());
-                        container.set(KeyRegistry.FISH_TYPE.key(), KeyRegistry.FISH_NAME, fish.getTier());
+                        container.set(KeyRegistry.FISH_NAME, fish.getName());
+                        container.set(KeyRegistry.FISH_TYPE, fish.getTier());
 
                     }));
         });
@@ -206,8 +206,8 @@ public class TierManager implements Manager {
         if (!stack.hasItemMeta()) return null;
 
         PersistentDataContainer container = stack.getItemMeta().getPersistentDataContainer();
-        String name = container.get(KeyRegistry.FISH_NAME.key(), KeyRegistry.FISH_NAME);
-        String tierName = container.get(KeyRegistry.FISH_TYPE.key(), KeyRegistry.FISH_TYPE);
+        String name = container.get(KeyRegistry.FISH_NAME);
+        String tierName = container.get(KeyRegistry.FISH_TYPE);
         if (name == null || tierName == null) return null;
 
         Tier tier = this.get(tierName);

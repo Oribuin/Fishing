@@ -6,7 +6,7 @@ import dev.oribuin.fishing.config.item.ConstructComponent;
 import dev.oribuin.fishing.config.item.ConstructType;
 import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.model.totem.Totem;
-import dev.oribuin.fishing.storage.persistent.PDCSerializable;
+import dev.oribuin.fishing.storage.util.PDCSerializable;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import io.papermc.paper.persistence.PersistentDataContainerView;
@@ -134,14 +134,12 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
      */
     @Override
     public void readContainer(PersistentDataContainerView container) {
-        this.level = container.getOrDefault(TOTEM_UPGRADE_LEVEL.key(), TOTEM_UPGRADE_LEVEL, this.defaultLevel);
+        this.level = container.getOrDefault(TOTEM_UPGRADE_LEVEL, this.defaultLevel);
 
         // Add the totem upgrade status if the type is toggleable
         if (this instanceof Toggleable toggleable) {
             toggleable.setActivated(container.getOrDefault(
-                    TOTEM_UPGRADE_ACTIVATED.key(),
-                    TOTEM_UPGRADE_ACTIVATED,
-                    false
+                    TOTEM_UPGRADE_ACTIVATED, false
             ));
         }
 
@@ -154,11 +152,11 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
      */
     @Override
     public void writeContainer(PersistentDataContainer container) {
-        container.set(TOTEM_UPGRADE_LEVEL.key(), TOTEM_UPGRADE_LEVEL, this.level);
+        container.set(TOTEM_UPGRADE_LEVEL, this.level);
 
         // Add the totem upgrade status if the type is toggleable
         if (this instanceof Toggleable toggleable) {
-            container.set(TOTEM_UPGRADE_ACTIVATED.key(), TOTEM_UPGRADE_ACTIVATED, toggleable.isActivated());
+            container.set(TOTEM_UPGRADE_ACTIVATED, toggleable.isActivated());
         }
     }
 
