@@ -68,7 +68,7 @@ public class AugmentFrenzy extends Augment {
 
         int fishCaught = this.minimumFish + (int) (Math.random() * (this.maximumFish - this.minimumFish));
         event.setAmountToCatch(event.getAmountToCatch() + fishCaught);
-        ADDITIONAL.put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
+            ADDITIONAL.put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
     }
 
     /**

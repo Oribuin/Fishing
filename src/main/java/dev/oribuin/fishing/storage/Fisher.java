@@ -80,6 +80,18 @@ public class Fisher implements ForwardingAudience.Single {
         );
     }
 
+    @Override
+    public String toString() {
+        return "Fisher{" +
+               "uuid=" + uuid +
+               ", entropy=" + entropy +
+               ", level=" + level +
+               ", experience=" + experience +
+               ", skillPoints=" + skillPoints +
+               ", skills=" + skills +
+               '}';
+    }
+
     public UUID getUUID() {
         return this.uuid;
     }

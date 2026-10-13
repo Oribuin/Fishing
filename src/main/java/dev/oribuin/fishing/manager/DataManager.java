@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -190,7 +191,7 @@ public class DataManager implements Manager {
      *
      * @throws SQLException The exception which is going to be caught by the DatabaseConnector
      */
-    private void saveUser(Fisher fisher, PreparedStatement statement) throws SQLException {
+    private void saveUser(@NotNull Fisher fisher, @NotNull PreparedStatement statement) throws SQLException {
         statement.setString(1, fisher.getUUID().toString());
         statement.setInt(2, fisher.getEntropy());
         statement.setInt(3, fisher.getLevel());
@@ -208,7 +209,7 @@ public class DataManager implements Manager {
      *
      * @throws SQLException The exception which is going to be caught by the DatabaseConnector
      */
-    private void loadUser(UUID uuid, Connection connection) throws SQLException {
+    private void loadUser(@NotNull UUID uuid, @NotNull Connection connection) throws SQLException {
         Fisher fisher = new Fisher(uuid);
         String query = "SELECT * FROM " + USERS_PREFIX + " WHERE uuid = ?";
 
@@ -222,9 +223,9 @@ public class DataManager implements Manager {
                 fisher.setSkillPoints(result.getInt("skill_points"));
                 fisher.setSkills(GSON.fromJson(result.getString("skills"), PlayerSkills.class).skills());
             }
-
-            this.userData.put(uuid, fisher);
         }
+
+        this.userData.put(uuid, fisher);
     }
 
     /**
