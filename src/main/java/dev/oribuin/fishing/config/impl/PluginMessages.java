@@ -57,9 +57,18 @@ public class PluginMessages {
     @Comment("Player has not got any fish to sell")
     private TextMessage noSoldFish = new TextMessage(PREFIX + "There are no fish that could be sold");
 
-    @Comment("Player has hit the maximum level for the upgrade")
-    private TextMessage hitMaxLevel = new TextMessage(PREFIX + "You cannot level up your upgrade past level <#93bc80><max>");
+    @Comment("Player has hit the maximum level for totem upgrade")
+    private TextMessage hitTotemMaxLevel = new TextMessage(PREFIX + "You cannot level up this totem upgrade past level <#93bc80><max>");
+    
+    @Comment("Player has hit the maximum level for augment upgrade")
+    private TextMessage hitAugmentMaxLevel = new TextMessage(PREFIX + "You cannot level up this augment past level <#93bc80><max>");
 
+    @Comment("Player cannot afford the cost")
+    private TextMessage cannotAfford = new TextMessage(PREFIX + "You cannot afford this (Cost: <#93bc80><cost><white>)");
+    
+    @Comment("Player has upgraded augment level")
+    private TextMessage upgradedAugment = new TextMessage(PREFIX + "You have upgraded the augment <#93bc80><display_name> <white>from level <#93bc80><current> <white>➡ <#93bc80><next><white>!");
+    
     @Comment("All the messages regarding a fishing totem")
     private TotemMessages totem = new TotemMessages();
 
@@ -215,8 +224,20 @@ public class PluginMessages {
         return soldFish;
     }
 
-    public TextMessage getHitMaxLevel() {
-        return hitMaxLevel;
+    public TextMessage getHitTotemMaxLevel() {
+        return hitTotemMaxLevel;
     }
 
+    public TextMessage getHitAugmentMaxLevel() {
+        return hitAugmentMaxLevel;
+    }
+
+    public TextMessage getCannotAfford() {
+        return cannotAfford;
+    }
+
+    public TextMessage getUpgradedAugment() {
+        return upgradedAugment;
+    }
+    
 }

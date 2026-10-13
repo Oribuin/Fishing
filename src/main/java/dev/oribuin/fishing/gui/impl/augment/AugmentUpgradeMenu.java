@@ -1,6 +1,8 @@
 package dev.oribuin.fishing.gui.impl.augment;
 
+import com.mojang.brigadier.Message;
 import dev.oribuin.fishing.FishingPlugin;
+import dev.oribuin.fishing.config.impl.PluginMessages;
 import dev.oribuin.fishing.config.item.ConstructComponent;
 import dev.oribuin.fishing.config.item.ConstructType;
 import dev.oribuin.fishing.config.item.ItemConstruct;
@@ -21,6 +23,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
@@ -31,8 +34,6 @@ import static dev.oribuin.fishing.config.item.ConstructType.TOOLTIP;
 import static dev.oribuin.fishing.storage.util.KeyRegistry.AUGMENT_TYPE;
 
 public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Config> implements GuiTickable {
-
-    private int increase = 0;
 
     /**
      * Creates a new menu for the plugin to use
@@ -57,92 +58,24 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
         this.tick();
     }
 
-    public void update(@Nullable Augment augment) {
-        // Add the level increase
-        if (augment == null) {
-            this.config.getDummyItems().forEach(icon -> icon.update(this.gui, EMPTY));
-            return;
-        }
-
+    public void update(@NotNull Augment augment) {
         Placeholders placeholders = Placeholders.builder()
-                .add("increase", augment.getLevel() + this.increase)
+                .add("next", Math.min(augment.getLevel() + 1, augment.getMaxLevel()))
                 .add("current", augment.getLevel())
-                .add("previous", augment.getLevel() - Math.min(0, this.increase))
-                .add("cost", augment.getUpgradeCost(this.increase).getFormatted())
+                //                .add("previous", augment.getLevel() - Math.min(0, this.increase))
+                .add("cost", augment.getUpgradeCost(1).getFormatted())
                 .addAll(augment.getPlaceholders())
                 .build();
-
-        // Add the level increase
-        this.config.getIncreaseLevel().update(this.gui, placeholders, event -> {
-            Player who = (Player) event.getWhoClicked();
-            boolean isAlreadyMax = augment.getLevel() >= augment.getMaxLevel();
-            if (isAlreadyMax) {
-                who.sendMessage("augment is already at max level");
-                return;
-            }
-
-            boolean canIncrease = augment.getLevel() + this.increase < augment.getMaxLevel();
-            if (!canIncrease) {
-                who.sendMessage("Augment level cannot be increased further");
-                return;
-            }
-
-            // level = augment level
-            // target = level+increase
-            // increase = target - level
-            this.increase++;
-            this.update(augment);
-            who.sendMessage("increased level to " + this.increase);
-            ItemStack stack = event.getCurrentItem();
-            if (stack != null) stack.setAmount(Math.min(1, this.increase));
-        });
-
-        // Add the level decrease
-        this.config.getDecreaseLevel().update(this.gui, placeholders, event -> {
-            Player who = (Player) event.getWhoClicked();
-            boolean isAlreadyMax = augment.getLevel() >= augment.getMaxLevel();
-            if (isAlreadyMax) {
-                who.sendMessage("augment is already at max level");
-                return;
-            }
-
-            if (this.increase <= 0) {
-                this.increase = 0; // make sure its 0 
-                who.sendMessage("You cannot decrease any further");
-                return;
-            }
-
-            if (this.increase > 1) this.increase--;
-            else this.increase = 0;
-
-            this.update(augment);
-            this.config.getIncreaseLevel().getSlots().forEach(slot -> {
-                ItemStack stack = event.getInventory().getItem(slot);
-                if (stack != null) stack.setAmount(Math.min(1, this.increase));
-            });
-        });
 
         this.config.getUpgradeLevel().update(this.gui, placeholders, event -> {
             Player who = (Player) event.getWhoClicked();
 
-            // Check whether the player is even levelling up the augment
-            if (this.increase <= 0) {
-                who.sendMessage("You have not increased the level of the augment at all");
-                return;
-            }
-
             // Check whether the augment is already at max level
-            if (augment.getLevel() >= augment.getMaxLevel()) {
-                who.sendMessage("Augment is already at maximum capacity");
+            if (augment.getLevel() >= augment.getMaxLevel() || augment.getLevel() + 1 > augment.getMaxLevel()) {
+                PluginMessages.get().getHitAugmentMaxLevel().send(who);
                 return;
             }
-
-            // Check whether the increase is too much for the augment
-            if (augment.getLevel() + this.increase > augment.getMaxLevel()) {
-                who.sendMessage("Cannot level up this much");
-                return;
-            }
-
+            
             // TODO: Add back the canUse functionality
             //            if (augment.canUse(who)) {
             //                who.sendMessage("Can the player even use the augment to upgrade it?");
@@ -150,9 +83,9 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
             //            }
 
             // entropy :) maybe make this better
-            Cost<Integer> cost = augment.getUpgradeCost(this.increase);
+            Cost<Integer> cost = augment.getUpgradeCost(1);
             if (!cost.has(who)) {
-                who.sendMessage("ur broke (" + (cost.amount(who).intValue() - cost.getPrice()) + ")");
+                PluginMessages.get().getCannotAfford().send(who, placeholders);
                 return;
             }
 
@@ -164,10 +97,9 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
             //            }
 
             // TODO: Do a cost check; can the player afford to do it
-            augment.setLevel(Math.min(augment.getLevel() + this.increase, augment.getMaxLevel()));
+            PluginMessages.get().getUpgradedAugment().send(who, placeholders);
+            augment.setLevel(Math.min(augment.getLevel() + 1, augment.getMaxLevel()));
             this.gui.getInventory().setItem(this.config.getAugmentSlot(), augment.getItemWithLevel());
-            gui.close(who);
-            who.sendMessage("Successfully upgraded the augment (Cost: " + cost + ")");
         });
     }
 
@@ -179,8 +111,9 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
         ItemStack stackAugment = this.gui.getInventory().getItem(this.config.getAugmentSlot());
 
         Augment augment = this.plugin.getAugmentManager().getAugmentStack(stackAugment);
-        if (augment != null && augment.getLevel() == augment.getMaxLevel()) {
+        if (augment == null || augment.getLevel() >= augment.getMaxLevel()) {
             this.config.getMissingPieces().update(this.gui, Placeholders.empty());
+            return;
         }
 
         this.update(augment);
@@ -299,7 +232,7 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
                         " <#93bc80>Click to see all fishing augments"
                 )
                 .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
-                .asMenuItem(13);
+                .asMenuItem(4);
 
         private MenuItem upgradeLevel = ItemConstruct.of(Material.PLAYER_HEAD) // TODO: Change
                 .setName("<white>[<#94bc80><bold>Upgrade Augment</bold><white>]")
@@ -307,7 +240,9 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
                         "<gray>Imagine things are listed here like cost",
                         "<gray>Required level blah blah",
                         "",
-                        "<white>Cost: <#93bc80>$<cost>",
+                        "<white>Level: <#93bc80><current>",
+                        "<white>Next Level: <#93bc80><next>",
+                        "<white>Cost: <#93bc80><cost>",
                         "",
                         "<#93bc80>Click to upgrade the augment"
                 )
@@ -323,30 +258,36 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
                 .setProperty(ConstructType.GLOWING, ConstructComponent::setEnabled)
                 .asMenuItem(31);
 
-        private MenuItem increaseLevel = ItemConstruct.of(Material.LIME_DYE)
-                .setName("<white>[<#94bc80><bold>Increase Level</bold><white>]")
-                .setLore(
-                        "<gray>Increases fishing level from",
-                        "<#93bc80>Level <current> <white>➡ <#93bc80><increase>"
-                )
-                .asMenuItem(25);
-
-        private MenuItem decreaseLevel = ItemConstruct.of(Material.RED_DYE)
-                .setName("<white>[<#94bc80><bold>Decrease Level</bold><white>]")
-                .setLore(
-                        "<gray>Increases fishing level from",
-                        "<#93bc80>Level <increase> <white>➡ <#93bc80><previous>"
-                )
-                .asMenuItem(19);
-
         public Config() {
             this.title = "Fishing | Upgrade Augment";
             this.rows = 5;
-            this.dummyItems.add(new MenuItem(this.border, FishUtils.parseList("0-21", "23-44")));
+
+            this.dummyItems.add(new MenuItem(this.border, FishUtils.parseList(
+                    "1-7",
+                    "10-16",
+                    "19-21", "23-25",
+                    "28-34",
+                    "37-43"
+            )));
+
             this.dummyItems.add(new MenuItem(ItemConstruct.of(Material.GREEN_STAINED_GLASS_PANE)
                     .setProperty(TOOLTIP, x -> x.setVisible(false)),
-                    FishUtils.parseList("12-14", "21", "23", "30-32")
+                    0, 8, 9, 17, 18, 26, 27, 35, 36, 44
             ));
+
+            //            this.dummyItems.add(new MenuItem(
+            //                    ItemConstruct.of(Material.PLAYER_HEAD)
+            //                            .setProperty(TOOLTIP, HIDDEN)
+            //                            .setProperty(TEXTURE, x -> x.setValue("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTYzMzlmZjJlNTM0MmJhMThiZGM0OGE5OWNjYTY1ZDEyM2NlNzgxZDg3ODI3MmY5ZDk2NGVhZDNiOGFkMzcwIn19fQ==")),
+            //                    10
+            //            ));
+            //
+            //            this.dummyItems.add(new MenuItem(
+            //                    ItemConstruct.of(Material.PLAYER_HEAD)
+            //                            .setProperty(TOOLTIP, HIDDEN)
+            //                            .setProperty(TEXTURE, x -> x.setValue("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODU1MGI3Zjc0ZTllZDc2MzNhYTI3NGVhMzBjYzNkMmU4N2FiYjM2ZDRkMWY0Y2E2MDhjZDQ0NTkwY2NlMGIifX19")),
+            //                    12
+            //            ));
         }
 
         public int getAugmentSlot() {
@@ -365,12 +306,12 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
             return upgradeLevel;
         }
 
-        public MenuItem getIncreaseLevel() {
-            return increaseLevel;
-        }
-
-        public MenuItem getDecreaseLevel() {
-            return decreaseLevel;
-        }
+        //        public MenuItem getIncreaseLevel() {
+        //            return increaseLevel;
+        //        }
+        //
+        //        public MenuItem getDecreaseLevel() {
+        //            return decreaseLevel;
+        //        }
     }
 }

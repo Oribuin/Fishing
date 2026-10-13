@@ -77,7 +77,7 @@ public abstract class TotemUpgrade extends FishEventHandler implements PDCSerial
         }
 
         if (this.level >= this.maxLevel) {
-            PluginMessages.get().getHitMaxLevel().send(player,
+            PluginMessages.get().getHitTotemMaxLevel().send(player,
                     "level", this.level,
                     "max", this.maxLevel
             );

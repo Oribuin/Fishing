@@ -84,7 +84,7 @@ public abstract class Augment extends FishEventHandler implements PDCSerializabl
         this.permission = "fishing.augment." + name;
         this.conflictsWith = new ArrayList<>();
         this.baseUpgradeCost = 25000; // x + x * (i - 1) * 0.15
-        this.upgradeCost = "<base_cost> + <base_cost> * ((<increase> - 1) * 0.15)";
+        this.upgradeCost = "<base_cost> + <base_cost> * ((<next> - 1) * 0.15)";
         this.displayItem = ItemConstruct.of(Material.FIREWORK_STAR)
                 .setName("<#94bc80><bold><display_name></bold> <gray>- <white>(<level><gray>/<white><max_level>)")
                 .setLore(
@@ -208,7 +208,7 @@ public abstract class Augment extends FishEventHandler implements PDCSerializabl
         Placeholders placeholders = Placeholders.of(
                 "base_cost", this.baseUpgradeCost,
                 "level", this.level,
-                "increase", Math.max(1, increase),
+                "next", Math.min(this.maxLevel, this.level + increase),
                 "max", this.maxLevel
         );
         return new Cost<>(
