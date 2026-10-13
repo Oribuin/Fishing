@@ -9,7 +9,7 @@ import dev.oribuin.fishing.model.augment.impl.AugmentEnlightened;
 import dev.oribuin.fishing.model.augment.impl.AugmentFailure;
 import dev.oribuin.fishing.model.augment.impl.AugmentFineSlicing;
 import dev.oribuin.fishing.model.augment.impl.AugmentGenius;
-import dev.oribuin.fishing.model.augment.impl.AugmentHotspot;
+import dev.oribuin.fishing.model.augment.impl.AugmentFrenzy;
 import dev.oribuin.fishing.model.augment.impl.AugmentIndulge;
 import dev.oribuin.fishing.model.augment.impl.AugmentIntuition;
 import dev.oribuin.fishing.model.augment.impl.AugmentRainDance;
@@ -65,8 +65,8 @@ public class AugmentManager implements Manager {
         register("biome_blend", AugmentBiomeBlend.class);
         register("enlightened", AugmentEnlightened.class);
         register("fine_slicing", AugmentFineSlicing.class);
+        register("frenzy", AugmentFrenzy.class);
         register("genius", AugmentGenius.class);
-        register("hotspot", AugmentHotspot.class);
         register("indulge", AugmentIndulge.class);
         register("intuition", AugmentIntuition.class);
         //        register(AugmentMakeItRain::new); // TODO: Redo

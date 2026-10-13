@@ -37,9 +37,9 @@ repositories {
 
 dependencies {
     // Commands, Configs & Database
-    api("org.incendo:cloud-core:2.0.0")
-    api("org.incendo:cloud-annotations:2.0.0")
-    api("org.incendo:cloud-paper:2.0.0")
+    api("org.incendo:cloud-core:2.1.0")
+    api("org.incendo:cloud-annotations:2.1.0")
+    api("org.incendo:cloud-paper:2.0.1")
     api("org.spongepowered:configurate-yaml:4.2.0")
     api("com.zaxxer:HikariCP:4.0.3")
     api("dev.triumphteam:triumph-gui:3.1.13") {  // https://triumphteam.dev/docs/triumph-gui/
@@ -59,6 +59,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.12.3")
     compileOnly("com.arcaniax:HeadDatabase-API:1.3.2")
     compileOnly("org.black_ixx:playerpoints:3.2.6")
+    compileOnly("dev.rosewood:roseloot:1.4.3")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude(group = "org.bukkit", module = "*")
     }

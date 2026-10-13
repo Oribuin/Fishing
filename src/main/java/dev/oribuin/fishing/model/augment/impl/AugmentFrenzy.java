@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  * When the weather is clear, there is a chance to catch multiple fish in a single catch.
  */
 @ConfigSerializable
-public class AugmentHotspot extends Augment {
+public class AugmentFrenzy extends Augment {
 
     private static final Map<UUID, Long> ADDITIONAL = new HashMap<>();
 
@@ -34,15 +34,15 @@ public class AugmentHotspot extends Augment {
     private final int maximumFish = 3;
 
     @Comment("The message sent when a player has caught additional fish")
-    private final TextMessage gotAdditional = TextMessage.ofActionBar("<#93bc80>[<white>Hotspot granted you additional fish<#93bc80>]");
+    private final TextMessage gotAdditional = TextMessage.ofActionBar("<#93bc80>[<white>Frenzy granted you additional fish<#93bc80>]");
 
     /**
      * Create a new type of augment with a name and description.
      * <p>
      * Augment names must be unique and should be in snake_case, this will be used to identify the augment in the plugin, once implemented it should not be changed.
      */
-    public AugmentHotspot() {
-        super("hotspot", "<gray>Increases the amount of fish", "<gray>caught when the weather is clear");
+    public AugmentFrenzy() {
+        super("frenzy", "<gray>Increases the amount of fish", "<gray>caught when the weather is clear");
 
         this.setMaxLevel(15);
         this.registerListener(InitialFishCatchEvent.class, this::onInitialCatch);
@@ -60,7 +60,7 @@ public class AugmentHotspot extends Augment {
      */
     @Override
     public void onInitialCatch(InitialFishCatchEvent event) {
-        if (!Weather.CLEAR.isState(event.getHook().getLocation())) return;
+        if (event.getWrapper().isHookInRain()) return;
 
         Placeholders plc = Placeholders.of("level", level);
         double chance = FishUtils.evaluate(plc.applyString(this.formula));

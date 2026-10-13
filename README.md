@@ -69,7 +69,7 @@ If an augment is applied to a rod and causes the slot capacity to be exceeded, I
 - Failure (Meme Augment; Strikes the player with lightning when they miss their augment)
 - Fine Slicing (Increases the entropy gained from gutting a fish)
 - Genius (Increases the minecraft experience gained from catching fish)
-- Hotspot (While the weather is sunny, allows the user to catch multiple fish at once)
+- Frenzy (While the weather is sunny, allows the user to catch multiple fish at once)
 - Indulge (Chance to increase the player's saturation level)
 - Make It Rain (Chance to rain multiple fish on the player at once)
 - Rain Dance (While the weather is raining, allows the user to catch multiple fish at once)

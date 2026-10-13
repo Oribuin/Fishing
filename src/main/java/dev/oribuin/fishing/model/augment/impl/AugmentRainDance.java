@@ -62,19 +62,15 @@ public class AugmentRainDance extends Augment {
      */
     @Override
     public void onInitialCatch(InitialFishCatchEvent event) {
-        Weather state = Weather.test(event.getHook().getLocation());
-        boolean isRaining = state == Weather.RAIN || state == Weather.STORM;
-        boolean isInfluenced = event.getHook().isInRain();
+        if (!event.getWrapper().isHookInRain()) return;
+        
+        Placeholders plc = Placeholders.of("level", level);
+        double chance = FishUtils.evaluate(plc.applyString(this.formula));
+        if (this.random.nextDouble(100) <= chance) return;
 
-        if (isRaining || isInfluenced) {
-            Placeholders plc = Placeholders.of("level", level);
-            double chance = FishUtils.evaluate(plc.applyString(this.formula));
-            if (this.random.nextDouble(100) <= chance) return;
-
-            int fishCaught = this.minimumFish + (int) (Math.random() * (this.maximumFish - this.minimumFish));
-            event.setAmountToCatch(event.getAmountToCatch() + fishCaught);
-            ADDITIONAL.put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
-        }
+        int fishCaught = this.minimumFish + (int) (Math.random() * (this.maximumFish - this.minimumFish));
+        event.setAmountToCatch(event.getAmountToCatch() + fishCaught);
+        ADDITIONAL.put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
     }
 
 
