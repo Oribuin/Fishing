@@ -4,7 +4,7 @@ plugins {
     `java-library`
     `maven-publish`
     id("com.gradleup.shadow") version "9.4.1"
-    id("de.eldoria.plugin-yml.bukkit") version "0.8.0"
+    id("de.eldoria.plugin-yml.bukkit") version "0.9.0"
     id("io.papermc.paperweight.userdev") version "2.0.0-beta.24"
 }
 
@@ -33,6 +33,7 @@ repositories {
     maven("https://repo.codemc.org/repository/maven-public")
     maven("https://nexus.neetgames.com/repository/maven-snapshots/")
     maven("https://jitpack.io")
+    maven("https://repo.glaremasters.me/repository/towny/")
 }
 
 dependencies {
@@ -60,6 +61,7 @@ dependencies {
     compileOnly("com.arcaniax:HeadDatabase-API:1.3.2")
     compileOnly("org.black_ixx:playerpoints:3.2.6")
     compileOnly("dev.rosewood:roseloot:1.4.3")
+    compileOnly("com.palmergames.bukkit.towny:towny:0.103.2.0")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude(group = "org.bukkit", module = "*")
     }

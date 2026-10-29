@@ -29,78 +29,78 @@ fish:
     description:
       - '<gray>a very slippery guy'
       - '<gray>a <italic>very</italic> very <gray>slippery guy'
-    biomes: []
-    worlds: []
+    biomes: [ ]
+    worlds: [ ]
     time: ALL_DAY
   coho_salmon:
     display-name: 'Coho Salmon'
     description:
       - '<gray>a very slippery guy'
       - '<gray>a <italic>very</italic> very <gray>slippery guy'
-    biomes: []
-    worlds: []
+    biomes: [ ]
+    worlds: [ ]
     time: ALL_DAY
   lake_trout:
     display-name: 'Lake Trout'
     description:
       - '<gray>a very slippery guy'
       - '<gray>a <italic>very</italic> very <gray>slippery guy'
-    biomes: []
-    worlds: []
+    biomes: [ ]
+    worlds: [ ]
     time: ALL_DAY
   black_crappie:
     display-name: 'Black Crappie'
     description:
       - '<gray>a very slippery guy'
       - '<gray>a <italic>very</italic> very <gray>slippery guy'
-    biomes: []
-    worlds: []
+    biomes: [ ]
+    worlds: [ ]
     time: ALL_DAY
   sturgeon:
     display-name: 'Sturgeon'
     description:
       - '<gray>a very slippery guy'
       - '<gray>a <italic>very</italic> very <gray>slippery guy'
-    biomes: []
-    worlds: []
+    biomes: [ ]
+    worlds: [ ]
     time: ALL_DAY
   walleye:
     display-name: 'Walleye'
     description:
       - '<gray>a very slippery guy'
       - '<gray>a <italic>very</italic> very <gray>slippery guy'
-    biomes: []
-    worlds: []
+    biomes: [ ]
+    worlds: [ ]
     time: ALL_DAY
   rockfish:
     display-name: 'Rockfish'
     description:
       - '<gray>a very slippery guy'
       - '<gray>a <italic>very</italic> very <gray>slippery guy'
-    biomes: []
-    worlds: []
+    biomes: [ ]
+    worlds: [ ]
     time: ALL_DAY
   flounder:
     display-name: 'Flounder'
     description:
       - '<gray>a very slippery guy'
       - '<gray>a <italic>very</italic> very <gray>slippery guy'
-    biomes: []
-    worlds: []
+    biomes: [ ]
+    worlds: [ ]
     time: ALL_DAY
   halibut:
     display-name: 'Halibut'
     description:
       - '<gray>a very slippery guy'
       - '<gray>a <italic>very</italic> very <gray>slippery guy'
-    biomes: []
-    worlds: []
+    biomes: [ ]
+    worlds: [ ]
     time: ALL_DAY
   dolphinfish:
     display-name: 'Dolphinfish'
     description:
       - '<gray>a very slippery guy'
       - '<gray>a <italic>very</italic> very <gray>slippery guy'
-    biomes: []
-    worlds: []
+    biomes: [ ]
+    worlds: [ ]
     time: ALL_DAY

@@ -8,7 +8,7 @@ import dev.oribuin.fishing.database.connector.MySQLConnector;
 import dev.oribuin.fishing.database.connector.SQLiteConnector;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.scheduler.PluginScheduler;
-import dev.oribuin.fishing.storage.Fisher;
+import dev.oribuin.fishing.model.fisher.Fisher;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -177,9 +177,7 @@ public class DataManager implements Manager {
      */
     public void loadBatch(Collection<UUID> uuids) {
         this.async(() -> this.connector.connect(connection -> {
-            for (UUID uuid : uuids) {
-                this.loadUser(uuid, connection);
-            }
+            for (UUID uuid : uuids) this.loadUser(uuid, connection);
         }));
     }
 
@@ -193,11 +191,12 @@ public class DataManager implements Manager {
      */
     private void saveUser(@NotNull Fisher fisher, @NotNull PreparedStatement statement) throws SQLException {
         statement.setString(1, fisher.getUUID().toString());
-        statement.setInt(2, fisher.getEntropy());
-        statement.setInt(3, fisher.getLevel());
-        statement.setInt(4, fisher.getExperience());
-        statement.setInt(5, fisher.getSkillPoints());
-        statement.setString(6, GSON.toJson(new PlayerSkills(fisher.getSkills())));
+        statement.setString(2, fisher.getUsername());
+        statement.setInt(3, fisher.getEntropy());
+        statement.setInt(4, fisher.getLevel());
+        statement.setInt(5, fisher.getExperience());
+        statement.setInt(6, fisher.getSkillPoints());
+        statement.setString(7, GSON.toJson(new PlayerSkills(fisher.getSkills())));
         statement.executeUpdate();
     }
 
@@ -217,6 +216,7 @@ public class DataManager implements Manager {
             statement.setString(1, uuid.toString());
             ResultSet result = statement.executeQuery();
             if (result.next()) {
+                fisher.setUsername(result.getString("username"));
                 fisher.setEntropy(result.getInt("entropy"));
                 fisher.setLevel(result.getInt("level"));
                 fisher.setExperience(result.getInt("experience"));
@@ -317,6 +317,7 @@ public class DataManager implements Manager {
     // SQL Queries
     private final String CREATE_TABLE_USERS = "CREATE TABLE IF NOT EXISTS `fishingplugin_users` (" +
                                               "`uuid` VARCHAR(36) NOT NULL PRIMARY KEY," +
+                                              "`username` VARCHAR(24) NULL," +
                                               "`entropy` INT NOT NULL," +
                                               "`level` INT NOT NULL," +
                                               "`experience` INT NOT NULL," +
@@ -324,8 +325,8 @@ public class DataManager implements Manager {
                                               "`skills` TEXT NOT NULL" +
                                               ")";
     private final String SAVE_USER = "REPLACE INTO `fishingplugin_users` " +
-                                     "(`uuid`, `entropy`, `level`, `experience`, `skill_points`, `skills`) " +
-                                     "VALUES(?, ?, ?, ?, ?, ?)";
+                                     "(`uuid`, `username`, `entropy`, `level`, `experience`, `skill_points`, `skills`) " +
+                                     "VALUES(?, ?, ?, ?, ?, ?, ?)";
 
     private final String CREATE_TABLE_TOTEMS = "CREATE TABLE IF NOT EXISTS `fishingplugin_totems`(" +
                                                "`entityId` VARCHAR(36) NOT NULL PRIMARY KEY, " +

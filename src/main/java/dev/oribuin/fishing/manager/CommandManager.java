@@ -55,11 +55,10 @@ public class CommandManager extends LegacyPaperCommandManager<CommandSender> imp
         this.parser = new AnnotationParser<>(this, CommandSender.class);
 
         // Register capabilities
-        if (this.hasCapability(CloudBukkitCapabilities.BRIGADIER)) {
-            this.registerBrigadier();
-        } else if (this.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
+        if (this.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
             this.registerAsynchronousCompletions();
         }
+
 
         this.exceptionController()
                 .registerHandler(NoPermissionException.class, x -> PluginMessages.get()

@@ -20,7 +20,7 @@ public class TUpgradeTorrent extends TotemUpgrade implements Toggleable {
     public TUpgradeTorrent() {
         super();
         this.activated = false;
-        this.description = List.of("<gray>Applies a buff to nearby fishers for rain");
+        this.description = List.of("<gray>Allows rain dance to be used during clear weather");
         this.upgradeIcon.setMaterial(Material.TUBE_CORAL);
         this.upgradeIcon.setLore(this.description, this.upgradeIcon.getLore());
         this.registerListener(RodCastEvent.class, this::onCastRod);

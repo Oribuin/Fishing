@@ -13,7 +13,7 @@ import dev.oribuin.fishing.gui.PluginMenu;
 import dev.oribuin.fishing.listener.TextInputHandler;
 import dev.oribuin.fishing.model.totem.Totem;
 import dev.oribuin.fishing.scheduler.PluginScheduler;
-import dev.oribuin.fishing.storage.Fisher;
+import dev.oribuin.fishing.model.fisher.Fisher;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.guis.Gui;

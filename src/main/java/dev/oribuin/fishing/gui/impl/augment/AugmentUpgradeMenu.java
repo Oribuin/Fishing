@@ -1,6 +1,5 @@
 package dev.oribuin.fishing.gui.impl.augment;
 
-import com.mojang.brigadier.Message;
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.config.impl.PluginMessages;
 import dev.oribuin.fishing.config.item.ConstructComponent;
@@ -14,7 +13,7 @@ import dev.oribuin.fishing.gui.impl.codex.impl.AugmentCodexMenu;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.model.economy.Cost;
 import dev.oribuin.fishing.scheduler.PluginScheduler;
-import dev.oribuin.fishing.storage.Fisher;
+import dev.oribuin.fishing.model.fisher.Fisher;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.guis.Gui;
@@ -75,7 +74,7 @@ public class AugmentUpgradeMenu extends PluginMenu<Gui, AugmentUpgradeMenu.Confi
                 PluginMessages.get().getHitAugmentMaxLevel().send(who);
                 return;
             }
-            
+
             // TODO: Add back the canUse functionality
             //            if (augment.canUse(who)) {
             //                who.sendMessage("Can the player even use the augment to upgrade it?");

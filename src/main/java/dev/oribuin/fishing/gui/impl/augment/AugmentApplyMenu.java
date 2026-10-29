@@ -12,7 +12,7 @@ import dev.oribuin.fishing.gui.impl.codex.impl.AugmentCodexMenu;
 import dev.oribuin.fishing.manager.AugmentManager;
 import dev.oribuin.fishing.model.augment.Augment;
 import dev.oribuin.fishing.scheduler.PluginScheduler;
-import dev.oribuin.fishing.storage.Fisher;
+import dev.oribuin.fishing.model.fisher.Fisher;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.guis.Gui;

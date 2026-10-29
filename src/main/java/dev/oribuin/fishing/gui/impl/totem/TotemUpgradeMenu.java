@@ -19,7 +19,7 @@ import dev.oribuin.fishing.model.totem.upgrade.TotemUpgrade;
 import dev.oribuin.fishing.model.totem.upgrade.impl.TUpgradeCooldown;
 import dev.oribuin.fishing.model.totem.upgrade.impl.TUpgradeDuration;
 import dev.oribuin.fishing.model.totem.upgrade.impl.TUpgradeRadius;
-import dev.oribuin.fishing.storage.Fisher;
+import dev.oribuin.fishing.model.fisher.Fisher;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.guis.GuiItem;

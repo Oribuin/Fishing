@@ -16,7 +16,7 @@ import dev.oribuin.fishing.model.economy.CurrencyRegistry;
 import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.fish.ProcessedFish;
 import dev.oribuin.fishing.model.fish.Tier;
-import dev.oribuin.fishing.storage.Fisher;
+import dev.oribuin.fishing.model.fisher.Fisher;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.guis.Gui;

@@ -29,78 +29,78 @@ fish:
     description:
       - '<gray>a very slippery guy'
       - '<gray>a <italic>very</italic> very <gray>slippery guy'
-    biomes: []
-    worlds: []
+    biomes: [ ]
+    worlds: [ ]
     time: ALL_DAY
   sockeye_salmon:
     display-name: 'Sockeye Salmon'
     description:
       - '<gray>a very slippery guy'
       - '<gray>a <italic>very</italic> very <gray>slippery guy'
-    biomes: []
-    worlds: []
+    biomes: [ ]
+    worlds: [ ]
     time: ALL_DAY
   largemouth_bass:
     display-name: 'Largemouth Bass'
     description:
       - '<gray>a very slippery guy'
       - '<gray>a <italic>very</italic> very <gray>slippery guy'
-    biomes: []
-    worlds: []
+    biomes: [ ]
+    worlds: [ ]
     time: ALL_DAY
   brown_trout:
     display-name: 'Brown Trout'
     description:
       - '<gray>a very slippery guy'
       - '<gray>a <italic>very</italic> very <gray>slippery guy'
-    biomes: []
-    worlds: []
+    biomes: [ ]
+    worlds: [ ]
     time: ALL_DAY
   arctic_char:
     display-name: 'Arctic Char'
     description:
       - '<gray>a very slippery guy'
       - '<gray>a <italic>very</italic> very <gray>slippery guy'
-    biomes: []
-    worlds: []
+    biomes: [ ]
+    worlds: [ ]
     time: ALL_DAY
   northern_pike:
     display-name: 'Northern Pike'
     description:
       - '<gray>a very slippery guy'
       - '<gray>a <italic>very</italic> very <gray>slippery guy'
-    biomes: []
-    worlds: []
+    biomes: [ ]
+    worlds: [ ]
     time: ALL_DAY
   scorpionfish:
     display-name: 'Scorpionfish'
     description:
       - '<gray>a very slippery guy'
       - '<gray>a <italic>very</italic> very <gray>slippery guy'
-    biomes: []
-    worlds: []
+    biomes: [ ]
+    worlds: [ ]
     time: ALL_DAY
   red_snapper:
     display-name: 'Red Snapper'
     description:
       - '<gray>a very slippery guy'
       - '<gray>a <italic>very</italic> very <gray>slippery guy'
-    biomes: []
-    worlds: []
+    biomes: [ ]
+    worlds: [ ]
     time: ALL_DAY
   barracuda:
     display-name: 'Barracuda'
     description:
       - '<gray>a very slippery guy'
       - '<gray>a <italic>very</italic> very <gray>slippery guy'
-    biomes: []
-    worlds: []
+    biomes: [ ]
+    worlds: [ ]
     time: ALL_DAY
   mackerel:
     display-name: 'Mackerel'
     description:
       - '<gray>a very slippery guy'
       - '<gray>a <italic>very</italic> very <gray>slippery guy'
-    biomes: []
-    worlds: []
+    biomes: [ ]
+    worlds: [ ]
     time: ALL_DAY

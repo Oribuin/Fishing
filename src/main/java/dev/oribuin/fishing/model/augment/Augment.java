@@ -8,7 +8,7 @@ import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.manager.AugmentManager;
 import dev.oribuin.fishing.model.economy.Cost;
 import dev.oribuin.fishing.model.economy.CurrencyRegistry;
-import dev.oribuin.fishing.storage.Fisher;
+import dev.oribuin.fishing.model.fisher.Fisher;
 import dev.oribuin.fishing.storage.util.PDCSerializable;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;

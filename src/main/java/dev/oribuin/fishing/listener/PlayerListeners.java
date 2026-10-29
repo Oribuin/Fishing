@@ -2,7 +2,7 @@ package dev.oribuin.fishing.listener;
 
 import dev.oribuin.fishing.FishingPlugin;
 import dev.oribuin.fishing.manager.DataManager;
-import dev.oribuin.fishing.storage.Fisher;
+import dev.oribuin.fishing.model.fisher.Fisher;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;

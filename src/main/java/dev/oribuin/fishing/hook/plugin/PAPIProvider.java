@@ -1,7 +1,7 @@
 package dev.oribuin.fishing.hook.plugin;
 
 import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.storage.Fisher;
+import dev.oribuin.fishing.model.fisher.Fisher;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;

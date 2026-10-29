@@ -59,16 +59,16 @@ public class PluginMessages {
 
     @Comment("Player has hit the maximum level for totem upgrade")
     private TextMessage hitTotemMaxLevel = new TextMessage(PREFIX + "You cannot level up this totem upgrade past level <#93bc80><max>");
-    
+
     @Comment("Player has hit the maximum level for augment upgrade")
     private TextMessage hitAugmentMaxLevel = new TextMessage(PREFIX + "You cannot level up this augment past level <#93bc80><max>");
 
     @Comment("Player cannot afford the cost")
     private TextMessage cannotAfford = new TextMessage(PREFIX + "You cannot afford this (Cost: <#93bc80><cost><white>)");
-    
+
     @Comment("Player has upgraded augment level")
     private TextMessage upgradedAugment = new TextMessage(PREFIX + "You have upgraded the augment <#93bc80><display_name> <white>from level <#93bc80><current> <white>➡ <#93bc80><next><white>!");
-    
+
     @Comment("All the messages regarding a fishing totem")
     private TotemMessages totem = new TotemMessages();
 
@@ -239,5 +239,5 @@ public class PluginMessages {
     public TextMessage getUpgradedAugment() {
         return upgradedAugment;
     }
-    
+
 }

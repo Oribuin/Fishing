@@ -7,7 +7,7 @@ import dev.oribuin.fishing.config.item.ItemConstruct;
 import dev.oribuin.fishing.gui.GuiConfig;
 import dev.oribuin.fishing.gui.MenuItem;
 import dev.oribuin.fishing.gui.PluginMenu;
-import dev.oribuin.fishing.storage.Fisher;
+import dev.oribuin.fishing.model.fisher.Fisher;
 import dev.oribuin.fishing.util.FishUtils;
 import dev.oribuin.fishing.util.Placeholders;
 import dev.triumphteam.gui.guis.Gui;

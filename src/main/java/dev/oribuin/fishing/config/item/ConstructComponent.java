@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
-@ConfigSerializable
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
 public abstract class ConstructComponent<T> {
 

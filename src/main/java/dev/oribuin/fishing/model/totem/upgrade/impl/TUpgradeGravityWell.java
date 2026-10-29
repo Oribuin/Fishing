@@ -29,7 +29,7 @@ public class TUpgradeGravityWell extends TotemUpgrade implements Toggleable, Tot
         super();
         this.activated = false;
         this.onlyCustomFish = true;
-        this.description = List.of("<gray>Pulls entities into the upgrade");
+        this.description = List.of("<gray>Pulls caught fish towards the totem");
         this.upgradeIcon.setMaterial(Material.ENDER_PEARL);
         this.upgradeIcon.setLore(this.description, this.upgradeIcon.getLore());
     }

@@ -1,7 +1,7 @@
 package dev.oribuin.fishing.model.economy;
 
 import dev.oribuin.fishing.FishingPlugin;
-import dev.oribuin.fishing.storage.Fisher;
+import dev.oribuin.fishing.model.fisher.Fisher;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 

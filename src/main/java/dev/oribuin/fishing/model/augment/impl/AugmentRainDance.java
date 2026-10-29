@@ -63,7 +63,7 @@ public class AugmentRainDance extends Augment {
     @Override
     public void onInitialCatch(InitialFishCatchEvent event) {
         if (!event.getWrapper().isHookInRain()) return;
-        
+
         Placeholders plc = Placeholders.of("level", level);
         double chance = FishUtils.evaluate(plc.applyString(this.formula));
         if (this.random.nextDouble(100) <= chance) return;

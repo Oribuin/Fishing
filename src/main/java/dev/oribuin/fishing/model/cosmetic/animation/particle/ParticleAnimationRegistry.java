@@ -19,7 +19,6 @@ public class ParticleAnimationRegistry {
         //        register("sphere", SphereParticleAnimation::new); // TODO
         //        register("raining", RainingParticleAnimation::new); // TODO
         //        register("vortex", VortexParticleAnimation::new); // TODO who knows
-        //        register("batman", SphereParticleAnimation::new); // TODO batman logo :)
         //        register("pulse", PulseParticleAnimation::new); // TODO particle wave going outwards
         //        register("magnet", MagnetParticleAnimation::new); // TODO particle wave coming inwards
         //        register("fairy", FairyParticleAnimation::new); // TODO just something flying around 

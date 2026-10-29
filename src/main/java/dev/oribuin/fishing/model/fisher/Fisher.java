@@ -1,4 +1,4 @@
-package dev.oribuin.fishing.storage;
+package dev.oribuin.fishing.model.fisher;
 
 import dev.oribuin.fishing.config.impl.Settings;
 import dev.oribuin.fishing.util.FishUtils;
@@ -11,11 +11,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 public class Fisher implements ForwardingAudience.Single {
 
     private final UUID uuid;
+    private String username;
     private int entropy;
     private int level;
     private int experience;
@@ -24,6 +26,7 @@ public class Fisher implements ForwardingAudience.Single {
 
     public Fisher(UUID uuid) {
         this.uuid = uuid;
+        this.username = Optional.ofNullable(Bukkit.getPlayer(uuid)).map(Player::getName).orElse(null);
         this.entropy = 0;
         this.level = 1;
         this.experience = 0;
@@ -71,19 +74,21 @@ public class Fisher implements ForwardingAudience.Single {
     }
 
     public Placeholders getPlaceholders() {
-        return Placeholders.of(
-                "entropy", this.entropy,
-                "level", this.level,
-                "experience", this.experience,
-                "skill_points", this.skillPoints,
-                "required_exp", this.getRequiredExp()
-        );
+        return Placeholders.builder()
+                .add("username", this.username != null ? this.username : "Unknown")
+                .add("entropy", this.entropy)
+                .add("level", this.level)
+                .add("experience", this.experience)
+                .add("skill_points", this.skillPoints)
+                .add("required_exp", this.getRequiredExp())
+                .build();
     }
 
     @Override
     public String toString() {
         return "Fisher{" +
                "uuid=" + uuid +
+               ", username=" + username +
                ", entropy=" + entropy +
                ", level=" + level +
                ", experience=" + experience +
@@ -94,6 +99,14 @@ public class Fisher implements ForwardingAudience.Single {
 
     public UUID getUUID() {
         return this.uuid;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public int getEntropy() {

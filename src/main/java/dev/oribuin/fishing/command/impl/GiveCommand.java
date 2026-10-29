@@ -9,7 +9,7 @@ import dev.oribuin.fishing.model.fish.Fish;
 import dev.oribuin.fishing.model.loot.FishLoot;
 import dev.oribuin.fishing.model.loot.LootRegistry;
 import dev.oribuin.fishing.model.totem.Totem;
-import dev.oribuin.fishing.storage.Fisher;
+import dev.oribuin.fishing.model.fisher.Fisher;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

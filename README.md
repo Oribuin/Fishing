@@ -82,6 +82,13 @@ Totems are entities placed by players to provide a buff to nearby users while ac
 
 - Gravity Well (Pulls nearby items towards the totem)
 - Vacuum (Automatically picks up nearby fish in a withdrawal only inventory)
-- Weather Flux (Increased By Speed by adding fake rain)
+- Torrent (Increased By Speed by adding fake rain)
 
 ### Skills
+
+passive upgrades for the players
+
+### Boss Ideas
+
+- a very strong frog........... plague+poison
+- turtle boss
